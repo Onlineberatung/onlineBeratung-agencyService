@@ -1,0 +1,1 @@
+ALTER TABLE `agencyservice`.`agency` MODIFY `id_old` BIGINT(21) NULL;

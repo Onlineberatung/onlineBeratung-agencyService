@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+    <include file="db/changelog/changeset/0002_agency_id_old_null/0002_changeSet.xml"/>
+	<include file="db/changelog/changeset/0003_agency_consulting_type/0003_changeSet.xml"/>
+	<include file="db/changelog/changeset/0004_agency_offline/0004_changeSet.xml"/>
+	<include file="db/changelog/changeset/0005_agency_delete_flag/0005_changeSet.xml"/>
+</databaseChangeLog>

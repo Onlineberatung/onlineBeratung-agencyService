@@ -1,0 +1,73 @@
+swagger: "2.0"
+info:
+  description: "This information will be replaced by the SpringFox config information"
+  version: "0.0.1"
+  title: "will be replaced"
+securityDefinitions:
+  Bearer:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+
+# REST API path definitions #
+paths:  
+  /agencies:
+    get:
+      tags:
+      - "agency-controller"
+      summary: "Returns the list of agencies. If no agency is found the white spot agency id is being returned. When no white spot agency is defined No Content is being returned. [Authorization: none]"
+      operationId: "getAgencies"
+      parameters:
+        - in: query
+          name: postcode
+          type: string
+          description: The postcode the user entered
+        - in: query
+          name: consultingType
+          type: integer
+          format: int32
+          description: The consulting type of the registration form
+      responses:
+        200:
+          description: "OK - successfull operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/AgencyResponseDTO"     
+        400:
+          description: "BAD REQUEST - invalid/incomplete request or body object"
+        500:
+          description: "INTERNAL SERVER ERROR - server encountered unexpected condition"
+  /agencies/data/{agencyId}:
+    get:
+      tags:
+      - "agency-controller"
+      summary: "Returns the information of provided agency (Id). [Authorization: none]"
+      operationId: "getAgency"
+      security:
+        - Bearer: []
+      parameters:
+        - in: "path"
+          required: true
+          description: "Agency Id"
+          name: "agencyId"
+          type: integer
+          format: int64 
+      responses:
+        200:
+          description: "OK - successfull operation"
+          schema:
+            $ref: "#/definitions/AgencyResponseDTO"
+        400:
+          description: "BAD REQUEST - invalid/incomplete request or body object"
+        401:
+          description: "UNAUTHORIZED - no/invalid CSRF token"
+        500:
+          description: "INTERNAL SERVER ERROR - server encountered unexpected condition"  
+       
+# Model/object definitions #
+definitions:
+  AgencyDTO:
+    type: "object"
+  AgencyDataResponseDTO:
+    type: "object"
