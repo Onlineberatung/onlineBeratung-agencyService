@@ -35,7 +35,7 @@ public class AgencyControllerIT {
   private final String PATH_GET_AGENCY = "/agencies/data/";
   private final String AGENCY_ID = "12";
   private final String INVALIDAGENCY_ID = "12xX";
-  private final AgencyResponseDTO AGENCY_RESPONSE_DTO = new AgencyResponseDTO(1L, "name", "12345",
+  private final AgencyResponseDTO AGENCY_RESPONSE_DTO = new AgencyResponseDTO(1L, "name", "12345","testcity",
       "description", false, false, ConsultingType.SUCHT.getValue());
 
   @Autowired

@@ -41,6 +41,7 @@ public class AgencyServiceTest {
   private final String POSTCODE = "postcode";
   private final String FIELD_AGENCY_ID = "id";
   private final String VALID_FULL_POSTCODE = "12345";
+  private final String AGENCY_CITY = "testcity";
   private final String VALID_MEDIUM_POSTCODE = "884";
   private final int VALID_MEDIUM_INT = 3;
   private final Long AGENCY_ID = 98L;
@@ -56,7 +57,7 @@ public class AgencyServiceTest {
   private final Agency TEAM_AGENCY = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
       VALID_FULL_POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null);
   private final AgencyResponseDTO AGENCY_RESPONSE_DTO =
-      new AgencyResponseDTO(AGENCY_ID, AGENCY_NAME, VALID_FULL_POSTCODE, AGENCY_DESCRIPTION, false,
+      new AgencyResponseDTO(AGENCY_ID, AGENCY_NAME, VALID_FULL_POSTCODE, AGENCY_CITY, AGENCY_DESCRIPTION, false,
           false, CONSULTING_TYPE_SUCHT.getValue());
   private final int MIN_POSTCODE_SIZE_3 = 3;
   private final int MIN_POSTCODE_SIZE_5 = 5;
