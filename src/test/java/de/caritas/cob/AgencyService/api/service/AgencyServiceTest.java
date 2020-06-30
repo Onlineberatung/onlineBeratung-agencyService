@@ -41,7 +41,7 @@ public class AgencyServiceTest {
   private final String POSTCODE = "postcode";
   private final String FIELD_AGENCY_ID = "id";
   private final String VALID_FULL_POSTCODE = "12345";
-  private final String AGENCY_CITY = "testcity";
+  private final String AGENCY_CITY = "Test city";
   private final String VALID_MEDIUM_POSTCODE = "884";
   private final int VALID_MEDIUM_INT = 3;
   private final Long AGENCY_ID = 98L;
@@ -257,6 +257,7 @@ public class AgencyServiceTest {
     AgencyResponseDTO result = agencyService.getAgency(AGENCY_ID);
 
     assertEquals(AGENCY_RESPONSE_DTO.getPostcode(), result.getPostcode());
+    assertEquals(AGENCY_RESPONSE_DTO.getCity(), result.getCity());
     assertEquals(AGENCY_RESPONSE_DTO.getDescription(), result.getDescription());
     assertEquals(AGENCY_RESPONSE_DTO.getName(), result.getName());
     assertEquals(AGENCY_RESPONSE_DTO.getId(), result.getId());
