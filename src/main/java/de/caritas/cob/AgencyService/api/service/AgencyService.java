@@ -121,6 +121,7 @@ public class AgencyService {
     return new AgencyResponseDTO(agency.getId() != null ? agency.getId() : null,
         (agency.getName() != null) ? agency.getName() : null,
         (agency.getPostCode() != null) ? agency.getPostCode() : null,
+        (agency.getCity() != null) ? agency.getCity() : null,
         (agency.getDescription() != null) ? agency.getDescription() : null, agency.isTeamAgency(),
         agency.isOffline(), agency.getConsultingType().getValue());
   }
