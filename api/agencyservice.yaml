@@ -38,33 +38,38 @@ paths:
           description: "BAD REQUEST - invalid/incomplete request or body object"
         500:
           description: "INTERNAL SERVER ERROR - server encountered unexpected condition"
-  /agencies/data/{agencyId}:
+  /agencies/{agencyIds}:
     get:
       tags:
       - "agency-controller"
-      summary: "Returns the information of provided agency (Id). [Authorization: none]"
-      operationId: "getAgency"
+      summary: "Returns the information of provided agencies (Ids). [Authorization: none]"
+      operationId: "getAgencies"
       security:
         - Bearer: []
       parameters:
         - in: "path"
           required: true
-          description: "Agency Id"
-          name: "agencyId"
-          type: integer
-          format: int64 
+          description: "List of Agency Ids"
+          name: "agencyIds"
+          type: "array"
+          items:
+            type: integer
+            format: int64
       responses:
         200:
           description: "OK - successfull operation"
           schema:
-            $ref: "#/definitions/AgencyResponseDTO"
+            type: "array"
+            items:
+              $ref: "#/definitions/AgencyResponseDTO"
         400:
           description: "BAD REQUEST - invalid/incomplete request or body object"
         401:
           description: "UNAUTHORIZED - no/invalid CSRF token"
         500:
-          description: "INTERNAL SERVER ERROR - server encountered unexpected condition"  
-       
+          description: "INTERNAL SERVER ERROR - server encountered unexpected condition"
+
+
 # Model/object definitions #
 definitions:
   AgencyDTO:

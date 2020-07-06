@@ -1,5 +1,13 @@
 package de.caritas.cob.AgencyService.api.controller;
 
+import static de.caritas.cob.AgencyService.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.AGENCY_ID;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALIDAGENCY_ID;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALID_CONSULTING_TYPE;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALID_POSTCODE;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_CONSULTING_TYPE;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_MEDIUM_POSTCODE;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,17 +35,6 @@ import de.caritas.cob.AgencyService.api.service.AgencyService;
 @AutoConfigureMockMvc(secure = false)
 public class AgencyControllerIT {
 
-  private final String VALID_MEDIUM_POSTCODE = "postcode=884";
-  private final String VALID_CONSULTING_TYPE = "consultingType=1";
-  private final String INVALID_POSTCODE = "postcode=12";
-  private final String INVALID_CONSULTING_TYPE = "consultingType=99999";
-  private final String PATH_GET_LIST_OF_AGENCIES = "/agencies";
-  private final String PATH_GET_AGENCY = "/agencies/data/";
-  private final String AGENCY_ID = "12";
-  private final String INVALIDAGENCY_ID = "12xX";
-  private final AgencyResponseDTO AGENCY_RESPONSE_DTO = new AgencyResponseDTO(1L, "name", "12345", "testcity",
-      "description", false, false, ConsultingType.SUCHT.getValue());
-
   @Autowired
   private MockMvc mvc;
 
@@ -47,7 +44,7 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_Should_ReturnNoContent_WhenServiceReturnsEmptyList() throws Exception {
 
-    when(agencyService.getListOfAgencies(Mockito.anyString(), Mockito.any(ConsultingType.class)))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.any(ConsultingType.class)))
         .thenReturn(null);
 
     mvc.perform(
@@ -97,7 +94,7 @@ public class AgencyControllerIT {
     List<AgencyResponseDTO> agencies = new ArrayList<AgencyResponseDTO>();
     agencies.add(AGENCY_RESPONSE_DTO);
 
-    when(agencyService.getListOfAgencies(Mockito.anyString(), Mockito.any(ConsultingType.class)))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.any(ConsultingType.class)))
         .thenReturn(agencies);
 
     mvc.perform(
@@ -106,35 +103,38 @@ public class AgencyControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
-    verify(agencyService, atLeastOnce()).getListOfAgencies(Mockito.anyString(),
+    verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyString(),
         Mockito.any(ConsultingType.class));
   }
 
   @Test
-  public void getAgency_Should_ReturnNoContent_WhenServiceReturnsNoAgency() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnNoContent_When_ServiceReturnsNoAgency() throws Exception {
 
-    when(agencyService.getAgency(Mockito.anyLong())).thenReturn(null);
+    when(agencyService.getAgencies(Mockito.anyList())).thenReturn(null);
 
-    mvc.perform(get(PATH_GET_AGENCY + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 
   @Test
-  public void getAgency_Should_ReturnBadRequest_WhenPathParamIsInvalid() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnBadRequest_WhenPathParamIsInvalid() throws Exception {
 
-    mvc.perform(get(PATH_GET_AGENCY + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
   @Test
-  public void getAgency_Should_ReturnAgencyAndOK_WhenServiceReturnsAgency() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnAgencyAndOK_WhenServiceReturnsAgency() throws Exception {
 
-    when(agencyService.getAgency(Mockito.anyLong())).thenReturn(AGENCY_RESPONSE_DTO);
+    List<AgencyResponseDTO> agencies = new ArrayList<AgencyResponseDTO>();
+    agencies.add(AGENCY_RESPONSE_DTO);
 
-    mvc.perform(get(PATH_GET_AGENCY + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
+    when(agencyService.getAgencies(Mockito.anyList())).thenReturn(agencies);
+
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("name").value(AGENCY_RESPONSE_DTO.getName()));
 
-    verify(agencyService, atLeastOnce()).getAgency(Mockito.anyLong());
+    verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyList());
   }
 }

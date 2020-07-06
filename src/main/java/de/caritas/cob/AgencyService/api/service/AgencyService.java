@@ -40,7 +40,7 @@ public class AgencyService {
    * @param postCode
    * @return
    */
-  public List<AgencyResponseDTO> getListOfAgencies(String postCode, ConsultingType consultingType) {
+  public List<AgencyResponseDTO> getAgencies(String postCode, ConsultingType consultingType) {
 
     ConsultingTypeSettings consultingTypeSettings =
         consultingTypeManager.getConsultantTypeSettings(consultingType);
@@ -88,27 +88,20 @@ public class AgencyService {
   }
 
   /**
-   * Returns the agency which matches to the provided agencyId
-   * 
-   * @param agencyId
+   * Returns a list of {@link AgencyResponseDTO} which match the provided agencyIds
+   *
+   * @param agencyIds
    * @return
    */
-  public AgencyResponseDTO getAgency(Long agencyId) {
-
-    Optional<Agency> agency;
-
+  public List<AgencyResponseDTO> getAgencies(List<Long> agencyIds) {
+    List<Agency> agencies;
     try {
-      agency = agencyRepository.findByIdAndDeleteDateNull(agencyId);
+      agencies = agencyRepository.findByIdIn(agencyIds);
     } catch (DataAccessException ex) {
       logService.logDatabaseError(ex);
-      throw new ServiceException("Database error while getting agency");
+      throw new ServiceException("Database error while getting agencies");
     }
-
-    if (agency.isPresent()) {
-      return convertToAgencyResponseDTO(agency.get());
-    } else {
-      return null;
-    }
+    return agencies.stream().map(this::convertToAgencyResponseDTO).collect(Collectors.toList());
   }
 
   /**
