@@ -66,7 +66,7 @@ public class AgencyController implements AgenciesApi {
 
     List<AgencyResponseDTO> agencies = agencyService.getAgencies(agencyIds);
 
-    return agencies.isEmpty() || agencies.contains(null) ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+    return agencies == null || agencies.isEmpty() || agencies.contains(null) ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
         : new ResponseEntity<>(agencies, HttpStatus.OK);
   }
 }

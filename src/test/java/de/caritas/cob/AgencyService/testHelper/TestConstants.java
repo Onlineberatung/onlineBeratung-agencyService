@@ -139,6 +139,7 @@ public class TestConstants {
   public static final String VALID_FULL_POSTCODE = "12345";
   public static final String AGENCY_CITY = "Test city";
   public static final String VALID_MEDIUM_POSTCODE = "884";
+  public static final String VALID_MEDIUM_POSTCODE_QUERY = "postcode=884";
   public static final int VALID_MEDIUM_INT = 3;
   public static final Long AGENCY_ID = 98L;
   public static final String AGENCY_NAME = "Test agency";
@@ -173,8 +174,8 @@ public class TestConstants {
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 
-  public static final String VALID_CONSULTING_TYPE = "consultingType=1";
-  public static final String INVALID_POSTCODE = "postcode=12";
-  public static final String INVALID_CONSULTING_TYPE = "consultingType=99999";
+  public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
+  public static final String INVALID_POSTCODE_QUERY = "postcode=12";
+  public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=99999";
   public static final String INVALIDAGENCY_ID = "12xX";
 }

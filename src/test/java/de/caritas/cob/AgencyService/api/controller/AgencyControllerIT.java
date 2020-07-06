@@ -1,13 +1,16 @@
 package de.caritas.cob.AgencyService.api.controller;
 
+import static de.caritas.cob.AgencyService.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.AgencyService.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
 import static de.caritas.cob.AgencyService.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.AgencyService.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALIDAGENCY_ID;
-import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALID_CONSULTING_TYPE;
-import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALID_POSTCODE;
-import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_CONSULTING_TYPE;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALID_CONSULTING_TYPE_QUERY;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_FULL_POSTCODE;
 import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_MEDIUM_POSTCODE;
+import static de.caritas.cob.AgencyService.testHelper.TestConstants.VALID_MEDIUM_POSTCODE_QUERY;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,7 +51,7 @@ public class AgencyControllerIT {
         .thenReturn(null);
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE + "&" + VALID_CONSULTING_TYPE)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&" + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
   }
@@ -57,7 +60,7 @@ public class AgencyControllerIT {
   public void getAgencies_Should_ReturnBadRequest_WhenPostcodeParamIsInvalid() throws Exception {
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + INVALID_POSTCODE + "&" + VALID_CONSULTING_TYPE)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + INVALID_POSTCODE_QUERY + "&" + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -67,7 +70,7 @@ public class AgencyControllerIT {
       throws Exception {
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE + "&" + INVALID_CONSULTING_TYPE)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&" + INVALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -76,7 +79,7 @@ public class AgencyControllerIT {
   public void getAgencies_Should_ReturnBadRequest_WhenPostcodeParamIsNotProvided()
       throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_CONSULTING_TYPE)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_CONSULTING_TYPE_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
@@ -84,7 +87,7 @@ public class AgencyControllerIT {
   public void getAgencies_Should_ReturnBadRequest_WhenConsultingTypeParamIsNotProvided()
       throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
@@ -98,7 +101,7 @@ public class AgencyControllerIT {
         .thenReturn(agencies);
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE + "&" + VALID_CONSULTING_TYPE)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&" + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
@@ -112,14 +115,14 @@ public class AgencyControllerIT {
 
     when(agencyService.getAgencies(Mockito.anyList())).thenReturn(null);
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
+    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnBadRequest_WhenPathParamIsInvalid() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnBadRequest_WhenIdInvalid() throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
+    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
@@ -131,9 +134,9 @@ public class AgencyControllerIT {
 
     when(agencyService.getAgencies(Mockito.anyList())).thenReturn(agencies);
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
+    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("name").value(AGENCY_RESPONSE_DTO.getName()));
+        .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
     verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyList());
   }
