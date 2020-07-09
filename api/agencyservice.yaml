@@ -72,7 +72,5 @@ paths:
 
 # Model/object definitions #
 definitions:
-  AgencyDTO:
-    type: "object"
-  AgencyDataResponseDTO:
+  AgencyResponseDTO:
     type: "object"
