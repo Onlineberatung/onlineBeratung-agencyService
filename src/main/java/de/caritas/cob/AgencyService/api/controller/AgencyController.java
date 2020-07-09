@@ -58,7 +58,7 @@ public class AgencyController implements AgenciesApi {
 
   /**
    * Returns information of the provided agencies
-   * @param agencyIds the List of agencies Ids
+   * @param agencyIds the List of agency IDs
    * @return the List of agencies with information
    */
   @Override
@@ -66,7 +66,7 @@ public class AgencyController implements AgenciesApi {
 
     List<AgencyResponseDTO> agencies = agencyService.getAgencies(agencyIds);
 
-    return agencies == null || agencies.isEmpty() || agencies.contains(null) ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+    return agencies.isEmpty() || agencies.contains(null) ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
         : new ResponseEntity<>(agencies, HttpStatus.OK);
   }
 }

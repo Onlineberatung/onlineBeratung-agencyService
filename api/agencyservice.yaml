@@ -49,7 +49,7 @@ paths:
       parameters:
         - in: "path"
           required: true
-          description: "List of Agency Ids"
+          description: "List of comma-seperated Agency IDs"
           name: "agencyIds"
           type: "array"
           items:

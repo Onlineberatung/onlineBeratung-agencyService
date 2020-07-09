@@ -170,7 +170,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnEmptyList_WhenPostcodeSizeIsSmallerThanMinSettingsValue()
+  public void getListOfAgencies_Should_ReturnEmptyList_When_PostcodeSizeIsSmallerThanMinSettingsValue()
       throws Exception {
 
     when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
@@ -200,7 +200,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnListOfAgencyResponseDTO_WhenDBSelectIsSuccessfull()
+  public void getAgencies_With_Ids_Should_ReturnListOfAgencyResponseDTO_When_DBSelectIsSuccessfull()
       throws Exception {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
@@ -221,7 +221,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getAgencies_With_ids_Should_ReturnCorrectOfflineFlag_WhenAgencyIsOnline() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnCorrectOfflineFlag_When_AgencyIsOnline() throws Exception {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
         .thenReturn(Collections.singletonList(AGENCY_ONLINE_U25));
@@ -232,7 +232,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnCorrectOfflineFlag_WhenAgencyIsOffline() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnCorrectOfflineFlag_When_AgencyIsOffline() throws Exception {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
         .thenReturn(Collections.singletonList(AGENCY_OFFLINE));
@@ -243,7 +243,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getAgencies_Should_ReturnEmptyList_WhenNoAgencyFoundForGivenId()
+  public void getAgencies_Should_ReturnEmptyList_When_NoAgencyFoundForGivenId()
       throws Exception {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST)).thenReturn(new ArrayList<Agency>());
