@@ -49,7 +49,7 @@ public class AgencyController implements AgenciesApi {
     }
 
     List<AgencyResponseDTO> agencies =
-        agencyService.getListOfAgencies(postcode, optionalConsultingType.get());
+        agencyService.getAgencies(postcode, optionalConsultingType.get());
 
     return (agencies != null && agencies.size() > 0)
         ? new ResponseEntity<List<AgencyResponseDTO>>(agencies, HttpStatus.OK)
@@ -57,15 +57,16 @@ public class AgencyController implements AgenciesApi {
   }
 
   /**
-   * Returns information of the provided agency (Id)
+   * Returns information of the provided agencies
+   * @param agencyIds the List of agency IDs
+   * @return the List of agencies with information
    */
   @Override
-  public ResponseEntity<AgencyResponseDTO> getAgency(@PathVariable("agencyId") Long agencyId) {
+  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(@PathVariable("agencyIds") List<Long> agencyIds) {
 
-    AgencyResponseDTO agency = agencyService.getAgency(agencyId);
+    List<AgencyResponseDTO> agencies = agencyService.getAgencies(agencyIds);
 
-    return (agency != null) ? new ResponseEntity<AgencyResponseDTO>(agency, HttpStatus.OK)
-        : new ResponseEntity<AgencyResponseDTO>(HttpStatus.NOT_FOUND);
+    return agencies.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        : new ResponseEntity<>(agencies, HttpStatus.OK);
   }
-
 }
