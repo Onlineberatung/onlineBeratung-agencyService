@@ -31,4 +31,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       @Param(value = "length") int length, @Param(value = "type") ConsultingType consultingType);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
+
+  List<Agency> findByIdIn(List<Long> agencyIds);
+
 }
