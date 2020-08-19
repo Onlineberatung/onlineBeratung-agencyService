@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
- * Service for logging
+ * Service for logging.
  */
 public class LogService {
 
@@ -19,30 +19,36 @@ public class LogService {
   }
 
   /**
-   * Logs a database error
+   * Logs a database error.
+   *
+   * @param exception the to be logged
    */
   public static void logDatabaseError(Exception exception) {
     LOGGER.error("Database error: {}", getStackTrace(exception));
   }
 
   /**
-   * javax Bad Request Exception
+   * javax Bad Request Exception.
+   *
+   * @param exception the to be logged
    */
   public static void logBadRequestException(BadRequestException exception) {
     LOGGER.warn("Bad Request: {}", getStackTrace(exception));
   }
 
   /**
-   * Logs a {@link NumberFormatException}
+   * Logs a {@link NumberFormatException}.
+   *
+   * @param exception the to be logged
    */
-  public static void logNumberFormatException(NumberFormatException exception) {
+  public static void logNumberFormatException(Exception exception) {
     LOGGER.error("Error while formating number: {}", getStackTrace(exception));
   }
 
   /**
-   * Logs a info message
+   * Logs a info message.
    *
-   * @param message the message
+   * @param message the message to be logged
    */
   public static void logInfo(String message) {
     LOGGER.info(message);

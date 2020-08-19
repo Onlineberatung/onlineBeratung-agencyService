@@ -73,7 +73,7 @@ public class ConsultingTypeManagerTest {
 
   @Test
   public void getConsultantTypeSettings_Should_ReturnConsultantTypeSettingsForConsultingType()
-      throws NoSuchFieldException, SecurityException {
+      throws NoSuchFieldException, SecurityException, MissingConsultingTypeException {
 
     FieldSetter.setField(consultingTypeManager,
         consultingTypeManager.getClass().getDeclaredField(FIELD_NAME_CONSULTING_TYPE_SETTINGS_MAP),
@@ -107,7 +107,7 @@ public class ConsultingTypeManagerTest {
   @Test
   public void init_Should_InitializeConsultingTypeSettingFromJsonFile()
       throws NoSuchMethodException, SecurityException, IllegalAccessException,
-      IllegalArgumentException, InvocationTargetException, NoSuchFieldException, IOException {
+      IllegalArgumentException, InvocationTargetException, NoSuchFieldException, IOException, MissingConsultingTypeException {
 
     FieldSetter.setField(consultingTypeManager,
         consultingTypeManager.getClass()

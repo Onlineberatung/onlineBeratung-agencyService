@@ -18,7 +18,6 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_FULL_POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_MEDIUM_INT;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_MEDIUM_POSTCODE;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -26,12 +25,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 
+import de.caritas.cob.agencyservice.api.exception.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
+import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -45,11 +48,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
-import de.caritas.cob.agencyservice.api.exception.ServiceException;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AgencyServiceTest {
@@ -69,7 +67,8 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnServiceExceptionAndLogDatabaseError_OnDatabaseErrorFindByPostCodeAndConsultingType() {
+  public void getListOfAgencies_Should_ReturnServiceExceptionAndLogDatabaseError_OnDatabaseErrorFindByPostCodeAndConsultingType()
+      throws MissingConsultingTypeException {
 
     @SuppressWarnings("serial")
     DataAccessException dbEx = new DataAccessException("db error") {};
@@ -82,15 +81,14 @@ public class AgencyServiceTest {
     try {
       agencyService.getAgencies(VALID_MEDIUM_POSTCODE, CONSULTING_TYPE_SUCHT);
       fail("Expected exception: ServiceException");
-    } catch (ServiceException serviceException) {
+    } catch (InternalServerErrorException internalServerErrorException) {
       assertTrue("Excepted ServiceException thrown", true);
     }
-
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnServiceExceptionAndLogNumberFormatError_OnInvalidWhiteSpotAgencyId() {
+  public void getListOfAgencies_Should_ReturnServiceException_OnInvalidWhiteSpotAgencyId()
+      throws MissingConsultingTypeException {
 
     NumberFormatException nfEx = new NumberFormatException();
 
@@ -103,15 +101,14 @@ public class AgencyServiceTest {
     try {
       agencyService.getAgencies(VALID_MEDIUM_POSTCODE, CONSULTING_TYPE_SUCHT);
       fail("Expected exception: ServiceException");
-    } catch (ServiceException serviceException) {
+    } catch (InternalServerErrorException internalServerErrorException) {
       assertTrue("Excepted ServiceException thrown", true);
     }
-
-    verify(logger, times(1)).error(eq("Error while formating number: {}"), eq(getStackTrace(nfEx)));
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnServiceExceptionAndLogDatabaseError_OnDatabaseErrorfindByIdAndDeleteDateNull() {
+  public void getListOfAgencies_Should_ReturnServiceException_OnDatabaseErrorfindByIdAndDeleteDateNull()
+      throws MissingConsultingTypeException {
 
     @SuppressWarnings("serial")
     DataAccessException dbEx = new DataAccessException("db error") {};
@@ -126,15 +123,14 @@ public class AgencyServiceTest {
     try {
       agencyService.getAgencies(VALID_MEDIUM_POSTCODE, CONSULTING_TYPE_SUCHT);
       fail("Expected exception: ServiceException");
-    } catch (ServiceException serviceException) {
+    } catch (InternalServerErrorException internalServerErrorException) {
       assertTrue("Excepted ServiceException thrown", true);
     }
-
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnListOfAgencyResponseDTO_WhenDBSelectIsSuccessfull() {
+  public void getListOfAgencies_Should_ReturnListOfAgencyResponseDTO_WhenDBSelectIsSuccessfull()
+      throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingType(VALID_MEDIUM_POSTCODE, VALID_MEDIUM_INT,
         CONSULTING_TYPE_SUCHT)).thenReturn(AGENCY_LIST);
@@ -148,7 +144,8 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnWhiteSpotAgency_WhenNoAgencyFoundForGivenPostcodeAndAgencyHasSetWhiteSpotAgency() {
+  public void getListOfAgencies_Should_ReturnWhiteSpotAgency_WhenNoAgencyFoundForGivenPostcodeAndAgencyHasSetWhiteSpotAgency()
+      throws MissingConsultingTypeException {
 
     Optional<Agency> agency = Optional.of(AGENCY_SUCHT);
 
@@ -163,7 +160,8 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnEmptyList_WhenNoAgencyFoundForGivenPostcodeAndAgencyHasNotSetWhiteSpotAgency() {
+  public void getListOfAgencies_Should_ReturnEmptyList_WhenNoAgencyFoundForGivenPostcodeAndAgencyHasNotSetWhiteSpotAgency()
+      throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingType(VALID_MEDIUM_POSTCODE, VALID_MEDIUM_INT,
         CONSULTING_TYPE_SUCHT)).thenReturn(new ArrayList<Agency>());
@@ -175,7 +173,8 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnEmptyList_When_PostcodeSizeIsSmallerThanMinSettingsValue() {
+  public void getListOfAgencies_Should_ReturnEmptyList_When_PostcodeSizeIsSmallerThanMinSettingsValue()
+      throws MissingConsultingTypeException {
 
     when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_EMIGRATION);
@@ -185,7 +184,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnServiceExceptionAndLogDatabaseError_OnDatabaseError() {
+  public void getAgencies_With_Ids_Should_ReturnServiceException_OnDatabaseError() {
 
     @SuppressWarnings("serial")
     DataAccessException dbEx = new DataAccessException("db error") {};
@@ -195,11 +194,9 @@ public class AgencyServiceTest {
     try {
       agencyService.getAgencies(Collections.singletonList(AGENCY_ID));
       fail("Expected exception: ServiceException");
-    } catch (ServiceException serviceException) {
+    } catch (InternalServerErrorException internalServerErrorException) {
       assertTrue("Excepted ServiceException thrown", true);
     }
-
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
   }
 
   @Test
@@ -251,5 +248,13 @@ public class AgencyServiceTest {
 
     assertThat(agencyService.getAgencies(AGENCY_IDS_LIST),
         IsEmptyCollection.empty());
+  }
+
+  @Test(expected = InternalServerErrorException.class)
+  public void getAgencies_Should_ThrowInternalServerError_When_MissingConsultingTypeExceptionIsThrown()
+      throws MissingConsultingTypeException {
+
+    when(consultingTypeManager.getConsultantTypeSettings(any())).thenThrow(new MissingConsultingTypeException(""));
+    agencyService.getAgencies("", null);
   }
 }

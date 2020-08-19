@@ -2,7 +2,7 @@ package de.caritas.cob.agencyservice.api;
 
 import de.caritas.cob.agencyservice.api.exception.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
-import de.caritas.cob.agencyservice.api.exception.ServiceException;
+import de.caritas.cob.agencyservice.api.exception.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.net.UnknownHostException;
 import javax.validation.ConstraintViolationException;
@@ -32,13 +32,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
   /**
-   * 
-   * Handle all common "Bad Request" errors (400)
-   * 
-   */
-
-  /**
-   * Custom BadRequest exception
+   * Custom BadRequest exception.
+   *
+   * @param ex the thrown exception
+   * @param request web request
+   * @return response entity
    */
   @ExceptionHandler({BadRequestException.class})
   public ResponseEntity<Object> handleCustomBadRequest(final BadRequestException ex,
@@ -49,11 +47,11 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   }
 
   /**
-   * Constraint violations
+   * Constraint violations.
    * 
-   * @param ex
-   * @param request
-   * @return
+   * @param ex the thrown exception
+   * @param request web request
+   * @return response entity
    */
   @ExceptionHandler({ConstraintViolationException.class})
   public ResponseEntity<Object> handleBadRequest(final ConstraintViolationException ex,
@@ -64,7 +62,13 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   }
 
   /**
-   * Incoming request body could not be deserialized
+   * Incoming request body could not be deserialized.
+   *
+   * @param ex the thrown exception
+   * @param headers http headers
+   * @param status http status
+   * @param request web request
+   * @return response entity
    */
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(
@@ -76,7 +80,13 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   }
 
   /**
-   * @Valid on object fails validation
+   * @Valid on object fails validation.
+   *
+   * @param ex the thrown exception
+   * @param headers http headers
+   * @param status http status
+   * @param request web request
+   * @return response entity
    */
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -88,11 +98,11 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   }
 
   /**
-   * 409 - Conflict
+   * 409 - Conflict.
    * 
    * @param ex
    * @param request
-   * @return
+   * @return response entity
    */
   @ExceptionHandler({InvalidDataAccessApiUsageException.class, DataAccessException.class})
   protected ResponseEntity<Object> handleConflict(final RuntimeException ex,
@@ -103,18 +113,34 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   }
 
   /**
-   * 500 - Internal Server Error
+   * 500 - Internal Server Error.
    * 
-   * @param ex
-   * @param request
-   * @return
+   * @param ex the thrown exception
+   * @param request web request
+   * @return response entity
    */
   @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class,
-      IllegalStateException.class, ServiceException.class, KeycloakException.class,
+      IllegalStateException.class, KeycloakException.class,
       UnknownHostException.class})
   public ResponseEntity<Object> handleInternal(final RuntimeException ex,
       final WebRequest request) {
     LogService.logInternalServerError(ex);
+
+    return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR,
+        request);
+  }
+
+  /**
+   * 500 - Internal Server Error with custom logging method.
+   *
+   * @param ex the thrown exception
+   * @param request web request
+   * @return response entity
+   */
+  @ExceptionHandler({ InternalServerErrorException.class})
+  public ResponseEntity<Object> handleInternal(final InternalServerErrorException ex,
+      final WebRequest request) {
+    ex.executeLogging();
 
     return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR,
         request);

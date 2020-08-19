@@ -54,7 +54,8 @@ public class ConsultingTypeManager {
 
   }
 
-  public ConsultingTypeSettings getConsultantTypeSettings(ConsultingType consultingType) {
+  public ConsultingTypeSettings getConsultantTypeSettings(ConsultingType consultingType)
+      throws MissingConsultingTypeException {
 
     if (consultingTypeSettingsMap.containsKey(consultingType.getValue())
         && consultingTypeSettingsMap.get(consultingType.getValue()) != null) {

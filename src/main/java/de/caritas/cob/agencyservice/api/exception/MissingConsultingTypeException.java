@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.exception;
 
-public class MissingConsultingTypeException extends RuntimeException {
+public class MissingConsultingTypeException extends Exception {
 
   private static final long serialVersionUID = -6127271234647444277L;
 

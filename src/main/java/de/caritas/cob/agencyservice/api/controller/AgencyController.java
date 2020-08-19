@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,11 @@ public class AgencyController implements AgenciesApi {
 
   /**
    * Gets a list of AgencyResponseDTOs (from database) and returns the list and a 200 OK on success
-   * depending on the post code that is given via query parameter
+   * depending on the post code that is given via query parameter.
+   *
+   * @param postcode the postcode for regarding agencies
+   * @param consultingType the type used to filter the agencies
+   * @return the List of agencies with information
    */
   @Override
   public ResponseEntity<List<AgencyResponseDTO>> getAgencies(@Valid String postcode,
@@ -51,13 +56,14 @@ public class AgencyController implements AgenciesApi {
     List<AgencyResponseDTO> agencies =
         agencyService.getAgencies(postcode, optionalConsultingType.get());
 
-    return (agencies != null && agencies.size() > 0)
-        ? new ResponseEntity<List<AgencyResponseDTO>>(agencies, HttpStatus.OK)
-        : new ResponseEntity<List<AgencyResponseDTO>>(HttpStatus.NO_CONTENT);
+    return !CollectionUtils.isEmpty(agencies)
+        ? new ResponseEntity<>(agencies, HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
-   * Returns information of the provided agencies
+   * Returns information of the provided agencies.
+   *
    * @param agencyIds the List of agency IDs
    * @return the List of agencies with information
    */

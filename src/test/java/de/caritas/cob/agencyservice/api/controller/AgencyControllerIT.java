@@ -10,18 +10,32 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONS
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_MEDIUM_POSTCODE_QUERY;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.reflect.Whitebox.setInternalState;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import de.caritas.cob.agencyservice.api.exception.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import de.caritas.cob.agencyservice.api.service.AgencyService;
+import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,9 +43,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
-import de.caritas.cob.agencyservice.api.service.AgencyService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AgencyController.class)
@@ -44,6 +55,14 @@ public class AgencyControllerIT {
   @MockBean
   private AgencyService agencyService;
 
+  @Mock
+  private Logger logger;
+
+  @Before
+  public void setup() {
+    setInternalState(LogService.class, "LOGGER", logger);
+  }
+
   @Test
   public void getAgencies_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
 
@@ -51,7 +70,8 @@ public class AgencyControllerIT {
         .thenReturn(null);
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&" + VALID_CONSULTING_TYPE_QUERY)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+            + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
   }
@@ -60,7 +80,8 @@ public class AgencyControllerIT {
   public void getAgencies_Should_ReturnBadRequest_When_PostcodeParamIsInvalid() throws Exception {
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + INVALID_POSTCODE_QUERY + "&" + VALID_CONSULTING_TYPE_QUERY)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + INVALID_POSTCODE_QUERY + "&"
+            + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -70,7 +91,8 @@ public class AgencyControllerIT {
       throws Exception {
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&" + INVALID_CONSULTING_TYPE_QUERY)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+            + INVALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -101,7 +123,8 @@ public class AgencyControllerIT {
         .thenReturn(agencies);
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&" + VALID_CONSULTING_TYPE_QUERY)
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+            + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
@@ -111,7 +134,8 @@ public class AgencyControllerIT {
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnNoContent_When_ServiceReturnsNoAgency() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnNoContent_When_ServiceReturnsNoAgency()
+      throws Exception {
 
     when(agencyService.getAgencies(Mockito.anyList())).thenReturn(Collections.emptyList());
 
@@ -122,19 +146,71 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_With_Ids_Should_ReturnBadRequest_When_IdInvalid() throws Exception {
 
-    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
-        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+    mvc.perform(
+        get(PATH_GET_AGENCIES_WITH_IDS + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnAgencyAndOk_When_ServiceReturnsAgency() throws Exception {
+  public void getAgencies_With_Ids_Should_ReturnAgencyAndOk_When_ServiceReturnsAgency()
+      throws Exception {
 
     when(agencyService.getAgencies(Mockito.anyList())).thenReturn(AGENCY_RESPONSE_DTO_LIST);
 
-    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID + "," + AGENCY_ID).accept(MediaType.APPLICATION_JSON))
+    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID + "," + AGENCY_ID)
+        .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
     verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyList());
   }
+
+  @Test
+  public void getListOfAgencies_Should_ReturnServerErrorAndLogDatabaseError_OnAgencyServiceThrowsServerErrorException()
+      throws Exception {
+
+    InternalServerErrorException dbEx = new InternalServerErrorException(
+        LogService::logDatabaseError, "message");
+    when(agencyService.getAgencies(any(), any())).thenThrow(dbEx);
+
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+        + VALID_CONSULTING_TYPE_QUERY)
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isInternalServerError());
+
+    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
+  }
+
+  @Test
+  public void getAgencies_With_Ids_Should_ReturnServerErrorAndLogDatabaseError_OnAgencyServiceThrowsServerErrorException()
+      throws Exception {
+
+    InternalServerErrorException dbEx = new InternalServerErrorException(
+        LogService::logDatabaseError, "message");
+    when(agencyService.getAgencies(any())).thenThrow(dbEx);
+
+    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID + "," + AGENCY_ID)
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isInternalServerError());
+
+    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
+  }
+
+  @Test
+  public void getListOfAgencies_Should_ReturnServerErrorAndLogNumberFormatError_OnAgencyServiceThrowsServerErrorException()
+      throws Exception {
+
+    InternalServerErrorException nfEx = new InternalServerErrorException(
+        LogService::logNumberFormatException, "message");
+
+    when(agencyService.getAgencies(any(), any())).thenThrow(nfEx);
+
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+        + VALID_CONSULTING_TYPE_QUERY)
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isInternalServerError());
+
+    verify(logger, times(1)).error(eq("Error while formating number: {}"), eq(getStackTrace(nfEx)));
+  }
+
 }
