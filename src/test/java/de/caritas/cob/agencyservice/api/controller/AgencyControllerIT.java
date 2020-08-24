@@ -210,7 +210,8 @@ public class AgencyControllerIT {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Error while formating number: {}"), eq(getStackTrace(nfEx)));
+    verify(logger, times(1)).error(eq("Error while formatting number: {}"),
+        eq(getStackTrace(nfEx)));
   }
 
 }
