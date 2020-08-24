@@ -25,7 +25,7 @@ public class InternalServerErrorException extends RuntimeException {
   /**
    * InternalServerErrorException exception.
    *
-   * @param loggingMethod the method to be used for loging
+   * @param loggingMethod the method to be used for logging
    * @param message the message to be logged
    */
   public InternalServerErrorException(Consumer<Exception> loggingMethod, String message) {

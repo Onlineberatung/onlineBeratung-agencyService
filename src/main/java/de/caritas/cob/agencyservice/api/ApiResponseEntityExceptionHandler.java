@@ -100,8 +100,8 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * 409 - Conflict.
    * 
-   * @param ex
-   * @param request
+   * @param ex the thrown exception
+   * @param request web request
    * @return response entity
    */
   @ExceptionHandler({InvalidDataAccessApiUsageException.class, DataAccessException.class})

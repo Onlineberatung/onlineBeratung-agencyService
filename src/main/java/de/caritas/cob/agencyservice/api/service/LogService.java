@@ -21,7 +21,7 @@ public class LogService {
   /**
    * Logs a database error.
    *
-   * @param exception the to be logged
+   * @param exception the exception to be logged
    */
   public static void logDatabaseError(Exception exception) {
     LOGGER.error("Database error: {}", getStackTrace(exception));
@@ -30,7 +30,7 @@ public class LogService {
   /**
    * javax Bad Request Exception.
    *
-   * @param exception the to be logged
+   * @param exception the exception to be logged
    */
   public static void logBadRequestException(BadRequestException exception) {
     LOGGER.warn("Bad Request: {}", getStackTrace(exception));
@@ -39,10 +39,10 @@ public class LogService {
   /**
    * Logs a {@link NumberFormatException}.
    *
-   * @param exception the to be logged
+   * @param exception the exception to be logged
    */
   public static void logNumberFormatException(Exception exception) {
-    LOGGER.error("Error while formating number: {}", getStackTrace(exception));
+    LOGGER.error("Error while formatting number: {}", getStackTrace(exception));
   }
 
   /**
