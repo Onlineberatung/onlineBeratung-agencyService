@@ -154,8 +154,9 @@ public class TestConstants {
   public static final Agency TEAM_AGENCY = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
       VALID_FULL_POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
-      new AgencyResponseDTO(AGENCY_ID, AGENCY_NAME, VALID_FULL_POSTCODE, AGENCY_CITY, AGENCY_DESCRIPTION, false,
-          false, CONSULTING_TYPE_SUCHT.getValue());
+      new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(VALID_FULL_POSTCODE)
+      .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
+          .consultingType(CONSULTING_TYPE_SUCHT.getValue());
   public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(AGENCY_RESPONSE_DTO);
   public static final int MIN_POSTCODE_SIZE_3 = 3;
   public static final int MIN_POSTCODE_SIZE_5 = 5;
