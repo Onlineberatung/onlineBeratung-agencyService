@@ -115,13 +115,14 @@ public class AgencyService {
   }
 
   private AgencyResponseDTO convertToAgencyResponseDTO(Agency agency) {
-    return new AgencyResponseDTO(agency.getId(),
-        agency.getName(),
-        agency.getPostCode(),
-        agency.getCity(),
-        agency.getDescription(),
-        agency.isTeamAgency(),
-        agency.isOffline(),
-        agency.getConsultingType().getValue());
+    return new AgencyResponseDTO()
+      .id(agency.getId())
+      .name(agency.getName())
+      .postcode(agency.getPostCode())
+      .city(agency.getCity())
+      .description(agency.getDescription())
+      .teamAgency(agency.isTeamAgency())
+      .offline(agency.isOffline())
+      .consultingType(agency.getConsultingType().getValue());
   }
 }
