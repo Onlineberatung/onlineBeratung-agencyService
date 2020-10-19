@@ -22,6 +22,7 @@ paths:
             type: string
         - name: consultingType
           in: query
+          required: true
           description: The consulting type of the registration form
           schema:
             type: integer
@@ -30,7 +31,7 @@ paths:
         200:
           description: OK - successfull operation
           content:
-            '*/*':
+            'application/json':
               schema:
                 type: array
                 items:
@@ -62,7 +63,7 @@ paths:
         200:
           description: OK - successfull operation
           content:
-            '*/*':
+            'application/json':
               schema:
                 type: array
                 items:
@@ -82,7 +83,8 @@ components:
       type: object
       properties:
         id:
-          type: long
+          type: integer
+          format: int64
           example: "684"
         name:
           type: string

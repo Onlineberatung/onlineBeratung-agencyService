@@ -10,7 +10,6 @@ import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +42,8 @@ public class AgencyController implements AgenciesApi {
    * @return the List of agencies with information
    */
   @Override
-  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(@Valid @RequestParam String postcode,
-      @Valid @RequestParam Integer consultingType) {
+  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(
+      @RequestParam Integer consultingType, @RequestParam String postcode) {
     if (postcode == null || postcode.length() < 3 || postcode.length() > 5) {
       throw new BadRequestException("Postcode size is invalid");
     }
