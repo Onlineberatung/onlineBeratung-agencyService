@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.2.0...v1.2.1) (2020-10-29)
+
+## [1.2.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.1.2...v1.2.0) (2020-10-29)
+
+
+### Features
+
+* update swagger to openapi and define model for generation ([e51a2b7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/e51a2b7555b8ef49dced05018eb6fa6652fed917))
+
+
+### Bug Fixes
+
+* failed tests ([5b6511b](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5b6511b67114339ea658c48f89e2561ae97e9fea))
+
 ### [1.1.2](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.1.1...v1.1.2) (2020-10-12)
 
 ### [1.1.1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.1.0...v1.1.1) (2020-10-12)
