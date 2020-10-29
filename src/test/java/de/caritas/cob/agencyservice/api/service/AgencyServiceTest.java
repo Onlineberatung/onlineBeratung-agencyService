@@ -212,8 +212,8 @@ public class AgencyServiceTest {
     assertEquals(AGENCY_RESPONSE_DTO.getDescription(), result.getDescription());
     assertEquals(AGENCY_RESPONSE_DTO.getName(), result.getName());
     assertEquals(AGENCY_RESPONSE_DTO.getId(), result.getId());
-    assertEquals(AGENCY_RESPONSE_DTO.isTeamAgency(), result.isTeamAgency());
-    assertEquals(AGENCY_RESPONSE_DTO.isOffline(), result.isOffline());
+    assertEquals(AGENCY_RESPONSE_DTO.getTeamAgency(), result.getTeamAgency());
+    assertEquals(AGENCY_RESPONSE_DTO.getOffline(), result.getOffline());
     assertEquals(AGENCY_RESPONSE_DTO.getConsultingType(), result.getConsultingType());
     assertThat(agencyService.getAgencies(Collections.singletonList(AGENCY_ID)),
         everyItem(instanceOf(AgencyResponseDTO.class)));
@@ -227,7 +227,7 @@ public class AgencyServiceTest {
 
     AgencyResponseDTO result = agencyService.getAgencies(Collections.singletonList(AGENCY_ID)).get(0);
 
-    assertEquals(result.isOffline(), false);
+    assertEquals(result.getOffline(), false);
   }
 
   @Test
@@ -238,7 +238,7 @@ public class AgencyServiceTest {
 
     AgencyResponseDTO result = agencyService.getAgencies(AGENCY_IDS_LIST).get(0);
 
-    assertEquals(result.isOffline(), true);
+    assertEquals(result.getOffline(), true);
   }
 
   @Test

@@ -214,4 +214,12 @@ public class AgencyControllerIT {
         eq(getStackTrace(nfEx)));
   }
 
+  @Test
+  public void getAgencies_Should_ReturnBadRequest_When_ConsultingTypeIsNull() throws Exception {
+    mvc.perform(
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+            + "consultingType=").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
 }

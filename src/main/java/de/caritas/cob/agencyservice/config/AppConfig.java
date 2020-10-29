@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 @ComponentScan(basePackages = {"de.caritas.cob.agencyservice"})
-@PropertySources({@PropertySource("classpath:messages.properties")})
 public class AppConfig {
 
   /**

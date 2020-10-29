@@ -1,9 +1,15 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static java.util.Objects.requireNonNull;
+
+import de.caritas.cob.agencyservice.api.exception.BadRequestException;
+import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import de.caritas.cob.agencyservice.api.service.AgencyService;
+import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
+import io.swagger.annotations.Api;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +17,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import de.caritas.cob.agencyservice.api.exception.BadRequestException;
-import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
-import de.caritas.cob.agencyservice.api.service.AgencyService;
-import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
-import io.swagger.annotations.Api;
 
 /**
  * Controller for agency API requests
@@ -30,7 +30,7 @@ public class AgencyController implements AgenciesApi {
 
   @Autowired
   public AgencyController(AgencyService agencyService) {
-    this.agencyService = agencyService;
+    this.agencyService = requireNonNull(agencyService);
   }
 
   /**
@@ -42,8 +42,8 @@ public class AgencyController implements AgenciesApi {
    * @return the List of agencies with information
    */
   @Override
-  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(@Valid String postcode,
-      @Valid @NotNull @RequestParam Integer consultingType) {
+  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(
+      @RequestParam Integer consultingType, @RequestParam String postcode) {
     if (postcode == null || postcode.length() < 3 || postcode.length() > 5) {
       throw new BadRequestException("Postcode size is invalid");
     }
@@ -68,7 +68,8 @@ public class AgencyController implements AgenciesApi {
    * @return the List of agencies with information
    */
   @Override
-  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(@PathVariable("agencyIds") List<Long> agencyIds) {
+  public ResponseEntity<List<AgencyResponseDTO>> getAgenciesByIds(
+      @PathVariable("agencyIds") List<Long> agencyIds) {
 
     List<AgencyResponseDTO> agencies = agencyService.getAgencies(agencyIds);
 
