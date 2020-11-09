@@ -46,6 +46,13 @@
       <version>6.1.6.Final</version>
     </dependency>
 
+    <!-- Search dependencies -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+      <version>5.11.5.Final</version>
+    </dependency>
+
     <!-- OpenApi/Swagger dependencies -->
     <dependency>
       <groupId>org.openapitools</groupId>
@@ -177,6 +184,7 @@
         <version>4.3.1</version>
         <executions>
           <execution>
+            <id>agency-service</id>
             <goals>
               <goal>generate</goal>
             </goals>
@@ -186,6 +194,24 @@
                 <sourceFolder>/</sourceFolder>
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyservice.yaml</inputSpec>
+              <generatorName>spring</generatorName>
+              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller</apiPackage>
+              <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
+              <generateSupportingFiles>true</generateSupportingFiles>
+              <output>target/generated-sources</output>
+            </configuration>
+          </execution>
+          <execution>
+            <id>agency-admin-service</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <configOptions>
+                <interfaceOnly>true</interfaceOnly>
+                <sourceFolder>/</sourceFolder>
+              </configOptions>
+              <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
               <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller</apiPackage>
               <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
