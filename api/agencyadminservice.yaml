@@ -56,7 +56,7 @@ components:
           type: integer
           format: int64
           example: "684"
-        diozeseId:
+        dioceseId:
           type: integer
           format: int64
           example: "684"
@@ -69,12 +69,6 @@ components:
         postcode:
           type: string
           example: "79106"
-        postcodeFrom:
-          type: string
-          example: "79106"
-        postcodeTo:
-          type: string
-          example: "79106"
         city:
           type: string
           example: "Bonn"
@@ -85,14 +79,28 @@ components:
           type: boolean
           example: "false"
         consultingType:
-          type: integer
-          example: "0"
+          type: string
+          example: "SUCHT"
         createDate:
           type: string
         updateDate:
           type: string
         deleteDate:
           type: string
+        postCodeRanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostCodeRangeDTO'
+
+    PostCodeRangeDTO:
+      type: object
+      properties:
+        postcodeFrom:
+          type: string
+          example: "79106"
+        postcodeTo:
+          type: string
+          example: "79106"
 
   securitySchemes:
     Bearer:

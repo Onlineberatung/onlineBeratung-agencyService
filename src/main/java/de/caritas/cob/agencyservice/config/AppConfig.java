@@ -1,11 +1,13 @@
 package de.caritas.cob.agencyservice.config;
 
+import de.caritas.cob.agencyservice.api.admin.service.AgencyReindexer;
+import javax.persistence.EntityManagerFactory;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,5 +36,18 @@ public class AppConfig {
   @Bean
   public RestTemplate restTemplate() {
     return new RestTemplate();
+  }
+
+  /**
+   * Builds an indexer for hibernate search.
+   *
+   * @param entityManagerFactory the manager factory bean
+   * @return an {@link AgencyReindexer} used to reindex entities
+   */
+  @Bean
+  public AgencyReindexer templateReindexer(EntityManagerFactory entityManagerFactory) {
+    FullTextEntityManager manager =
+        Search.getFullTextEntityManager(entityManagerFactory.createEntityManager());
+    return new AgencyReindexer(manager);
   }
 }
