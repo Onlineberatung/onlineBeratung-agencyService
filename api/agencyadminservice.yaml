@@ -6,6 +6,21 @@ info:
 servers:
   - url: /
 paths:
+  /:
+    get:
+      tags:
+        - root-controller
+      summary: 'Returns the hal root entry point. [Authorization: Role: agency-admin]'
+      operationId: getRoot
+      responses:
+        200:
+          description: OK - successfull operation
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RootDTO'
+      security:
+        - Bearer: [ ]
   /admin/agencies:
     get:
       tags:
@@ -21,7 +36,7 @@ paths:
             type: string
         - name: page
           in: query
-          description: Number of page where to start in the query (0 = first page)
+          description: Number of page where to start in the query (1 = first page)
           required: true
           schema:
             type: integer
@@ -35,11 +50,9 @@ paths:
         200:
           description: OK - successfull operation
           content:
-            'application/json':
+            'application/hal+json':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AgencyAdminResponseDTO'
+                $ref: '#/components/schemas/AgencyAdminSearchResultDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
         500:
@@ -49,6 +62,47 @@ paths:
 
 components:
   schemas:
+    RootDTO:
+      type: object
+      required:
+        - _links
+      properties:
+        _links:
+          $ref: '#/components/schemas/RootLinks'
+
+    RootLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/halLink'
+        agencies:
+          $ref: '#/components/schemas/halLink'
+
+    HalLink:
+      type: object
+      required:
+        - href
+      properties:
+        href:
+          type: string
+        method:
+          type: string
+          enum: [ GET, POST, DELETE, PUT ]
+        templated:
+          type: boolean
+
+    AgencyAdminSearchResultDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/SearchResultLinks'
+
     AgencyAdminResponseDTO:
       type: object
       properties:
@@ -101,6 +155,20 @@ components:
         postcodeTo:
           type: string
           example: "79106"
+
+    SearchResultLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/halLink'
+        next:
+          $ref: '#/components/schemas/halLink'
+        previous:
+          $ref: '#/components/schemas/halLink'
+        search:
+          $ref: '#/components/schemas/halLink'
 
   securitySchemes:
     Bearer:

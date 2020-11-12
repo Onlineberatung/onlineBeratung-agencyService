@@ -1,11 +1,16 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
+import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +35,7 @@ public class AgencyAdminSearchResultBuilderIT {
 
     AgencyAdminResponseDTO firstSearchResult =
         this.agencyAdminSearchResultBuilder
-            .buildAgencyAdminSearchResult(keyword, 0, 1).iterator().next();
+            .buildAgencyAdminSearchResult(keyword, 0, 1).getEmbedded().iterator().next();
 
     assertThat(firstSearchResult.getAgencyId(), is(846L));
     assertThat(firstSearchResult.getCity(), is("Schwelm"));
@@ -50,6 +55,35 @@ public class AgencyAdminSearchResultBuilderIT {
     assertThat(firstSearchResult.getPostCodeRanges().get(1).getPostcodeTo(), is("58300"));
     assertThat(firstSearchResult.getPostCodeRanges().get(2).getPostcodeFrom(), is("58314"));
     assertThat(firstSearchResult.getPostCodeRanges().get(2).getPostcodeTo(), is("58332"));
+  }
+
+  @Test
+  public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_search() {
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminSearchResultBuilder
+        .buildAgencyAdminSearchResult("q", 1, 20);
+
+    SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
+    assertThat(searchResultLinks.getSelf(), notNullValue());
+    assertThat(searchResultLinks.getSelf().getHref(),
+        endsWith("/admin/agencies?page=1&perPage=20&q=q"));
+    assertThat(searchResultLinks.getPrevious(), nullValue());
+    assertThat(searchResultLinks.getNext(), notNullValue());
+    assertThat(searchResultLinks.getNext().getHref(),
+        endsWith("/admin/agencies?page=2&perPage=20&q=q"));
+    assertThat(searchResultLinks.getSearch(), notNullValue());
+    assertThat(searchResultLinks.getSearch().getHref(),
+        endsWith("/admin/agencies?page=1&perPage=20{&q}"));
+  }
+
+  @Test
+  public void buildAgencyAdminSearchResult_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminSearchResultBuilder
+        .buildAgencyAdminSearchResult("q", 10, 20);
+
+    SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
+    assertThat(searchResultLinks.getPrevious(), notNullValue());
+    assertThat(searchResultLinks.getPrevious().getHref(),
+        endsWith("/admin/agencies?page=9&perPage=20&q=q"));
   }
 
 }

@@ -4,6 +4,7 @@ import de.caritas.cob.agencyservice.api.admin.service.AgencyReindexer;
 import javax.persistence.EntityManagerFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 @Configuration
+@EnableCaching
 @ComponentScan(basePackages = {"de.caritas.cob.agencyservice"})
 public class AppConfig {
 
@@ -50,4 +52,5 @@ public class AppConfig {
         Search.getFullTextEntityManager(entityManagerFactory.createEntityManager());
     return new AgencyReindexer(manager);
   }
+
 }

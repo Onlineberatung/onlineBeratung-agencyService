@@ -43,7 +43,7 @@ public class AgencyAdminSearchService {
 
     FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
-    fullTextQuery.setFirstResult(Math.max(page * perPage, 0));
+    fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
 
     return fullTextQuery.getResultList();
   }
@@ -67,8 +67,10 @@ public class AgencyAdminSearchService {
         .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
         .get()
         .keyword()
-        .onFields(NAME_SEARCH_FIELD, POST_CODE_SEARCH_FIELD, CITY_SEARCH_FIELD,
-            DIOCESE_ID_SEARCH_FIELD)
+        .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
+        .andField(NAME_SEARCH_FIELD)
+        .andField(POST_CODE_SEARCH_FIELD)
+        .andField(CITY_SEARCH_FIELD)
         .matching(keyword)
         .createQuery();
   }

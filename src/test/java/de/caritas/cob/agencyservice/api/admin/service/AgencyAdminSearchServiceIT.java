@@ -71,8 +71,8 @@ public class AgencyAdminSearchServiceIT {
 
   @Test
   public void searchAgencies_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
-    List<Agency> firstPage = this.agencyAdminSearchService.searchAgencies("", 0, 1000);
-    List<Agency> secondPage = this.agencyAdminSearchService.searchAgencies("", 1, 1000);
+    List<Agency> firstPage = this.agencyAdminSearchService.searchAgencies("", 1, 1000);
+    List<Agency> secondPage = this.agencyAdminSearchService.searchAgencies("", 2, 1000);
 
     assertThat(firstPage, hasSize(1000));
     assertThat(secondPage, hasSize(133));
@@ -103,6 +103,14 @@ public class AgencyAdminSearchServiceIT {
           + agency.getDioceseId().toString();
       assertThat(resultSet, containsString("1"));
     });
+  }
+
+  @Test
+  public void searchAgencies_Should_returnFirstMatchOnDioceseId_When_keywordIsValidDioceseId() {
+    List<Agency> agencies = this.agencyAdminSearchService.searchAgencies("1", 0, 5);
+
+    Agency firstResult = agencies.get(0);
+    assertThat(firstResult.getDioceseId(), is(1L));
   }
 
 }
