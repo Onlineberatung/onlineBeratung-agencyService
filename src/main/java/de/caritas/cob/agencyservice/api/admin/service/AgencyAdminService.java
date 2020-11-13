@@ -1,5 +1,8 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static java.util.Collections.emptyList;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminService {
 
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
-  private final @NonNull AgencyPostCodeRangeService agencyPostCodeRangeService;
 
   /**
    * Searches for agencies and generates a {@link AgencyAdminSearchResultDTO} containing hal links.
@@ -51,12 +53,6 @@ public class AgencyAdminService {
   }
 
   private AgencyAdminResponseDTO fromAgency(Agency agency) {
-    List<PostCodeRangeDTO> postCodeRanges = this.agencyPostCodeRangeService
-        .findPostCodeRangeByAgency(agency)
-        .stream()
-        .map(this::fromAgencyPostCodeRange)
-        .collect(Collectors.toList());
-
     return new AgencyAdminResponseDTO()
         .agencyId(agency.getId())
         .dioceseId(agency.getDioceseId())
@@ -70,7 +66,17 @@ public class AgencyAdminService {
         .createDate(String.valueOf(agency.getCreateDate()))
         .updateDate(String.valueOf(agency.getUpdateDate()))
         .deleteDate(String.valueOf(agency.getDeleteDate()))
-        .postCodeRanges(postCodeRanges);
+        .postCodeRanges(buildAgencyPostCodeRanges(agency));
+  }
+
+  private List<PostCodeRangeDTO> buildAgencyPostCodeRanges(Agency agency) {
+    if (isEmpty(agency.getAgencyPostCodeRanges())) {
+      return emptyList();
+    }
+    return agency.getAgencyPostCodeRanges()
+        .stream()
+        .map(this::fromAgencyPostCodeRange)
+        .collect(Collectors.toList());
   }
 
   private PostCodeRangeDTO fromAgencyPostCodeRange(AgencyPostCodeRange agencyPostCodeRange) {

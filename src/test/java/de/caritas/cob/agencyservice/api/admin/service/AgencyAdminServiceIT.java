@@ -58,6 +58,17 @@ public class AgencyAdminServiceIT {
   }
 
   @Test
+  public void buildAgencyAdminSearchResult_Should_returnEmptyListForPostCodeRanges_When_searchForAgencyWithoutPostcodeRanges() {
+    String keyword = "Kreis-Caritasverband Burghausen e.V.";
+
+    AgencyAdminResponseDTO firstSearchResult =
+        this.agencyAdminService
+            .buildAgencyAdminSearchResult(keyword, 0, 1).getEmbedded().iterator().next();
+
+    assertThat(firstSearchResult.getPostCodeRanges(), hasSize(0));
+  }
+
+  @Test
   public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_search() {
     AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminService
         .buildAgencyAdminSearchResult("q", 1, 20);
