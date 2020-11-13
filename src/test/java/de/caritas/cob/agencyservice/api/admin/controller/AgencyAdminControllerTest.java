@@ -1,8 +1,10 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
+import static org.hamcrest.Matchers.endsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
@@ -23,8 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 public class AgencyAdminControllerTest {
 
-  private static final String AGENCY_SEARCH_PATH = "/admin/agencies";
-  private static final String QUERY_PARAM = "q";
+  private static final String ROOT_PATH = "/agencyadmin";
+  private static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
   private static final String PAGE_PARAM = "page";
   private static final String PER_PAGE_PARAM = "perPage";
 
@@ -45,6 +47,19 @@ public class AgencyAdminControllerTest {
       throws Exception {
     this.mvc.perform(get(AGENCY_SEARCH_PATH))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getRoot_Should_returnExpectedRootDTO()
+      throws Exception {
+    this.mvc.perform(get(ROOT_PATH))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$._links").exists())
+        .andExpect(jsonPath("$._links.self").exists())
+        .andExpect(jsonPath("$._links.self.href", endsWith("/agencyadmin")))
+        .andExpect(jsonPath("$._links.agencies").exists())
+        .andExpect(
+            jsonPath("$._links.agencies.href", endsWith("/agencyadmin/agencies?page=1&perPage=20{&q}")));
   }
 
   @Test

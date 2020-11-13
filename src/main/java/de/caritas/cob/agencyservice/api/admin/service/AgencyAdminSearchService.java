@@ -12,6 +12,7 @@ import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.springframework.security.web.util.TextEscapeUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,6 +60,7 @@ public class AgencyAdminSearchService {
 
   private Query buildFullTextSearchQuery(String keyword,
       FullTextEntityManager fullTextEntityManager) {
+    keyword = TextEscapeUtils.escapeEntities(keyword);
     return fullTextEntityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)

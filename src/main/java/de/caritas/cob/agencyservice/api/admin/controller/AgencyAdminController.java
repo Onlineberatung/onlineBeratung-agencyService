@@ -1,8 +1,10 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
+import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
-import de.caritas.cob.agencyservice.generated.api.controller.AdminApi;
+import de.caritas.cob.agencyservice.api.model.RootDTO;
+import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -18,9 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "agency-admin-controller")
 @RequiredArgsConstructor
-public class AgencyAdminController implements AdminApi {
+public class AgencyAdminController implements AgencyadminApi {
 
   private final @NonNull AgencyAdminService agencyAdminService;
+
+  /**
+   * Creates the root hal based navigation entity.
+   *
+   * @return a entity containing the available navigation hal links
+   */
+  @Override
+  public ResponseEntity<RootDTO> getRoot() {
+    RootDTO rootDTO = new RootDTOBuilder().buildRootDTO();
+    return new ResponseEntity<>(rootDTO, HttpStatus.OK);
+  }
 
   /**
    * Entry point to search for agencies.

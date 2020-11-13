@@ -19,9 +19,9 @@ public class RootDTOBuilderTest {
     RootLinks rootLinks = rootDTO.getLinks();
     assertThat(rootLinks, notNullValue());
     assertThat(rootLinks.getAgencies(), notNullValue());
-    assertThat(rootLinks.getAgencies().getHref(), is("/admin/agencies?page=1&perPage=20{&q}"));
+    assertThat(rootLinks.getAgencies().getHref(), is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
     assertThat(rootLinks.getAgencies().getMethod(), is(MethodEnum.GET));
-    assertThat(rootLinks.getSelf().getHref(), is("/"));
+    assertThat(rootLinks.getSelf().getHref(), is("/agencyadmin"));
     assertThat(rootLinks.getSelf().getMethod(), is(MethodEnum.GET));
   }
 

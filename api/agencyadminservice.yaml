@@ -6,7 +6,7 @@ info:
 servers:
   - url: /
 paths:
-  /:
+  /agencyadmin:
     get:
       tags:
         - root-controller
@@ -21,7 +21,7 @@ paths:
                 $ref: '#/components/schemas/RootDTO'
       security:
         - Bearer: [ ]
-  /admin/agencies:
+  /agencyadmin/agencies:
     get:
       tags:
         - admin-agency-controller

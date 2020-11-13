@@ -4,9 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.List;
 import org.junit.Test;
@@ -111,6 +111,15 @@ public class AgencyAdminSearchServiceIT {
 
     Agency firstResult = agencies.get(0);
     assertThat(firstResult.getDioceseId(), is(1L));
+  }
+
+  @Test
+  public void searchAgencies_Should_returnValidResult_When_keywordareSpecialCharacters() {
+    String specialChars = "!§$%&/()=?#'*+`^^><";
+
+    List<Agency> agencies = this.agencyAdminSearchService.searchAgencies(specialChars, 0, 5);
+
+    assertThat(agencies, notNullValue());
   }
 
 }

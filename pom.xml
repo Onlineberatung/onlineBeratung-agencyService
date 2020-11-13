@@ -217,7 +217,7 @@
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
-              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller</apiPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.admin.controller</apiPackage>
               <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
               <generateSupportingFiles>true</generateSupportingFiles>
               <output>target/generated-sources</output>

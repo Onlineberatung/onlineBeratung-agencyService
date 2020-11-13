@@ -8,7 +8,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
-import de.caritas.cob.agencyservice.generated.api.controller.AdminApi;
+import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 
 /**
  * Link builder to create hal links for search results.
@@ -87,7 +87,7 @@ public class SearchResultLinkBuilder implements HalLinkBuilder {
   }
 
   private HalLink buildHalLinkForParams(Integer page, Integer perPage, String keyword) {
-    return buildHalLink(methodOn(AdminApi.class).searchAgencies(page, perPage, keyword),
+    return buildHalLink(methodOn(AgencyadminApi.class).searchAgencies(page, perPage, keyword),
         MethodEnum.GET);
   }
 

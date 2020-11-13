@@ -72,7 +72,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .antMatchers("/agencies/*").permitAll()
         .antMatchers(SpringFoxConfig.WHITE_LIST).permitAll()
         .antMatchers("/agencies").permitAll()
-        .antMatchers("/", "/admin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
+        .antMatchers("/agencyadmin", "/agencyadmin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
   }
 

@@ -76,14 +76,14 @@ public class AgencyAdminServiceIT {
     SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
     assertThat(searchResultLinks.getSelf(), notNullValue());
     assertThat(searchResultLinks.getSelf().getHref(),
-        endsWith("/admin/agencies?page=1&perPage=20&q=q"));
+        endsWith("/agencyadmin/agencies?page=1&perPage=20&q=q"));
     assertThat(searchResultLinks.getPrevious(), nullValue());
     assertThat(searchResultLinks.getNext(), notNullValue());
     assertThat(searchResultLinks.getNext().getHref(),
-        endsWith("/admin/agencies?page=2&perPage=20&q=q"));
+        endsWith("/agencyadmin/agencies?page=2&perPage=20&q=q"));
     assertThat(searchResultLinks.getSearch(), notNullValue());
     assertThat(searchResultLinks.getSearch().getHref(),
-        endsWith("/admin/agencies?page=1&perPage=20{&q}"));
+        endsWith("/agencyadmin/agencies?page=1&perPage=20{&q}"));
   }
 
   @Test
@@ -94,7 +94,7 @@ public class AgencyAdminServiceIT {
     SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
     assertThat(searchResultLinks.getPrevious(), notNullValue());
     assertThat(searchResultLinks.getPrevious().getHref(),
-        endsWith("/admin/agencies?page=9&perPage=20&q=q"));
+        endsWith("/agencyadmin/agencies?page=9&perPage=20&q=q"));
   }
 
 }

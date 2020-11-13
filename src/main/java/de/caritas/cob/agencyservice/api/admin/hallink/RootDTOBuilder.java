@@ -6,8 +6,7 @@ import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.RootLinks;
-import de.caritas.cob.agencyservice.generated.api.controller.AdminApi;
-import de.caritas.cob.agencyservice.generated.api.controller.DefaultApi;
+import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 
 /**
  * Builder to create the root navigation hal DTO.
@@ -30,12 +29,12 @@ public class RootDTOBuilder implements HalLinkBuilder {
   }
 
   private HalLink buildSelfLink() {
-    return buildHalLink(methodOn(DefaultApi.class).getRoot(), MethodEnum.GET);
+    return buildHalLink(methodOn(AgencyadminApi.class).getRoot(), MethodEnum.GET);
   }
 
   private HalLink buildSearchLink() {
     return buildHalLink(
-        methodOn(AdminApi.class).searchAgencies(DEFAULT_PAGE, DEFAULT_PER_PAGE, null),
+        methodOn(AgencyadminApi.class).searchAgencies(DEFAULT_PAGE, DEFAULT_PER_PAGE, null),
         MethodEnum.GET);
   }
 

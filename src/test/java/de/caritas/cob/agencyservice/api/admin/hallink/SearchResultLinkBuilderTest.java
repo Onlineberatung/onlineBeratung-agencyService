@@ -23,19 +23,19 @@ public class SearchResultLinkBuilderTest {
     assertThat(searchResultLinks.getSelf(), notNullValue());
     assertThat(searchResultLinks.getSelf().getMethod(), is(MethodEnum.GET));
     assertThat(searchResultLinks.getSelf().getHref(),
-        is("/admin/agencies?page=2&perPage=20&q=keyword"));
+        is("/agencyadmin/agencies?page=2&perPage=20&q=keyword"));
     assertThat(searchResultLinks.getPrevious(), notNullValue());
     assertThat(searchResultLinks.getPrevious().getMethod(), is(MethodEnum.GET));
     assertThat(searchResultLinks.getPrevious().getHref(),
-        is("/admin/agencies?page=1&perPage=20&q=keyword"));
+        is("/agencyadmin/agencies?page=1&perPage=20&q=keyword"));
     assertThat(searchResultLinks.getNext(), notNullValue());
     assertThat(searchResultLinks.getNext().getMethod(), is(MethodEnum.GET));
     assertThat(searchResultLinks.getNext().getHref(),
-        is("/admin/agencies?page=3&perPage=20&q=keyword"));
+        is("/agencyadmin/agencies?page=3&perPage=20&q=keyword"));
     assertThat(searchResultLinks.getSearch(), notNullValue());
     assertThat(searchResultLinks.getSearch().getMethod(), is(MethodEnum.GET));
     assertThat(searchResultLinks.getSearch().getHref(),
-        is("/admin/agencies?page=2&perPage=20{&q}"));
+        is("/agencyadmin/agencies?page=2&perPage=20{&q}"));
   }
 
   @Test
@@ -58,7 +58,7 @@ public class SearchResultLinkBuilderTest {
         .buildSearchResultLinks();
 
     assertThat(searchResultLinks, notNullValue());
-    assertThat(searchResultLinks.getSelf().getHref(), is("/admin/agencies?page=1&perPage=20{&q}"));
+    assertThat(searchResultLinks.getSelf().getHref(), is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
   }
 
   @Test
@@ -67,7 +67,7 @@ public class SearchResultLinkBuilderTest {
         .buildSearchResultLinks();
 
     assertThat(searchResultLinks, notNullValue());
-    assertThat(searchResultLinks.getSelf().getHref(), is("/admin/agencies?page=1&perPage=20{&q}"));
+    assertThat(searchResultLinks.getSelf().getHref(), is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
   }
 
 }
