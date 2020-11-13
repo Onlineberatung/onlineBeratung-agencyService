@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Builder to search agencies and generate the required {@link AgencyAdminSearchResultDTO}.
  */
-@Component
+@Service
 @RequiredArgsConstructor
-public class AgencyAdminSearchResultBuilder {
+public class AgencyAdminService {
 
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
   private final @NonNull AgencyPostCodeRangeService agencyPostCodeRangeService;
@@ -62,7 +62,7 @@ public class AgencyAdminSearchResultBuilder {
         .dioceseId(agency.getDioceseId())
         .name(agency.getName())
         .city(agency.getCity())
-        .consultingType(agency.getConsultingType().name())
+        .consultingType(agency.getConsultingType().getValue())
         .description(agency.getDescription())
         .postcode(agency.getPostCode())
         .teamAgency(agency.isTeamAgency())

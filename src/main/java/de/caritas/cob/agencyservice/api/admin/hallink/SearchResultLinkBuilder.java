@@ -1,5 +1,8 @@
 package de.caritas.cob.agencyservice.api.admin.hallink;
 
+import static de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder.DEFAULT_PAGE;
+import static de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder.DEFAULT_PER_PAGE;
+import static java.util.Objects.nonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import de.caritas.cob.agencyservice.api.model.HalLink;
@@ -66,11 +69,17 @@ public class SearchResultLinkBuilder implements HalLinkBuilder {
    * @return the generated {@link SearchResultLinks}
    */
   public SearchResultLinks buildSearchResultLinks() {
+    ensureNonNullPaginationParams();
     return new SearchResultLinks()
         .self(buildSelfLink())
         .next(buildNextLink())
         .previous(buildPreviousLink())
         .search(buildSearchLink());
+  }
+
+  private void ensureNonNullPaginationParams() {
+    this.page = nonNull(this.page) ? this.page : DEFAULT_PAGE;
+    this.perPage = nonNull(this.perPage) ? this.perPage : DEFAULT_PER_PAGE;
   }
 
   private HalLink buildSelfLink() {

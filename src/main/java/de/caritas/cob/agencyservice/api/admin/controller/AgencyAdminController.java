@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchResultBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.generated.api.controller.AdminApi;
 import io.swagger.annotations.Api;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AgencyAdminController implements AdminApi {
 
-  private final @NonNull AgencyAdminSearchResultBuilder agencyAdminSearchResultBuilder;
+  private final @NonNull AgencyAdminService agencyAdminService;
 
   /**
    * Entry point to search for agencies.
@@ -34,7 +34,7 @@ public class AgencyAdminController implements AdminApi {
   public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(@NotNull @Valid Integer page,
       @NotNull @Valid Integer perPage, @Valid String q) {
 
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminSearchResultBuilder
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminService
         .buildAgencyAdminSearchResult(q, page, perPage);
 
     return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);

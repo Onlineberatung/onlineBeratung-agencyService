@@ -5,7 +5,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchResultBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
+import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -31,10 +32,13 @@ public class AgencyAdminControllerTest {
   private MockMvc mvc;
 
   @MockBean
-  private AgencyAdminSearchResultBuilder agencyAdminSearchResultBuilder;
+  private AgencyAdminService agencyAdminService;
 
   @MockBean
   private LinkDiscoverers linkDiscoverers;
+
+  @MockBean
+  private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
 
   @Test
   public void searchAgencies_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
@@ -51,7 +55,7 @@ public class AgencyAdminControllerTest {
         .param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
-    Mockito.verify(this.agencyAdminSearchResultBuilder, Mockito.times(1))
+    Mockito.verify(this.agencyAdminService, Mockito.times(1))
         .buildAgencyAdminSearchResult(any(), eq(0), eq(1));
   }
 

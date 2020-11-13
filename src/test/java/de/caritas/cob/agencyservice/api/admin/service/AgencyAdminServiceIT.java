@@ -24,22 +24,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
-public class AgencyAdminSearchResultBuilderIT {
+public class AgencyAdminServiceIT {
 
   @Autowired
-  private AgencyAdminSearchResultBuilder agencyAdminSearchResultBuilder;
+  private AgencyAdminService agencyAdminService;
 
   @Test
   public void buildAgencyAdminSearchResult_Should_returnExpectedMappedResponseDTO_When_searchForSpecialAgency() {
     String keyword = "Schwangerschaftsberatungsstelle";
 
     AgencyAdminResponseDTO firstSearchResult =
-        this.agencyAdminSearchResultBuilder
+        this.agencyAdminService
             .buildAgencyAdminSearchResult(keyword, 0, 1).getEmbedded().iterator().next();
 
     assertThat(firstSearchResult.getAgencyId(), is(846L));
     assertThat(firstSearchResult.getCity(), is("Schwelm"));
-    assertThat(firstSearchResult.getConsultingType(), is("PREGNANCY"));
+    assertThat(firstSearchResult.getConsultingType(), is(2));
     assertThat(firstSearchResult.getCreateDate(), is("2019-08-23T08:52:05"));
     assertThat(firstSearchResult.getUpdateDate(), is("2019-08-23T08:52:05"));
     assertThat(firstSearchResult.getDeleteDate(), is("null"));
@@ -59,7 +59,7 @@ public class AgencyAdminSearchResultBuilderIT {
 
   @Test
   public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_search() {
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminSearchResultBuilder
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminService
         .buildAgencyAdminSearchResult("q", 1, 20);
 
     SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
@@ -77,7 +77,7 @@ public class AgencyAdminSearchResultBuilderIT {
 
   @Test
   public void buildAgencyAdminSearchResult_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminSearchResultBuilder
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminService
         .buildAgencyAdminSearchResult("q", 10, 20);
 
     SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();

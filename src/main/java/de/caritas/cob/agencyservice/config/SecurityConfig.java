@@ -1,5 +1,9 @@
 package de.caritas.cob.agencyservice.config;
 
+import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
+
+import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
+import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -18,11 +22,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CsrfFilter;
-import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
 
 /**
  * Provides the Keycloak/Spring Security configuration.
@@ -69,7 +71,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers("/agencies/*").permitAll()
         .antMatchers(SpringFoxConfig.WHITE_LIST).permitAll()
-        .antMatchers("/agencies").permitAll().anyRequest().denyAll();
+        .antMatchers("/agencies").permitAll()
+        .antMatchers("/", "/admin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
+        .anyRequest().denyAll();
   }
 
   /**
@@ -79,7 +83,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * @return
    */
   @Bean
-  public KeycloakConfigResolver KeyCloakConfigResolver() {
+  public KeycloakConfigResolver keyCloakConfigResolver() {
     return new KeycloakSpringBootConfigResolver();
   }
 
@@ -98,12 +102,12 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * (prefix ROLE_).
    * 
    * @param auth
-   * @throws Exception
    */
   @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+  public void configureGlobal(AuthenticationManagerBuilder auth,
+      RoleAuthorizationAuthorityMapper authorityMapper) {
     KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
-    keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+    keyCloakAuthProvider.setGrantedAuthoritiesMapper(authorityMapper);
 
     auth.authenticationProvider(keyCloakAuthProvider);
   }

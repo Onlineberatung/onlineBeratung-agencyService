@@ -14,8 +14,8 @@ import de.caritas.cob.agencyservice.generated.api.controller.DefaultApi;
  */
 public class RootDTOBuilder implements HalLinkBuilder {
 
-  private static final Integer DEFAULT_PAGE = 1;
-  private static final Integer DEFAULT_PER_PAGE = 20;
+  public static final Integer DEFAULT_PAGE = 1;
+  public static final Integer DEFAULT_PER_PAGE = 20;
 
   /**
    * Builds the root navigation DTO.
