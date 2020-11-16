@@ -3,8 +3,11 @@ package de.caritas.cob.agencyservice.api.admin.service;
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.EntityManagerFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,7 @@ public class AgencyAdminSearchService {
    * @param perPage the amount of items in one page
    * @return the result list
    */
-  public List<Agency> searchAgencies(final String keyword, final Integer page,
+  public List<AgencyAdminResponseDTO> searchAgencies(final String keyword, final Integer page,
       final Integer perPage) {
     FullTextEntityManager fullTextEntityManager = Search
         .getFullTextEntityManager(entityManagerFactory.createEntityManager());
@@ -46,7 +49,14 @@ public class AgencyAdminSearchService {
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
     fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
 
-    return fullTextQuery.getResultList();
+    Stream<Agency> resultStream = fullTextQuery.getResultStream();
+    List<AgencyAdminResponseDTO> resultList = resultStream
+        .map(AgencyAdminResponseDTOBuilder::new)
+        .map(AgencyAdminResponseDTOBuilder::fromAgency)
+        .collect(Collectors.toList());
+
+    fullTextEntityManager.close();
+    return resultList;
   }
 
   private Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
