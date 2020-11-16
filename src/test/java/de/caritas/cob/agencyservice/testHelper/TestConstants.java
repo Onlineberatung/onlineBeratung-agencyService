@@ -145,14 +145,15 @@ public class TestConstants {
   public static final String AGENCY_NAME = "Test agency";
   public static final String AGENCY_DESCRIPTION = "Test description";
   public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      VALID_FULL_POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null);
+      VALID_FULL_POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, null, null,
+      null);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, VALID_FULL_POSTCODE, "Test city",
-          false, CONSULTING_TYPE_U25, false, null);
+          false, CONSULTING_TYPE_U25, false, null, null, null, null);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      VALID_FULL_POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null);
+      VALID_FULL_POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, null, null, null);
   public static final Agency TEAM_AGENCY = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      VALID_FULL_POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null);
+      VALID_FULL_POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(VALID_FULL_POSTCODE)
       .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
