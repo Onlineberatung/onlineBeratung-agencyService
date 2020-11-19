@@ -20,6 +20,7 @@ paths:
           description: The postcode the user entered
           schema:
             type: string
+            example: "588"
         - name: consultingType
           in: query
           required: true
@@ -27,6 +28,7 @@ paths:
           schema:
             type: integer
             format: int32
+            example: 5
       responses:
         200:
           description: OK - successfull operation
@@ -59,6 +61,7 @@ paths:
             items:
               type: integer
               format: int64
+              example: 20
       responses:
         200:
           description: OK - successfull operation
@@ -85,7 +88,7 @@ components:
         id:
           type: integer
           format: int64
-          example: "684"
+          example: 684
         name:
           type: string
           example: "Suchtberatung Freiburg"
@@ -106,7 +109,7 @@ components:
           example: "false"
         consultingType:
           type: integer
-          example: "0"
+          example: 0
 
   securitySchemes:
     Bearer:
