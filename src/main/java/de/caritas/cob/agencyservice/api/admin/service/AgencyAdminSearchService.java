@@ -3,7 +3,10 @@ package de.caritas.cob.agencyservice.api.admin.service;
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
+import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,14 +33,15 @@ public class AgencyAdminSearchService {
   private final @NonNull EntityManagerFactory entityManagerFactory;
 
   /**
-   * Searches for {@link List<Agency>} by given keyword limited by perPage.
+   * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link
+   * AgencyAdminSearchResultDTO} containing hal links.
    *
    * @param keyword the keyword to search for
-   * @param page the current requested page
+   * @param page    the current requested page
    * @param perPage the amount of items in one page
    * @return the result list
    */
-  public List<AgencyAdminResponseDTO> searchAgencies(final String keyword, final Integer page,
+  public AgencyAdminSearchResultDTO searchAgencies(final String keyword, final Integer page,
       final Integer perPage) {
     FullTextEntityManager fullTextEntityManager = Search
         .getFullTextEntityManager(entityManagerFactory.createEntityManager());
@@ -55,8 +59,18 @@ public class AgencyAdminSearchService {
         .map(AgencyAdminResponseDTOBuilder::fromAgency)
         .collect(Collectors.toList());
 
+    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+        .withPage(page)
+        .withPerPage(perPage)
+        .withTotalResults(fullTextQuery.getResultSize())
+        .withKeyword(keyword)
+        .buildSearchResultLinks();
+
     fullTextEntityManager.close();
-    return resultList;
+
+    return new AgencyAdminSearchResultDTO()
+        .embedded(resultList)
+        .links(searchResultLinks);
   }
 
   private Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {

@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.hallink;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -17,6 +18,7 @@ public class SearchResultLinkBuilderTest {
         .withKeyword("keyword")
         .withPage(2)
         .withPerPage(20)
+        .withTotalResults(50)
         .buildSearchResultLinks();
 
     assertThat(searchResultLinks, notNullValue());
@@ -39,15 +41,55 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildSearchResultLinks_Should_returnNoPreviousLink_When_pageIsTheFirst() {
+  public void buildAgencyAdminSearchResult_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
+    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+        .withKeyword("keyword")
+        .withPage(2)
+        .withPerPage(20)
+        .withTotalResults(50)
+        .buildSearchResultLinks();
+
+    assertThat(searchResultLinks.getPrevious(), notNullValue());
+    assertThat(searchResultLinks.getPrevious().getHref(),
+        endsWith("/agencyadmin/agencies?page=1&perPage=20&q=keyword"));
+  }
+
+  @Test
+  public void buildAgencyAdminSearchResult_ShouldNot_havePreviousLink_When_currentPageIsTheFirst() {
     SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withKeyword("keyword")
         .withPage(1)
         .withPerPage(20)
+        .withTotalResults(50)
         .buildSearchResultLinks();
 
-    assertThat(searchResultLinks, notNullValue());
     assertThat(searchResultLinks.getPrevious(), nullValue());
+  }
+
+  @Test
+  public void buildAgencyAdminSearchResult_Should_haveNextLink_When_currentPageIsNotTheLast() {
+    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+        .withKeyword("keyword")
+        .withPage(2)
+        .withPerPage(20)
+        .withTotalResults(50)
+        .buildSearchResultLinks();
+
+    assertThat(searchResultLinks.getNext(), notNullValue());
+    assertThat(searchResultLinks.getNext().getHref(),
+        endsWith("/agencyadmin/agencies?page=3&perPage=20&q=keyword"));
+  }
+
+  @Test
+  public void buildAgencyAdminSearchResult_ShouldNot_haveNextLink_When_currentPageIsTheLast() {
+    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+        .withKeyword("keyword")
+        .withPage(3)
+        .withPerPage(20)
+        .withTotalResults(50)
+        .buildSearchResultLinks();
+
+    assertThat(searchResultLinks.getNext(), nullValue());
   }
 
   @Test
@@ -58,7 +100,8 @@ public class SearchResultLinkBuilderTest {
         .buildSearchResultLinks();
 
     assertThat(searchResultLinks, notNullValue());
-    assertThat(searchResultLinks.getSelf().getHref(), is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
+    assertThat(searchResultLinks.getSelf().getHref(),
+        is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
   }
 
   @Test
@@ -67,7 +110,8 @@ public class SearchResultLinkBuilderTest {
         .buildSearchResultLinks();
 
     assertThat(searchResultLinks, notNullValue());
-    assertThat(searchResultLinks.getSelf().getHref(), is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
+    assertThat(searchResultLinks.getSelf().getHref(),
+        is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
   }
 
 }

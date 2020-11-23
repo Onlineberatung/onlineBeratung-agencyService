@@ -93,7 +93,7 @@ paths:
           content:
             'application/hal+json':
               schema:
-                $ref: '#/components/schemas/AgencyAdminDioceseResultDTO'
+                $ref: '#/components/schemas/DioceseAdminResultDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
@@ -202,7 +202,7 @@ components:
           type: string
           example: "79106"
 
-    AgencyAdminDioceseResultDTO:
+    DioceseAdminResultDTO:
       type: object
       properties:
         _embedded:
