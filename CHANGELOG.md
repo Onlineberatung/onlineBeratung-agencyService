@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.2.1...v1.3.0) (2020-11-23)
+
+
+### Features
+
+* added admin api specs to retrieve all dioceses ([551cdb7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/551cdb75ebd97776d7c014bd922d8748a41487e9))
+* added missing root controller ([71e4066](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/71e4066fc1409ae5ecb954fcf5e83bc61a005de7))
+* adjust admin endpoint naming structure ([00a48e7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/00a48e7341c0d1091e4fa8680fa42e29f28b9c95))
+* integrate agency admin role authorization for admin endpoints ([93d2d40](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/93d2d40d89f910aa974152d52247d1f890f3894b))
+* integrate basic search service and test database structure ([012254c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/012254c2c1328f99e326f2275ce41a06922bcf3b))
+* integrate first endpoint for admin search ([20474d5](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/20474d56d996ea38a8fef9fddc0c78daf8544188))
+* provide fetching for postcode ranges via agency entity ([fbbdc47](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/fbbdc470565e42172f3293028e2bc26c178c9edd))
+* provide hal based structure for agency search ([b446c7d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b446c7d76db951715916103bd1742e5272d58de2))
+* provide search endpoint for agencies ([69ae93a](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/69ae93a38e5d947efa245259f7214d892837e942))
+* small optimizations ([dc7ef03](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/dc7ef034c75359a4eb744765503bec2c78e3a9fd))
+* update spring boot and dependencies ([8be66f7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/8be66f7b6b669cc44ea5d2b058f757372bfc8e8e))
+
+
+### Bug Fixes
+
+* add new mapped columns to sql query ([495412a](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/495412a191dd1c554fae419dd762b5659518fd36))
+* release database connections after hibernate search query execution ([560fa76](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/560fa76f3e93e4cfc7c0d9e347d7733588589d62))
+* update deprecated logging property ([41a2f21](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/41a2f2155668ce4636477eb2fe57131699b2ab3c))
+
+### [1.2.1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.2.0...v1.2.1) (2020-10-29)
+
 ## [1.2.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.1.2...v1.2.0) (2020-10-29)
 
 
