@@ -17,7 +17,6 @@ import lombok.Setter;
 /**
  * Diocese entity.
  */
-
 @Entity
 @Table(name = "diocese")
 @AllArgsConstructor

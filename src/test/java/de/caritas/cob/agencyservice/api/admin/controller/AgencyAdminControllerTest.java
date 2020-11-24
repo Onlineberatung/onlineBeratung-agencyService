@@ -91,4 +91,11 @@ public class AgencyAdminControllerTest {
         .findAllDioceses(eq(0), eq(1));
   }
 
+  @Test
+  public void getDioceses_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
+      throws Exception {
+    this.mvc.perform(get(GET_DIOCESES_PATH))
+        .andExpect(status().isBadRequest());
+  }
+
 }

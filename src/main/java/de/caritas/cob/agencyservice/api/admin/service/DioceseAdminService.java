@@ -18,9 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class to handle diocese admin requests
+ * Service class to handle diocese admin requests.
  */
-
 @Service
 @RequiredArgsConstructor
 public class DioceseAdminService {

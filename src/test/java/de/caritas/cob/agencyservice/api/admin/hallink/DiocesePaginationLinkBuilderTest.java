@@ -84,7 +84,7 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_Should_returnPlaceHolderSelfLink_When_keywordIsNotSet() {
+  public void buildPaginationLinks_Should_returnSelfLink() {
     PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(1)
         .withPerPage(20)
