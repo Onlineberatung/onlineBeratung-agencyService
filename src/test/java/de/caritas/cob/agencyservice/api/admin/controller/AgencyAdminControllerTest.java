@@ -7,7 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,7 @@ public class AgencyAdminControllerTest {
 
   private static final String ROOT_PATH = "/agencyadmin";
   private static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
+  private static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
   private static final String PAGE_PARAM = "page";
   private static final String PER_PAGE_PARAM = "perPage";
 
@@ -34,7 +36,10 @@ public class AgencyAdminControllerTest {
   private MockMvc mvc;
 
   @MockBean
-  private AgencyAdminService agencyAdminService;
+  private AgencyAdminSearchService agencyAdminSearchService;
+
+  @MockBean
+  private DioceseAdminService dioceseAdminService;
 
   @MockBean
   private LinkDiscoverers linkDiscoverers;
@@ -70,8 +75,27 @@ public class AgencyAdminControllerTest {
         .param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
-    Mockito.verify(this.agencyAdminService, Mockito.times(1))
-        .buildAgencyAdminSearchResult(any(), eq(0), eq(1));
+    Mockito.verify(this.agencyAdminSearchService, Mockito.times(1))
+        .searchAgencies(any(), eq(0), eq(1));
+  }
+
+  @Test
+  public void getDioceses_Should_returnOk_When_requiredPaginationParamsAreGiven()
+      throws Exception {
+    this.mvc.perform(get(GET_DIOCESES_PATH)
+        .param(PAGE_PARAM, "0")
+        .param(PER_PAGE_PARAM, "1"))
+        .andExpect(status().isOk());
+
+    Mockito.verify(this.dioceseAdminService, Mockito.times(1))
+        .findAllDioceses(eq(0), eq(1));
+  }
+
+  @Test
+  public void getDioceses_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
+      throws Exception {
+    this.mvc.perform(get(GET_DIOCESES_PATH))
+        .andExpect(status().isBadRequest());
   }
 
 }

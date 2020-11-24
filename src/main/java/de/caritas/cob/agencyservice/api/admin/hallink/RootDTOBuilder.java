@@ -15,6 +15,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
 
   public static final Integer DEFAULT_PAGE = 1;
   public static final Integer DEFAULT_PER_PAGE = 20;
+  public static final Integer DEFAULT_TOTAL_PAGES = 0;
 
   /**
    * Builds the root navigation DTO.
