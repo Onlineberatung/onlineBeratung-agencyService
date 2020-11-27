@@ -3,7 +3,9 @@ package de.caritas.cob.agencyservice.api.admin.controller;
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller to handle all agency admin requests.
  */
 @RestController
-@Api(tags = "agency-admin-controller")
+@Api(tags = "admin-agency-controller")
 @RequiredArgsConstructor
 public class AgencyAdminController implements AgencyadminApi {
 
@@ -72,4 +74,16 @@ public class AgencyAdminController implements AgencyadminApi {
 
     return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
   }
+
+  /**
+   * Entry point for creating an agency.
+   *
+   * @param agencyDTO  (required)
+   * @return {@link AgencyAdminResponseDTO}
+   */
+  @Override
+  public ResponseEntity<AgencyAdminResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
+    return null;
+  }
+
 }

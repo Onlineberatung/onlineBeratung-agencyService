@@ -102,7 +102,33 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-
+  /agencyadmin/agency:
+    post:
+      tags:
+        - admin-agency-controller
+      summary: 'Creates a new agency [Authorization: Role: agency-admin]'
+      operationId: createAgency
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AgencyDTO'
+        required: true
+      responses:
+        201:
+          description: CREATED - agency was created successfully
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 components:
   schemas:
     RootDTO:
@@ -171,10 +197,10 @@ components:
           example: "Bonn"
         teamAgency:
           type: boolean
-          example: "false"
+          example: false
         offline:
           type: boolean
-          example: "false"
+          example: false
         consultingType:
           type: integer
           example: 1
@@ -228,6 +254,41 @@ components:
         updateDate:
           type: string
           example: "2019-12-02T13:12:08"
+
+    AgencyDTO:
+      type: object
+      required:
+        - dioceseId
+        - name
+        - teamAgency
+        - offline
+        - consultingType
+      properties:
+        dioceseId:
+          type: integer
+          format: int64
+          example: 12
+        name:
+          type: string
+          example: "Beratungstelle"
+        description:
+          type: string
+          example: "Beschreibung Beratungstelle..."
+        postcode:
+          type: string
+          example: "79106"
+        city:
+          type: string
+          example: "Muenchen"
+        teamAgency:
+          type: boolean
+          example: false
+        offline:
+          type: boolean
+          example: false
+        consultingType:
+          type: integer
+          example: 1
 
     PaginationLinks:
       type: object
