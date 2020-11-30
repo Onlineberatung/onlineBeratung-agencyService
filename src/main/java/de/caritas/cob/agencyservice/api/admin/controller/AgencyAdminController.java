@@ -16,6 +16,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -83,6 +84,16 @@ public class AgencyAdminController implements AgencyadminApi {
    */
   @Override
   public ResponseEntity<AgencyAdminResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
+    return null;
+  }
+
+  /**
+   * Entry point for deleting an agency.
+   *
+   * @param agencyId  (required)
+   */
+  @Override
+  public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
     return null;
   }
 

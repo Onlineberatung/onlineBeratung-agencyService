@@ -129,6 +129,31 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}:
+    delete:
+      tags:
+        - admin-agency-controller
+      summary: 'Flags an agency as deleted [Authorization: Role: agency-admin]'
+      operationId: deleteAgency
+      parameters:
+      - name: agencyId
+        in: path
+        description: Agency Id
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK - agency was deleted successfully
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 components:
   schemas:
     RootDTO:
