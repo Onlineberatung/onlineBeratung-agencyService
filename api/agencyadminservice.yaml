@@ -118,9 +118,9 @@ paths:
         201:
           description: CREATED - agency was created successfully
           content:
-            'application/json':
+            'application/hal+json':
               schema:
-                $ref: '#/components/schemas/AgencyAdminResponseDTO'
+                $ref: '#/components/schemas/CreateAgencyResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
@@ -136,16 +136,50 @@ paths:
       summary: 'Flags an agency as deleted [Authorization: Role: agency-admin]'
       operationId: deleteAgency
       parameters:
-      - name: agencyId
-        in: path
-        description: Agency Id
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         200:
           description: OK - agency was deleted successfully
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    put:
+      tags:
+        - admin-agency-controller
+      summary: 'Updates an agency [Authorization: Role: agency-admin]'
+      operationId: updateAgency
+      requestBody:
+        content:
+          'application/hal+json':
+            schema:
+              $ref: '#/components/schemas/UpdateAgencyDTO'
+        required: true
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency was updated successfully
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UpdateAgencyResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request
         401:
@@ -315,6 +349,53 @@ components:
           type: integer
           example: 1
 
+    CreateAgencyResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/CreateLinks'
+
+    UpdateAgencyDTO:
+      type: object
+      required:
+        - dioceseId
+        - name
+        - offline
+      properties:
+        dioceseId:
+          type: integer
+          format: int64
+          example: 12
+        name:
+          type: string
+          example: "Beratungstelle"
+        description:
+          type: string
+          example: "Beschreibung Beratungstelle..."
+        postcode:
+          type: string
+          example: "79106"
+        city:
+          type: string
+          example: "Muenchen"
+        offline:
+          type: boolean
+          example: false
+
+    UpdateAgencyResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/UpdateLinks'
+
     PaginationLinks:
       type: object
       required:
@@ -334,6 +415,30 @@ components:
           properties:
             search:
               $ref: '#/components/schemas/HalLink'
+
+    CreateLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/HalLink'
+        update:
+          $ref: '#/components/schemas/HalLink'
+        delete:
+          $ref: '#/components/schemas/HalLink'
+
+    UpdateLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/HalLink'
+        agency:
+          $ref: '#/components/schemas/HalLink'
+        delete:
+          $ref: '#/components/schemas/HalLink'
 
   securitySchemes:
     Bearer:

@@ -6,8 +6,11 @@ import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
@@ -83,7 +86,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return {@link AgencyAdminResponseDTO}
    */
   @Override
-  public ResponseEntity<AgencyAdminResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
+  public ResponseEntity<CreateAgencyResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
     return null;
   }
 
@@ -97,4 +100,15 @@ public class AgencyAdminController implements AgencyadminApi {
     return null;
   }
 
+  /**
+   *
+   * @param agencyId Agency Id (required)
+   * @param updateAgencyDTO  (required)
+   * @return {@link UpdateAgencyDTO}
+   */
+  @Override
+  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(@PathVariable Long agencyId,
+      @Valid UpdateAgencyDTO updateAgencyDTO) {
+    return null;
+  }
 }
