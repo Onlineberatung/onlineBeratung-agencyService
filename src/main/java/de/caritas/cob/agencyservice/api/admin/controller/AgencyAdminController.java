@@ -6,9 +6,11 @@ import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.GetAgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
@@ -121,6 +123,19 @@ public class AgencyAdminController implements AgencyadminApi {
    */
   @Override
   public ResponseEntity<GetAgencyResponseDTO> getAgency(@PathVariable Long agencyId) {
+    return null;
+  }
+
+  /**
+   * Entry point for creating a postcode range.
+   *
+   * @param agencyId Agency Id (required)
+   * @param postCodeRangeDTO  (required)
+   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
+   */
+  @Override
+  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
+      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
     return null;
   }
 }
