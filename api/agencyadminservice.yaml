@@ -130,6 +130,36 @@ paths:
       security:
         - Bearer: [ ]
   /agencyadmin/agency/{agencyId}:
+    get:
+      tags:
+         - admin-agency-controller
+      summary: 'Get an agency [Authorization: Role: agency-admin]'
+      operationId: getAgency
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/GetAgencyResponseDTO'
+        204:
+          description: NO CONTENT - agency with the specific id was not found
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
     delete:
       tags:
         - admin-agency-controller
@@ -349,6 +379,16 @@ components:
           type: integer
           example: 1
 
+    GetAgencyResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/GetLinks'
+
     CreateAgencyResponseDTO:
       type: object
       properties:
@@ -436,6 +476,18 @@ components:
         self:
           $ref: '#/components/schemas/HalLink'
         agency:
+          $ref: '#/components/schemas/HalLink'
+        delete:
+          $ref: '#/components/schemas/HalLink'
+
+    GetLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/HalLink'
+        update:
           $ref: '#/components/schemas/HalLink'
         delete:
           $ref: '#/components/schemas/HalLink'
