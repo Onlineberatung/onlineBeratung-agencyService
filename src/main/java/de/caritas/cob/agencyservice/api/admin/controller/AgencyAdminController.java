@@ -160,11 +160,25 @@ public class AgencyAdminController implements AgencyadminApi {
    *
    * @param agencyId Agency Id (required)
    * @param postcodeRangeId Postcode range id (required)
-   * @return {@link PostCodeRangeResponseDTO}
+   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
    */
   @Override
-  public ResponseEntity<PostCodeRangeResponseDTO> getAgencyPostcodeRange(@PathVariable Long agencyId,
+  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> getAgencyPostcodeRange(@PathVariable Long agencyId,
       @PathVariable Long postcodeRangeId) {
+    return null;
+  }
+
+  /**
+   * Entry point to update an existing postcode range for an agency.
+   *
+   * @param agencyId Agency Id (required)
+   * @param postcodeRangeId Postcode range id (required)
+   * @param postCodeRangeDTO  (required)
+   * @return
+   */
+  @Override
+  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
+      Long agencyId, Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
     return null;
   }
 }

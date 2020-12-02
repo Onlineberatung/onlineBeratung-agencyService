@@ -280,11 +280,52 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostCodeRangeResponseDTO'
+                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
         204:
           description: NO CONTENT - agency postcode range with the specific id was not found
         400:
           description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    put:
+      tags:
+        - admin-agency-controller
+      summary: 'Updates an existing postcode range for an agency [Authorization: Role: agency-admin]'
+      operationId: updateAgencyPostcodeRange
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostCodeRangeDTO'
+        required: true
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: postcodeRangeId
+          in: path
+          description: Postcode range id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        201:
+          description: CREATED - agency postcode range was created successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
         401:
           description: UNAUTHORIZED - no/invalid role/authorization
         500:
