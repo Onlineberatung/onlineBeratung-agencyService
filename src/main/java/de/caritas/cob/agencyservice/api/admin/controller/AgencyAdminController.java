@@ -174,11 +174,22 @@ public class AgencyAdminController implements AgencyadminApi {
    * @param agencyId Agency Id (required)
    * @param postcodeRangeId Postcode range id (required)
    * @param postCodeRangeDTO  (required)
-   * @return
+   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
    */
   @Override
   public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
-      Long agencyId, Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+    return null;
+  }
+
+  /**
+   * Entry point to delete a specific agency postcode range.
+   *
+   * @param agencyId Agency Id (required)
+   * @param postcodeRangeId Postcode range id (required)
+   */
+  @Override
+  public ResponseEntity<Void> deleteAgencyPostcodeRange(@PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
     return null;
   }
 }
