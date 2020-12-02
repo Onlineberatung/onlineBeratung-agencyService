@@ -556,7 +556,7 @@ components:
           items:
             $ref: '#/components/schemas/PostCodeRangeResponseDTO'
         _links:
-          $ref: '#/components/schemas/SearchResultLinks'
+          $ref: '#/components/schemas/PaginationLinks'
 
     PaginationLinks:
       type: object
