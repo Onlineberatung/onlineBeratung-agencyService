@@ -6,6 +6,7 @@ import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
@@ -136,6 +137,20 @@ public class AgencyAdminController implements AgencyadminApi {
   @Override
   public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
       @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+    return null;
+  }
+
+  /**
+   * Entry point to get the postcode ranges for a specific agency.
+   *
+   * @param agencyId Agency Id (required)
+   * @param page Number of page where to start (1 &#x3D; first page) (required)
+   * @param perPage Number of items which are being returned per page (required)
+   * @return an entity containing the search result
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(@PathVariable Long agencyId,
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
     return null;
   }
 }

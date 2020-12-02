@@ -253,6 +253,49 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}/postcoderanges:
+    get:
+      tags:
+        - admin-agency-controller
+      summary: 'Returns the list of the postcode ranges for an agency.  [Authorization: Role: agency-admin]'
+      operationId: getAgencyPostcodeRanges
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Number of page where to start (1 = first page)
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: perPage
+          in: query
+          description: Number of items which are being returned per page
+          required: true
+          schema:
+            type: integer
+            example: 20
+      responses:
+        200:
+          description: OK - successfull operation
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/AgencyPostcodeRangesResultDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 components:
   schemas:
     RootDTO:
@@ -369,6 +412,12 @@ components:
         postcodeTo:
           type: string
           example: "79106"
+        createDate:
+          type: string
+          example: "2019-08-23T08:52:05"
+        updateDate:
+          type: string
+          example: "2019-12-02T13:12:08"
 
     DioceseAdminResultDTO:
       type: object
@@ -499,6 +548,15 @@ components:
         _links:
           $ref: '#/components/schemas/CreateLinks'
 
+    AgencyPostcodeRangesResultDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostCodeRangeResponseDTO'
+        _links:
+          $ref: '#/components/schemas/SearchResultLinks'
 
     PaginationLinks:
       type: object
