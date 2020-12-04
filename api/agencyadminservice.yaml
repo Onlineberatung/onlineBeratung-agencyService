@@ -607,8 +607,6 @@ components:
       type: object
       properties:
         _embedded:
-          type: array
-          items:
             $ref: '#/components/schemas/AgencyAdminResponseDTO'
         _links:
           $ref: '#/components/schemas/CreateLinks'
@@ -644,9 +642,7 @@ components:
       type: object
       properties:
         _embedded:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+          $ref: '#/components/schemas/AgencyAdminResponseDTO'
         _links:
           $ref: '#/components/schemas/UpdateLinks'
 

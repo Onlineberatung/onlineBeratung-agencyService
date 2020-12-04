@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.exception;
+package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
 import static java.util.Objects.nonNull;
 
@@ -15,7 +15,7 @@ public class InternalServerErrorException extends RuntimeException {
 
   /**
    * InternalServerErrorException exception.
-   * 
+   *
    * @param message the message to be logged
    */
   public InternalServerErrorException(String message) {

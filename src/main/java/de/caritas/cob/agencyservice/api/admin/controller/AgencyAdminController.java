@@ -2,8 +2,9 @@ package de.caritas.cob.agencyservice.api.admin.controller;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
@@ -12,7 +13,6 @@ import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.GetAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
@@ -27,9 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Controller to handle all agency admin requests.
- */
+/** Controller to handle all agency admin requests. */
 @RestController
 @Api(tags = "admin-agency-controller")
 @RequiredArgsConstructor
@@ -37,6 +35,8 @@ public class AgencyAdminController implements AgencyadminApi {
 
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
   private final @NonNull DioceseAdminService dioceseAdminService;
+  private final @NonNull AgencyAdminService agencyAdminService;
+  private final @NonNull AgencyValidator agencyValidator;
 
   /**
    * Creates the root hal based navigation entity.
@@ -52,14 +52,14 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to search for agencies.
    *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
+   * @param page Number of page where to start in the query (1 = first page) (required)
    * @param perPage Number of items which are being returned per page (required)
-   * @param q       The query parameter to search for (optional)
+   * @param q The query parameter to search for (optional)
    * @return an entity containing the search result
    */
   @Override
-  public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(@NotNull @Valid Integer page,
-      @NotNull @Valid Integer perPage, @Valid String q) {
+  public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
 
     AgencyAdminSearchResultDTO agencyAdminSearchResultDTO =
         this.agencyAdminSearchService.searchAgencies(q, page, perPage);
@@ -70,16 +70,16 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to return all dioceses.
    *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
+   * @param page Number of page where to start in the query (1 = first page) (required)
    * @param perPage Number of items which are being returned per page (required)
    * @return {@link DioceseAdminResultDTO}
    */
   @Override
-  public ResponseEntity<DioceseAdminResultDTO> getDioceses(@NotNull @Valid Integer page,
-      @NotNull @Valid Integer perPage) {
+  public ResponseEntity<DioceseAdminResultDTO> getDioceses(
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
 
-    DioceseAdminResultDTO dioceseAdminResultDTO = dioceseAdminService
-        .findAllDioceses(page, perPage);
+    DioceseAdminResultDTO dioceseAdminResultDTO =
+        dioceseAdminService.findAllDioceses(page, perPage);
 
     return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
   }
@@ -87,18 +87,22 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point for creating an agency.
    *
-   * @param agencyDTO  (required)
-   * @return {@link AgencyAdminResponseDTO}
+   * @param agencyDTO (required)
+   * @return {@link CreateAgencyResponseDTO}
    */
   @Override
   public ResponseEntity<CreateAgencyResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
-    return null;
+
+    agencyValidator.validate(agencyDTO);
+    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+
+    return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.OK);
   }
 
   /**
    * Entry point for deleting an agency.
    *
-   * @param agencyId  (required)
+   * @param agencyId (required)
    */
   @Override
   public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
@@ -106,14 +110,13 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
-   *
    * @param agencyId Agency Id (required)
-   * @param updateAgencyDTO  (required)
+   * @param updateAgencyDTO (required)
    * @return {@link UpdateAgencyResponseDTO}
    */
   @Override
-  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(@PathVariable Long agencyId,
-      @Valid UpdateAgencyDTO updateAgencyDTO) {
+  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(
+      @PathVariable Long agencyId, @Valid UpdateAgencyDTO updateAgencyDTO) {
     return null;
   }
 
@@ -132,7 +135,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * Entry point for creating a postcode range.
    *
    * @param agencyId Agency Id (required)
-   * @param postCodeRangeDTO  (required)
+   * @param postCodeRangeDTO (required)
    * @return {@link CreateAgencyPostcodeRangeResponseDTO}
    */
   @Override
@@ -150,8 +153,8 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return an entity containing the search result
    */
   @Override
-  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(@PathVariable Long agencyId,
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
+  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
+      @PathVariable Long agencyId, @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
     return null;
   }
 
@@ -163,8 +166,8 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return {@link CreateAgencyPostcodeRangeResponseDTO}
    */
   @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> getAgencyPostcodeRange(@PathVariable Long agencyId,
-      @PathVariable Long postcodeRangeId) {
+  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> getAgencyPostcodeRange(
+      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
     return null;
   }
 
@@ -173,12 +176,14 @@ public class AgencyAdminController implements AgencyadminApi {
    *
    * @param agencyId Agency Id (required)
    * @param postcodeRangeId Postcode range id (required)
-   * @param postCodeRangeDTO  (required)
+   * @param postCodeRangeDTO (required)
    * @return {@link CreateAgencyPostcodeRangeResponseDTO}
    */
   @Override
   public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
-      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+      @PathVariable Long agencyId,
+      @PathVariable Long postcodeRangeId,
+      @Valid PostCodeRangeDTO postCodeRangeDTO) {
     return null;
   }
 
@@ -189,7 +194,8 @@ public class AgencyAdminController implements AgencyadminApi {
    * @param postcodeRangeId Postcode range id (required)
    */
   @Override
-  public ResponseEntity<Void> deleteAgencyPostcodeRange(@PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
+  public ResponseEntity<Void> deleteAgencyPostcodeRange(
+      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
     return null;
   }
 }
