@@ -137,6 +137,7 @@ public class TestConstants {
   public static final String POSTCODE = "postcode";
   public static final String FIELD_AGENCY_ID = "id";
   public static final String VALID_FULL_POSTCODE = "12345";
+  public static final String INVALID_POSTCODE = "123456";
   public static final String AGENCY_CITY = "Test city";
   public static final String VALID_MEDIUM_POSTCODE = "884";
   public static final String VALID_MEDIUM_POSTCODE_QUERY = "postcode=884";

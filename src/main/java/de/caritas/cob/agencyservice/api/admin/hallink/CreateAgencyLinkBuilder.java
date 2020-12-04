@@ -1,11 +1,14 @@
 package de.caritas.cob.agencyservice.api.admin.hallink;
 
+import static java.util.Objects.isNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.CreateLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.service.LogService;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 
 public class CreateAgencyLinkBuilder implements HalLinkBuilder {
@@ -40,10 +43,17 @@ public class CreateAgencyLinkBuilder implements HalLinkBuilder {
    * @return the generated {@link CreateAgencyLinkBuilder}
    */
   public CreateLinks buildCreateAgencyLinks() {
+    ensureNonNullAgency();
     return new CreateLinks()
         .self(buildSelfLink())
         .delete(buildDeleteHalLink())
         .update(buildUpdateHalLink());
+  }
+
+  private void ensureNonNullAgency() {
+    if (isNull(this.agency)) {
+      throw new InternalServerErrorException("Agency must not be null");
+    }
   }
 
   private HalLink buildSelfLink() {
