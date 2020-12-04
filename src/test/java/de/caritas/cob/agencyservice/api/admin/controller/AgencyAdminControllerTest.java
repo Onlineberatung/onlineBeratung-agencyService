@@ -8,7 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
+import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,12 @@ public class AgencyAdminControllerTest {
 
   @Autowired
   private MockMvc mvc;
+
+  @MockBean
+  private AgencyAdminService agencyAdminService;
+
+  @MockBean
+  private AgencyValidator agencyValidator;
 
   @MockBean
   private AgencyAdminSearchService agencyAdminSearchService;

@@ -28,7 +28,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
         .links(new RootLinks()
             .self(buildSelfLink())
             .agencies(buildSearchLink())
-            .agencies(buildCreateLink()));
+            .agency(buildCreateLink()));
   }
 
   private HalLink buildSelfLink() {
