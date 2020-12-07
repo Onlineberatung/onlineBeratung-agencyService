@@ -7,8 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,11 +27,13 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 public class AgencyAdminControllerTest {
 
-  private static final String ROOT_PATH = "/agencyadmin";
-  private static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
-  private static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
-  private static final String PAGE_PARAM = "page";
-  private static final String PER_PAGE_PARAM = "perPage";
+  protected static final String ROOT_PATH = "/agencyadmin";
+  protected static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
+  protected static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
+  protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH +
+      "/agency/1/postcoderanges";
+  protected static final String PAGE_PARAM = "page";
+  protected static final String PER_PAGE_PARAM = "perPage";
 
   @Autowired
   private MockMvc mvc;
@@ -40,6 +43,9 @@ public class AgencyAdminControllerTest {
 
   @MockBean
   private DioceseAdminService dioceseAdminService;
+
+  @MockBean
+  private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
 
   @MockBean
   private LinkDiscoverers linkDiscoverers;
@@ -95,6 +101,25 @@ public class AgencyAdminControllerTest {
   public void getDioceses_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
       throws Exception {
     this.mvc.perform(get(GET_DIOCESES_PATH))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgencyPostCodeRanges_Should_returnOk_When_requiredPaginationParamsAreGiven()
+      throws Exception {
+    this.mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH)
+        .param(PAGE_PARAM, "0")
+        .param(PER_PAGE_PARAM, "1"))
+        .andExpect(status().isOk());
+
+    Mockito.verify(this.agencyPostCodeRangeAdminService, Mockito.times(1))
+        .findPostCodeRangesForAgency(eq(0), eq(1), eq(1L));
+  }
+
+  @Test
+  public void getAgencyPostCodeRanges_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
+      throws Exception {
+    this.mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH))
         .andExpect(status().isBadRequest());
   }
 

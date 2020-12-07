@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.admin.service;
+package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
 import static org.apache.commons.lang3.StringUtils.isBlank;

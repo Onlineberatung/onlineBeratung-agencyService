@@ -1,7 +1,8 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
@@ -12,7 +13,6 @@ import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.GetAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgencyAdminController implements AgencyadminApi {
 
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
+  private final @NonNull AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
   private final @NonNull DioceseAdminService dioceseAdminService;
 
   /**
@@ -152,7 +153,9 @@ public class AgencyAdminController implements AgencyadminApi {
   @Override
   public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(@PathVariable Long agencyId,
       @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
-    return null;
+    AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
+        .findPostCodeRangesForAgency(page, perPage, agencyId);
+    return ResponseEntity.ok(postCodeRangesForAgency);
   }
 
   /**
