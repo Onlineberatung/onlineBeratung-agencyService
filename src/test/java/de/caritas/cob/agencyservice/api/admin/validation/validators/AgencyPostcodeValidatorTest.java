@@ -30,4 +30,10 @@ public class AgencyPostcodeValidatorTest {
     this.agencyDTO.setPostcode(VALID_FULL_POSTCODE);
     new AgencyPostcodeValidator().validate(agencyDTO);
   }
+
+  @Test
+  public void validate_ShouldNot_ThrowInvalidPostcodeException_WhenPostcodeIsNull() {
+    this.agencyDTO.setPostcode(null);
+    new AgencyPostcodeValidator().validate(agencyDTO);
+  }
 }

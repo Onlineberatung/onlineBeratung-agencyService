@@ -96,7 +96,7 @@ public class AgencyAdminController implements AgencyadminApi {
     agencyValidator.validate(agencyDTO);
     CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
-    return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.OK);
+    return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.CREATED);
   }
 
   /**

@@ -5,7 +5,7 @@ import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIS
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO_LIST;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALIDAGENCY_ID;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
@@ -155,7 +155,7 @@ public class AgencyControllerIT {
   public void getAgencies_With_Ids_Should_ReturnBadRequest_When_IdInvalid() throws Exception {
 
     mvc.perform(
-        get(PATH_GET_AGENCIES_WITH_IDS + INVALIDAGENCY_ID).contentType(MediaType.APPLICATION_JSON)
+        get(PATH_GET_AGENCIES_WITH_IDS + INVALID_AGENCY_ID).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 

@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.testHelper;
 
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.ArrayList;
@@ -181,5 +182,6 @@ public class TestConstants {
   public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
   public static final String INVALID_POSTCODE_QUERY = "postcode=12";
   public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=99999";
-  public static final String INVALIDAGENCY_ID = "12xX";
+  public static final String INVALID_AGENCY_ID = "12xX";
+
 }
