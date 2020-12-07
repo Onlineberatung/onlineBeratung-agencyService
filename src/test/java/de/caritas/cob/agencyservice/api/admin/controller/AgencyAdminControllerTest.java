@@ -30,8 +30,8 @@ public class AgencyAdminControllerTest {
   protected static final String ROOT_PATH = "/agencyadmin";
   protected static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
   protected static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
-  protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH +
-      "/agency/1/postcoderanges";
+  protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
+      + "/agency/1/postcoderanges";
   protected static final String PAGE_PARAM = "page";
   protected static final String PER_PAGE_PARAM = "perPage";
 
