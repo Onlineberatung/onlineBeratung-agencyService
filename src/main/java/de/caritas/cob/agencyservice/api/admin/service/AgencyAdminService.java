@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.CreateAgencyLinkBuilder;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
@@ -12,7 +13,6 @@ import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import javax.ws.rs.BadRequestException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -67,7 +67,7 @@ public class AgencyAdminService {
         .teamAgency(agencyDTO.getTeamAgency())
         .consultingType(
             ConsultingType.valueOf(agencyDTO.getConsultingType())
-                .orElseThrow(BadRequestException::new))
+                .orElseThrow(() -> new BadRequestException("Consulting type of agency dto does not exist")))
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();

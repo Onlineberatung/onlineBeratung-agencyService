@@ -566,7 +566,6 @@ components:
         - dioceseId
         - name
         - teamAgency
-        - offline
         - consultingType
       properties:
         dioceseId:
@@ -586,9 +585,6 @@ components:
           type: string
           example: "Muenchen"
         teamAgency:
-          type: boolean
-          example: false
-        offline:
           type: boolean
           example: false
         consultingType:

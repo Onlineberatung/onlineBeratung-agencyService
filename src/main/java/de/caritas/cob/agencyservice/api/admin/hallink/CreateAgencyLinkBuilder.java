@@ -8,7 +8,6 @@ import de.caritas.cob.agencyservice.api.model.CreateLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.service.LogService;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 
 public class CreateAgencyLinkBuilder implements HalLinkBuilder {
