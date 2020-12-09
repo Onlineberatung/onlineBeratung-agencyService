@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.exception.customheader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason;
 import org.junit.Test;
