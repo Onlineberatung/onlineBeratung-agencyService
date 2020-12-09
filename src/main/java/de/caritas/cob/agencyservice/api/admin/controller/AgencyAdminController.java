@@ -107,13 +107,17 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * PUT /agencyadmin/agency/{agencyId} : Updates an agency [Authorization: Role: agency-admin].
    *
    * @param agencyId Agency Id (required)
    * @param updateAgencyDTO  (required)
-   * @return {@link UpdateAgencyResponseDTO}
+   * @return OK - agency was updated successfully (status code 200)
+   *         or BAD REQUEST - invalid/incomplete request (status code 400)
+   *         or UNAUTHORIZED - no/invalid role/authorization (status code 401)
+   *         or INTERNAL SERVER ERROR - server encountered unexpected condition (status code 500)
    */
   @Override
-  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(@PathVariable Long agencyId,
+  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(Long agencyId,
       @Valid UpdateAgencyDTO updateAgencyDTO) {
     return null;
   }
