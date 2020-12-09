@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.config;
 
-import de.caritas.cob.agencyservice.api.admin.service.AgencyReindexer;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyReindexer;
 import javax.persistence.EntityManagerFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;

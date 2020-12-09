@@ -102,7 +102,312 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-
+  /agencyadmin/agency:
+    post:
+      tags:
+        - admin-agency-controller
+      summary: 'Creates a new agency [Authorization: Role: agency-admin]'
+      operationId: createAgency
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AgencyDTO'
+        required: true
+      responses:
+        201:
+          description: CREATED - agency was created successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/CreateAgencyResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}:
+    get:
+      tags:
+         - admin-agency-controller
+      summary: 'Get an agency [Authorization: Role: agency-admin]'
+      operationId: getAgency
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/GetAgencyResponseDTO'
+        204:
+          description: NO CONTENT - agency with the specific id was not found
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    delete:
+      tags:
+        - admin-agency-controller
+      summary: 'Flags an agency as deleted [Authorization: Role: agency-admin]'
+      operationId: deleteAgency
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency was deleted successfully
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    put:
+      tags:
+        - admin-agency-controller
+      summary: 'Updates an agency [Authorization: Role: agency-admin]'
+      operationId: updateAgency
+      requestBody:
+        content:
+          'application/hal+json':
+            schema:
+              $ref: '#/components/schemas/UpdateAgencyDTO'
+        required: true
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency was updated successfully
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UpdateAgencyResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}/postcoderange:
+    post:
+      tags:
+        - admin-agency-controller
+      summary: 'Creates a new postcode range for an agency [Authorization: Role: agency-admin]'
+      operationId: createAgencyPostcodeRange
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostCodeRangeDTO'
+        required: true
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        201:
+          description: CREATED - agency postcode range was created successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}/postcoderange/{postcodeRangeId}:
+    get:
+      tags:
+        - admin-agency-controller
+      summary: 'Get a specific postcode range for an agency [Authorization: Role: agency-admin]'
+      operationId: getAgencyPostcodeRange
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: postcodeRangeId
+          in: path
+          description: Postcode range id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency postcode range found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+        204:
+          description: NO CONTENT - agency postcode range with the specific id was not found
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    put:
+      tags:
+        - admin-agency-controller
+      summary: 'Updates an existing postcode range for an agency [Authorization: Role: agency-admin]'
+      operationId: updateAgencyPostcodeRange
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostCodeRangeDTO'
+        required: true
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: postcodeRangeId
+          in: path
+          description: Postcode range id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        201:
+          description: CREATED - agency postcode range was created successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    delete:
+      tags:
+        - admin-agency-controller
+      summary: 'Delete a specific postcode range for an agency [Authorization: Role: agency-admin]'
+      operationId: deleteAgencyPostcodeRange
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: postcodeRangeId
+          in: path
+          description: Postcode range id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency postcode range was deleted sucessfully
+        204:
+          description: NO CONTENT - agency postcode range with the specific id was not found
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}/postcoderanges:
+    get:
+      tags:
+        - admin-agency-controller
+      summary: 'Returns the list of the postcode ranges for an agency.  [Authorization: Role: agency-admin]'
+      operationId: getAgencyPostcodeRanges
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Number of page where to start (1 = first page)
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: perPage
+          in: query
+          description: Number of items which are being returned per page
+          required: true
+          schema:
+            type: integer
+            example: 20
+      responses:
+        200:
+          description: OK - successfull operation
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/AgencyPostcodeRangesResultDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 components:
   schemas:
     RootDTO:
@@ -121,6 +426,10 @@ components:
         self:
           $ref: '#/components/schemas/HalLink'
         agencies:
+          $ref: '#/components/schemas/HalLink'
+        agencypostcodes:
+          $ref: '#/components/schemas/HalLink'
+        dioceses:
           $ref: '#/components/schemas/HalLink'
 
     HalLink:
@@ -171,10 +480,10 @@ components:
           example: "Bonn"
         teamAgency:
           type: boolean
-          example: "false"
+          example: false
         offline:
           type: boolean
-          example: "false"
+          example: false
         consultingType:
           type: integer
           example: 1
@@ -201,6 +510,30 @@ components:
         postcodeTo:
           type: string
           example: "79106"
+
+    PostCodeRangeResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 684
+        agencyId:
+          type: integer
+          format: int64
+          example: 684
+        postcodeFrom:
+          type: string
+          example: "79106"
+        postcodeTo:
+          type: string
+          example: "79106"
+        createDate:
+          type: string
+          example: "2019-08-23T08:52:05"
+        updateDate:
+          type: string
+          example: "2019-12-02T13:12:08"
 
     DioceseAdminResultDTO:
       type: object
@@ -229,6 +562,118 @@ components:
           type: string
           example: "2019-12-02T13:12:08"
 
+    AgencyDTO:
+      type: object
+      required:
+        - dioceseId
+        - name
+        - teamAgency
+        - offline
+        - consultingType
+      properties:
+        dioceseId:
+          type: integer
+          format: int64
+          example: 12
+        name:
+          type: string
+          example: "Beratungstelle"
+        description:
+          type: string
+          example: "Beschreibung Beratungstelle..."
+        postcode:
+          type: string
+          example: "79106"
+        city:
+          type: string
+          example: "Muenchen"
+        teamAgency:
+          type: boolean
+          example: false
+        offline:
+          type: boolean
+          example: false
+        consultingType:
+          type: integer
+          example: 1
+
+    GetAgencyResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/GetLinks'
+
+    CreateAgencyResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/CreateLinks'
+
+    UpdateAgencyDTO:
+      type: object
+      required:
+        - dioceseId
+        - name
+        - offline
+      properties:
+        dioceseId:
+          type: integer
+          format: int64
+          example: 12
+        name:
+          type: string
+          example: "Beratungstelle"
+        description:
+          type: string
+          example: "Beschreibung Beratungstelle..."
+        postcode:
+          type: string
+          example: "79106"
+        city:
+          type: string
+          example: "Muenchen"
+        offline:
+          type: boolean
+          example: false
+
+    UpdateAgencyResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+        _links:
+          $ref: '#/components/schemas/UpdateLinks'
+
+    CreateAgencyPostcodeRangeResponseDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostCodeRangeResponseDTO'
+        _links:
+          $ref: '#/components/schemas/CreateLinks'
+
+    AgencyPostcodeRangesResultDTO:
+      type: object
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostCodeRangeResponseDTO'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+
     PaginationLinks:
       type: object
       required:
@@ -248,6 +693,42 @@ components:
           properties:
             search:
               $ref: '#/components/schemas/HalLink'
+
+    CreateLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/HalLink'
+        update:
+          $ref: '#/components/schemas/HalLink'
+        delete:
+          $ref: '#/components/schemas/HalLink'
+
+    UpdateLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/HalLink'
+        agency:
+          $ref: '#/components/schemas/HalLink'
+        delete:
+          $ref: '#/components/schemas/HalLink'
+
+    GetLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          $ref: '#/components/schemas/HalLink'
+        update:
+          $ref: '#/components/schemas/HalLink'
+        delete:
+          $ref: '#/components/schemas/HalLink'
 
   securitySchemes:
     Bearer:

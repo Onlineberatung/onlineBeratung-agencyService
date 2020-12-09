@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.admin.service;
+package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -9,10 +9,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;

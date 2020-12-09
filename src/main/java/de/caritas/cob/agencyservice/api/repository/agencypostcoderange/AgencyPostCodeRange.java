@@ -1,5 +1,7 @@
-package de.caritas.cob.agencyservice.api.repository.agency;
+package de.caritas.cob.agencyservice.api.repository.agencypostcoderange;
 
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,4 +51,10 @@ public class AgencyPostCodeRange {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "agency_id", nullable = false)
   private Agency agency;
+
+  @Column(name = "create_date")
+  private LocalDateTime createDate;
+
+  @Column(name = "update_date")
+  private LocalDateTime updateDate;
 }
