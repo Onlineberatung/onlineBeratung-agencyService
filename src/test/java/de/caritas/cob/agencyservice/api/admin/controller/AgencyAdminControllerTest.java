@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -144,7 +145,8 @@ public class AgencyAdminControllerTest {
             post(CREATE_AGENCY_PATH)
                 .content(new ObjectMapper().writeValueAsString(agencyDTO))
                 .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(header().string("X-Reason", "INVALID_CONSULTING_TYPE"));
 
   }
 
@@ -160,7 +162,8 @@ public class AgencyAdminControllerTest {
             post(CREATE_AGENCY_PATH)
                 .content(new ObjectMapper().writeValueAsString(agencyDTO))
                 .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(header().string("X-Reason", "INVALID_DIOCESE"));
 
   }
 
@@ -176,7 +179,8 @@ public class AgencyAdminControllerTest {
             post(CREATE_AGENCY_PATH)
                 .content(new ObjectMapper().writeValueAsString(agencyDTO))
                 .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(header().string("X-Reason", "INVALID_POSTCODE"));
 
   }
 }
