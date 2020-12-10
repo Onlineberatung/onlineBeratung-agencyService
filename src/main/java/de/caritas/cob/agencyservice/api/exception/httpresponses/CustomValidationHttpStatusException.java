@@ -4,6 +4,9 @@ import static java.util.Objects.nonNull;
 
 import java.util.function.Consumer;
 
+/**
+* Custom validation exception for http status with reason.
+*/
 public abstract class CustomValidationHttpStatusException extends RuntimeException {
 
   private final Consumer<Exception> loggingMethod;
@@ -15,7 +18,9 @@ public abstract class CustomValidationHttpStatusException extends RuntimeExcepti
     this.httpStatusExceptionReason = httpStatusExceptionReason;
   }
 
-  /** Executes the non null logging method. */
+  /**
+   * Executes the non null logging method.
+   */
   public void executeLogging() {
     if (nonNull(this.loggingMethod)) {
       this.loggingMethod.accept(this);
