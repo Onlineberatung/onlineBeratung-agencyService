@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.admin.service;
+package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import de.caritas.cob.agencyservice.api.service.LogService;
 import lombok.NonNull;

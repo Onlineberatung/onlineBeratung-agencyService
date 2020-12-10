@@ -1,21 +1,17 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
-import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
+import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
-import de.caritas.cob.agencyservice.api.model.GetAgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
@@ -36,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgencyAdminController implements AgencyadminApi {
 
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
+  private final @NonNull AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
   private final @NonNull DioceseAdminService dioceseAdminService;
   private final @NonNull AgencyAdminService agencyAdminService;
   private final @NonNull AgencyValidator agencyValidator;
@@ -99,6 +96,22 @@ public class AgencyAdminController implements AgencyadminApi {
     CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
     return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.CREATED);
+  }
+
+  /**
+   * Entry point to get the postcode ranges for a specific agency.
+   *
+   * @param agencyId Agency Id (required)
+   * @param page Number of page where to start (1 &#x3D; first page) (required)
+   * @param perPage Number of items which are being returned per page (required)
+   * @return an entity containing the search result
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(@PathVariable Long agencyId,
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
+    AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
+        .findPostCodeRangesForAgency(page, perPage, agencyId);
+    return ResponseEntity.ok(postCodeRangesForAgency);
   }
 
 }

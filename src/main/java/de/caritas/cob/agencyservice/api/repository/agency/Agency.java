@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
+import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
