@@ -20,6 +20,7 @@ public class TestConstants {
    */
 
   public static final String INIT_GROUP_NAME = "init";
+  public static final Integer INVALID_CONSULTING_TYPE_VALUE = -1;
   public static final ConsultingType CONSULTING_TYPE_SUCHT = ConsultingType.SUCHT;
   public static final ConsultingType CONSULTING_TYPE_U25 = ConsultingType.U25;
   public static final ConsultingType CONSULTING_TYPE_PREGNANCY = ConsultingType.PREGNANCY;
@@ -183,5 +184,7 @@ public class TestConstants {
   public static final String INVALID_POSTCODE_QUERY = "postcode=12";
   public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=99999";
   public static final String INVALID_AGENCY_ID = "12xX";
+
+  public static final Long INVALID_DIOCESE_ID = -1L;
 
 }
