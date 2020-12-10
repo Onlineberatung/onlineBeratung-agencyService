@@ -427,6 +427,8 @@ components:
           $ref: '#/components/schemas/HalLink'
         agencies:
           $ref: '#/components/schemas/HalLink'
+        agency:
+          $ref: '#/components/schemas/HalLink'
         agencypostcodes:
           $ref: '#/components/schemas/HalLink'
         dioceses:
@@ -568,7 +570,6 @@ components:
         - dioceseId
         - name
         - teamAgency
-        - offline
         - consultingType
       properties:
         dioceseId:
@@ -590,9 +591,6 @@ components:
         teamAgency:
           type: boolean
           example: false
-        offline:
-          type: boolean
-          example: false
         consultingType:
           type: integer
           example: 1
@@ -611,8 +609,6 @@ components:
       type: object
       properties:
         _embedded:
-          type: array
-          items:
             $ref: '#/components/schemas/AgencyAdminResponseDTO'
         _links:
           $ref: '#/components/schemas/CreateLinks'
@@ -648,9 +644,7 @@ components:
       type: object
       properties:
         _embedded:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+          $ref: '#/components/schemas/AgencyAdminResponseDTO'
         _links:
           $ref: '#/components/schemas/UpdateLinks'
 

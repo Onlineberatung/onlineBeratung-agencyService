@@ -1,21 +1,17 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
-import de.caritas.cob.agencyservice.api.model.GetAgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
@@ -38,6 +34,8 @@ public class AgencyAdminController implements AgencyadminApi {
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
   private final @NonNull AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
   private final @NonNull DioceseAdminService dioceseAdminService;
+  private final @NonNull AgencyAdminService agencyAdminService;
+  private final @NonNull AgencyValidator agencyValidator;
 
   /**
    * Creates the root hal based navigation entity.
@@ -53,14 +51,14 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to search for agencies.
    *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
+   * @param page Number of page where to start in the query (1 = first page) (required)
    * @param perPage Number of items which are being returned per page (required)
-   * @param q       The query parameter to search for (optional)
+   * @param q The query parameter to search for (optional)
    * @return an entity containing the search result
    */
   @Override
-  public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(@NotNull @Valid Integer page,
-      @NotNull @Valid Integer perPage, @Valid String q) {
+  public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
 
     AgencyAdminSearchResultDTO agencyAdminSearchResultDTO =
         this.agencyAdminSearchService.searchAgencies(q, page, perPage);
@@ -71,16 +69,16 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to return all dioceses.
    *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
+   * @param page Number of page where to start in the query (1 = first page) (required)
    * @param perPage Number of items which are being returned per page (required)
    * @return {@link DioceseAdminResultDTO}
    */
   @Override
-  public ResponseEntity<DioceseAdminResultDTO> getDioceses(@NotNull @Valid Integer page,
-      @NotNull @Valid Integer perPage) {
+  public ResponseEntity<DioceseAdminResultDTO> getDioceses(
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
 
-    DioceseAdminResultDTO dioceseAdminResultDTO = dioceseAdminService
-        .findAllDioceses(page, perPage);
+    DioceseAdminResultDTO dioceseAdminResultDTO =
+        dioceseAdminService.findAllDioceses(page, perPage);
 
     return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
   }
@@ -88,62 +86,16 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point for creating an agency.
    *
-   * @param agencyDTO  (required)
-   * @return {@link AgencyAdminResponseDTO}
+   * @param agencyDTO (required)
+   * @return {@link CreateAgencyResponseDTO}
    */
   @Override
   public ResponseEntity<CreateAgencyResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
-    return null;
-  }
 
-  /**
-   * Entry point for deleting an agency.
-   *
-   * @param agencyId  (required)
-   */
-  @Override
-  public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
-    return null;
-  }
+    agencyValidator.validate(agencyDTO);
+    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
-  /**
-   * PUT /agencyadmin/agency/{agencyId} : Updates an agency [Authorization: Role: agency-admin].
-   *
-   * @param agencyId Agency Id (required)
-   * @param updateAgencyDTO  (required)
-   * @return OK - agency was updated successfully (status code 200)
-   *         or BAD REQUEST - invalid/incomplete request (status code 400)
-   *         or UNAUTHORIZED - no/invalid role/authorization (status code 401)
-   *         or INTERNAL SERVER ERROR - server encountered unexpected condition (status code 500)
-   */
-  @Override
-  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(Long agencyId,
-      @Valid UpdateAgencyDTO updateAgencyDTO) {
-    return null;
-  }
-
-  /**
-   * Entry point for getting an agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @return {@link GetAgencyResponseDTO}
-   */
-  @Override
-  public ResponseEntity<GetAgencyResponseDTO> getAgency(@PathVariable Long agencyId) {
-    return null;
-  }
-
-  /**
-   * Entry point for creating a postcode range.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postCodeRangeDTO  (required)
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
-   */
-  @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
-      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
-    return null;
+    return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.CREATED);
   }
 
   /**
@@ -162,41 +114,4 @@ public class AgencyAdminController implements AgencyadminApi {
     return ResponseEntity.ok(postCodeRangesForAgency);
   }
 
-  /**
-   * Entry point to get a specific postcode range for an agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postcodeRangeId Postcode range id (required)
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
-   */
-  @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> getAgencyPostcodeRange(@PathVariable Long agencyId,
-      @PathVariable Long postcodeRangeId) {
-    return null;
-  }
-
-  /**
-   * Entry point to update an existing postcode range for an agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postcodeRangeId Postcode range id (required)
-   * @param postCodeRangeDTO  (required)
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
-   */
-  @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
-      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
-    return null;
-  }
-
-  /**
-   * Entry point to delete a specific agency postcode range.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postcodeRangeId Postcode range id (required)
-   */
-  @Override
-  public ResponseEntity<Void> deleteAgencyPostcodeRange(@PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
-    return null;
-  }
 }

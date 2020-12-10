@@ -10,9 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -46,6 +48,7 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 @Getter
 @Setter
 @Indexed
+@Builder
 @AnalyzerDef(name = Agency.SEARCH_ANALYZER,
     tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
     filters = {
@@ -64,7 +67,8 @@ public class Agency {
   public static final String SEARCH_ANALYZER = "searchAnalyzer";
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_seq")
   @Column(name = "id", updatable = false, nullable = false)
   private Long id;
 
@@ -84,16 +88,14 @@ public class Agency {
   @Column(name = "description", nullable = false)
   private String description;
 
-  @NonNull
   @Size(max = 5)
-  @Column(name = "postcode", nullable = false)
+  @Column(name = "postcode")
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
   private String postCode;
 
-  @NonNull
   @Size(max = 100)
-  @Column(name = "city", nullable = false)
+  @Column(name = "city")
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
   private String city;
@@ -113,10 +115,10 @@ public class Agency {
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;
 
-  @Column(name = "create_date")
+  @Column(name = "create_date", nullable = false)
   private LocalDateTime createDate;
 
-  @Column(name = "update_date")
+  @Column(name = "update_date", nullable = false)
   private LocalDateTime updateDate;
 
   @OneToMany(
