@@ -22,9 +22,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
@@ -34,43 +31,27 @@ import org.springframework.web.context.WebApplicationContext;
 public class AgencyValidatorIT {
 
   @Autowired
-  private WebApplicationContext webApplicationContext;
-  private MockMvc mockMvc;
+  private AgencyValidator agencyValidator;
 
   @Test(expected = InvalidPostcodeException.class)
   public void validate_Should_ThrowInvalidPostcodeException_WhenAgencyPostcodeIsInvalid() {
-
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-    AgencyValidator agencyValidator = (AgencyValidator) this.webApplicationContext.getBean("agencyValidator");
-
     AgencyDTO agencyDTO = getValidAgencyDTO();
     agencyDTO.setPostcode(INVALID_POSTCODE);
     agencyValidator.validate(agencyDTO);
-
   }
 
   @Test(expected = InvalidConsultingTypeException.class)
   public void validate_Should_ThrowInvalidConsultingTypeException_WhenAgencyConsultingTypeIsInvalid() {
-
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-    AgencyValidator agencyValidator = (AgencyValidator) this.webApplicationContext.getBean("agencyValidator");
-
     AgencyDTO agencyDTO = getValidAgencyDTO();
     agencyDTO.setConsultingType(INVALID_CONSULTING_TYPE_VALUE);
     agencyValidator.validate(agencyDTO);
-
   }
 
   @Test(expected = InvalidDioceseException.class)
   public void validate_Should_ThrowInvalidDioceseException_WhenAgencyDioceseIdIsInvalid() {
-
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-    AgencyValidator agencyValidator = (AgencyValidator) this.webApplicationContext.getBean("agencyValidator");
-
     AgencyDTO agencyDTO = getValidAgencyDTO();
     agencyDTO.setDioceseId(INVALID_DIOCESE_ID);
     agencyValidator.validate(agencyDTO);
-
   }
 
   private AgencyDTO getValidAgencyDTO() {

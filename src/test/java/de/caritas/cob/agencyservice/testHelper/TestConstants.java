@@ -176,7 +176,7 @@ public class TestConstants {
   public static final ConsultingTypeSettings CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY =
       new ConsultingTypeSettings(CONSULTING_TYPE_U25, WHITESPOT_AGENCIES_U25, REGISTRATION_U25);
 
-  public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<Agency>();
+  public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 
@@ -186,5 +186,15 @@ public class TestConstants {
   public static final String INVALID_AGENCY_ID = "12xX";
 
   public static final Long INVALID_DIOCESE_ID = -1L;
+
+  public static final String VALID_AGENCY_DTO = "{\n"
+      + "  \"city\": \"City\",\n"
+      + "  \"consultingType\": " + CONSULTING_TYPE_AIDS.getValue() + ",\n"
+      + "  \"description\": \"Description\",\n"
+      + "  \"dioceseId\": 1,\n"
+      + "  \"name\": \"Agency\",\n"
+      + "  \"postcode\": \"76000\",\n"
+      + "  \"teamAgency\": false\n"
+      + "}";
 
 }
