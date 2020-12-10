@@ -35,8 +35,8 @@ public class WhiteSpotMapBuilder {
    */
   public WhiteSpotMapBuilder addMappingEntry(ConsultingType consultingType,
       String whiteSpotAgencyId) {
-    Long whiteSpotAgencyValue = isNotBlank(whiteSpotAgencyId) ?
-        Long.parseLong(whiteSpotAgencyId) : null;
+    Long whiteSpotAgencyValue = isNotBlank(whiteSpotAgencyId)
+        ? Long.parseLong(whiteSpotAgencyId) : null;
     this.whiteSpotMapping.put(consultingType.getValue(), whiteSpotAgencyValue);
     return this;
   }
