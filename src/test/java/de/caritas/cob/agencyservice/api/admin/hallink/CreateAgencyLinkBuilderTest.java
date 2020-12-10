@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.CreateLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -19,8 +18,7 @@ public class CreateAgencyLinkBuilderTest {
     EasyRandom easyRandom = new EasyRandom();
     Agency agency = easyRandom.nextObject(Agency.class);
 
-    CreateLinks createLinks = CreateAgencyLinkBuilder.getInstance()
-        .withAgency(agency)
+    CreateLinks createLinks = CreateAgencyLinkBuilder.getInstance(agency)
         .buildCreateAgencyLinks();
 
     assertThat(createLinks, notNullValue());
@@ -39,11 +37,10 @@ public class CreateAgencyLinkBuilderTest {
 
   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void buildCreateAgencyLinks_Should_ThrowInternalServerException_WhenAgencyIsNotSet() {
+  @Test(expected = NullPointerException.class)
+  public void buildCreateAgencyLinks_Should_ThrowNullPointerException_WhenAgencyIsNotSet() {
 
-    CreateLinks createLinks = CreateAgencyLinkBuilder.getInstance()
-        .buildCreateAgencyLinks();
+    CreateAgencyLinkBuilder.getInstance(null).buildCreateAgencyLinks();
 
   }
 

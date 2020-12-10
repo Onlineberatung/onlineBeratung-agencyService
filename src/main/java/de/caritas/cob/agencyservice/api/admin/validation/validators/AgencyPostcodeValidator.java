@@ -6,7 +6,9 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeE
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import org.springframework.stereotype.Component;
 
-/** Postcode validator for an {@link AgencyDTO}. */
+/**
+ * Postcode validator for an {@link AgencyDTO}.
+ */
 @Component
 public class AgencyPostcodeValidator implements ConcreteAgencyValidator {
 

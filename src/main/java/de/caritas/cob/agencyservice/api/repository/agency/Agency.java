@@ -88,13 +88,13 @@ public class Agency {
   private String description;
 
   @Size(max = 5)
-  @Column(name = "postcode", nullable = true)
+  @Column(name = "postcode")
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
   private String postCode;
 
   @Size(max = 100)
-  @Column(name = "city", nullable = true)
+  @Column(name = "city")
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
   private String city;

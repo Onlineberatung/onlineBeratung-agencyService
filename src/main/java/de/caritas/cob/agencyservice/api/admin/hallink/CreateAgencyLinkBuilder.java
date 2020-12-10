@@ -1,39 +1,33 @@
 package de.caritas.cob.agencyservice.api.admin.hallink;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.CreateLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 
+/**
+ * Link builder to create hal links for create agency results.
+ */
 public class CreateAgencyLinkBuilder implements HalLinkBuilder {
 
-  private Agency agency;
+  private final Agency agency;
 
-  private CreateAgencyLinkBuilder() {}
+  private CreateAgencyLinkBuilder(Agency agency) {
+    this.agency = agency;
+  }
 
   /**
    * Creates an {@link CreateAgencyLinkBuilder} instance.
    *
    * @return a instance of {@link CreateAgencyLinkBuilder}
    */
-  public static CreateAgencyLinkBuilder getInstance() {
-    return new CreateAgencyLinkBuilder();
-  }
-
-  /**
-   * Sets the agency param.
-   *
-   * @param agency the {@link Agency} for building links
-   * @return the current {@link CreateAgencyLinkBuilder}
-   */
-  public CreateAgencyLinkBuilder withAgency(Agency agency) {
-    this.agency = agency;
-    return this;
+  public static CreateAgencyLinkBuilder getInstance(Agency agency) {
+    requireNonNull(agency);
+    return new CreateAgencyLinkBuilder(agency);
   }
 
   /**
@@ -42,24 +36,13 @@ public class CreateAgencyLinkBuilder implements HalLinkBuilder {
    * @return the generated {@link CreateAgencyLinkBuilder}
    */
   public CreateLinks buildCreateAgencyLinks() {
-    ensureNonNullAgency();
     return new CreateLinks()
         .self(buildSelfLink())
         .delete(buildDeleteHalLink())
         .update(buildUpdateHalLink());
   }
 
-  private void ensureNonNullAgency() {
-    if (isNull(this.agency)) {
-      throw new InternalServerErrorException("Agency must not be null");
-    }
-  }
-
   private HalLink buildSelfLink() {
-    return buildHalLinkForParams(this.agency);
-  }
-
-  private HalLink buildHalLinkForParams(Agency agency) {
     return buildHalLink(methodOn(AgencyadminApi.class).getAgency(agency.getId()), MethodEnum.GET);
   }
 

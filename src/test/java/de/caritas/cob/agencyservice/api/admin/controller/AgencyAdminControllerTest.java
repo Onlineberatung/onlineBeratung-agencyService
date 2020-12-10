@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
@@ -65,7 +64,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void searchAgencies_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
       throws Exception {
-    this.mvc.perform(get(AGENCY_SEARCH_PATH)).andExpect(status().isBadRequest());
+    this.mvc.perform(get(AGENCY_SEARCH_PATH))
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -105,7 +105,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void getDioceses_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
       throws Exception {
-    this.mvc.perform(get(GET_DIOCESES_PATH)).andExpect(status().isBadRequest());
+    this.mvc.perform(get(GET_DIOCESES_PATH))
+        .andExpect(status().isBadRequest());
   }
 
   @Test

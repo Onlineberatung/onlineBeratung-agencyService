@@ -5,7 +5,9 @@ import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import org.springframework.stereotype.Component;
 
-/** Consulting type validator for an {@link AgencyDTO}. */
+/**
+ * Consulting type validator for an {@link AgencyDTO}.
+ */
 @Component
 public class AgencyConsultingTypeValidator implements ConcreteAgencyValidator {
 

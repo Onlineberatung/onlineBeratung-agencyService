@@ -30,7 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class AgencyAdminServiceTestIT {
+public class AgencyAdminServiceIT {
 
   @Autowired private AgencyAdminService agencyAdminService;
   @Autowired private AgencyRepository agencyRepository;

@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+/**
+ * Validator registry for an agency.
+ */
 @Service
 @RequiredArgsConstructor
 public class AgencyValidator {
@@ -14,7 +17,7 @@ public class AgencyValidator {
   private final @NonNull ApplicationContext applicationContext;
 
   /**
-   * Validates an {@link AgencyDTO}
+   * Validates an {@link AgencyDTO}.
    *
    * @param agencyDTO (required)
    */

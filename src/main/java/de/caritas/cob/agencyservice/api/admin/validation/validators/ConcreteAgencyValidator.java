@@ -4,5 +4,5 @@ import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 
 public interface ConcreteAgencyValidator {
 
-  public void validate(AgencyDTO agencyDTO);
+  void validate(AgencyDTO agencyDTO);
 }

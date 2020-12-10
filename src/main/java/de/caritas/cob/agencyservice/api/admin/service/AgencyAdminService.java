@@ -18,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-/** Service class to handle agency admin requests. */
+/**
+ * Service class to handle agency admin requests.
+ */
 @Service
 @RequiredArgsConstructor
 public class AgencyAdminService {
@@ -41,7 +43,7 @@ public class AgencyAdminService {
     }
 
     CreateLinks createLinks =
-        CreateAgencyLinkBuilder.getInstance().withAgency(agency).buildCreateAgencyLinks();
+        CreateAgencyLinkBuilder.getInstance(agency).buildCreateAgencyLinks();
 
     return new CreateAgencyResponseDTO()
         .embedded(new AgencyAdminResponseDTOBuilder(agency).fromAgency())

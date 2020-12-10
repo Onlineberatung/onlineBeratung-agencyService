@@ -3,7 +3,7 @@ package de.caritas.cob.agencyservice.api;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
 import de.caritas.cob.agencyservice.api.exception.customheader.CustomHttpHeader;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomHttpStatusException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomValidationHttpStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
@@ -157,7 +157,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * 400 - Bad Request.
    *
-   * @param ex CustomHttpStatusException
+   * @param ex CustomValidationHttpStatusException
    * @param request WebRequest
    * @return a ResponseEntity instance
    */
@@ -165,7 +165,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       InvalidDioceseException.class
   })
   public ResponseEntity<Object> handleInternal(
-      final CustomHttpStatusException ex, final WebRequest request) {
+      final CustomValidationHttpStatusException ex, final WebRequest request) {
     ex.executeLogging();
 
     return handleExceptionInternal(

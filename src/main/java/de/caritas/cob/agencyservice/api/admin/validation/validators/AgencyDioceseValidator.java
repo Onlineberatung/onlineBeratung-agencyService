@@ -1,7 +1,5 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
-import static java.util.Objects.nonNull;
-
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.diocese.DioceseRepository;
@@ -9,7 +7,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/** Diocese validator for an {@link AgencyDTO}. */
+/*
+* Diocese validator for an {@link AgencyDTO}.
+ */
 @Component
 @RequiredArgsConstructor
 public class AgencyDioceseValidator implements ConcreteAgencyValidator {

@@ -27,7 +27,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Controller to handle all agency admin requests. */
+/**
+ * Controller to handle all agency admin requests.
+ */
 @RestController
 @Api(tags = "admin-agency-controller")
 @RequiredArgsConstructor
@@ -99,103 +101,4 @@ public class AgencyAdminController implements AgencyadminApi {
     return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.CREATED);
   }
 
-  /**
-   * Entry point for deleting an agency.
-   *
-   * @param agencyId (required)
-   */
-  @Override
-  public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
-    return null;
-  }
-
-  /**
-   * @param agencyId Agency Id (required)
-   * @param updateAgencyDTO (required)
-   * @return {@link UpdateAgencyResponseDTO}
-   */
-  @Override
-  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(
-      @PathVariable Long agencyId, @Valid UpdateAgencyDTO updateAgencyDTO) {
-    return null;
-  }
-
-  /**
-   * Entry point for getting an agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @return {@link GetAgencyResponseDTO}
-   */
-  @Override
-  public ResponseEntity<GetAgencyResponseDTO> getAgency(@PathVariable Long agencyId) {
-    return null;
-  }
-
-  /**
-   * Entry point for creating a postcode range.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postCodeRangeDTO (required)
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
-   */
-  @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
-      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
-    return null;
-  }
-
-  /**
-   * Entry point to get the postcode ranges for a specific agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param page Number of page where to start (1 &#x3D; first page) (required)
-   * @param perPage Number of items which are being returned per page (required)
-   * @return an entity containing the search result
-   */
-  @Override
-  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
-      @PathVariable Long agencyId, @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
-    return null;
-  }
-
-  /**
-   * Entry point to get a specific postcode range for an agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postcodeRangeId Postcode range id (required)
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
-   */
-  @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> getAgencyPostcodeRange(
-      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
-    return null;
-  }
-
-  /**
-   * Entry point to update an existing postcode range for an agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postcodeRangeId Postcode range id (required)
-   * @param postCodeRangeDTO (required)
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
-   */
-  @Override
-  public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
-      @PathVariable Long agencyId,
-      @PathVariable Long postcodeRangeId,
-      @Valid PostCodeRangeDTO postCodeRangeDTO) {
-    return null;
-  }
-
-  /**
-   * Entry point to delete a specific agency postcode range.
-   *
-   * @param agencyId Agency Id (required)
-   * @param postcodeRangeId Postcode range id (required)
-   */
-  @Override
-  public ResponseEntity<Void> deleteAgencyPostcodeRange(
-      @PathVariable Long agencyId, @PathVariable Long postcodeRangeId) {
-    return null;
-  }
 }

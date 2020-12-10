@@ -1,8 +1,13 @@
 package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
-public class InvalidConsultingTypeException extends CustomHttpStatusException {
+/**
+ * Exception, when consulting type is invalid.
+ */
+public class InvalidConsultingTypeException extends CustomValidationHttpStatusException {
 
-  /** InvalidConsultingTypeException - BAD REQUEST 400. */
+  /**
+   * InvalidConsultingTypeException - BAD REQUEST 400.
+   */
   public InvalidConsultingTypeException() {
     super(HttpStatusExceptionReason.INVALID_CONSULTING_TYPE);
   }

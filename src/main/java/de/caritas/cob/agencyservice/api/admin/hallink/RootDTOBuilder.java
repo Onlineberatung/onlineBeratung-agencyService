@@ -28,7 +28,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
         .links(new RootLinks()
             .self(buildSelfLink())
             .agencies(buildSearchLink())
-            .agency(buildCreateLink()));
+            .agency(buildCreateAgencyLink()));
   }
 
   private HalLink buildSelfLink() {
@@ -41,7 +41,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
         MethodEnum.GET);
   }
 
-  private HalLink buildCreateLink() {
+  private HalLink buildCreateAgencyLink() {
     return buildHalLink(
         methodOn(AgencyadminApi.class).createAgency(new AgencyDTO()),
         MethodEnum.POST);
