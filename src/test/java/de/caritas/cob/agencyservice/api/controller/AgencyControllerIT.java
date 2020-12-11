@@ -9,7 +9,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALIDAGENC
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_MEDIUM_POSTCODE_QUERY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_QUERY;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -78,7 +78,7 @@ public class AgencyControllerIT {
         .thenReturn(null);
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
             + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
@@ -99,7 +99,7 @@ public class AgencyControllerIT {
       throws Exception {
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
             + INVALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
@@ -117,7 +117,7 @@ public class AgencyControllerIT {
   public void getAgencies_Should_ReturnBadRequest_When_ConsultingTypeParamIsNotProvided()
       throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
@@ -131,7 +131,7 @@ public class AgencyControllerIT {
         .thenReturn(agencies);
 
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
             + VALID_CONSULTING_TYPE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -181,7 +181,7 @@ public class AgencyControllerIT {
         LogService::logDatabaseError, "message");
     when(agencyService.getAgencies(any(), any())).thenThrow(dbEx);
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
@@ -213,7 +213,7 @@ public class AgencyControllerIT {
 
     when(agencyService.getAgencies(any(), any())).thenThrow(nfEx);
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
@@ -225,7 +225,7 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_Should_ReturnBadRequest_When_ConsultingTypeIsNull() throws Exception {
     mvc.perform(
-        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_MEDIUM_POSTCODE_QUERY + "&"
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
             + "consultingType=").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }

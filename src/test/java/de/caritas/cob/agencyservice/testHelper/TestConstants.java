@@ -136,26 +136,25 @@ public class TestConstants {
 
   public static final String POSTCODE = "postcode";
   public static final String FIELD_AGENCY_ID = "id";
-  public static final String VALID_FULL_POSTCODE = "12345";
+  public static final String VALID_POSTCODE = "12345";
   public static final String AGENCY_CITY = "Test city";
-  public static final String VALID_MEDIUM_POSTCODE = "884";
-  public static final String VALID_MEDIUM_POSTCODE_QUERY = "postcode=884";
-  public static final int VALID_MEDIUM_INT = 3;
+  public static final String VALID_POSTCODE_QUERY = "postcode=88488";
+  public static final int VALID_POSTCODE_LENGTH = 5;
   public static final Long AGENCY_ID = 98L;
   public static final String AGENCY_NAME = "Test agency";
   public static final String AGENCY_DESCRIPTION = "Test description";
   public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      VALID_FULL_POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, null, null,
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, null, null,
       null);
   public static final Agency AGENCY_ONLINE_U25 =
-      new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, VALID_FULL_POSTCODE, "Test city",
+      new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
           false, CONSULTING_TYPE_U25, false, null, null, null, null);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      VALID_FULL_POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, null, null, null);
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, null, null, null);
   public static final Agency TEAM_AGENCY = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      VALID_FULL_POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null, null, null, null);
+      POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
-      new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(VALID_FULL_POSTCODE)
+      new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
       .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
           .consultingType(CONSULTING_TYPE_SUCHT.getValue());
   public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(AGENCY_RESPONSE_DTO);
@@ -163,17 +162,15 @@ public class TestConstants {
   public static final int MIN_POSTCODE_SIZE_5 = 5;
   public static final WhiteSpot WHITESPOT_AGENCIES_SUCHT = new WhiteSpot(true, WHITESPOT_AGENCY_ID);
   public static final WhiteSpot WHITESPOT_AGENCIES_U25 = new WhiteSpot(false, WHITESPOT_AGENCY_ID);
-  public static final WhiteSpot WHITESPOT_AGENCIES_EMIGRATION = new WhiteSpot(false, WHITESPOT_AGENCY_ID);
   public static final Registration REGISTRATION_SUCHT = new Registration(MIN_POSTCODE_SIZE_3);
   public static final Registration REGISTRATION_U25 = new Registration(MIN_POSTCODE_SIZE_3);
-  public static final Registration REGISTRATION_EMIGRATION = new Registration(MIN_POSTCODE_SIZE_5);
   public static final ConsultingTypeSettings CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY =
       new ConsultingTypeSettings(CONSULTING_TYPE_SUCHT, WHITESPOT_AGENCIES_SUCHT,
           REGISTRATION_SUCHT);
   public static final ConsultingTypeSettings CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY =
       new ConsultingTypeSettings(CONSULTING_TYPE_U25, WHITESPOT_AGENCIES_U25, REGISTRATION_U25);
 
-  public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<Agency>();
+  public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 
