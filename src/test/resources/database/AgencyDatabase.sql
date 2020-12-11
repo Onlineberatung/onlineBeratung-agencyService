@@ -23,6 +23,9 @@ create table AGENCY (
   primary key (ID),
   foreign key (DIOCESE_ID) references DIOCESE(ID)
 );
+CREATE SEQUENCE SEQUENCE_AGENCY
+    START WITH 100000
+    INCREMENT BY 1;
 create table AGENCY_POSTCODE_RANGE (
   ID bigint not null,
   AGENCY_ID bigint not null,

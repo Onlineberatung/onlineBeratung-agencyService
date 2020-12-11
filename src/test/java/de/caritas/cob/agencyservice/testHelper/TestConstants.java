@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.testHelper;
 
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class TestConstants {
    */
 
   public static final String INIT_GROUP_NAME = "init";
+  public static final Integer INVALID_CONSULTING_TYPE_VALUE = -1;
   public static final ConsultingType CONSULTING_TYPE_SUCHT = ConsultingType.SUCHT;
   public static final ConsultingType CONSULTING_TYPE_U25 = ConsultingType.U25;
   public static final ConsultingType CONSULTING_TYPE_PREGNANCY = ConsultingType.PREGNANCY;
@@ -177,5 +179,18 @@ public class TestConstants {
   public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
   public static final String INVALID_POSTCODE_QUERY = "postcode=12";
   public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=99999";
-  public static final String INVALIDAGENCY_ID = "12xX";
+  public static final String INVALID_AGENCY_ID = "12xX";
+
+  public static final Long INVALID_DIOCESE_ID = -1L;
+
+  public static final String VALID_AGENCY_DTO = "{\n"
+      + "  \"city\": \"City\",\n"
+      + "  \"consultingType\": " + CONSULTING_TYPE_AIDS.getValue() + ",\n"
+      + "  \"description\": \"Description\",\n"
+      + "  \"dioceseId\": 1,\n"
+      + "  \"name\": \"Agency\",\n"
+      + "  \"postcode\": \"76000\",\n"
+      + "  \"teamAgency\": false\n"
+      + "}";
+
 }
