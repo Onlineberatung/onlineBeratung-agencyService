@@ -1,7 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_FULL_POSTCODE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
@@ -27,7 +27,7 @@ public class AgencyPostcodeValidatorTest {
 
   @Test
   public void validate_Should_ThrowNoException_WhenPostcodeIsValid() {
-    this.agencyDTO.setPostcode(VALID_FULL_POSTCODE);
+    this.agencyDTO.setPostcode(VALID_POSTCODE);
     new AgencyPostcodeValidator().validate(agencyDTO);
   }
 
