@@ -3,6 +3,6 @@
 		"whiteSpotAgencyAssigned": false
 	},
 	"registration": {
-		"minPostcodeSize": 3
+		"minPostcodeSize": 5
 	}
 }
