@@ -1,13 +1,13 @@
-package de.caritas.cob.agencyservice.api.admin.service;
+package de.caritas.cob.agencyservice.api.admin.service.agency;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class AgencyAdminResponseDTOBuilderTest {
   public void fromAgency_Should_returnFullMappedResponseDTO_When_agencyHasAllPropertiesSet() {
     Agency agency = new Agency();
     agency.setAgencyPostCodeRanges(Collections.singletonList(new AgencyPostCodeRange(1L, "from",
-        "to", agency)));
+        "to", agency, null, null)));
     agency.setCity("city");
     agency.setPostCode("postcode");
     agency.setConsultingType(ConsultingType.CHILDREN);

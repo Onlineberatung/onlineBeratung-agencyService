@@ -2,7 +2,7 @@ package de.caritas.cob.agencyservice.api.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import de.caritas.cob.agencyservice.api.exception.BadRequestException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.service.AgencyService;

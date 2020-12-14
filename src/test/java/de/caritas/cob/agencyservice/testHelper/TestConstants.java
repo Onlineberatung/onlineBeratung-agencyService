@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.testHelper;
 
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class TestConstants {
    */
 
   public static final String INIT_GROUP_NAME = "init";
+  public static final Integer INVALID_CONSULTING_TYPE_VALUE = -1;
   public static final ConsultingType CONSULTING_TYPE_SUCHT = ConsultingType.SUCHT;
   public static final ConsultingType CONSULTING_TYPE_U25 = ConsultingType.U25;
   public static final ConsultingType CONSULTING_TYPE_PREGNANCY = ConsultingType.PREGNANCY;
@@ -137,6 +139,7 @@ public class TestConstants {
   public static final String POSTCODE = "postcode";
   public static final String FIELD_AGENCY_ID = "id";
   public static final String VALID_FULL_POSTCODE = "12345";
+  public static final String INVALID_POSTCODE = "123456";
   public static final String AGENCY_CITY = "Test city";
   public static final String VALID_MEDIUM_POSTCODE = "884";
   public static final String VALID_MEDIUM_POSTCODE_QUERY = "postcode=884";
@@ -173,12 +176,25 @@ public class TestConstants {
   public static final ConsultingTypeSettings CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY =
       new ConsultingTypeSettings(CONSULTING_TYPE_U25, WHITESPOT_AGENCIES_U25, REGISTRATION_U25);
 
-  public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<Agency>();
+  public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 
   public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
   public static final String INVALID_POSTCODE_QUERY = "postcode=12";
   public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=99999";
-  public static final String INVALIDAGENCY_ID = "12xX";
+  public static final String INVALID_AGENCY_ID = "12xX";
+
+  public static final Long INVALID_DIOCESE_ID = -1L;
+
+  public static final String VALID_AGENCY_DTO = "{\n"
+      + "  \"city\": \"City\",\n"
+      + "  \"consultingType\": " + CONSULTING_TYPE_AIDS.getValue() + ",\n"
+      + "  \"description\": \"Description\",\n"
+      + "  \"dioceseId\": 1,\n"
+      + "  \"name\": \"Agency\",\n"
+      + "  \"postcode\": \"76000\",\n"
+      + "  \"teamAgency\": false\n"
+      + "}";
+
 }

@@ -17,6 +17,7 @@ public class SearchResultLinkBuilder implements HalLinkBuilder {
 
   private Integer page;
   private Integer perPage;
+  private Integer totalResults;
   private String keyword;
 
   private SearchResultLinkBuilder() {}
@@ -49,6 +50,17 @@ public class SearchResultLinkBuilder implements HalLinkBuilder {
    */
   public SearchResultLinkBuilder withPerPage(Integer perPage) {
     this.perPage = perPage;
+    return this;
+  }
+
+  /**
+   * Sets the totalResults param.
+   *
+   * @param totalResults the total amount of results items.
+   * @return the current {@link SearchResultLinkBuilder}
+   */
+  public SearchResultLinkBuilder withTotalResults(Integer totalResults) {
+    this.totalResults = totalResults;
     return this;
   }
 
@@ -92,14 +104,21 @@ public class SearchResultLinkBuilder implements HalLinkBuilder {
   }
 
   private HalLink buildNextLink() {
-    return buildHalLinkForParams(this.page + 1, this.perPage, this.keyword);
+    return hasNextPage() ? buildHalLinkForParams(this.page + 1, this.perPage, this.keyword)
+        : null;
+  }
+
+  private boolean hasNextPage() {
+    return nonNull(this.totalResults) && this.page * this.perPage < this.totalResults;
   }
 
   private HalLink buildPreviousLink() {
-    if (this.page > 1) {
-      return buildHalLinkForParams(this.page - 1, this.perPage, this.keyword);
-    }
-    return null;
+    return hasPreviousPage() ? buildHalLinkForParams(this.page - 1, this.perPage, this.keyword)
+        : null;
+  }
+
+  private boolean hasPreviousPage() {
+    return this.page > 1;
   }
 
   private HalLink buildSearchLink() {

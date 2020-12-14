@@ -1,22 +1,26 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.endsWith;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
-import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,77 +28,79 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class AgencyAdminServiceIT {
 
-  @Autowired
-  private AgencyAdminService agencyAdminService;
+  @Autowired private AgencyAdminService agencyAdminService;
+  @Autowired private AgencyRepository agencyRepository;
 
   @Test
-  public void buildAgencyAdminSearchResult_Should_returnExpectedMappedResponseDTO_When_searchForSpecialAgency() {
-    String keyword = "Schwangerschaftsberatungsstelle";
+  public void saveAgency_Should_PersistsAgency() {
 
-    AgencyAdminResponseDTO firstSearchResult =
-        this.agencyAdminService
-            .buildAgencyAdminSearchResult(keyword, 0, 1).getEmbedded().iterator().next();
+    AgencyDTO agencyDTO = createAgencyDTO();
 
-    assertThat(firstSearchResult.getAgencyId(), is(846L));
-    assertThat(firstSearchResult.getCity(), is("Schwelm"));
-    assertThat(firstSearchResult.getConsultingType(), is(2));
-    assertThat(firstSearchResult.getCreateDate(), is("2019-08-23T08:52:05"));
-    assertThat(firstSearchResult.getUpdateDate(), is("2019-08-23T08:52:05"));
-    assertThat(firstSearchResult.getDeleteDate(), is("null"));
-    assertThat(firstSearchResult.getDioceseId(), is(10L));
-    assertThat(firstSearchResult.getName(), is("Schwangerschaftsberatungsstelle Schwelm"));
-    assertThat(firstSearchResult.getOffline(), is(false));
-    assertThat(firstSearchResult.getPostcode(), is("58332"));
-    assertThat(firstSearchResult.getTeamAgency(), is(false));
-    assertThat(firstSearchResult.getPostCodeRanges(), hasSize(3));
-    assertThat(firstSearchResult.getPostCodeRanges().get(0).getPostcodeFrom(), is("45536"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(0).getPostcodeTo(), is("45549"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(1).getPostcodeFrom(), is("58240"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(1).getPostcodeTo(), is("58300"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(2).getPostcodeFrom(), is("58314"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(2).getPostcodeTo(), is("58332"));
+    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+
+    Optional<Agency> agencyOptional =
+        agencyRepository.findById(createAgencyResponseDTO.getEmbedded().getAgencyId());
+    Agency agency = agencyOptional.get();
+    assertTrue(agency.isTeamAgency());
+    assertEquals(ConsultingType.SOCIAL, agency.getConsultingType());
+    assertEquals(0L, agency.getDioceseId().longValue());
+    assertEquals("12345", agency.getPostCode());
+    assertEquals("Agency description", agency.getDescription());
+    assertEquals("Agency name", agency.getName());
+    assertTrue(agency.isOffline());
   }
 
   @Test
-  public void buildAgencyAdminSearchResult_Should_returnEmptyListForPostCodeRanges_When_searchForAgencyWithoutPostcodeRanges() {
-    String keyword = "Kreis-Caritasverband Burghausen e.V.";
+  public void saveAgency_Should_SetOfflineToTrue_WhenPersistsAgency() {
 
-    AgencyAdminResponseDTO firstSearchResult =
-        this.agencyAdminService
-            .buildAgencyAdminSearchResult(keyword, 0, 1).getEmbedded().iterator().next();
+    AgencyDTO agencyDTO = createAgencyDTO();
 
-    assertThat(firstSearchResult.getPostCodeRanges(), hasSize(0));
+    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+
+    Optional<Agency> agencyOptional =
+        agencyRepository.findById(createAgencyResponseDTO.getEmbedded().getAgencyId());
+    Agency agency = agencyOptional.get();
+    assertTrue(agency.isOffline());
   }
 
   @Test
-  public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_search() {
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminService
-        .buildAgencyAdminSearchResult("q", 1, 20);
+  public void saveAgency_Should_ProvideValidCreateLinks() {
 
-    SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
-    assertThat(searchResultLinks.getSelf(), notNullValue());
-    assertThat(searchResultLinks.getSelf().getHref(),
-        endsWith("/agencyadmin/agencies?page=1&perPage=20&q=q"));
-    assertThat(searchResultLinks.getPrevious(), nullValue());
-    assertThat(searchResultLinks.getNext(), notNullValue());
-    assertThat(searchResultLinks.getNext().getHref(),
-        endsWith("/agencyadmin/agencies?page=2&perPage=20&q=q"));
-    assertThat(searchResultLinks.getSearch(), notNullValue());
-    assertThat(searchResultLinks.getSearch().getHref(),
-        endsWith("/agencyadmin/agencies?page=1&perPage=20{&q}"));
+    AgencyDTO agencyDTO = createAgencyDTO();
+
+    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    assertThat(createAgencyResponseDTO.getLinks().getDelete(), notNullValue());
+    assertThat(
+        createAgencyResponseDTO.getLinks().getDelete().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
+    assertThat(createAgencyResponseDTO.getLinks().getSelf(), notNullValue());
+    assertThat(
+        createAgencyResponseDTO.getLinks().getSelf().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
+    assertThat(createAgencyResponseDTO.getLinks().getUpdate(), notNullValue());
+    assertThat(
+        createAgencyResponseDTO.getLinks().getUpdate().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
   }
 
-  @Test
-  public void buildAgencyAdminSearchResult_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminService
-        .buildAgencyAdminSearchResult("q", 10, 20);
+  private AgencyDTO createAgencyDTO() {
 
-    SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
-    assertThat(searchResultLinks.getPrevious(), notNullValue());
-    assertThat(searchResultLinks.getPrevious().getHref(),
-        endsWith("/agencyadmin/agencies?page=9&perPage=20&q=q"));
+    AgencyDTO agencyDTO = new AgencyDTO();
+    agencyDTO.setTeamAgency(true);
+    agencyDTO.setConsultingType(ConsultingType.SOCIAL.getValue());
+    agencyDTO.setDioceseId(0L);
+    agencyDTO.setPostcode("12345");
+    agencyDTO.setDescription("Agency description");
+    agencyDTO.setName("Agency name");
+    return agencyDTO;
   }
-
 }

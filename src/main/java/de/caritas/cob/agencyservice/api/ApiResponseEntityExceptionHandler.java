@@ -1,8 +1,13 @@
 package de.caritas.cob.agencyservice.api;
 
-import de.caritas.cob.agencyservice.api.exception.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
-import de.caritas.cob.agencyservice.api.exception.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.customheader.CustomHttpHeader;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomValidationHttpStatusException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.net.UnknownHostException;
 import javax.validation.ConstraintViolationException;
@@ -24,7 +29,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 /**
  * Customizes API error/exception handling to hide information and/or possible security
  * vulnerabilities.
- *
  */
 @NoArgsConstructor
 @ControllerAdvice
@@ -39,8 +43,8 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @return response entity
    */
   @ExceptionHandler({BadRequestException.class})
-  public ResponseEntity<Object> handleCustomBadRequest(final BadRequestException ex,
-      final WebRequest request) {
+  public ResponseEntity<Object> handleCustomBadRequest(
+      final BadRequestException ex, final WebRequest request) {
     LogService.logWarning(ex);
 
     return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -48,14 +52,14 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
   /**
    * Constraint violations.
-   * 
+   *
    * @param ex the thrown exception
    * @param request web request
    * @return response entity
    */
   @ExceptionHandler({ConstraintViolationException.class})
-  public ResponseEntity<Object> handleBadRequest(final ConstraintViolationException ex,
-      final WebRequest request) {
+  public ResponseEntity<Object> handleBadRequest(
+      final ConstraintViolationException ex, final WebRequest request) {
     LogService.logWarning(ex);
 
     return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -72,7 +76,9 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    */
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(
-      final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatus status,
+      final HttpMessageNotReadableException ex,
+      final HttpHeaders headers,
+      final HttpStatus status,
       final WebRequest request) {
     LogService.logWarning(status, ex);
 
@@ -90,7 +96,9 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    */
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status,
+      final MethodArgumentNotValidException ex,
+      final HttpHeaders headers,
+      final HttpStatus status,
       final WebRequest request) {
     LogService.logWarning(status, ex);
 
@@ -99,14 +107,14 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
   /**
    * 409 - Conflict.
-   * 
+   *
    * @param ex the thrown exception
    * @param request web request
    * @return response entity
    */
   @ExceptionHandler({InvalidDataAccessApiUsageException.class, DataAccessException.class})
-  protected ResponseEntity<Object> handleConflict(final RuntimeException ex,
-      final WebRequest request) {
+  protected ResponseEntity<Object> handleConflict(
+      final RuntimeException ex, final WebRequest request) {
     LogService.logWarning(HttpStatus.CONFLICT, ex);
 
     return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.CONFLICT, request);
@@ -114,7 +122,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
   /**
    * 500 - Internal Server Error.
-   * 
+   *
    * @param ex the thrown exception
    * @param request web request
    * @return response entity
@@ -122,12 +130,12 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class,
       IllegalStateException.class, KeycloakException.class,
       UnknownHostException.class})
-  public ResponseEntity<Object> handleInternal(final RuntimeException ex,
-      final WebRequest request) {
+  public ResponseEntity<Object> handleInternal(
+      final RuntimeException ex, final WebRequest request) {
     LogService.logInternalServerError(ex);
 
-    return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR,
-        request);
+    return handleExceptionInternal(
+        ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
   /**
@@ -137,13 +145,34 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @param request web request
    * @return response entity
    */
-  @ExceptionHandler({ InternalServerErrorException.class})
-  public ResponseEntity<Object> handleInternal(final InternalServerErrorException ex,
-      final WebRequest request) {
+  @ExceptionHandler({InternalServerErrorException.class})
+  public ResponseEntity<Object> handleInternal(
+      final InternalServerErrorException ex, final WebRequest request) {
     ex.executeLogging();
 
-    return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR,
-        request);
+    return handleExceptionInternal(
+        null, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
+  /**
+   * 400 - Bad Request.
+   *
+   * @param ex CustomValidationHttpStatusException
+   * @param request WebRequest
+   * @return a ResponseEntity instance
+   */
+  @ExceptionHandler({InvalidPostcodeException.class, InvalidConsultingTypeException.class,
+      InvalidDioceseException.class
+  })
+  public ResponseEntity<Object> handleInternal(
+      final CustomValidationHttpStatusException ex, final WebRequest request) {
+    ex.executeLogging();
+
+    return handleExceptionInternal(
+        null,
+        null,
+        new CustomHttpHeader(ex.getHttpStatusExceptionReason()).buildHeader(),
+        HttpStatus.BAD_REQUEST,
+        request);
+  }
 }

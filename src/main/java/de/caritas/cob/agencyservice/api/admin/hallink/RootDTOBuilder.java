@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.admin.hallink;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
@@ -15,6 +16,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
 
   public static final Integer DEFAULT_PAGE = 1;
   public static final Integer DEFAULT_PER_PAGE = 20;
+  public static final Integer DEFAULT_TOTAL_PAGES = 0;
 
   /**
    * Builds the root navigation DTO.
@@ -25,7 +27,10 @@ public class RootDTOBuilder implements HalLinkBuilder {
     return new RootDTO()
         .links(new RootLinks()
             .self(buildSelfLink())
-            .agencies(buildSearchLink()));
+            .agencies(buildSearchLink())
+            .agency(buildCreateAgencyLink())
+            .dioceses(buildDiocesesLink())
+            .agencypostcodes(buildAgencyPostCodeRangesLink()));
   }
 
   private HalLink buildSelfLink() {
@@ -36,6 +41,23 @@ public class RootDTOBuilder implements HalLinkBuilder {
     return buildHalLink(
         methodOn(AgencyadminApi.class).searchAgencies(DEFAULT_PAGE, DEFAULT_PER_PAGE, null),
         MethodEnum.GET);
+  }
+
+  private HalLink buildCreateAgencyLink() {
+    return buildHalLink(
+        methodOn(AgencyadminApi.class).createAgency(new AgencyDTO()),
+        MethodEnum.POST);
+  }
+
+  private HalLink buildAgencyPostCodeRangesLink() {
+    return buildHalLink(
+        methodOn(AgencyadminApi.class).getAgencyPostcodeRanges(null, DEFAULT_PAGE,
+            DEFAULT_PER_PAGE), MethodEnum.GET);
+  }
+
+  private HalLink buildDiocesesLink() {
+    return buildHalLink(methodOn(AgencyadminApi.class).getDioceses(DEFAULT_PAGE,
+        DEFAULT_PER_PAGE), MethodEnum.GET);
   }
 
 }
