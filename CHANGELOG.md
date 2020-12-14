@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.3.0...v1.4.0) (2020-12-14)
+
+
+### Features
+
+* added admin api call to get all dioceses ([cb8e287](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/cb8e287ca04881fb678bc7a0403b9317c0f20979))
+* added agency admin api spec ([855974d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/855974de7f52de3a3b9d549c6f91b89f3f240958))
+* added create agency postcode range admin api spec ([83fe334](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/83fe33451c1538470e3a9f91baac9ce37382578c))
+* added delete agency admin api spec ([13805de](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/13805de6c05d91af6616928ccb183a6827dc49f0))
+* added delete specific postcode range for an agency admin api spec ([7202980](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/720298016528a4c885e123bd7c9e1819ae04b782))
+* added get agency admin api spec ([2e1c026](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/2e1c026e58294ee6fb0b542aeaf22440df2cb926))
+* added get agency postcode ranges admin api spec ([9c81864](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/9c818644cfc7a9e33d89312a711c121dbfca2dc4))
+* added get specific postcode range for an agency admin api spec ([cb0203e](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/cb0203e95b941b812be66269c1b9ec1442badf04))
+* added integration tests for AgencyValidator ([234a3b4](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/234a3b458a432272b4762054925b9caf234c43a5))
+* added tests ([5acabc1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5acabc16cddf957f7c61a7a274d6e6b250932383))
+* added tests ([878087f](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/878087f7dc30b80c8a08852ef501f9ebef1c1d57))
+* added tests ([7bc28c1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/7bc28c1ebc3865fdc586da1d682f99ac4966af28))
+* added tests for CustomHttpHeader ([e03bf44](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/e03bf44ce102106df2244f1039e95f4544abf900))
+* added update agency admin api spec ([1e92287](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/1e92287ae5a0c7a9dfce3b25d514095712b77689))
+* added update specific postcode range for an agency admin api spec ([d2f3de2](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/d2f3de26232fbe87e17143ec3550de8abfda8852))
+* extend integration tests ([55f450d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/55f450dfda81472e8b697f76c50b4b6ff3010e71))
+* implementation of create agency admin entry point ([21c3012](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/21c3012cd9da1025a3347b07d064998a816daff3))
+* minor optimizations ([60423e8](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/60423e8315919414da62c4fac3b450c7dcbdd7b7))
+* minor optimizations ([ef7e2db](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ef7e2dbcd84288ed22f857a186bd7bf7762c4141))
+* minor optimizations ([97e23a6](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/97e23a6286b10acc5780cf431b728f8bedf151ed))
+* minor optimizations ([4bdbe22](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/4bdbe2254ea37844cb2b5c8c04435fa039a932b8))
+* provide paginated endpoint for agency postcoderanges ([e427fd9](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/e427fd9c8718d47fbe1278d3e436577f99f11fc6))
+* small optimizations ([b82181f](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b82181fb45d7caf59f220872ee7e797482da5e01))
+
+
+### Bug Fixes
+
+* fixed checkstyle violation ([072b7b7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/072b7b76c4a5011328b54b46d8ffb4e025428ef9))
+* fixed tests ([99c0f28](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/99c0f28fb2f6bb8fcb4c67bd551d9bd703db5509))
+* removed unnecessary link ([e8293d8](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/e8293d8cbda522a920e00f3a1d6a843a0ce3415b))
+
 ## [1.3.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.2.1...v1.3.0) (2020-11-23)
 
 
