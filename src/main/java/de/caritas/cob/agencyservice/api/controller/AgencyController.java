@@ -43,10 +43,7 @@ public class AgencyController implements AgenciesApi {
    */
   @Override
   public ResponseEntity<List<AgencyResponseDTO>> getAgencies(
-      @RequestParam Integer consultingType, @RequestParam String postcode) {
-    if (postcode == null || postcode.length() < 3 || postcode.length() > 5) {
-      throw new BadRequestException("Postcode size is invalid");
-    }
+      @RequestParam String postcode, @RequestParam Integer consultingType) {
 
     Optional<ConsultingType> optionalConsultingType = ConsultingType.valueOf(consultingType);
     if (!optionalConsultingType.isPresent()) {
