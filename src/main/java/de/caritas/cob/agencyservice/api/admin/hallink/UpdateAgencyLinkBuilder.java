@@ -1,10 +1,8 @@
-package de.caritas.cob.agencyservice.api.admin.service;
+package de.caritas.cob.agencyservice.api.admin.hallink;
 
 import static java.util.Objects.requireNonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import de.caritas.cob.agencyservice.api.admin.hallink.CreateAgencyLinkBuilder;
-import de.caritas.cob.agencyservice.api.admin.hallink.HalLinkBuilder;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.UpdateLinks;

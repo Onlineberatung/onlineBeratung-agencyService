@@ -99,7 +99,7 @@ public class AgencyAdminSearchServiceIT {
         .getEmbedded();
 
     assertThat(firstPage, hasSize(1000));
-    assertThat(secondPage, hasSize(133));
+    assertThat(secondPage, hasSize(134));
   }
 
   @Test
