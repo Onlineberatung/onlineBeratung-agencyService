@@ -22,6 +22,7 @@ import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import javax.servlet.http.Cookie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -217,7 +218,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isCreated());
 
-    verify(this.agencyValidator, times(1)).validate(Mockito.any());
+    verify(this.agencyValidator, times(1)).validate(Mockito.any(AgencyDTO.class));
     verify(this.agencyAdminService, times(1)).saveAgency(Mockito.any());
   }
 

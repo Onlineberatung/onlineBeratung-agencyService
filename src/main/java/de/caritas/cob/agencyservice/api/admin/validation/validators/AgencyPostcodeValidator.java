@@ -2,23 +2,27 @@ package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static java.util.Objects.nonNull;
 
+import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.CreateAgencyValidator;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
-import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import org.springframework.stereotype.Component;
 
 /**
- * Postcode validator for an {@link AgencyDTO}.
+ * Postcode validator for an {@link ValidateAgencyDto}.
  */
 @Component
+@CreateAgencyValidator
+@UpdateAgencyValidator
 public class AgencyPostcodeValidator implements ConcreteAgencyValidator {
 
   /**
-   * Validates the postcode of an {@link AgencyDTO}.
+   * Validates the postcode of an {@link ValidateAgencyDto}.
    *
-   * @param agencyDTO (required)
+   * @param validateAgencyDto (required)
    */
-  public void validate(AgencyDTO agencyDTO) {
-    if (nonNull(agencyDTO.getPostcode()) && !agencyDTO.getPostcode().matches("^[0-9]{5}$")) {
+  public void validate(ValidateAgencyDto validateAgencyDto) {
+    if (nonNull(validateAgencyDto.getPostcode()) && !validateAgencyDto.getPostcode().matches("^[0-9]{5}$")) {
       throw new InvalidPostcodeException();
     }
   }

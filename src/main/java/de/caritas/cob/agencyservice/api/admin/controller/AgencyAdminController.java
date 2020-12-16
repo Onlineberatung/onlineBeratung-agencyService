@@ -12,6 +12,8 @@ import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
@@ -114,4 +116,20 @@ public class AgencyAdminController implements AgencyadminApi {
     return ResponseEntity.ok(postCodeRangesForAgency);
   }
 
+  /**
+   * Entry point to update a specific agency.
+   *
+   * @param agencyId Agency Id (required)
+   * @param updateAgencyDTO  (required)
+   * @return a {@link CreateAgencyResponseDTO} entity
+   */
+  @Override
+  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(@PathVariable Long agencyId,
+      @Valid UpdateAgencyDTO updateAgencyDTO) {
+
+    agencyValidator.validate(agencyId, updateAgencyDTO);
+    UpdateAgencyResponseDTO updateAgencyResponseDTO = agencyAdminService.updateAgency(agencyId, updateAgencyDTO);
+
+    return new ResponseEntity<>(updateAgencyResponseDTO, HttpStatus.OK);
+  }
 }

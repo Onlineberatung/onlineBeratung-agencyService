@@ -191,7 +191,7 @@ paths:
       operationId: updateAgency
       requestBody:
         content:
-          'application/hal+json':
+          'application/json':
             schema:
               $ref: '#/components/schemas/UpdateAgencyDTO'
         required: true
@@ -207,11 +207,13 @@ paths:
         200:
           description: OK - agency was updated successfully
           content:
-            'application/json':
+            'application/hal+json':
               schema:
                 $ref: '#/components/schemas/UpdateAgencyResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request
+        404:
+          description: NOT FOUND - agency not found
         401:
           description: UNAUTHORIZED - no/invalid role/authorization
         500:
@@ -627,15 +629,19 @@ components:
         name:
           type: string
           example: "Beratungstelle"
+          minLength: 1
+          maxLength: 100
         description:
           type: string
           example: "Beschreibung Beratungstelle..."
+          maxLength: 10000
         postcode:
           type: string
           example: "79106"
         city:
           type: string
           example: "Muenchen"
+          maxLength: 100
         offline:
           type: boolean
           example: false

@@ -2,8 +2,8 @@ package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static org.mockito.Mockito.when;
 
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
-import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.diocese.Diocese;
 import de.caritas.cob.agencyservice.api.repository.diocese.DioceseRepository;
 import java.util.Optional;
@@ -24,27 +24,27 @@ public class AgencyDioceseValidatorTest {
   DioceseRepository dioceseRepository;
 
   Long dioceseId = 1L;
-  private AgencyDTO agencyDTO;
+  private ValidateAgencyDto validateAgencyDto;
   private final Diocese diocese = new Diocese();
 
   @Before
   public void setup() {
     EasyRandom easyRandom = new EasyRandom();
-    this.agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDto.class);
   }
 
   @Test(expected = InvalidDioceseException.class)
   public void validate_Should_ThrowInvalidDioceseException_WhenDioceseIsInvalid() {
     when(dioceseRepository.findById(dioceseId)).thenReturn(Optional.empty());
-    this.agencyDTO.setDioceseId(dioceseId);
-    agencyDioceseValidator.validate(agencyDTO);
+    this.validateAgencyDto.setDioceseId(dioceseId);
+    agencyDioceseValidator.validate(validateAgencyDto);
   }
 
   @Test
   public void validate_Should_ThrowNoException_WhenDioceseIsValid() {
     when(dioceseRepository.findById(dioceseId)).thenReturn(Optional.of(this.diocese));
-    this.agencyDTO.setDioceseId(dioceseId);
-    agencyDioceseValidator.validate(agencyDTO);
+    this.validateAgencyDto.setDioceseId(dioceseId);
+    agencyDioceseValidator.validate(validateAgencyDto);
   }
 
 }
