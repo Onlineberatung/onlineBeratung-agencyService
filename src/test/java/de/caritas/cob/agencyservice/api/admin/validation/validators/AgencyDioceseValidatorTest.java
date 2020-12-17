@@ -1,7 +1,10 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.CreateAgencyValidator;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.repository.diocese.Diocese;
@@ -45,6 +48,16 @@ public class AgencyDioceseValidatorTest {
     when(dioceseRepository.findById(dioceseId)).thenReturn(Optional.of(this.diocese));
     this.validateAgencyDto.setDioceseId(dioceseId);
     agencyDioceseValidator.validate(validateAgencyDto);
+  }
+
+  @Test
+  public void agencyDioceseValidator_Should_HaveCreateAgencyValidatorAnnotation() {
+    assertTrue(AgencyDioceseValidator.class.isAnnotationPresent(CreateAgencyValidator.class));
+  }
+
+  @Test
+  public void agencyDioceseValidator_Should_HaveUpdateAgencyValidatorAnnotation() {
+    assertTrue(AgencyDioceseValidator.class.isAnnotationPresent(UpdateAgencyValidator.class));
   }
 
 }

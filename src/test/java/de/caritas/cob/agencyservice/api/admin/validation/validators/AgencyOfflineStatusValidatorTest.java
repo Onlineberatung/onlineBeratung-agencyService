@@ -2,8 +2,12 @@ package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_SUCHT;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
+import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.helper.WhiteSpotHelper;
@@ -12,103 +16,105 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.jeasy.random.EasyRandom;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-public class AgencyOfflineStatusValidatorTest {
+class AgencyOfflineStatusValidatorTest {
 
+  public static boolean IS_OFFLINE = true;
+  public static boolean IS_NOT_OFFLINE = false;
+  public static boolean IS_WHITE_SPOT_AGENCY = true;
+  public static boolean IS_NOT_WHITE_SPOT_AGENCY = false;
+  public static long NO_POSTCODE_RANGES = 0L;
+  public static long WITH_POSTCODE_RANGES = 5L;
   @InjectMocks
-  private ValidateAgencyDto validateAgencyDto;
+  ValidateAgencyDto validateAgencyDto;
   @Mock
-  private WhiteSpotHelper whiteSpotHelper;
+  WhiteSpotHelper whiteSpotHelper;
   @Mock
-  private AgencyRepository agencyRepository;
+  AgencyRepository agencyRepository;
   @Mock
-  private AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
+  AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
+  Map<Integer, Long> whiteSpotMap;
 
-  private Map<Integer, Long> whiteSpotMap;
+  static Stream<Arguments> validate_Should_ThrowInvalidOfflineStatusException_Arguments() {
+    return Stream.of(
+        Arguments.of(IS_NOT_OFFLINE, NO_POSTCODE_RANGES, IS_NOT_WHITE_SPOT_AGENCY)
+    );
+  }
 
+  static Stream<Arguments> validate_Should_NotThrowInvalidOfflineStatusException_Arguments() {
+    return Stream.of(
+        Arguments.of(IS_NOT_OFFLINE, NO_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY),
+        Arguments.of(IS_OFFLINE, NO_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY),
+        Arguments.of(IS_NOT_OFFLINE, WITH_POSTCODE_RANGES, IS_NOT_WHITE_SPOT_AGENCY),
+        Arguments.of(IS_OFFLINE, WITH_POSTCODE_RANGES, IS_NOT_WHITE_SPOT_AGENCY),
+        Arguments.of(IS_OFFLINE, NO_POSTCODE_RANGES, IS_NOT_WHITE_SPOT_AGENCY)
+    );
+  }
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void init() {
+    initMocks(this);
     EasyRandom easyRandom = new EasyRandom();
     this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDto.class);
   }
 
-  @Test(expected = InvalidOfflineStatusException.class)
-  public void validate_Should_ThrowInvalidOfflineStatusException_WhenOfflineFalseAndNoWhiteSpotAgencyAndNoPostcodeRanges() {
+  @ParameterizedTest
+  @MethodSource("validate_Should_ThrowInvalidOfflineStatusException_Arguments")
+  void validate_Should_ThrowInvalidOfflineStatusException(boolean isOffline,
+      long numberOfAgencyPostcodeRanges, boolean isWhiteSpotAgency) {
     whiteSpotMap = new HashMap<>();
-    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(), validateAgencyDto.getId() + 1);
-    this.validateAgencyDto.setOffline(false);
+    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(),
+        isWhiteSpotAgency ? validateAgencyDto.getId() : validateAgencyDto.getId() + 1);
+    this.validateAgencyDto.setOffline(isOffline);
+
     when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
-        .thenReturn(0L);
+        .thenReturn(numberOfAgencyPostcodeRanges);
     when(whiteSpotHelper.getWhiteSpotAgenciesMap()).thenReturn(whiteSpotMap);
     when(agencyRepository.findById(validateAgencyDto.getId()))
         .thenReturn(Optional.of(AGENCY_SUCHT));
+
+    AgencyOfflineStatusValidator agencyOfflineStatusValidator = new AgencyOfflineStatusValidator(
+        agencyRepository, agencyPostCodeRangeRepository,
+        whiteSpotHelper);
+    assertThrows(InvalidOfflineStatusException.class, () -> {
+      agencyOfflineStatusValidator.validate(validateAgencyDto);
+    });
+  }
+
+  @ParameterizedTest
+  @MethodSource("validate_Should_NotThrowInvalidOfflineStatusException_Arguments")
+  void validate_Should_NotThrowInvalidOfflineStatusException(
+      boolean isOffline, long numberOfAgencyPostcodeRanges, boolean isWhiteSpotAgency) {
+    whiteSpotMap = new HashMap<>();
+    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(),
+        isWhiteSpotAgency ? validateAgencyDto.getId() : validateAgencyDto.getId() + 1);
+    this.validateAgencyDto.setOffline(isOffline);
+
+    when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
+        .thenReturn(numberOfAgencyPostcodeRanges);
+    when(whiteSpotHelper.getWhiteSpotAgenciesMap()).thenReturn(whiteSpotMap);
+    when(agencyRepository.findById(validateAgencyDto.getId()))
+        .thenReturn(Optional.of(AGENCY_SUCHT));
+
     new AgencyOfflineStatusValidator(agencyRepository, agencyPostCodeRangeRepository,
         whiteSpotHelper).validate(validateAgencyDto);
   }
 
   @Test
-  public void validate_Should_NotThrowInvalidOfflineStatusException_WhenOfflineFalseAndNoWhiteSpotAgencyAndPostcodeRanges() {
-    whiteSpotMap = new HashMap<>();
-    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(), validateAgencyDto.getId() + 1);
-    this.validateAgencyDto.setOffline(false);
-    when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
-        .thenReturn(10L);
-    when(whiteSpotHelper.getWhiteSpotAgenciesMap()).thenReturn(whiteSpotMap);
-    when(agencyRepository.findById(validateAgencyDto.getId()))
-        .thenReturn(Optional.of(AGENCY_SUCHT));
-    new AgencyOfflineStatusValidator(agencyRepository, agencyPostCodeRangeRepository,
-        whiteSpotHelper).validate(validateAgencyDto);
-  }
-
-  @Test
-  public void validate_Should_NotThrowInvalidOfflineStatusException_WhenOfflineFalseAndWhiteSpotAgencyAndNoPostcodeRanges() {
-    whiteSpotMap = new HashMap<>();
-    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(), validateAgencyDto.getId());
-    this.validateAgencyDto.setOffline(false);
-    when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
-        .thenReturn(0L);
-    when(whiteSpotHelper.getWhiteSpotAgenciesMap()).thenReturn(whiteSpotMap);
-    when(agencyRepository.findById(validateAgencyDto.getId()))
-        .thenReturn(Optional.of(AGENCY_SUCHT));
-    new AgencyOfflineStatusValidator(agencyRepository, agencyPostCodeRangeRepository,
-        whiteSpotHelper).validate(validateAgencyDto);
-  }
-
-  @Test
-  public void validate_Should_NotThrowInvalidOfflineStatusException_WhenOfflineTrueAndWhiteSpotAgencyAndNoPostcodeRanges() {
-    whiteSpotMap = new HashMap<>();
-    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(), validateAgencyDto.getId());
-    this.validateAgencyDto.setOffline(true);
-    when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
-        .thenReturn(0L);
-    when(whiteSpotHelper.getWhiteSpotAgenciesMap()).thenReturn(whiteSpotMap);
-    when(agencyRepository.findById(validateAgencyDto.getId()))
-        .thenReturn(Optional.of(AGENCY_SUCHT));
-    new AgencyOfflineStatusValidator(agencyRepository, agencyPostCodeRangeRepository,
-        whiteSpotHelper).validate(validateAgencyDto);
-  }
-
-  @Test
-  public void validate_Should_NotThrowInvalidOfflineStatusException_WhenOfflineTrueAndNoWhiteSpotAgencyAndPostcodeRanges() {
-    whiteSpotMap = new HashMap<>();
-    whiteSpotMap.put(CONSULTING_TYPE_SUCHT.getValue(), validateAgencyDto.getId() + 1);
-    this.validateAgencyDto.setOffline(true);
-    when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
-        .thenReturn(5L);
-    when(whiteSpotHelper.getWhiteSpotAgenciesMap()).thenReturn(whiteSpotMap);
-    when(agencyRepository.findById(validateAgencyDto.getId()))
-        .thenReturn(Optional.of(AGENCY_SUCHT));
-    new AgencyOfflineStatusValidator(agencyRepository, agencyPostCodeRangeRepository,
-        whiteSpotHelper).validate(validateAgencyDto);
+  public void agencyOfflineStatusValidator_Should_HaveUpdateAgencyValidatorAnnotation() {
+    assertTrue(AgencyOfflineStatusValidator.class.isAnnotationPresent(UpdateAgencyValidator.class));
   }
 
 }
