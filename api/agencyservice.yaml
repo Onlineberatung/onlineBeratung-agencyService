@@ -17,10 +17,13 @@ paths:
       parameters:
         - name: postcode
           in: query
+          required: true
           description: The postcode the user entered
           schema:
             type: string
-            example: "588"
+            minLength: 5
+            maxLength: 5
+            example: "56789"
         - name: consultingType
           in: query
           required: true

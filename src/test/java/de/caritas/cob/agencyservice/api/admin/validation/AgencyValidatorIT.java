@@ -4,7 +4,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_T
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_VALUE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_DIOCESE_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_FULL_POSTCODE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
@@ -45,7 +45,7 @@ public class AgencyValidatorIT {
   @Test
   public void validate_Should_NotThrowInvalidPostcodeException_WhenCreateAndAgencyPostcodeIsValid() {
     AgencyDTO agencyDTO = getValidAgencyDTO();
-    agencyDTO.setPostcode(VALID_FULL_POSTCODE);
+    agencyDTO.setPostcode(VALID_POSTCODE);
     agencyValidator.validate(agencyDTO);
   }
 
@@ -87,7 +87,7 @@ public class AgencyValidatorIT {
   @Test
   public void validate_Should_NotThrowInvalidPostcodeException_WhenUpdateAndAgencyPostcodeIsValid() {
     UpdateAgencyDTO updateAgencyDTO = getValidUpdateAgencyDTO();
-    updateAgencyDTO.setPostcode(VALID_FULL_POSTCODE);
+    updateAgencyDTO.setPostcode(VALID_POSTCODE);
     agencyValidator.validate(1L, updateAgencyDTO);
   }
 
@@ -124,7 +124,7 @@ public class AgencyValidatorIT {
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setConsultingType(CONSULTING_TYPE_SUCHT.getValue());
-    agencyDTO.setPostcode(VALID_FULL_POSTCODE);
+    agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setDioceseId(0L);
     return agencyDTO;
 
@@ -134,7 +134,7 @@ public class AgencyValidatorIT {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    updateAgencyDTO.setPostcode(VALID_FULL_POSTCODE);
+    updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(0L);
     return updateAgencyDTO;
 

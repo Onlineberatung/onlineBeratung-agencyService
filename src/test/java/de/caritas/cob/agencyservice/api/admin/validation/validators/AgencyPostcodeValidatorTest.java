@@ -1,7 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_FULL_POSTCODE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.CreateAgencyValidator;
@@ -30,7 +30,7 @@ public class AgencyPostcodeValidatorTest {
 
   @Test
   public void validate_Should_ThrowNoException_WhenPostcodeIsValid() {
-    this.validateAgencyDto.setPostcode(VALID_FULL_POSTCODE);
+    this.validateAgencyDto.setPostcode(VALID_POSTCODE);
     new AgencyPostcodeValidator().validate(validateAgencyDto);
   }
 
