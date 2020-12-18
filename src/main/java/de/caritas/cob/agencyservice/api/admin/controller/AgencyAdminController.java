@@ -88,7 +88,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * Entry point for creating an agency.
    *
    * @param agencyDTO (required)
-   * @return {@link AgencyAdminFullResponseDTO}
+   * @return {@link AgencyAdminSearchService}
    */
   @Override
   public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {

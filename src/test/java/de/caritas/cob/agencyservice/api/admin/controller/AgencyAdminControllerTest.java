@@ -62,7 +62,7 @@ public class AgencyAdminControllerTest {
   @MockBean
   private AgencyValidator agencyValidator;
   @MockBean
-  private AgencyAdminSearchService agencyAdminSearchService;
+  private AgencyAdminSearchService agencyAdminFullResponseDTO;
   @MockBean
   private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
   @MockBean
@@ -100,7 +100,7 @@ public class AgencyAdminControllerTest {
         .perform(get(AGENCY_SEARCH_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
-    Mockito.verify(this.agencyAdminSearchService, Mockito.times(1))
+    Mockito.verify(this.agencyAdminFullResponseDTO, Mockito.times(1))
         .searchAgencies(any(), eq(0), eq(1));
   }
 

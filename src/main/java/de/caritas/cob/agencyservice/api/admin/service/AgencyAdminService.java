@@ -1,13 +1,11 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
-import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
-import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -44,13 +42,7 @@ public class AgencyAdminService {
           LogService::logDatabaseError, "Database error while saving agency");
     }
 
-    return new AgencyAdminFullResponseDTO()
-        .embedded(new AgencyAdminResponseDTOBuilder(agency).fromAgency())
-        .links(createAgencyLinks(agency));
-  }
-
-  private AgencyLinks createAgencyLinks(Agency agency) {
-    return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
+    return new AgencyAdminFullResponseDTOBuilder(agency).fromAgency();
   }
 
   /**
@@ -83,7 +75,7 @@ public class AgencyAdminService {
    * Updates an agency in the database.
    *
    * @param updateAgencyDTO (required)
-   * @return an {@link UpdateAgencyResponseDTO} instance
+   * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     Agency updatedAgency;
@@ -96,9 +88,7 @@ public class AgencyAdminService {
           LogService::logDatabaseError, "Database error while saving agency");
     }
 
-    return new AgencyAdminFullResponseDTO()
-        .embedded(new AgencyAdminResponseDTOBuilder(updatedAgency).fromAgency())
-        .links(createAgencyLinks(updatedAgency));
+    return new AgencyAdminFullResponseDTOBuilder(updatedAgency).fromAgency();
 
   }
 

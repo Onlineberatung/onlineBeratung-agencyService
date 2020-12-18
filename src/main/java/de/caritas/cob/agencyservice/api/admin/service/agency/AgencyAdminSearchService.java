@@ -4,7 +4,7 @@ import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_A
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -54,9 +54,9 @@ public class AgencyAdminSearchService {
     fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
 
     Stream<Agency> resultStream = fullTextQuery.getResultStream();
-    List<AgencyAdminResponseDTO> resultList = resultStream
-        .map(AgencyAdminResponseDTOBuilder::new)
-        .map(AgencyAdminResponseDTOBuilder::fromAgency)
+    List<AgencyAdminFullResponseDTO> resultList = resultStream
+        .map(AgencyAdminFullResponseDTOBuilder::new)
+        .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
         .collect(Collectors.toList());
 
     SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()

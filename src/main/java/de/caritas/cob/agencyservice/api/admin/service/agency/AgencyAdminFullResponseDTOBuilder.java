@@ -1,23 +1,25 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
-import static java.util.Collections.emptyList;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
+import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class AgencyAdminResponseDTOBuilder {
+public class AgencyAdminFullResponseDTOBuilder {
 
   private final @NonNull Agency agency;
 
-  public AgencyAdminResponseDTO fromAgency() {
+  public AgencyAdminFullResponseDTO fromAgency() {
+    return new AgencyAdminFullResponseDTO()
+        .embedded(createAgency())
+        .links(createAgencyLinks());
+  }
+
+  public AgencyAdminResponseDTO createAgency() {
     return new AgencyAdminResponseDTO()
         .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
@@ -31,6 +33,12 @@ public class AgencyAdminResponseDTOBuilder {
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
+  }
+
+  public AgencyLinks createAgencyLinks() {
+
+    return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
+
   }
 
 }

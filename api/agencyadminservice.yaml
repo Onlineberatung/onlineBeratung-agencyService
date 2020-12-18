@@ -455,7 +455,7 @@ components:
         _embedded:
           type: array
           items:
-            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+            $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
         _links:
           $ref: '#/components/schemas/SearchResultLinks'
 

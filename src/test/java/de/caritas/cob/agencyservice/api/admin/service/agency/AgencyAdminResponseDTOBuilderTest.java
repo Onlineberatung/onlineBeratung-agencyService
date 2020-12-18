@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
@@ -32,20 +32,21 @@ public class AgencyAdminResponseDTOBuilderTest {
     agency.setOffline(true);
     agency.setTeamAgency(true);
 
-    AgencyAdminResponseDTO agencyResponseDTO = new AgencyAdminResponseDTOBuilder(agency).fromAgency();
+    AgencyAdminFullResponseDTO agencyResponseDTO = new AgencyAdminFullResponseDTOBuilder(agency)
+        .fromAgency();
 
-    assertThat(agencyResponseDTO.getId(), is(3L));
-    assertThat(agencyResponseDTO.getCity(), is("city"));
-    assertThat(agencyResponseDTO.getConsultingType(), is(14));
-    assertThat(agencyResponseDTO.getCreateDate(), notNullValue());
-    assertThat(agencyResponseDTO.getUpdateDate(), notNullValue());
-    assertThat(agencyResponseDTO.getDeleteDate(), notNullValue());
-    assertThat(agencyResponseDTO.getDescription(), is("description"));
-    assertThat(agencyResponseDTO.getDioceseId(), is(2L));
-    assertThat(agencyResponseDTO.getName(), is("name"));
-    assertThat(agencyResponseDTO.getOffline(), is(true));
-    assertThat(agencyResponseDTO.getTeamAgency(), is(true));
-    assertThat(agencyResponseDTO.getPostcode(), is("postcode"));
+    assertThat(agencyResponseDTO.getEmbedded().getId(), is(3L));
+    assertThat(agencyResponseDTO.getEmbedded().getCity(), is("city"));
+    assertThat(agencyResponseDTO.getEmbedded().getConsultingType(), is(14));
+    assertThat(agencyResponseDTO.getEmbedded().getCreateDate(), notNullValue());
+    assertThat(agencyResponseDTO.getEmbedded().getUpdateDate(), notNullValue());
+    assertThat(agencyResponseDTO.getEmbedded().getDeleteDate(), notNullValue());
+    assertThat(agencyResponseDTO.getEmbedded().getDescription(), is("description"));
+    assertThat(agencyResponseDTO.getEmbedded().getDioceseId(), is(2L));
+    assertThat(agencyResponseDTO.getEmbedded().getName(), is("name"));
+    assertThat(agencyResponseDTO.getEmbedded().getOffline(), is(true));
+    assertThat(agencyResponseDTO.getEmbedded().getTeamAgency(), is(true));
+    assertThat(agencyResponseDTO.getEmbedded().getPostcode(), is("postcode"));
   }
 
 }

@@ -58,7 +58,7 @@ public class AgencyAdminControllerAuthorizationIT {
   private MockMvc mvc;
 
   @MockBean
-  private AgencyAdminSearchService agencyAdminSearchService;
+  private AgencyAdminSearchService agencyAdminFullResponseDTO;
 
   @MockBean
   private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
@@ -79,7 +79,7 @@ public class AgencyAdminControllerAuthorizationIT {
     mvc.perform(get(AGENCY_SEARCH_PATH))
         .andExpect(status().isForbidden());
 
-    verifyNoMoreInteractions(this.agencyAdminSearchService);
+    verifyNoMoreInteractions(this.agencyAdminFullResponseDTO);
   }
 
   @Test
@@ -91,7 +91,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isUnauthorized());
 
-    verifyNoMoreInteractions(this.agencyAdminSearchService);
+    verifyNoMoreInteractions(this.agencyAdminFullResponseDTO);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyAdminSearchService, times(1)).searchAgencies(any(), anyInt(), any());
+    verify(this.agencyAdminFullResponseDTO, times(1)).searchAgencies(any(), anyInt(), any());
   }
 
   @Test
