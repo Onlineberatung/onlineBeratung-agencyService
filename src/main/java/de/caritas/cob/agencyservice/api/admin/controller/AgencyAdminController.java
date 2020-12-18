@@ -88,7 +88,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * Entry point for creating an agency.
    *
    * @param agencyDTO (required)
-   * @return {@link CreateAgencyResponseDTO}
+   * @return {@link AgencyAdminFullResponseDTO}
    */
   @Override
   public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
@@ -122,7 +122,7 @@ public class AgencyAdminController implements AgencyadminApi {
    *
    * @param agencyId        Agency Id (required)
    * @param updateAgencyDTO (required)
-   * @return a {@link CreateAgencyResponseDTO} entity
+   * @return a {@link AgencyAdminFullResponseDTO} entity
    */
   @Override
   public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(@PathVariable Long agencyId,
