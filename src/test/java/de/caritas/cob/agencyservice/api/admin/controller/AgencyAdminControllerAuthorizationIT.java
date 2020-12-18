@@ -266,7 +266,8 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyValidator, times(1)).validate(Mockito.anyLong(), Mockito.any(UpdateAgencyDTO.class));
+    verify(this.agencyValidator, times(1))
+        .validate(Mockito.anyLong(), Mockito.any(UpdateAgencyDTO.class));
     verify(this.agencyAdminService, times(1)).updateAgency(Mockito.anyLong(), Mockito.any());
   }
 
@@ -299,7 +300,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void deletePostcodeRang_Should_ReturnOKAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH)
+    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))

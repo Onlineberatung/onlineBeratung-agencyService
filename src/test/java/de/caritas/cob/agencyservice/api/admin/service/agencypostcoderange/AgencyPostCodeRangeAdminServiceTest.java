@@ -11,6 +11,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
+import java.util.Collections;
 import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -35,6 +36,7 @@ public class AgencyPostCodeRangeAdminServiceTest {
   public void deleteAgencyPostcodeRange_Should_setAgencyOffline_When_givenPostcodeRangeIsTheLast() {
     AgencyPostCodeRange postCodeRange = new AgencyPostCodeRange();
     Agency agency = new Agency();
+    agency.setAgencyPostCodeRanges(Collections.singletonList(postCodeRange));
     postCodeRange.setAgency(agency);
     when(this.agencyPostCodeRangeRepository.findById(anyLong()))
         .thenReturn(Optional.of(postCodeRange));

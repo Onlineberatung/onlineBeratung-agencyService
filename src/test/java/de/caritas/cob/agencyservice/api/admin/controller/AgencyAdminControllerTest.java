@@ -229,9 +229,9 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void deleteAgencyPostCodeRange_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
+  public void deleteAgencyPostCodeRange_Should_returnBadRequest_When_requiredParamIsWrong()
       throws Exception {
-    this.mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH))
+    this.mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "aaa"))
         .andExpect(status().isBadRequest());
   }
 

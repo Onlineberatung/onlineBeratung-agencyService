@@ -3,11 +3,11 @@ package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.HalLinkBuilder;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.PaginationLinks;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import java.util.List;
@@ -87,8 +87,9 @@ public class AgencyPostCodeRangesResultDTOBuilder implements HalLinkBuilder {
    * @return the created {@link AgencyPostcodeRangesResultDTO}
    */
   public AgencyPostcodeRangesResultDTO build() {
-    List<PostCodeRangeResponseDTO> postCodeRanges = this.resultPage.get()
-        .map(this::fromPostCodeRange)
+    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.resultPage.get()
+        .map(AgencyPostcodeRangeResponseDTOBuilder::getInstance)
+        .map(AgencyPostcodeRangeResponseDTOBuilder::build)
         .collect(Collectors.toList());
 
     PaginationLinks postCodeRangeLinks = new PaginationLinks()
@@ -99,16 +100,6 @@ public class AgencyPostCodeRangesResultDTOBuilder implements HalLinkBuilder {
     return new AgencyPostcodeRangesResultDTO()
         .embedded(postCodeRanges)
         .links(postCodeRangeLinks);
-  }
-
-  private PostCodeRangeResponseDTO fromPostCodeRange(AgencyPostCodeRange agencyPostCodeRange) {
-    return new PostCodeRangeResponseDTO()
-        .agencyId(this.agencyId)
-        .id(agencyPostCodeRange.getId())
-        .postcodeFrom(agencyPostCodeRange.getPostCodeFrom())
-        .postcodeTo(agencyPostCodeRange.getPostCodeTo())
-        .createDate(String.valueOf(agencyPostCodeRange.getCreateDate()))
-        .updateDate(String.valueOf(agencyPostCodeRange.getUpdateDate()));
   }
 
   private HalLink buildSelfLink() {

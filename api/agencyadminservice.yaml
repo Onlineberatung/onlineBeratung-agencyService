@@ -594,15 +594,15 @@ components:
         _embedded:
           $ref: '#/components/schemas/AgencyAdminResponseDTO'
         _links:
-          $ref: '#/components/schemas/UpdateLinks'
+          $ref: '#/components/schemas/DefaultLinks'
 
-    CreateAgencyPostcodeRangeResponseDTO:
+    AgencyPostcodeRangeResponseDTO:
       type: object
       properties:
         _embedded:
           $ref: '#/components/schemas/PostCodeRangeResponseDTO'
         _links:
-          $ref: '#/components/schemas/CreateLinks'
+          $ref: '#/components/schemas/DefaultLinks'
 
     AgencyPostcodeRangesResultDTO:
       type: object
@@ -657,18 +657,6 @@ components:
           properties:
             search:
               $ref: '#/components/schemas/HalLink'
-
-    CreateLinks:
-      type: object
-      required:
-        - self
-      properties:
-        self:
-          $ref: '#/components/schemas/HalLink'
-        update:
-          $ref: '#/components/schemas/HalLink'
-        delete:
-          $ref: '#/components/schemas/HalLink'
 
     DefaultLinks:
       type: object
