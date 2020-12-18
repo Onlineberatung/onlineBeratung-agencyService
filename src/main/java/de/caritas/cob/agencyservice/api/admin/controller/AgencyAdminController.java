@@ -10,7 +10,6 @@ import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
@@ -89,7 +88,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * Entry point for creating an agency.
    *
    * @param agencyDTO (required)
-   * @return {@link CreateAgencyResponseDTO}
+   * @return {@link AgencyAdminFullResponseDTO}
    */
   @Override
   public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
@@ -123,7 +122,7 @@ public class AgencyAdminController implements AgencyadminApi {
    *
    * @param agencyId        Agency Id (required)
    * @param updateAgencyDTO (required)
-   * @return a {@link CreateAgencyResponseDTO} entity
+   * @return a {@link AgencyAdminFullResponseDTO} entity
    */
   @Override
   public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(@PathVariable Long agencyId,

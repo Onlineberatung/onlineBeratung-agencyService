@@ -6,12 +6,9 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestExcept
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
