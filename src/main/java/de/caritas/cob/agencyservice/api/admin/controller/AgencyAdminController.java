@@ -6,6 +6,7 @@ import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
@@ -13,7 +14,6 @@ import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
@@ -92,12 +92,13 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return {@link CreateAgencyResponseDTO}
    */
   @Override
-  public ResponseEntity<CreateAgencyResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
+  public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
 
     agencyValidator.validate(agencyDTO);
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
+        .saveAgency(agencyDTO);
 
-    return new ResponseEntity<>(createAgencyResponseDTO, HttpStatus.CREATED);
+    return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.CREATED);
   }
 
   /**
@@ -110,7 +111,8 @@ public class AgencyAdminController implements AgencyadminApi {
    */
   @Override
   public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
-      @PathVariable Long agencyId, @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
+      @PathVariable Long agencyId,
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
     AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(page, perPage, agencyId);
     return ResponseEntity.ok(postCodeRangesForAgency);
@@ -124,14 +126,14 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return a {@link CreateAgencyResponseDTO} entity
    */
   @Override
-  public ResponseEntity<UpdateAgencyResponseDTO> updateAgency(@PathVariable Long agencyId,
+  public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(@PathVariable Long agencyId,
       @Valid UpdateAgencyDTO updateAgencyDTO) {
 
     agencyValidator.validate(agencyId, updateAgencyDTO);
-    UpdateAgencyResponseDTO updateAgencyResponseDTO = agencyAdminService
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
         .updateAgency(agencyId, updateAgencyDTO);
 
-    return new ResponseEntity<>(updateAgencyResponseDTO, HttpStatus.OK);
+    return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.OK);
   }
 
   /**

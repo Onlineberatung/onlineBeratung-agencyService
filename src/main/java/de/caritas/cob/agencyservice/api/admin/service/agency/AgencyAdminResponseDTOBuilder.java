@@ -19,7 +19,7 @@ public class AgencyAdminResponseDTOBuilder {
 
   public AgencyAdminResponseDTO fromAgency() {
     return new AgencyAdminResponseDTO()
-        .agencyId(this.agency.getId())
+        .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
         .city(this.agency.getCity())
@@ -30,24 +30,7 @@ public class AgencyAdminResponseDTOBuilder {
         .offline(this.agency.isOffline())
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
-        .deleteDate(String.valueOf(this.agency.getDeleteDate()))
-        .postCodeRanges(buildAgencyPostCodeRanges());
-  }
-
-  private List<PostCodeRangeDTO> buildAgencyPostCodeRanges() {
-    if (isEmpty(this.agency.getAgencyPostCodeRanges())) {
-      return emptyList();
-    }
-    return this.agency.getAgencyPostCodeRanges()
-        .stream()
-        .map(this::fromAgencyPostCodeRange)
-        .collect(Collectors.toList());
-  }
-
-  private PostCodeRangeDTO fromAgencyPostCodeRange(AgencyPostCodeRange agencyPostCodeRange) {
-    return new PostCodeRangeDTO()
-        .postcodeFrom(agencyPostCodeRange.getPostCodeFrom())
-        .postcodeTo(agencyPostCodeRange.getPostCodeTo());
+        .deleteDate(String.valueOf(this.agency.getDeleteDate()));
   }
 
 }

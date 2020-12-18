@@ -163,7 +163,7 @@ public class AgencyAdminSearchServiceIT {
     AgencyAdminResponseDTO firstSearchResult = this.agencyAdminSearchService
         .searchAgencies(keyword, 0, 1).getEmbedded().iterator().next();
 
-    assertThat(firstSearchResult.getAgencyId(), is(846L));
+    assertThat(firstSearchResult.getId(), is(846L));
     assertThat(firstSearchResult.getCity(), is("Schwelm"));
     assertThat(firstSearchResult.getConsultingType(), is(2));
     assertThat(firstSearchResult.getCreateDate(), is("2019-08-23T08:52:05"));
@@ -174,24 +174,7 @@ public class AgencyAdminSearchServiceIT {
     assertThat(firstSearchResult.getOffline(), is(false));
     assertThat(firstSearchResult.getPostcode(), is("58332"));
     assertThat(firstSearchResult.getTeamAgency(), is(false));
-    assertThat(firstSearchResult.getPostCodeRanges(), hasSize(3));
-    assertThat(firstSearchResult.getPostCodeRanges().get(0).getPostcodeFrom(), is("45536"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(0).getPostcodeTo(), is("45549"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(1).getPostcodeFrom(), is("58240"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(1).getPostcodeTo(), is("58300"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(2).getPostcodeFrom(), is("58314"));
-    assertThat(firstSearchResult.getPostCodeRanges().get(2).getPostcodeTo(), is("58332"));
-  }
 
-
-  @Test
-  public void buildAgencyAdminSearchResult_Should_returnEmptyListForPostCodeRanges_When_searchForAgencyWithoutPostcodeRanges() {
-    String keyword = "Kreis-Caritasverband Burghausen e.V.";
-
-    AgencyAdminResponseDTO firstSearchResult = this.agencyAdminSearchService
-        .searchAgencies(keyword, 0, 1).getEmbedded().iterator().next();
-
-    assertThat(firstSearchResult.getPostCodeRanges(), hasSize(0));
   }
 
   @Test

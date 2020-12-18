@@ -1,18 +1,17 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
-import de.caritas.cob.agencyservice.api.admin.hallink.CreateAgencyLinkBuilder;
-import de.caritas.cob.agencyservice.api.admin.hallink.UpdateAgencyLinkBuilder;
+import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.model.CreateLinks;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
@@ -37,9 +36,9 @@ public class AgencyAdminService {
    * Saves an agency to the database.
    *
    * @param agencyDTO (required)
-   * @return an {@link AgencyAdminResponseDTO} instance
+   * @return an {@link AgencyAdminFullResponseDTO} instance
    */
-  public CreateAgencyResponseDTO saveAgency(AgencyDTO agencyDTO) {
+  public AgencyAdminFullResponseDTO saveAgency(AgencyDTO agencyDTO) {
     Agency agency;
     try {
       agency = agencyRepository.save(fromAgencyDTO(agencyDTO));
@@ -48,12 +47,13 @@ public class AgencyAdminService {
           LogService::logDatabaseError, "Database error while saving agency");
     }
 
-    CreateLinks createLinks =
-        CreateAgencyLinkBuilder.getInstance(agency).buildCreateAgencyLinks();
-
-    return new CreateAgencyResponseDTO()
+    return new AgencyAdminFullResponseDTO()
         .embedded(new AgencyAdminResponseDTOBuilder(agency).fromAgency())
-        .links(createLinks);
+        .links(createAgencyLinks(agency));
+  }
+
+  private AgencyLinks createAgencyLinks(Agency agency) {
+    return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
   }
 
   /**
@@ -88,7 +88,7 @@ public class AgencyAdminService {
    * @param updateAgencyDTO (required)
    * @return an {@link UpdateAgencyResponseDTO} instance
    */
-  public UpdateAgencyResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
+  public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     Agency updatedAgency;
     try {
       Agency agency = agencyRepository.findById(agencyId)
@@ -99,12 +99,9 @@ public class AgencyAdminService {
           LogService::logDatabaseError, "Database error while saving agency");
     }
 
-    UpdateLinks updateLinks =
-        UpdateAgencyLinkBuilder.getInstance(updatedAgency).buildUpdateAgencyLinks();
-
-    return new UpdateAgencyResponseDTO()
+    return new AgencyAdminFullResponseDTO()
         .embedded(new AgencyAdminResponseDTOBuilder(updatedAgency).fromAgency())
-        .links(updateLinks);
+        .links(createAgencyLinks(updatedAgency));
 
   }
 

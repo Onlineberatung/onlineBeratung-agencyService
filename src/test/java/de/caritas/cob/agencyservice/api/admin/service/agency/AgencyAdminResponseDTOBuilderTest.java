@@ -34,7 +34,7 @@ public class AgencyAdminResponseDTOBuilderTest {
 
     AgencyAdminResponseDTO agencyResponseDTO = new AgencyAdminResponseDTOBuilder(agency).fromAgency();
 
-    assertThat(agencyResponseDTO.getAgencyId(), is(3L));
+    assertThat(agencyResponseDTO.getId(), is(3L));
     assertThat(agencyResponseDTO.getCity(), is("city"));
     assertThat(agencyResponseDTO.getConsultingType(), is(14));
     assertThat(agencyResponseDTO.getCreateDate(), notNullValue());
@@ -46,8 +46,6 @@ public class AgencyAdminResponseDTOBuilderTest {
     assertThat(agencyResponseDTO.getOffline(), is(true));
     assertThat(agencyResponseDTO.getTeamAgency(), is(true));
     assertThat(agencyResponseDTO.getPostcode(), is("postcode"));
-    assertThat(agencyResponseDTO.getPostCodeRanges().get(0).getPostcodeFrom(), is("from"));
-    assertThat(agencyResponseDTO.getPostCodeRanges().get(0).getPostcodeTo(), is("to"));
   }
 
 }
