@@ -24,11 +24,9 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultin
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -127,10 +125,10 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    CreateAgencyResponseDTO createAgencyResponseDTO =
-        easyRandom.nextObject(CreateAgencyResponseDTO.class);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+        easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
-    when(agencyAdminService.saveAgency(agencyDTO)).thenReturn(createAgencyResponseDTO);
+    when(agencyAdminService.saveAgency(agencyDTO)).thenReturn(agencyAdminFullResponseDTO);
 
     this.mvc
         .perform(
@@ -221,10 +219,10 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    UpdateAgencyResponseDTO updateAgencyResponseDTO =
-        easyRandom.nextObject(UpdateAgencyResponseDTO.class);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+        easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
-    when(agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO)).thenReturn(updateAgencyResponseDTO);
+    when(agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO)).thenReturn(agencyAdminFullResponseDTO);
 
     this.mvc
         .perform(

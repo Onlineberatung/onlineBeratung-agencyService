@@ -1,6 +1,5 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
@@ -8,10 +7,9 @@ import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.endsWith;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
@@ -26,7 +24,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
@@ -43,10 +40,10 @@ public class AgencyAdminServiceIT {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
-        agencyRepository.findById(createAgencyResponseDTO.getEmbedded().getAgencyId());
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isTeamAgency());
     assertEquals(ConsultingType.SOCIAL, agency.getConsultingType());
@@ -62,38 +59,44 @@ public class AgencyAdminServiceIT {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
-        agencyRepository.findById(createAgencyResponseDTO.getEmbedded().getAgencyId());
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isOffline());
   }
 
   @Test
-  public void saveAgency_Should_ProvideValidCreateLinks() {
+  public void saveAgency_Should_ProvideValidAgencyLinks() {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
-    assertThat(createAgencyResponseDTO.getLinks().getDelete(), notNullValue());
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    assertThat(agencyAdminFullResponseDTO.getLinks().getDelete(), notNullValue());
     assertThat(
-        createAgencyResponseDTO.getLinks().getDelete().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
-    assertThat(createAgencyResponseDTO.getLinks().getSelf(), notNullValue());
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
-        createAgencyResponseDTO.getLinks().getSelf().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
-    assertThat(createAgencyResponseDTO.getLinks().getUpdate(), notNullValue());
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
-        createAgencyResponseDTO.getLinks().getUpdate().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
   }
 
   private AgencyDTO createAgencyDTO() {
@@ -112,11 +115,11 @@ public class AgencyAdminServiceIT {
   public void updateAgency_Should_PersistsAgencyChanges() {
 
     UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
-    UpdateAgencyResponseDTO updateAgencyResponseDTO
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO
         = agencyAdminService.updateAgency(0L, updateAgencyDTO);
 
     Optional<Agency> agencyOptional =
-        agencyRepository.findById(updateAgencyResponseDTO.getEmbedded().getAgencyId());
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
     assertEquals(updateAgencyDTO.getDioceseId(), agency.getDioceseId());
     assertEquals(updateAgencyDTO.getPostcode(), agency.getPostCode());
@@ -142,29 +145,35 @@ public class AgencyAdminServiceIT {
   }
 
   @Test
-  public void updateAgency_Should_ProvideValidUpdateLinks() {
+  public void updateAgency_Should_ProvideValidAgencyLinks() {
 
     UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
 
-    UpdateAgencyResponseDTO updateAgencyResponseDTO = agencyAdminService.updateAgency(0L, updateAgencyDTO);
-    assertThat(updateAgencyResponseDTO.getLinks().getDelete(), notNullValue());
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.updateAgency(0L, updateAgencyDTO);
+    assertThat(agencyAdminFullResponseDTO.getLinks().getDelete(), notNullValue());
     assertThat(
-        updateAgencyResponseDTO.getLinks().getDelete().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", updateAgencyResponseDTO.getEmbedded().getAgencyId())));
-    assertThat(updateAgencyResponseDTO.getLinks().getSelf(), notNullValue());
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
-        updateAgencyResponseDTO.getLinks().getSelf().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", updateAgencyResponseDTO.getEmbedded().getAgencyId())));
-    assertThat(updateAgencyResponseDTO.getLinks().getAgency(), notNullValue());
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
-        updateAgencyResponseDTO.getLinks().getAgency().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", updateAgencyResponseDTO.getEmbedded().getAgencyId())));
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
   }
 
 }

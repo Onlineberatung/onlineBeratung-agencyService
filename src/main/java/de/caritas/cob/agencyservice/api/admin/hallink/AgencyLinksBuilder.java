@@ -3,46 +3,47 @@ package de.caritas.cob.agencyservice.api.admin.hallink;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
-import de.caritas.cob.agencyservice.api.model.UpdateLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 
 /**
- * Link builder to create hal links for update agency results.
+ * Link builder to create hal links for agency results.
  */
-public class UpdateAgencyLinkBuilder implements HalLinkBuilder {
+public class AgencyLinksBuilder implements HalLinkBuilder {
 
   private final Agency agency;
 
-  private UpdateAgencyLinkBuilder(Agency agency) {
+  private AgencyLinksBuilder(Agency agency) {
     this.agency = agency;
   }
 
   /**
-   * Creates an {@link CreateAgencyLinkBuilder} instance.
+   * Creates an {@link AgencyLinksBuilder} instance.
    *
-   * @return a instance of {@link CreateAgencyLinkBuilder}
+   * @return a instance of {@link AgencyLinksBuilder}
    */
-  public static UpdateAgencyLinkBuilder getInstance(Agency agency) {
+  public static AgencyLinksBuilder getInstance(Agency agency) {
     requireNonNull(agency);
-    return new UpdateAgencyLinkBuilder(agency);
+    return new AgencyLinksBuilder(agency);
   }
 
   /**
-   * Creates the {@link CreateAgencyLinkBuilder}.
+   * Creates the {@link AgencyLinksBuilder}.
    *
-   * @return the generated {@link CreateAgencyLinkBuilder}
+   * @return the generated {@link AgencyLinksBuilder}
    */
-  public UpdateLinks buildUpdateAgencyLinks() {
-    return new UpdateLinks()
+  public AgencyLinks buildAgencyLinks() {
+    return new AgencyLinks()
         .self(buildSelfLink())
         .delete(buildDeleteHalLink())
-        .agency(buildAgencyLink());
+        .update(buildUpdateHalLink())
+        .postcoderanges(buildPostcodeRangesLink());
   }
 
-  private HalLink buildAgencyLink() {
+  private HalLink buildSelfLink() {
     return buildHalLink(methodOn(AgencyadminApi.class).getAgency(agency.getId()), MethodEnum.GET);
   }
 
@@ -51,9 +52,14 @@ public class UpdateAgencyLinkBuilder implements HalLinkBuilder {
         methodOn(AgencyadminApi.class).deleteAgency(agency.getId()), MethodEnum.DELETE);
   }
 
-  private HalLink buildSelfLink() {
+  private HalLink buildUpdateHalLink() {
     return buildHalLink(
         methodOn(AgencyadminApi.class).updateAgency(agency.getId(), null), MethodEnum.PUT);
+  }
+
+  private HalLink buildPostcodeRangesLink() {
+    return buildHalLink(
+        methodOn(AgencyadminApi.class).getAgencyPostcodeRanges(agency.getId(), RootDTOBuilder.DEFAULT_PAGE, RootDTOBuilder.DEFAULT_PER_PAGE), MethodEnum.GET);
   }
 
 }

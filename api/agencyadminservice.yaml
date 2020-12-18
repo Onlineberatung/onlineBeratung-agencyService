@@ -120,7 +120,7 @@ paths:
           content:
             'application/hal+json':
               schema:
-                $ref: '#/components/schemas/CreateAgencyResponseDTO'
+                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
@@ -149,7 +149,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/GetAgencyResponseDTO'
+                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
         204:
           description: NO CONTENT - agency with the specific id was not found
         400:
@@ -209,7 +209,7 @@ paths:
           content:
             'application/hal+json':
               schema:
-                $ref: '#/components/schemas/UpdateAgencyResponseDTO'
+                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request
         404:
@@ -462,7 +462,7 @@ components:
     AgencyAdminResponseDTO:
       type: object
       properties:
-        agencyId:
+        id:
           type: integer
           format: int64
           example: 684
@@ -500,10 +500,6 @@ components:
         deleteDate:
           type: string
           example: "2020-09-02T15:53:23"
-        postCodeRanges:
-          type: array
-          items:
-            $ref: '#/components/schemas/PostCodeRangeDTO'
 
     PostCodeRangeDTO:
       type: object
@@ -597,23 +593,13 @@ components:
           type: integer
           example: 1
 
-    GetAgencyResponseDTO:
+    AgencyAdminFullResponseDTO:
       type: object
       properties:
         _embedded:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgencyAdminResponseDTO'
+          $ref: '#/components/schemas/AgencyAdminResponseDTO'
         _links:
-          $ref: '#/components/schemas/GetLinks'
-
-    CreateAgencyResponseDTO:
-      type: object
-      properties:
-        _embedded:
-            $ref: '#/components/schemas/AgencyAdminResponseDTO'
-        _links:
-          $ref: '#/components/schemas/CreateLinks'
+          $ref: '#/components/schemas/AgencyLinks'
 
     UpdateAgencyDTO:
       type: object
@@ -645,14 +631,6 @@ components:
         offline:
           type: boolean
           example: false
-
-    UpdateAgencyResponseDTO:
-      type: object
-      properties:
-        _embedded:
-          $ref: '#/components/schemas/AgencyAdminResponseDTO'
-        _links:
-          $ref: '#/components/schemas/UpdateLinks'
 
     CreateAgencyPostcodeRangeResponseDTO:
       type: object
@@ -706,19 +684,7 @@ components:
         delete:
           $ref: '#/components/schemas/HalLink'
 
-    UpdateLinks:
-      type: object
-      required:
-        - self
-      properties:
-        self:
-          $ref: '#/components/schemas/HalLink'
-        agency:
-          $ref: '#/components/schemas/HalLink'
-        delete:
-          $ref: '#/components/schemas/HalLink'
-
-    GetLinks:
+    DefaultLinks:
       type: object
       required:
         - self
@@ -729,6 +695,14 @@ components:
           $ref: '#/components/schemas/HalLink'
         delete:
           $ref: '#/components/schemas/HalLink'
+
+    AgencyLinks:
+      allOf:
+        - $ref: '#/components/schemas/DefaultLinks'
+        - type: object
+          properties:
+            postcoderanges:
+              $ref: '#/components/schemas/HalLink'
 
   securitySchemes:
     Bearer:
