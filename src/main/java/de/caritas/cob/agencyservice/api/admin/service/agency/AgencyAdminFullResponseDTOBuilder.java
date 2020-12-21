@@ -8,18 +8,27 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Builder to build an {@link AgencyAdminFullResponseDTO()} from an {@link Agency} instance.
+ */
 @RequiredArgsConstructor
 public class AgencyAdminFullResponseDTOBuilder {
 
   private final @NonNull Agency agency;
 
+  /**
+   * Creates an {@link AgencyAdminFullResponseDTO()} with HAL-Links from an {@link Agency}
+   * instance.
+   *
+   * @return an {@link AgencyAdminFullResponseDTO()} instance
+   */
   public AgencyAdminFullResponseDTO fromAgency() {
     return new AgencyAdminFullResponseDTO()
         .embedded(createAgency())
         .links(createAgencyLinks());
   }
 
-  public AgencyAdminResponseDTO createAgency() {
+  private AgencyAdminResponseDTO createAgency() {
     return new AgencyAdminResponseDTO()
         .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
@@ -35,7 +44,7 @@ public class AgencyAdminFullResponseDTOBuilder {
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
   }
 
-  public AgencyLinks createAgencyLinks() {
+  private AgencyLinks createAgencyLinks() {
 
     return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
 
