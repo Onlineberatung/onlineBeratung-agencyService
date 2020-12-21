@@ -36,10 +36,17 @@ public class AgencyPostCodeRangeAdminService {
    */
   public AgencyPostcodeRangesResultDTO findPostCodeRangesForAgency(Integer page,
       Integer perPage, Long agencyId) {
+    Page<AgencyPostCodeRange> agencyPostCodeRanges;
     Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(perPage, 1));
 
-    Page<AgencyPostCodeRange> agencyPostCodeRanges =
-        this.agencyPostCodeRangeRepository.findAllByAgencyId(agencyId, pageable);
+    try {
+      agencyPostCodeRanges =
+          this.agencyPostCodeRangeRepository.findAllByAgencyId(agencyId, pageable);
+    } catch (DataAccessException dataAccessException) {
+      throw new InternalServerErrorException(LogService::logDatabaseError, String
+          .format("Error while fetching all postcode ranges by agency id %s with page %s and perPage %s",
+              agencyId.toString(), page.toString(), perPage.toString()));
+    }
 
     return AgencyPostCodeRangesResultDTOBuilder.getInstance()
         .withPage(page)
@@ -60,15 +67,22 @@ public class AgencyPostCodeRangeAdminService {
       this.agencyPostCodeRangeRepository.deleteById(postcodeRangeId);
     } catch (DataAccessException dataAccessException) {
       throw new InternalServerErrorException(LogService::logDatabaseError, String
-          .format("Error while deleting agency post code range with id %s",
+          .format("Error while deleting agency postcode range with id %s",
               postcodeRangeId.toString()));
     }
   }
 
   private void markAgencyOfflineIfPostcodeRangeIsLast(Long postcodeRangeId) {
-    AgencyPostCodeRange agencyPostCodeRange = this.agencyPostCodeRangeRepository
-        .findById(postcodeRangeId)
-        .orElseThrow(NotFoundException::new);
+    AgencyPostCodeRange agencyPostCodeRange;
+    try {
+      agencyPostCodeRange = this.agencyPostCodeRangeRepository
+          .findById(postcodeRangeId)
+          .orElseThrow(NotFoundException::new);
+    } catch (DataAccessException dataAccessException) {
+      throw new InternalServerErrorException(LogService::logDatabaseError, String
+          .format("Error while fetching agency postcode range with id %s",
+              postcodeRangeId.toString()));
+    }
 
     if (isTheLastPostcodeRangeOfAgency(agencyPostCodeRange)) {
       this.agencyService.setAgencyOffline(agencyPostCodeRange.getAgency().getId());

@@ -116,7 +116,7 @@ public class AgencyPostCodeRangesResultDTOBuilder implements HalLinkBuilder {
   }
 
   private boolean hasNextPage() {
-    return this.resultPage.getTotalElements() > this.page * this.perPage;
+    return this.resultPage.getTotalElements() > (long) this.page * this.perPage;
   }
 
   private HalLink buildPreviousLink() {

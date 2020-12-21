@@ -1,15 +1,19 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.PAGE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.PER_PAGE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.POSTCODE_RANGE_ID;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.reflect.Whitebox.setInternalState;
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -38,13 +42,6 @@ public class AgencyPostCodeRangeAdminServiceTest {
   private AgencyService agencyService;
   @Mock
   private AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
-  @Mock
-  private Logger logger;
-
-  @Before
-  public void setup() {
-    setInternalState(LogService.class, "LOGGER", logger);
-  }
 
   @Test
   public void deleteAgencyPostcodeRange_Should_setAgencyOffline_When_givenPostcodeRangeIsTheLast() {
@@ -72,18 +69,33 @@ public class AgencyPostCodeRangeAdminServiceTest {
   }
 
   @Test(expected = InternalServerErrorException.class)
-  public void deleteAgencyPostcodeRange_Should_ThrowInternalServerErrorAndLogDatabaseError_When_DatabaseError() {
+  public void deleteAgencyPostcodeRange_Should_ThrowInternalServerError_When_DatabaseErrorDuringDelete() {
 
     AgencyPostCodeRange postCodeRange = new EasyRandom().nextObject(AgencyPostCodeRange.class);
     when(this.agencyPostCodeRangeRepository.findById(anyLong()))
         .thenReturn(Optional.of(postCodeRange));
-    doThrow(new DataAccessException("database error") {}).when(this.agencyPostCodeRangeRepository).deleteById(anyLong());
+    doThrow(new DataAccessException("database error") {
+    }).when(this.agencyPostCodeRangeRepository).deleteById(anyLong());
 
     this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(POSTCODE_RANGE_ID);
+  }
 
-    verify(this.logger, times(1)).info(eq(String
-        .format("Error while deleting agency post code range with id %s",
-            POSTCODE_RANGE_ID)));
+  @Test(expected = InternalServerErrorException.class)
+  public void deleteAgencyPostcodeRange_Should_ThrowInternalServerError_When_DatabaseErrorWhileFetchingData() {
+
+    AgencyPostCodeRange postCodeRange = new EasyRandom().nextObject(AgencyPostCodeRange.class);
+    doThrow(new DataAccessException("database error") {
+    }).when(this.agencyPostCodeRangeRepository).findById(anyLong());
+
+    this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(POSTCODE_RANGE_ID);
+  }
+
+  @Test(expected = InternalServerErrorException.class)
+  public void findPostCodeRangesForAgency_Should_ThrowInternalServerError_When_DatabaseErrorWhileFetchingData() {
+
+    doThrow(new DataAccessException("database error") {
+    }).when(this.agencyPostCodeRangeRepository).findAllByAgencyId(anyLong(), any());
+    this.agencyPostCodeRangeAdminService.findPostCodeRangesForAgency(PAGE, PER_PAGE, AGENCY_ID);
 
   }
 

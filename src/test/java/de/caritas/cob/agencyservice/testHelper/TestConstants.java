@@ -185,6 +185,9 @@ public class TestConstants {
 
   public static final Long INVALID_DIOCESE_ID = -1L;
 
+  public static final Integer PAGE = 1;
+  public static final Integer PER_PAGE = 1;
+
   public static final String VALID_AGENCY_DTO = "{\n"
       + "  \"city\": \"City\",\n"
       + "  \"consultingType\": " + CONSULTING_TYPE_AIDS.getValue() + ",\n"

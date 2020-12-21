@@ -44,7 +44,7 @@ public class AgencyAdminServiceTest {
   }
 
   @Test(expected = InternalServerErrorException.class)
-  public void saveAgency_Should_logExpectedInfoMessage_WhenDatabaseError() {
+  public void saveAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
 
     when(agencyRepository.save(Mockito.any())).thenThrow(Mockito.mock(DataAccessException.class));
 
@@ -53,12 +53,12 @@ public class AgencyAdminServiceTest {
     agencyDTO.setConsultingType(ConsultingType.SOCIAL.getValue());
     agencyAdminService.saveAgency(agencyDTO);
 
-    verify(this.logger, times(1)).info(eq("Database error while saving agency"));
+    verify(this.logger, times(1)).error(eq("Database error while saving agency"));
 
   }
 
   @Test(expected = InternalServerErrorException.class)
-  public void updateAgency_Should_logExpectedInfoMessage_WhenDatabaseError() {
+  public void updateAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
 
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(AGENCY_SUCHT));
     when(agencyRepository.save(Mockito.any())).thenThrow(Mockito.mock(DataAccessException.class));
@@ -67,7 +67,7 @@ public class AgencyAdminServiceTest {
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
-    verify(this.logger, times(1)).info(eq("Database error while saving agency"));
+    verify(this.logger, times(1)).error(eq("Database error while saving agency"));
 
   }
 

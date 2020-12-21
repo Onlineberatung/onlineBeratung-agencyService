@@ -135,13 +135,18 @@ public class AgencyService {
    * @param agencyId the id for the agency to set offline
    */
   public void setAgencyOffline(Long agencyId) {
-    Agency agency = this.agencyRepository.findById(agencyId)
-        .orElseThrow(NotFoundException::new);
-
-    agency.setOffline(true);
-    agency.setUpdateDate(LocalDateTime.now(ZoneOffset.UTC));
-
-    this.agencyRepository.save(agency);
+    Agency agency;
+    try {
+      agency = this.agencyRepository.findById(agencyId)
+          .orElseThrow(NotFoundException::new);
+      agency.setOffline(true);
+      agency.setUpdateDate(LocalDateTime.now(ZoneOffset.UTC));
+      this.agencyRepository.save(agency);
+    } catch (DataAccessException dataAccessException) {
+      throw new InternalServerErrorException(LogService::logDatabaseError, String
+          .format("Database error while setting agency with id %s offline",
+              agencyId.toString()));
+    }
   }
 
 }

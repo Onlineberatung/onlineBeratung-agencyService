@@ -283,7 +283,7 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void deletePostcodeRang_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
+  public void deletePostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
     mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH)
@@ -297,7 +297,7 @@ public class AgencyAdminControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
-  public void deletePostcodeRang_Should_ReturnOKAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
+  public void deletePostcodeRange_Should_ReturnOKAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
       throws Exception {
 
     mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")
