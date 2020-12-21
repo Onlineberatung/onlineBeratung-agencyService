@@ -194,4 +194,13 @@ public class TestConstants {
       + "  \"teamAgency\": false\n"
       + "}";
 
+  public static final String VALID_AGENCY_UPDATE_DTO = "{\n"
+      + "  \"city\": \"City\",\n"
+      + "  \"description\": \"Description\",\n"
+      + "  \"dioceseId\": 1,\n"
+      + "  \"name\": \"Agency\",\n"
+      + "  \"postcode\": \"76000\",\n"
+      + "  \"offline\": true\n"
+      + "}";
+
 }

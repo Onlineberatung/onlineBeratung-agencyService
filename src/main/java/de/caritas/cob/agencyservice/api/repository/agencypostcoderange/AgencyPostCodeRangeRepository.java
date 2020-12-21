@@ -18,4 +18,12 @@ public interface AgencyPostCodeRangeRepository extends CrudRepository<AgencyPost
    */
   Page<AgencyPostCodeRange> findAllByAgencyId(Long agencyId, Pageable pageable);
 
+  /**
+   * Count the amount of agency postcode ranges for a given agency id.
+   *
+   * @param agencyId the agency id
+   * @return the amount of postcode ranges
+   */
+  long countAllByAgencyId(Long agencyId);
+
 }

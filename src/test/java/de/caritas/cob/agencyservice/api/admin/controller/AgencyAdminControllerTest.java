@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static org.hamcrest.Matchers.endsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,9 +22,11 @@ import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.Agency
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,28 +49,28 @@ public class AgencyAdminControllerTest {
   protected static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
   protected static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
   protected static final String CREATE_AGENCY_PATH = ROOT_PATH + "/agency";
+  protected static final String UPDATE_AGENCY_PATH = ROOT_PATH + "/agency/1";
   protected static final String PAGE_PARAM = "page";
   protected static final String PER_PAGE_PARAM = "perPage";
   protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
       + "/agency/1/postcoderanges";
 
-  @Autowired private MockMvc mvc;
-
-  @MockBean private AgencyAdminService agencyAdminService;
-
-  @MockBean private AgencyValidator agencyValidator;
-
-  @MockBean private AgencyAdminSearchService agencyAdminSearchService;
-
+  @Autowired
+  private MockMvc mvc;
+  @MockBean
+  private AgencyAdminService agencyAdminService;
+  @MockBean
+  private AgencyValidator agencyValidator;
+  @MockBean
+  private AgencyAdminSearchService agencyAdminFullResponseDTO;
   @MockBean
   private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
-
   @MockBean
   private LinkDiscoverers linkDiscoverers;
-
-  @MockBean private DioceseAdminService dioceseAdminService;
-
-  @MockBean private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
+  @MockBean
+  private DioceseAdminService dioceseAdminService;
+  @MockBean
+  private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
 
   @Test
   public void searchAgencies_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
@@ -96,7 +100,7 @@ public class AgencyAdminControllerTest {
         .perform(get(AGENCY_SEARCH_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
-    Mockito.verify(this.agencyAdminSearchService, Mockito.times(1))
+    Mockito.verify(this.agencyAdminFullResponseDTO, Mockito.times(1))
         .searchAgencies(any(), eq(0), eq(1));
   }
 
@@ -121,10 +125,10 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    CreateAgencyResponseDTO createAgencyResponseDTO =
-        easyRandom.nextObject(CreateAgencyResponseDTO.class);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+        easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
-    when(agencyAdminService.saveAgency(agencyDTO)).thenReturn(createAgencyResponseDTO);
+    when(agencyAdminService.saveAgency(agencyDTO)).thenReturn(agencyAdminFullResponseDTO);
 
     this.mvc
         .perform(
@@ -208,6 +212,82 @@ public class AgencyAdminControllerTest {
       throws Exception {
     this.mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void updateAgency_Should_returnOk_When_UpdateAgencyDtoIsGiven() throws Exception {
+
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+        easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
+
+    when(agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO)).thenReturn(agencyAdminFullResponseDTO);
+
+    this.mvc
+        .perform(
+            put(UPDATE_AGENCY_PATH)
+                .content(new ObjectMapper().writeValueAsString(updateAgencyDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void updateAgency_Should_ReturnBadRequest_WhenUpdateAgencyDtoIsMissing() throws Exception {
+    this.mvc
+        .perform(put(UPDATE_AGENCY_PATH).content("").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void updateAgency_Should_ReturnBadRequest_WhenAgencyOfflineStatus_IsInvalid()
+      throws Exception {
+
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    doThrow(new InvalidOfflineStatusException()).when(agencyValidator).validate(1L, updateAgencyDTO);
+    this.mvc
+        .perform(
+            put(UPDATE_AGENCY_PATH)
+                .content(new ObjectMapper().writeValueAsString(updateAgencyDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest())
+        .andExpect(header().string("X-Reason", "INVALID_OFFLINE_STATUS"));
+
+  }
+
+  @Test
+  public void updateAgency_Should_ReturnBadRequest_WhenAgencyDiocese_IsInvalid()
+      throws Exception {
+
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    doThrow(new InvalidDioceseException()).when(agencyValidator).validate(1L, updateAgencyDTO);
+    this.mvc
+        .perform(
+            put(UPDATE_AGENCY_PATH)
+                .content(new ObjectMapper().writeValueAsString(updateAgencyDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest())
+        .andExpect(header().string("X-Reason", "INVALID_DIOCESE"));
+
+  }
+
+  @Test
+  public void updateAgency_Should_ReturnBadRequest_WhenAgencyPostcode_IsInvalid()
+      throws Exception {
+
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(1L, updateAgencyDTO);
+    this.mvc
+        .perform(
+            put(UPDATE_AGENCY_PATH)
+                .content(new ObjectMapper().writeValueAsString(updateAgencyDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest())
+        .andExpect(header().string("X-Reason", "INVALID_POSTCODE"));
+
   }
 
 }
