@@ -9,8 +9,10 @@ import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
+import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
@@ -102,16 +104,29 @@ public class AgencyAdminController implements AgencyadminApi {
    * Entry point to get the postcode ranges for a specific agency.
    *
    * @param agencyId Agency Id (required)
-   * @param page Number of page where to start (1 &#x3D; first page) (required)
-   * @param perPage Number of items which are being returned per page (required)
+   * @param page     Number of page where to start (1 = first page) (required)
+   * @param perPage  Number of items which are being returned per page (required)
    * @return an entity containing the search result
    */
   @Override
-  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(@PathVariable Long agencyId,
+  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
+      @PathVariable Long agencyId,
       @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
     AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(page, perPage, agencyId);
     return ResponseEntity.ok(postCodeRangesForAgency);
   }
 
+  /**
+   * Entry point to create a new postcode range for the given agency.
+   *
+   * @param agencyId         Agency Id (required)
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
+   * @return an entity containing the created postcode ranges
+   */
+  @Override public ResponseEntity<CreateAgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
+      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+    return ResponseEntity
+        .ok(agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO));
+  }
 }

@@ -4,6 +4,7 @@ import de.caritas.cob.agencyservice.api.admin.hallink.CreateAgencyLinkBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
@@ -27,6 +28,22 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
+
+  /**
+   * Returns the {@link Agency} for the provided agency ID.
+   *
+   * @param agencyId the agency ID
+   * @return {@link Agency}
+   */
+  public Agency findAgencyById(Long agencyId) {
+    try {
+      return agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
+    } catch (DataAccessException exception) {
+      throw new InternalServerErrorException(
+          LogService::logDatabaseError,
+          String.format("Database error while getting agency with id %s", agencyId));
+    }
+  }
 
   /**
    * Saves an agency to the database.
