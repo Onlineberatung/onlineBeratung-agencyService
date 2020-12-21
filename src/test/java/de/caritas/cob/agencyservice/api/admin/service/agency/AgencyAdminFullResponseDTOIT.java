@@ -11,6 +11,8 @@ import static org.hamcrest.Matchers.nullValue;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyLinks;
+import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import java.util.List;
 import org.junit.Test;
@@ -192,5 +194,32 @@ public class AgencyAdminFullResponseDTOIT {
     assertThat(searchResultLinks.getSearch(), notNullValue());
     assertThat(searchResultLinks.getSearch().getHref(),
         endsWith("/agencyadmin/agencies?page=1&perPage=20{&q}"));
+  }
+
+  @Test
+  public void buildAgencyAdminSearchResult_Should_returnExpectedLinksForAgencies() {
+    AgencyAdminSearchResultDTO searchResult = this.agencyAdminFullResponseDTO
+        .searchAgencies("", 0, 2);
+
+    for (AgencyAdminFullResponseDTO result : searchResult.getEmbedded()) {
+      AgencyLinks agencyLinks = result.getLinks();
+      assertThat(result, notNullValue());
+      assertThat(agencyLinks.getSelf(), notNullValue());
+      assertThat(agencyLinks.getSelf().getMethod(), is(MethodEnum.GET));
+      assertThat(agencyLinks.getSelf().getHref(),
+          endsWith(String.format("/agencyadmin/agency/%s", result.getEmbedded().getId())));
+      assertThat(agencyLinks.getDelete(), notNullValue());
+      assertThat(agencyLinks.getDelete().getMethod(), is(MethodEnum.DELETE));
+      assertThat(agencyLinks.getDelete().getHref(),
+          endsWith(String.format("/agencyadmin/agency/%s", result.getEmbedded().getId())));
+      assertThat(agencyLinks.getUpdate(), notNullValue());
+      assertThat(agencyLinks.getUpdate().getMethod(), is(MethodEnum.PUT));
+      assertThat(agencyLinks.getUpdate().getHref(),
+          endsWith(String.format("/agencyadmin/agency/%s", result.getEmbedded().getId())));
+      assertThat(agencyLinks.getPostcoderanges(), notNullValue());
+      assertThat(agencyLinks.getPostcoderanges().getMethod(), is(MethodEnum.GET));
+      assertThat(agencyLinks.getPostcoderanges().getHref(),
+          endsWith(String.format("/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", result.getEmbedded().getId(), 1, 20)));
+    }
   }
 }
