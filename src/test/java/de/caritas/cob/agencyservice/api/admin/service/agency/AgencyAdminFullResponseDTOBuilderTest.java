@@ -3,7 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.service.agency;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
@@ -38,7 +38,7 @@ public class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(agency.getPostCode(), result.getEmbedded().getPostcode());
     assertEquals(agency.getCity(), result.getEmbedded().getCity());
     assertEquals(agency.isOffline(), result.getEmbedded().getOffline());
-    assertEquals(agency.getConsultingType().getValue(), result.getEmbedded().getConsultingType());
+    assertEquals(Integer.valueOf(agency.getConsultingType().getValue()), result.getEmbedded().getConsultingType());
     assertEquals(String.valueOf(agency.getCreateDate()), result.getEmbedded().getCreateDate());
     assertEquals(String.valueOf(agency.getUpdateDate()), result.getEmbedded().getUpdateDate());
     assertEquals(String.valueOf(agency.getDeleteDate()), result.getEmbedded().getDeleteDate());
