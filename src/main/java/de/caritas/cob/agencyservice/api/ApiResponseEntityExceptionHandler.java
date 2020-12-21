@@ -7,7 +7,9 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomValidation
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.net.UnknownHostException;
 import javax.validation.ConstraintViolationException;
@@ -162,7 +164,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @return a ResponseEntity instance
    */
   @ExceptionHandler({InvalidPostcodeException.class, InvalidConsultingTypeException.class,
-      InvalidDioceseException.class
+      InvalidDioceseException.class, InvalidOfflineStatusException.class
   })
   public ResponseEntity<Object> handleInternal(
       final CustomValidationHttpStatusException ex, final WebRequest request) {
@@ -173,6 +175,25 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
         null,
         new CustomHttpHeader(ex.getHttpStatusExceptionReason()).buildHeader(),
         HttpStatus.BAD_REQUEST,
+        request);
+  }
+
+  /**
+   * 404 - Not found.
+   *
+   * @param ex {@link NotFoundException}
+   * @param request WebRequest
+   * @return a ResponseEntity instance
+   */
+  @ExceptionHandler({NotFoundException.class})
+  public ResponseEntity<Object> handleInternal(
+      final NotFoundException ex, final WebRequest request) {
+
+    return handleExceptionInternal(
+        null,
+        null,
+        new HttpHeaders(),
+        HttpStatus.NOT_FOUND,
         request);
   }
 }
