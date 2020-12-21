@@ -132,6 +132,6 @@ public class AgencyAdminController implements AgencyadminApi {
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
         .updateAgency(agencyId, updateAgencyDTO);
 
-    return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.OK);
+    return ResponseEntity.ok(agencyAdminFullResponseDTO);
   }
 }

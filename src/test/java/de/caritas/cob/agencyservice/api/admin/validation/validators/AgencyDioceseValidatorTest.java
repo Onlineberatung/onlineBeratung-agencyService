@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.CreateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
-import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.repository.diocese.Diocese;
 import de.caritas.cob.agencyservice.api.repository.diocese.DioceseRepository;
@@ -27,13 +27,13 @@ public class AgencyDioceseValidatorTest {
   DioceseRepository dioceseRepository;
 
   Long dioceseId = 1L;
-  private ValidateAgencyDto validateAgencyDto;
+  private ValidateAgencyDTO validateAgencyDto;
   private final Diocese diocese = new Diocese();
 
   @Before
   public void setup() {
     EasyRandom easyRandom = new EasyRandom();
-    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDto.class);
+    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDTO.class);
   }
 
   @Test(expected = InvalidDioceseException.class)

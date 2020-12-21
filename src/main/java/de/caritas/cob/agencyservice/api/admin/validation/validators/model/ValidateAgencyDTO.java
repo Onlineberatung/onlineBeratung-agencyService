@@ -1,6 +1,5 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators.model;
 
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 @Builder
 @Getter
 @Setter
-public class ValidateAgencyDto {
+public class ValidateAgencyDTO {
 
   private Long id;
   private Long dioceseId;

@@ -1,8 +1,8 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
-import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 
 public interface ConcreteAgencyValidator {
 
-  void validate(ValidateAgencyDto validateAgencyDto);
+  void validate(ValidateAgencyDTO validateAgencyDto);
 }
