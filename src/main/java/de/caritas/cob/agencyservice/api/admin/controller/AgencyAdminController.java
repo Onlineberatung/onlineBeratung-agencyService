@@ -136,15 +136,10 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
-   * DELETE /agencyadmin/postcoderange/{postcodeRangeId} : Delete a specific postcode range
-   * [Authorization: Role: agency-admin].
+   * Entry point to delete an agency postcode range.
    *
    * @param postcodeRangeId Postcode range id (required)
-   * @return OK - agency postcode range was deleted sucessfully (status code 200) or BAD REQUEST -
-   * invalid/incomplete request (status code 400) or UNAUTHORIZED - no/invalid role/authorization
-   * (status code 401) or NOT FOUND - agency postcode range with the specific id was not found
-   * (status code 404) or INTERNAL SERVER ERROR - server encountered unexpected condition (status
-   * code 500)
+   * @return a {@link ResponseEntity} with the status code.
    */
   @Override
   public ResponseEntity<Void> deleteAgencyPostcodeRange(Long postcodeRangeId) {

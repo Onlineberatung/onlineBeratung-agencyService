@@ -83,7 +83,7 @@ public class AgencyAdminService {
    * Updates an agency in the database.
    *
    * @param updateAgencyDTO (required)
-   * @return an {@link UpdateAgencyResponseDTO} instance
+   * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     Agency updatedAgency;

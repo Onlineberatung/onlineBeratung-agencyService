@@ -1,14 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
-import static java.util.Collections.emptyList;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

@@ -114,7 +114,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @param request web request
    * @return response entity
    */
-  @ExceptionHandler({InvalidDataAccessApiUsageException.class, DataAccessException.class})
+  @ExceptionHandler({InvalidDataAccessApiUsageException.class})
   protected ResponseEntity<Object> handleConflict(
       final RuntimeException ex, final WebRequest request) {
     LogService.logWarning(HttpStatus.CONFLICT, ex);
@@ -131,13 +131,13 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    */
   @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class,
       IllegalStateException.class, KeycloakException.class,
-      UnknownHostException.class})
+      UnknownHostException.class, DataAccessException.class})
   public ResponseEntity<Object> handleInternal(
       final RuntimeException ex, final WebRequest request) {
     LogService.logInternalServerError(ex);
 
     return handleExceptionInternal(
-        ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        null, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
   /**
