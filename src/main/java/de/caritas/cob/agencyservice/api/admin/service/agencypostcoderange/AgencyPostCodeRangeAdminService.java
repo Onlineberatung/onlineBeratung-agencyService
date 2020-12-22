@@ -5,7 +5,6 @@ import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
@@ -61,7 +60,7 @@ public class AgencyPostCodeRangeAdminService {
    *
    * @param agencyId         agency ID to save the postcode range for
    * @param postCodeRangeDTO {@link PostCodeRangeDTO}
-   * @return {@link CreateAgencyPostcodeRangeResponseDTO}
+   * @return {@link AgencyPostcodeRangeResponseDTO}
    */
   @Transactional
   public AgencyPostcodeRangeResponseDTO createPostcodeRange(Long agencyId,
