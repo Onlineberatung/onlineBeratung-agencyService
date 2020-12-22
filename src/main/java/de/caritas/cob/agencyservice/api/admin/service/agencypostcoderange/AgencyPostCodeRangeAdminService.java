@@ -1,16 +1,13 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
-import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.function.Predicate;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,17 +33,10 @@ public class AgencyPostCodeRangeAdminService {
    */
   public AgencyPostcodeRangesResultDTO findPostCodeRangesForAgency(Integer page,
       Integer perPage, Long agencyId) {
-    Page<AgencyPostCodeRange> agencyPostCodeRanges;
     Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(perPage, 1));
 
-    try {
-      agencyPostCodeRanges =
-          this.agencyPostCodeRangeRepository.findAllByAgencyId(agencyId, pageable);
-    } catch (DataAccessException dataAccessException) {
-      throw new InternalServerErrorException(LogService::logDatabaseError, String
-          .format("Error while fetching all postcode ranges by agency id %s with page %s and perPage %s",
-              agencyId.toString(), page.toString(), perPage.toString()));
-    }
+    Page<AgencyPostCodeRange> agencyPostCodeRanges =
+        this.agencyPostCodeRangeRepository.findAllByAgencyId(agencyId, pageable);
 
     return AgencyPostCodeRangesResultDTOBuilder.getInstance()
         .withPage(page)
@@ -63,26 +53,13 @@ public class AgencyPostCodeRangeAdminService {
    */
   public void deleteAgencyPostcodeRange(Long postcodeRangeId) {
     markAgencyOfflineIfPostcodeRangeIsLast(postcodeRangeId);
-    try {
-      this.agencyPostCodeRangeRepository.deleteById(postcodeRangeId);
-    } catch (DataAccessException dataAccessException) {
-      throw new InternalServerErrorException(LogService::logDatabaseError, String
-          .format("Error while deleting agency postcode range with id %s",
-              postcodeRangeId.toString()));
-    }
+    this.agencyPostCodeRangeRepository.deleteById(postcodeRangeId);
   }
 
   private void markAgencyOfflineIfPostcodeRangeIsLast(Long postcodeRangeId) {
-    AgencyPostCodeRange agencyPostCodeRange;
-    try {
-      agencyPostCodeRange = this.agencyPostCodeRangeRepository
+    AgencyPostCodeRange agencyPostCodeRange = this.agencyPostCodeRangeRepository
           .findById(postcodeRangeId)
           .orElseThrow(NotFoundException::new);
-    } catch (DataAccessException dataAccessException) {
-      throw new InternalServerErrorException(LogService::logDatabaseError, String
-          .format("Error while fetching agency postcode range with id %s",
-              postcodeRangeId.toString()));
-    }
 
     if (isTheLastPostcodeRangeOfAgency(agencyPostCodeRange)) {
       this.agencyService.setAgencyOffline(agencyPostCodeRange.getAgency().getId());

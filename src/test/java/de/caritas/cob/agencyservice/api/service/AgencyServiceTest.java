@@ -257,25 +257,6 @@ public class AgencyServiceTest {
     agencyService.getAgencies("", null);
   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void setAgencyOffline_Should_ThrowInternalServerError_When_WhenDatabaseErrorDuringFindById() {
-
-    when(agencyRepository.findById(AGENCY_ID))
-        .thenThrow(new DataAccessException("database error") {
-        });
-    agencyService.setAgencyOffline(AGENCY_ID);
-  }
-
-  @Test(expected = InternalServerErrorException.class)
-  public void setAgencyOffline_Should_ThrowInternalServerError_When_WhenDatabaseErrorDuringSave() {
-
-    when(agencyRepository.findById(AGENCY_SUCHT.getId())).thenReturn(Optional.of(AGENCY_SUCHT));
-    when(agencyRepository.save(any()))
-        .thenThrow(new DataAccessException("database error") {
-        });
-    agencyService.setAgencyOffline(AGENCY_SUCHT.getId());
-  }
-
   @Test
   public void setAgencyOffline_Should_SaveAgency() {
 

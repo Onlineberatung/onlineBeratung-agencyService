@@ -68,35 +68,4 @@ public class AgencyPostCodeRangeAdminServiceTest {
     verifyNoInteractions(this.agencyService);
   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void deleteAgencyPostcodeRange_Should_ThrowInternalServerError_When_DatabaseErrorDuringDelete() {
-
-    AgencyPostCodeRange postCodeRange = new EasyRandom().nextObject(AgencyPostCodeRange.class);
-    when(this.agencyPostCodeRangeRepository.findById(anyLong()))
-        .thenReturn(Optional.of(postCodeRange));
-    doThrow(new DataAccessException("database error") {
-    }).when(this.agencyPostCodeRangeRepository).deleteById(anyLong());
-
-    this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(POSTCODE_RANGE_ID);
-  }
-
-  @Test(expected = InternalServerErrorException.class)
-  public void deleteAgencyPostcodeRange_Should_ThrowInternalServerError_When_DatabaseErrorWhileFetchingData() {
-
-    AgencyPostCodeRange postCodeRange = new EasyRandom().nextObject(AgencyPostCodeRange.class);
-    doThrow(new DataAccessException("database error") {
-    }).when(this.agencyPostCodeRangeRepository).findById(anyLong());
-
-    this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(POSTCODE_RANGE_ID);
-  }
-
-  @Test(expected = InternalServerErrorException.class)
-  public void findPostCodeRangesForAgency_Should_ThrowInternalServerError_When_DatabaseErrorWhileFetchingData() {
-
-    doThrow(new DataAccessException("database error") {
-    }).when(this.agencyPostCodeRangeRepository).findAllByAgencyId(anyLong(), any());
-    this.agencyPostCodeRangeAdminService.findPostCodeRangesForAgency(PAGE, PER_PAGE, AGENCY_ID);
-
-  }
-
 }
