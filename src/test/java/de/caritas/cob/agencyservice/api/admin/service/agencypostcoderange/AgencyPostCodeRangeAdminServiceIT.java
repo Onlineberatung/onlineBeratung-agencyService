@@ -1,12 +1,20 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_2;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
+import de.caritas.cob.agencyservice.api.model.DefaultLinks;
+import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.PaginationLinks;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
 import java.util.List;
 import org.junit.Test;
@@ -108,5 +116,31 @@ public class AgencyPostCodeRangeAdminServiceIT {
     assertThat(paginationLinks.getPrevious(), notNullValue());
     assertThat(paginationLinks.getPrevious().getHref(),
         endsWith("/agencyadmin/agency/15/postcoderanges?page=1&perPage=2"));
+  }
+
+  @Test
+  public void createPostcodeRange_Should_haveExpectedLinks_When_AllParamsAreProvided() {
+    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE)
+        .postcodeTo(VALID_POSTCODE_2);
+
+    AgencyPostcodeRangeResponseDTO agencyPostcodeRangeResponseDTO = this
+        .agencyPostCodeRangeAdminService
+        .createPostcodeRange(AGENCY_ID, postCodeRangeDTO);
+
+    DefaultLinks defaultLinks = agencyPostcodeRangeResponseDTO.getLinks();
+    Long generatedId = agencyPostcodeRangeResponseDTO.getEmbedded().getId();
+
+    assertThat(defaultLinks.getSelf(), notNullValue());
+    assertThat(defaultLinks.getSelf().getHref(),
+        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderange/" + generatedId));
+    assertEquals(defaultLinks.getSelf().getMethod().getValue(), MethodEnum.GET.getValue());
+    assertThat(defaultLinks.getDelete(), notNullValue());
+    assertThat(defaultLinks.getDelete().getHref(),
+        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderange/" + generatedId));
+    assertEquals(defaultLinks.getDelete().getMethod().getValue(), MethodEnum.DELETE.getValue());
+    assertThat(defaultLinks.getUpdate(), notNullValue());
+    assertThat(defaultLinks.getUpdate().getHref(),
+        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderange/" + generatedId));
+    assertEquals(defaultLinks.getUpdate().getMethod().getValue(), MethodEnum.PUT.getValue());
   }
 }

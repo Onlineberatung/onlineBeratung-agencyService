@@ -1,10 +1,15 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_PREGNANCY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_2;
 import static org.hamcrest.Matchers.endsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -13,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
@@ -26,6 +32,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineSt
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -54,6 +61,8 @@ public class AgencyAdminControllerTest {
   protected static final String PER_PAGE_PARAM = "perPage";
   protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
       + "/agency/1/postcoderanges";
+  protected static final String CREATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
+      + "/agency/1/postcoderange";
 
   @Autowired
   private MockMvc mvc;
@@ -125,6 +134,9 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    agencyDTO.setDioceseId(1L);
+    agencyDTO.setPostcode(VALID_POSTCODE);
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
         easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
@@ -151,6 +163,9 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    agencyDTO.setDioceseId(1L);
+    agencyDTO.setPostcode(VALID_POSTCODE);
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
     doThrow(new InvalidConsultingTypeException()).when(agencyValidator).validate(agencyDTO);
     this.mvc
         .perform(
@@ -168,6 +183,9 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    agencyDTO.setDioceseId(1L);
+    agencyDTO.setPostcode(VALID_POSTCODE);
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
     doThrow(new InvalidDioceseException()).when(agencyValidator).validate(agencyDTO);
     this.mvc
         .perform(
@@ -185,6 +203,9 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    agencyDTO.setDioceseId(1L);
+    agencyDTO.setPostcode(VALID_POSTCODE);
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
     doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(agencyDTO);
     this.mvc
         .perform(
@@ -219,10 +240,13 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setPostcode(VALID_POSTCODE);
+    updateAgencyDTO.setDioceseId(1L);
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
         easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
-    when(agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO)).thenReturn(agencyAdminFullResponseDTO);
+    when(agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO))
+        .thenReturn(agencyAdminFullResponseDTO);
 
     this.mvc
         .perform(
@@ -245,7 +269,10 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    doThrow(new InvalidOfflineStatusException()).when(agencyValidator).validate(1L, updateAgencyDTO);
+    updateAgencyDTO.setPostcode(VALID_POSTCODE);
+    updateAgencyDTO.setDioceseId(1L);
+    doThrow(new InvalidOfflineStatusException()).when(agencyValidator)
+        .validate(1L, updateAgencyDTO);
     this.mvc
         .perform(
             put(UPDATE_AGENCY_PATH)
@@ -262,6 +289,8 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setPostcode(VALID_POSTCODE);
+    updateAgencyDTO.setDioceseId(1L);
     doThrow(new InvalidDioceseException()).when(agencyValidator).validate(1L, updateAgencyDTO);
     this.mvc
         .perform(
@@ -279,6 +308,8 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setPostcode(VALID_POSTCODE);
+    updateAgencyDTO.setDioceseId(1L);
     doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(1L, updateAgencyDTO);
     this.mvc
         .perform(
@@ -290,4 +321,16 @@ public class AgencyAdminControllerTest {
 
   }
 
+  @Test
+  public void createAgencyPostcodeRange_Should_returnOk_When_requiredPaginationParamsAreGiven()
+      throws Exception {
+    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO()
+        .postcodeFrom(VALID_POSTCODE)
+        .postcodeTo(VALID_POSTCODE_2);
+
+    this.mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
+        .content(new ObjectMapper().writeValueAsString(postCodeRangeDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
 }

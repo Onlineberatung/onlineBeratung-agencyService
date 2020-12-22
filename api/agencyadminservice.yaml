@@ -43,8 +43,6 @@ paths:
           required: true
           schema:
             type: integer
-            minimum: 1
-            maximum: 2147483647
             example: 1
         - name: perPage
           in: query
@@ -52,8 +50,6 @@ paths:
           required: true
           schema:
             type: integer
-            minimum: 1
-            maximum: 2147483647
             example: 20
       responses:
         200:
@@ -83,8 +79,6 @@ paths:
           required: true
           schema:
             type: integer
-            minimum: 1
-            maximum: 2147483647
             example: 1
         - name: perPage
           in: query
@@ -92,8 +86,6 @@ paths:
           required: true
           schema:
             type: integer
-            minimum: 1
-            maximum: 2147483647
             example: 20
       responses:
         200:
@@ -151,8 +143,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         200:
           description: OK - agency found
@@ -183,8 +173,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         200:
           description: OK - agency was deleted successfully
@@ -215,8 +203,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         200:
           description: OK - agency was updated successfully
@@ -254,15 +240,13 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         201:
           description: CREATED - agency postcode range was created successfully
           content:
             'application/hal+json':
               schema:
-                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+                $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
@@ -287,8 +271,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
         - name: postcodeRangeId
           in: path
           description: Postcode range id
@@ -296,15 +278,13 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         200:
           description: OK - agency postcode range found
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+                $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
         204:
           description: NO CONTENT - agency postcode range with the specific id was not found
         400:
@@ -334,8 +314,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
         - name: postcodeRangeId
           in: path
           description: Postcode range id
@@ -343,15 +321,13 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         201:
           description: CREATED - agency postcode range was created successfully
           content:
             'application/hal+json':
               schema:
-                $ref: '#/components/schemas/CreateAgencyPostcodeRangeResponseDTO'
+                $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
@@ -373,8 +349,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
         - name: postcodeRangeId
           in: path
           description: Postcode range id
@@ -382,8 +356,6 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
       responses:
         200:
           description: OK - agency postcode range was deleted sucessfully
@@ -411,16 +383,12 @@ paths:
           schema:
             type: integer
             format: int64
-            minimum: 0
-            maximum: 9223372036854775807
         - name: page
           in: query
           description: Number of page where to start (1 = first page)
           required: true
           schema:
             type: integer
-            minimum: 1
-            maximum: 2147483647
             example: 1
         - name: perPage
           in: query
@@ -428,8 +396,6 @@ paths:
           required: true
           schema:
             type: integer
-            minimum: 1
-            maximum: 2147483647
             example: 20
       responses:
         200:
@@ -568,14 +534,10 @@ components:
         id:
           type: integer
           format: int64
-          minimum: 0
-          maximum: 9223372036854775807
           example: 684
         agencyId:
           type: integer
           format: int64
-          minimum: 0
-          maximum: 9223372036854775807
           example: 684
         postcodeFrom:
           type: string
@@ -707,15 +669,13 @@ components:
           type: boolean
           example: false
 
-    CreateAgencyPostcodeRangeResponseDTO:
+    AgencyPostcodeRangeResponseDTO:
       type: object
       properties:
         _embedded:
-          type: array
-          items:
-            $ref: '#/components/schemas/PostCodeRangeResponseDTO'
+          $ref: '#/components/schemas/PostCodeRangeResponseDTO'
         _links:
-          $ref: '#/components/schemas/CreateLinks'
+          $ref: '#/components/schemas/DefaultLinks'
 
     AgencyPostcodeRangesResultDTO:
       type: object
@@ -746,18 +706,6 @@ components:
           properties:
             search:
               $ref: '#/components/schemas/HalLink'
-
-    CreateLinks:
-      type: object
-      required:
-        - self
-      properties:
-        self:
-          $ref: '#/components/schemas/HalLink'
-        update:
-          $ref: '#/components/schemas/HalLink'
-        delete:
-          $ref: '#/components/schemas/HalLink'
 
     DefaultLinks:
       type: object

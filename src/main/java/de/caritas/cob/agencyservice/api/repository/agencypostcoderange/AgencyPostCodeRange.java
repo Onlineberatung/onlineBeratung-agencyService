@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -36,7 +37,8 @@ import lombok.Setter;
 public class AgencyPostCodeRange {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency_postcode_range")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_seq")
   @Column(name = "id", updatable = false, nullable = false)
   private Long id;
 

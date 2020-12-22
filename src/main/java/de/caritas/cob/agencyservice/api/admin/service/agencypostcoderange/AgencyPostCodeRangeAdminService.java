@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create.PostcodeRangeValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.CreateAgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
@@ -63,17 +64,19 @@ public class AgencyPostCodeRangeAdminService {
    * @return {@link CreateAgencyPostcodeRangeResponseDTO}
    */
   @Transactional
-  public CreateAgencyPostcodeRangeResponseDTO createPostcodeRange(Long agencyId,
+  public AgencyPostcodeRangeResponseDTO createPostcodeRange(Long agencyId,
       PostCodeRangeDTO postCodeRangeDTO) {
 
     postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO);
     Agency agency = agencyAdminService.findAgencyById(agencyId);
     postcodeRangeValidator.validatePostcodeRangeForAgency(postCodeRangeDTO,
         agency.getAgencyPostCodeRanges());
-    this.savePostcodeRange(fromPostCodeRangeDTO(postCodeRangeDTO, agency));
+    AgencyPostCodeRange agencyPostCodeRange = this
+        .savePostcodeRange(fromPostCodeRangeDTO(postCodeRangeDTO, agency));
 
-    // TODO return PostcodeRangeResponseDTO
-    return null;
+    return AgencyPostcodeRangeResponseDTOBuilder.getInstance()
+        .withAgencyPostCodeRange(agencyPostCodeRange)
+        .build();
   }
 
   private AgencyPostCodeRange fromPostCodeRangeDTO(PostCodeRangeDTO postCodeRangeDTO,
