@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -54,6 +55,8 @@ public class AgencyAdminControllerTest {
   protected static final String PER_PAGE_PARAM = "perPage";
   protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
       + "/agency/1/postcoderanges";
+  protected static final String DELETE_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
+      + "/postcoderange/";
 
   @Autowired
   private MockMvc mvc;
@@ -196,6 +199,7 @@ public class AgencyAdminControllerTest {
 
   }
 
+  @Test
   public void getAgencyPostCodeRanges_Should_returnOk_When_requiredPaginationParamsAreGiven()
       throws Exception {
     this.mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH)
@@ -211,6 +215,23 @@ public class AgencyAdminControllerTest {
   public void getAgencyPostCodeRanges_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
       throws Exception {
     this.mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void deleteAgencyPostCodeRange_Should_returnOk_When_requiredPaginationParamsAreGiven()
+      throws Exception {
+    this.mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1"))
+        .andExpect(status().isOk());
+
+    Mockito.verify(this.agencyPostCodeRangeAdminService, Mockito.times(1))
+        .deleteAgencyPostcodeRange(eq(1L));
+  }
+
+  @Test
+  public void deleteAgencyPostCodeRange_Should_returnBadRequest_When_requiredParamIsWrong()
+      throws Exception {
+    this.mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "aaa"))
         .andExpect(status().isBadRequest());
   }
 

@@ -3,9 +3,14 @@ package de.caritas.cob.agencyservice.api.service;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import java.util.List;
 import org.junit.Test;
@@ -25,6 +30,8 @@ public class AgencyServiceIT {
 
   @Autowired
   private AgencyService agencyService;
+  @Autowired
+  private AgencyRepository agencyRepository;
 
   @Test
   public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven() {
@@ -36,6 +43,19 @@ public class AgencyServiceIT {
     assertThat(resultAgencies, hasSize(1));
     AgencyResponseDTO resultAgency = resultAgencies.get(0);
     assertThat(resultAgency.getId(), is(883L));
+  }
+
+  @Test
+  public void setAgencyOffline_Should_FlagAgencyAsOfflineAndSetUpdateDate() {
+
+    Agency agencyBefore = agencyRepository.findById(883L)
+        .orElseThrow(RuntimeException::new);
+    agencyService.setAgencyOffline(883L);
+    Agency agencyAfter = agencyRepository.findById(883L)
+        .orElseThrow(RuntimeException::new);
+    assertTrue(agencyAfter.isOffline());
+    assertNotEquals(agencyBefore.getUpdateDate(), agencyAfter.getUpdateDate());
+
   }
 
 }

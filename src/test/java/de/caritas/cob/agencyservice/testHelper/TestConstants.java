@@ -144,6 +144,7 @@ public class TestConstants {
   public static final String VALID_POSTCODE_QUERY = "postcode=88488";
   public static final int VALID_POSTCODE_LENGTH = 5;
   public static final Long AGENCY_ID = 98L;
+  public static final Long POSTCODE_RANGE_ID = 95L;
   public static final String AGENCY_NAME = "Test agency";
   public static final String AGENCY_DESCRIPTION = "Test description";
   public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
@@ -183,6 +184,9 @@ public class TestConstants {
   public static final String INVALID_AGENCY_ID = "12xX";
 
   public static final Long INVALID_DIOCESE_ID = -1L;
+
+  public static final Integer PAGE = 1;
+  public static final Integer PER_PAGE = 1;
 
   public static final String VALID_AGENCY_DTO = "{\n"
       + "  \"city\": \"City\",\n"
