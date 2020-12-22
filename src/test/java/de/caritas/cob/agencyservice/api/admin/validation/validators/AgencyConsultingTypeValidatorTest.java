@@ -4,7 +4,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_T
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.CreateAgencyValidator;
-import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import org.jeasy.random.EasyRandom;
 import org.junit.Before;
@@ -12,12 +12,12 @@ import org.junit.Test;
 
 public class AgencyConsultingTypeValidatorTest {
 
-  private ValidateAgencyDto validateAgencyDto;
+  private ValidateAgencyDTO validateAgencyDto;
 
   @Before
   public void setup() {
     EasyRandom easyRandom = new EasyRandom();
-    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDto.class);
+    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDTO.class);
   }
 
   @Test(expected = InvalidConsultingTypeException.class)

@@ -1,13 +1,11 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
-import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
-import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -44,13 +42,7 @@ public class AgencyAdminService {
           LogService::logDatabaseError, "Database error while saving agency");
     }
 
-    return new AgencyAdminFullResponseDTO()
-        .embedded(new AgencyAdminResponseDTOBuilder(agency).fromAgency())
-        .links(createAgencyLinks(agency));
-  }
-
-  private AgencyLinks createAgencyLinks(Agency agency) {
-    return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
+    return new AgencyAdminFullResponseDTOBuilder(agency).fromAgency();
   }
 
   /**
@@ -73,7 +65,9 @@ public class AgencyAdminService {
         .consultingType(
             ConsultingType.valueOf(agencyDTO.getConsultingType())
                 .orElseThrow(
-                    () -> new BadRequestException("Consulting type of agency dto does not exist")))
+                    () -> new BadRequestException(String
+                        .format("Consulting type %s of agency dto does not exist",
+                            agencyDTO.getConsultingType()))))
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
@@ -82,32 +76,23 @@ public class AgencyAdminService {
   /**
    * Updates an agency in the database.
    *
-   * @param updateAgencyDTO (required)
+   * @param agencyId        the id of the agency to update
+   * @param updateAgencyDTO {@link UpdateAgencyDTO}
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
-    Agency updatedAgency;
     try {
       Agency agency = agencyRepository.findById(agencyId)
           .orElseThrow(NotFoundException::new);
-      updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
+      return new AgencyAdminFullResponseDTOBuilder(
+          agencyRepository.save(mergeAgencies(agency, updateAgencyDTO))).fromAgency();
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(
-          LogService::logDatabaseError, "Database error while saving agency");
+          LogService::logDatabaseError,
+          String.format("Database error while saving agency with id %s", agencyId.toString()));
     }
-
-    return new AgencyAdminFullResponseDTO()
-        .embedded(new AgencyAdminResponseDTOBuilder(updatedAgency).fromAgency())
-        .links(createAgencyLinks(updatedAgency));
-
   }
 
-  /**
-   * Converts a {@link UpdateAgencyDTO} to an {@link Agency}.
-   *
-   * @param updateAgencyDTO (required)
-   * @return an {@link Agency} instance
-   */
   private Agency mergeAgencies(Agency agency, UpdateAgencyDTO updateAgencyDTO) {
 
     return Agency.builder()

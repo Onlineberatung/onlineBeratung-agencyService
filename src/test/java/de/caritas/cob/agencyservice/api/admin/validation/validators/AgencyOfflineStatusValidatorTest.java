@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
-import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.helper.WhiteSpotHelper;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -38,7 +38,7 @@ class AgencyOfflineStatusValidatorTest {
   public static long NO_POSTCODE_RANGES = 0L;
   public static long WITH_POSTCODE_RANGES = 5L;
   @InjectMocks
-  ValidateAgencyDto validateAgencyDto;
+  ValidateAgencyDTO validateAgencyDto;
   @Mock
   WhiteSpotHelper whiteSpotHelper;
   @Mock
@@ -67,7 +67,7 @@ class AgencyOfflineStatusValidatorTest {
   void init() {
     initMocks(this);
     EasyRandom easyRandom = new EasyRandom();
-    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDto.class);
+    this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDTO.class);
   }
 
   @ParameterizedTest
@@ -88,9 +88,8 @@ class AgencyOfflineStatusValidatorTest {
     AgencyOfflineStatusValidator agencyOfflineStatusValidator = new AgencyOfflineStatusValidator(
         agencyRepository, agencyPostCodeRangeRepository,
         whiteSpotHelper);
-    assertThrows(InvalidOfflineStatusException.class, () -> {
-      agencyOfflineStatusValidator.validate(validateAgencyDto);
-    });
+    assertThrows(InvalidOfflineStatusException.class,
+        () -> agencyOfflineStatusValidator.validate(validateAgencyDto));
   }
 
   @ParameterizedTest

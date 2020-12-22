@@ -3,7 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.validation.validators;
 import static java.util.Objects.nonNull;
 
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
-import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.helper.WhiteSpotHelper;
@@ -27,24 +27,24 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   private final @NonNull WhiteSpotHelper whiteSpotHelper;
 
   /**
-   * Validates the offline status of an {@link ValidateAgencyDto}.
+   * Validates the offline status of an {@link ValidateAgencyDTO}.
    *
    * @param validateAgencyDto (required)
    */
   @Override
-  public void validate(ValidateAgencyDto validateAgencyDto) {
+  public void validate(ValidateAgencyDTO validateAgencyDto) {
     if (!isWhiteSpotAgency(validateAgencyDto)
         && !isValidOfflineStatus(validateAgencyDto)) {
       throw new InvalidOfflineStatusException();
     }
   }
 
-  private boolean isValidOfflineStatus(ValidateAgencyDto validateAgencyDto) {
+  private boolean isValidOfflineStatus(ValidateAgencyDTO validateAgencyDto) {
     return Boolean.TRUE.equals(validateAgencyDto.getOffline())
         || agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
   }
 
-  private boolean isWhiteSpotAgency(ValidateAgencyDto validateAgencyDto) {
+  private boolean isWhiteSpotAgency(ValidateAgencyDTO validateAgencyDto) {
     ConsultingType consultingType = obtainConsultingTypeOfAgency(validateAgencyDto);
     return nonNull(getWhiteSpotAgencyIdForConsultingType(consultingType))
         && getWhiteSpotAgencyIdForConsultingType(consultingType)
@@ -56,7 +56,7 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
         .get(consultingType.getValue());
   }
 
-  private ConsultingType obtainConsultingTypeOfAgency(ValidateAgencyDto validateAgencyDto) {
+  private ConsultingType obtainConsultingTypeOfAgency(ValidateAgencyDTO validateAgencyDto) {
     return agencyRepository.findById(validateAgencyDto.getId())
         .orElseThrow(NotFoundException::new).getConsultingType();
   }

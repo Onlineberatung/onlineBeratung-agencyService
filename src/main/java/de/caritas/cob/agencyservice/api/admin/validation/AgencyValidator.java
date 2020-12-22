@@ -3,11 +3,9 @@ package de.caritas.cob.agencyservice.api.admin.validation;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.ConcreteAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.CreateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
-import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDto;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +50,8 @@ public class AgencyValidator {
         .forEach(validator -> validator.validate(fromUpdateAgencyDto(agencyId, updateAgencyDTO)));
   }
 
-  private ValidateAgencyDto fromAgencyDto(AgencyDTO agencyDto) {
-    return ValidateAgencyDto.builder()
+  private ValidateAgencyDTO fromAgencyDto(AgencyDTO agencyDto) {
+    return ValidateAgencyDTO.builder()
         .dioceseId(agencyDto.getDioceseId())
         .name(agencyDto.getName())
         .description(agencyDto.getDescription())
@@ -64,8 +62,8 @@ public class AgencyValidator {
         .build();
   }
 
-  private ValidateAgencyDto fromUpdateAgencyDto(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
-    return ValidateAgencyDto.builder()
+  private ValidateAgencyDTO fromUpdateAgencyDto(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
+    return ValidateAgencyDTO.builder()
         .id(agencyId)
         .dioceseId(updateAgencyDTO.getDioceseId())
         .name(updateAgencyDTO.getName())
