@@ -1,17 +1,22 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.service.LogService;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_SUCHT;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 
+import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +44,7 @@ public class AgencyAdminServiceTest {
   }
 
   @Test(expected = InternalServerErrorException.class)
-  public void saveAgency_Should_logExpectedInfoMessage_WhenDatabaseError() {
+  public void saveAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
 
     when(agencyRepository.save(Mockito.any())).thenThrow(Mockito.mock(DataAccessException.class));
 
@@ -48,7 +53,32 @@ public class AgencyAdminServiceTest {
     agencyDTO.setConsultingType(ConsultingType.SOCIAL.getValue());
     agencyAdminService.saveAgency(agencyDTO);
 
-    verify(this.logger, times(1)).info(eq("Database error while saving agency"));
+    verify(this.logger, times(1)).error(eq("Database error while saving agency"));
+
+  }
+
+  @Test(expected = InternalServerErrorException.class)
+  public void updateAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
+
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(AGENCY_SUCHT));
+    when(agencyRepository.save(Mockito.any())).thenThrow(Mockito.mock(DataAccessException.class));
+
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
+
+    verify(this.logger, times(1)).error(eq("Database error while saving agency"));
+
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void updateAgency_Should_ThrowNotFoundException_WhenAgencyIsNotFound() {
+
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
+
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
   }
 

@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.4.0...v1.5.0) (2021-01-11)
+
+
+### Features
+
+* added tests ([cd895fc](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/cd895fc6bd7fbe2d6cfd00b97b540ab11f3fa5f6))
+* added tests ([39b2701](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/39b2701c1265a3402cdac8ba1f551cb92d520e87))
+* added tests ([ccada67](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ccada67d39991329178c57a273bf41facf967f9c))
+* added tests ([a374902](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/a3749025e8dd85946cadc3eafd1c1923d1adba4c))
+* added tests ([36aa69c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/36aa69c85b6fad415eab8b4597fc350fda912b19))
+* changed error handling for database actions ([200b18c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/200b18c0feb27a83b061d513e88472880edef086))
+* changed hal links ([8e7dd66](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/8e7dd66ea1b12683bce145a613dd90a8c596cc65))
+* changed hal links for agency api ([0a8d8b7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/0a8d8b797402196a0a7685e18aa3d66ce6d76238))
+* implementation ([5b6993d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5b6993dbdd0f25f0590eecd87851df23b1e06977))
+* increment postcode sizes to 5 ([ab5cbe7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ab5cbe7fa750392fc898b8cbbfafc077a306fc4d))
+* increment postcode sizes to 5 ([48141de](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/48141de0418d59f60c1e21ce2ffcd0a7e105b679))
+* provide deletion endpoint and hal builder ([60d4153](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/60d4153a07fab7a0c22f441fefecd54dd6de224a))
+* provide deletion function for agency postcode ranges ([3a1d603](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/3a1d6033641164e122da09a10d3b55ef4ad1ce6c))
+* provide new consulting type for men ([31c4397](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/31c4397e41160997126ccee6535182294bdb2a68))
+
+
+### Bug Fixes
+
+* javadoc ([0e2930c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/0e2930c70e70ec98b00decc10ba23e54941159cc))
+* merge conflicts ([0a40c08](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/0a40c0824165e26caec04cb7d36fed18a3f5e9d9))
+* removed wrong imports ([16dac11](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/16dac11b243df4c12e329edf92ae90dc3ba5011e))
+
 ## [1.4.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.3.0...v1.4.0) (2020-12-14)
 
 

@@ -7,8 +7,9 @@ import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.endsWith;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.CreateAgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
@@ -39,10 +40,10 @@ public class AgencyAdminServiceIT {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
-        agencyRepository.findById(createAgencyResponseDTO.getEmbedded().getAgencyId());
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isTeamAgency());
     assertEquals(ConsultingType.SOCIAL, agency.getConsultingType());
@@ -58,38 +59,44 @@ public class AgencyAdminServiceIT {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
-        agencyRepository.findById(createAgencyResponseDTO.getEmbedded().getAgencyId());
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isOffline());
   }
 
   @Test
-  public void saveAgency_Should_ProvideValidCreateLinks() {
+  public void saveAgency_Should_ProvideValidAgencyLinks() {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    CreateAgencyResponseDTO createAgencyResponseDTO = agencyAdminService.saveAgency(agencyDTO);
-    assertThat(createAgencyResponseDTO.getLinks().getDelete(), notNullValue());
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    assertThat(agencyAdminFullResponseDTO.getLinks().getDelete(), notNullValue());
     assertThat(
-        createAgencyResponseDTO.getLinks().getDelete().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
-    assertThat(createAgencyResponseDTO.getLinks().getSelf(), notNullValue());
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
-        createAgencyResponseDTO.getLinks().getSelf().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
-    assertThat(createAgencyResponseDTO.getLinks().getUpdate(), notNullValue());
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
-        createAgencyResponseDTO.getLinks().getUpdate().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", createAgencyResponseDTO.getEmbedded().getAgencyId())));
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
   }
 
   private AgencyDTO createAgencyDTO() {
@@ -103,4 +110,70 @@ public class AgencyAdminServiceIT {
     agencyDTO.setName("Agency name");
     return agencyDTO;
   }
+
+  @Test
+  public void updateAgency_Should_PersistsAgencyChanges() {
+
+    UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO
+        = agencyAdminService.updateAgency(0L, updateAgencyDTO);
+
+    Optional<Agency> agencyOptional =
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
+    Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
+    assertEquals(updateAgencyDTO.getDioceseId(), agency.getDioceseId());
+    assertEquals(updateAgencyDTO.getPostcode(), agency.getPostCode());
+    assertEquals(updateAgencyDTO.getDescription(), agency.getDescription());
+    assertEquals(updateAgencyDTO.getName(), agency.getName());
+    assertEquals(updateAgencyDTO.getCity(), agency.getCity());
+    assertEquals(updateAgencyDTO.getOffline(),  agency.isOffline());
+  }
+
+  private UpdateAgencyDTO createUpdateAgencyDtoFromExistingAgency() {
+
+    Optional<Agency> agencyOptional = agencyRepository.findById(0L);
+    Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
+    UpdateAgencyDTO updateAgencyDTO = new UpdateAgencyDTO();
+    updateAgencyDTO.dioceseId(agency.getDioceseId() + 1);
+    updateAgencyDTO.name(agency.getName() + "x");
+    updateAgencyDTO.description(agency.getDescription() + "x");
+    updateAgencyDTO.postcode("00000");
+    updateAgencyDTO.city(agency.getCity() + "x");
+    updateAgencyDTO.setOffline(!agency.isOffline());
+    return updateAgencyDTO;
+
+  }
+
+  @Test
+  public void updateAgency_Should_ProvideValidAgencyLinks() {
+
+    UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
+
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.updateAgency(0L, updateAgencyDTO);
+    assertThat(agencyAdminFullResponseDTO.getLinks().getDelete(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
+    assertThat(
+        agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
+        endsWith(
+            String.format(
+                "/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
+  }
+
 }

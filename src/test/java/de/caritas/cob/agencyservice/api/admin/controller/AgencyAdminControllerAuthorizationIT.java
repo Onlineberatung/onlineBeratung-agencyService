@@ -2,19 +2,24 @@ package de.caritas.cob.agencyservice.api.admin.controller;
 
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.AGENCY_SEARCH_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.CREATE_AGENCY_PATH;
+import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.DELETE_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.GET_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PER_PAGE_PARAM;
+import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.UPDATE_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_DTO;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_UPDATE_DTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
@@ -22,6 +27,8 @@ import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import javax.servlet.http.Cookie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +60,7 @@ public class AgencyAdminControllerAuthorizationIT {
   private MockMvc mvc;
 
   @MockBean
-  private AgencyAdminSearchService agencyAdminSearchService;
+  private AgencyAdminSearchService agencyAdminFullResponseDTO;
 
   @MockBean
   private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
@@ -74,7 +81,7 @@ public class AgencyAdminControllerAuthorizationIT {
     mvc.perform(get(AGENCY_SEARCH_PATH))
         .andExpect(status().isForbidden());
 
-    verifyNoMoreInteractions(this.agencyAdminSearchService);
+    verifyNoMoreInteractions(this.agencyAdminFullResponseDTO);
   }
 
   @Test
@@ -86,7 +93,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isUnauthorized());
 
-    verifyNoMoreInteractions(this.agencyAdminSearchService);
+    verifyNoMoreInteractions(this.agencyAdminFullResponseDTO);
   }
 
   @Test
@@ -101,7 +108,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyAdminSearchService, times(1)).searchAgencies(any(), anyInt(), any());
+    verify(this.agencyAdminFullResponseDTO, times(1)).searchAgencies(any(), anyInt(), any());
   }
 
   @Test
@@ -217,8 +224,89 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isCreated());
 
-    verify(this.agencyValidator, times(1)).validate(Mockito.any());
+    verify(this.agencyValidator, times(1)).validate(Mockito.any(AgencyDTO.class));
     verify(this.agencyAdminService, times(1)).saveAgency(Mockito.any());
+  }
+
+  @Test
+  public void updateAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
+      throws Exception {
+
+    mvc.perform(put(UPDATE_AGENCY_PATH)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+    verifyNoMoreInteractions(this.agencyValidator);
+  }
+
+  @Test
+  public void updateAgency_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
+      throws Exception {
+
+    mvc.perform(put(UPDATE_AGENCY_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isUnauthorized());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+    verifyNoMoreInteractions(this.agencyValidator);
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  public void updateAgency_Should_ReturnOkAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
+      throws Exception {
+
+    mvc.perform(put(UPDATE_AGENCY_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(VALID_AGENCY_UPDATE_DTO)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isOk());
+
+    verify(this.agencyValidator, times(1))
+        .validate(Mockito.anyLong(), Mockito.any(UpdateAgencyDTO.class));
+    verify(this.agencyAdminService, times(1)).updateAgency(Mockito.anyLong(), Mockito.any());
+  }
+
+  @Test
+  public void deletePostcodeRange_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
+      throws Exception {
+
+    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+  }
+
+  @Test
+  public void deletePostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
+      throws Exception {
+
+    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isUnauthorized());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  public void deletePostcodeRange_Should_ReturnOKAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
+      throws Exception {
+
+    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isOk());
+
+    verify(this.agencyPostCodeRangeAdminService, times(1)).deleteAgencyPostcodeRange(any());
   }
 
 }
