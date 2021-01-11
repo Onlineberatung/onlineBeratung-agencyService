@@ -1,13 +1,16 @@
 package de.caritas.cob.agencyservice.api.service;
 
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -116,13 +119,27 @@ public class AgencyService {
 
   private AgencyResponseDTO convertToAgencyResponseDTO(Agency agency) {
     return new AgencyResponseDTO()
-      .id(agency.getId())
-      .name(agency.getName())
-      .postcode(agency.getPostCode())
-      .city(agency.getCity())
-      .description(agency.getDescription())
-      .teamAgency(agency.isTeamAgency())
-      .offline(agency.isOffline())
-      .consultingType(agency.getConsultingType().getValue());
+        .id(agency.getId())
+        .name(agency.getName())
+        .postcode(agency.getPostCode())
+        .city(agency.getCity())
+        .description(agency.getDescription())
+        .teamAgency(agency.isTeamAgency())
+        .offline(agency.isOffline())
+        .consultingType(agency.getConsultingType().getValue());
   }
+
+  /**
+   * Sets the {@link Agency} with given id to offline.
+   *
+   * @param agencyId the id for the agency to set offline
+   */
+  public void setAgencyOffline(Long agencyId) {
+    Agency agency = this.agencyRepository.findById(agencyId)
+        .orElseThrow(NotFoundException::new);
+    agency.setOffline(true);
+    agency.setUpdateDate(LocalDateTime.now(ZoneOffset.UTC));
+    this.agencyRepository.save(agency);
+  }
+
 }

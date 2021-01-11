@@ -74,16 +74,14 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
   private HalLink buildSelfLink() {
     return buildHalLink(
         methodOn(AgencyadminApi.class)
-            .getAgencyPostcodeRange(this.agencyPostCodeRange.getAgency().getId(),
-                this.agencyPostCodeRange.getId()),
+            .getAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
         MethodEnum.GET);
   }
 
   private HalLink buildUpdateLink() {
     return buildHalLink(
         methodOn(AgencyadminApi.class)
-            .updateAgencyPostcodeRange(this.agencyPostCodeRange.getAgency().getId(),
-                this.agencyPostCodeRange.getId(),
+            .updateAgencyPostcodeRange(this.agencyPostCodeRange.getId(),
                 new PostCodeRangeDTO().postcodeFrom(this.agencyPostCodeRange.getPostCodeFrom())
                     .postcodeTo(this.agencyPostCodeRange.getPostCodeTo())), MethodEnum.PUT);
   }
@@ -91,8 +89,7 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
   private HalLink buildDeleteLink() {
     return buildHalLink(
         methodOn(AgencyadminApi.class)
-            .deleteAgencyPostcodeRange(this.agencyPostCodeRange.getAgency().getId(),
-                this.agencyPostCodeRange.getId()),
+            .deleteAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
         MethodEnum.DELETE);
   }
 }

@@ -149,4 +149,16 @@ public class AgencyAdminController implements AgencyadminApi {
 
     return ResponseEntity.ok(agencyAdminFullResponseDTO);
   }
+
+  /**
+   * Entry point to delete an agency postcode range.
+   *
+   * @param postcodeRangeId Postcode range id (required)
+   * @return a {@link ResponseEntity} with the status code.
+   */
+  @Override
+  public ResponseEntity<Void> deleteAgencyPostcodeRange(Long postcodeRangeId) {
+    this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(postcodeRangeId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

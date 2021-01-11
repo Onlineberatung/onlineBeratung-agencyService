@@ -4,11 +4,14 @@ import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create.PostcodeRangeValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
+import de.caritas.cob.agencyservice.api.service.AgencyService;
+import java.util.function.Predicate;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AgencyPostCodeRangeAdminService {
 
   private final @NonNull AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
+  private final @NonNull AgencyService agencyService;
   private final @NonNull AgencyAdminService agencyAdminService;
   private final @NonNull PostcodeRangeValidator postcodeRangeValidator;
 
@@ -53,6 +57,37 @@ public class AgencyPostCodeRangeAdminService {
         .withResultPage(agencyPostCodeRanges)
         .withAgencyId(agencyId)
         .build();
+  }
+
+  /**
+   * Deletes a {@link AgencyPostCodeRange} by given id.
+   *
+   * @param postcodeRangeId the postcode range id
+   */
+  public void deleteAgencyPostcodeRange(Long postcodeRangeId) {
+    markAgencyOfflineIfPostcodeRangeIsLast(postcodeRangeId);
+    this.agencyPostCodeRangeRepository.deleteById(postcodeRangeId);
+  }
+
+  private void markAgencyOfflineIfPostcodeRangeIsLast(Long postcodeRangeId) {
+    AgencyPostCodeRange agencyPostCodeRange = this.agencyPostCodeRangeRepository
+          .findById(postcodeRangeId)
+          .orElseThrow(NotFoundException::new);
+
+    if (isTheLastPostcodeRangeOfAgency(agencyPostCodeRange)) {
+      this.agencyService.setAgencyOffline(agencyPostCodeRange.getAgency().getId());
+    }
+  }
+
+  private boolean isTheLastPostcodeRangeOfAgency(AgencyPostCodeRange agencyPostCodeRange) {
+    return agencyPostCodeRange.getAgency()
+        .getAgencyPostCodeRanges()
+        .stream()
+        .noneMatch(otherRangeThan(agencyPostCodeRange));
+  }
+
+  private Predicate<AgencyPostCodeRange> otherRangeThan(AgencyPostCodeRange agencyPostCodeRange) {
+    return range -> !range.equals(agencyPostCodeRange);
   }
 
   /**
