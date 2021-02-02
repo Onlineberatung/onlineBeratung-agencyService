@@ -7,40 +7,30 @@ import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DefaultLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
-import lombok.NoArgsConstructor;
 
 /**
  * Builder class to generate a {@link AgencyPostcodeRangeResponseDTO} containing navigation hal
  * links.
  */
-@NoArgsConstructor
 public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
 
-  private AgencyPostCodeRange agencyPostCodeRange;
+  private final AgencyPostCodeRange agencyPostCodeRange;
+
+  private AgencyPostcodeRangeResponseDTOBuilder(AgencyPostCodeRange agencyPostCodeRange) {
+    this.agencyPostCodeRange = agencyPostCodeRange;
+  }
 
   /**
    * Creates a builder instance of {@link AgencyPostcodeRangeResponseDTOBuilder}.
    *
    * @return a instance of {@link AgencyPostcodeRangeResponseDTOBuilder}
    */
-  public static AgencyPostcodeRangeResponseDTOBuilder getInstance() {
-    return new AgencyPostcodeRangeResponseDTOBuilder();
-  }
-
-  /**
-   * Sets the {@link AgencyPostCodeRange}.
-   *
-   * @param agencyPostCodeRange {@link AgencyPostCodeRange}
-   * @return the current {@link AgencyPostcodeRangeResponseDTOBuilder}
-   */
-  public AgencyPostcodeRangeResponseDTOBuilder withAgencyPostCodeRange(
+  public static AgencyPostcodeRangeResponseDTOBuilder getInstance(
       AgencyPostCodeRange agencyPostCodeRange) {
-    this.agencyPostCodeRange = agencyPostCodeRange;
-    return this;
+    return new AgencyPostcodeRangeResponseDTOBuilder(agencyPostCodeRange);
   }
 
   /**
@@ -73,23 +63,20 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
 
   private HalLink buildSelfLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class)
-            .getAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
+        methodOn(AgencyadminApi.class).deleteAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
         MethodEnum.GET);
   }
 
   private HalLink buildUpdateLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class)
-            .updateAgencyPostcodeRange(this.agencyPostCodeRange.getId(),
-                new PostCodeRangeDTO().postcodeFrom(this.agencyPostCodeRange.getPostCodeFrom())
-                    .postcodeTo(this.agencyPostCodeRange.getPostCodeTo())), MethodEnum.PUT);
+        methodOn(AgencyadminApi.class).deleteAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
+        MethodEnum.PUT);
   }
 
   private HalLink buildDeleteLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class)
-            .deleteAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
+        methodOn(AgencyadminApi.class).deleteAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
         MethodEnum.DELETE);
   }
+
 }

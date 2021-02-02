@@ -15,21 +15,20 @@ import org.junit.Test;
 
 public class AgencyPostcodeRangeResponseDTOBuilderTest {
 
-  private AgencyPostcodeRangeResponseDTOBuilder agencyPostcodeRangeResponseDTOBuilder;
   private AgencyPostCodeRange agencyPostCodeRange;
 
   @Before
   public void init() {
     EasyRandom easyRandom = new EasyRandom();
     this.agencyPostCodeRange = easyRandom.nextObject(AgencyPostCodeRange.class);
-    this.agencyPostcodeRangeResponseDTOBuilder = new AgencyPostcodeRangeResponseDTOBuilder();
-    this.agencyPostcodeRangeResponseDTOBuilder.withAgencyPostCodeRange(this.agencyPostCodeRange);
   }
 
   @Test
   public void build_Should_Return_ValidAgencyPostcodeRangeResponseDTO() {
 
-    AgencyPostcodeRangeResponseDTO result = this.agencyPostcodeRangeResponseDTOBuilder.build();
+    AgencyPostcodeRangeResponseDTO result = AgencyPostcodeRangeResponseDTOBuilder
+        .getInstance(this.agencyPostCodeRange)
+        .build();
 
     assertEquals(this.agencyPostCodeRange.getId(), result.getEmbedded().getId());
     assertEquals(this.agencyPostCodeRange.getPostCodeFrom(),
@@ -45,7 +44,9 @@ public class AgencyPostcodeRangeResponseDTOBuilderTest {
   @Test
   public void build_Should_Return_ValidHalLinks() {
 
-    AgencyPostcodeRangeResponseDTO result = this.agencyPostcodeRangeResponseDTOBuilder.build();
+    AgencyPostcodeRangeResponseDTO result = AgencyPostcodeRangeResponseDTOBuilder
+        .getInstance(this.agencyPostCodeRange)
+        .build();
     DefaultLinks defaultLinks = result.getLinks();
     Long generatedId = result.getEmbedded().getId();
 

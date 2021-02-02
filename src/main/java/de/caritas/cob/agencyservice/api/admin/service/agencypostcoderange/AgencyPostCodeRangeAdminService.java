@@ -108,8 +108,7 @@ public class AgencyPostCodeRangeAdminService {
     AgencyPostCodeRange agencyPostCodeRange = this
         .savePostcodeRange(fromPostCodeRangeDTO(postCodeRangeDTO, agency));
 
-    return AgencyPostcodeRangeResponseDTOBuilder.getInstance()
-        .withAgencyPostCodeRange(agencyPostCodeRange)
+    return AgencyPostcodeRangeResponseDTOBuilder.getInstance(agencyPostCodeRange)
         .build();
   }
 
