@@ -51,18 +51,15 @@ public class AgencyPostcodeRangeResponseDTOBuilderTest {
     Long generatedId = result.getEmbedded().getId();
 
     assertThat(defaultLinks.getSelf().getHref(),
-        endsWith("/agencyadmin/agency/" + this.agencyPostCodeRange.getAgency().getId()
-            + "/postcoderange/" + generatedId));
+        endsWith("/agencyadmin/postcoderange/" + generatedId));
     assertEquals(defaultLinks.getSelf().getMethod().getValue(), MethodEnum.GET.getValue());
     assertThat(defaultLinks.getDelete(), notNullValue());
     assertThat(defaultLinks.getDelete().getHref(),
-        endsWith("/agencyadmin/agency/" + this.agencyPostCodeRange.getAgency().getId()
-            + "/postcoderange/" + generatedId));
+        endsWith("/agencyadmin/postcoderange/" + generatedId));
     assertEquals(defaultLinks.getDelete().getMethod().getValue(), MethodEnum.DELETE.getValue());
     assertThat(defaultLinks.getUpdate(), notNullValue());
     assertThat(defaultLinks.getUpdate().getHref(),
-        endsWith("/agencyadmin/agency/" + this.agencyPostCodeRange.getAgency().getId()
-            + "/postcoderange/" + generatedId));
+        endsWith("/agencyadmin/postcoderange/" + generatedId));
     assertEquals(defaultLinks.getUpdate().getMethod().getValue(), MethodEnum.PUT.getValue());
   }
 }

@@ -340,7 +340,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void createAgencyPostcodeRange_Should_returnOk_When_requiredPaginationParamsAreGiven()
+  public void createAgencyPostcodeRange_Should_returnCreated_When_requiredPaginationParamsAreGiven()
       throws Exception {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO()
         .postcodeFrom(VALID_POSTCODE)
@@ -349,6 +349,6 @@ public class AgencyAdminControllerTest {
     this.mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
         .content(new ObjectMapper().writeValueAsString(postCodeRangeDTO))
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
   }
 }

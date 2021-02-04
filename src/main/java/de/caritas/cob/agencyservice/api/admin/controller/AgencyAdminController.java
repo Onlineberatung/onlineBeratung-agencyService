@@ -128,8 +128,10 @@ public class AgencyAdminController implements AgencyadminApi {
    */
   @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
       @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
-    return ResponseEntity
-        .ok(agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO));
+
+    return new ResponseEntity<>(
+        agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO),
+        HttpStatus.CREATED);
   }
 
   /**

@@ -338,7 +338,7 @@ public class AgencyAdminControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
-  public void createAgencyPostcodeRange_Should_ReturnOkAndCallAgencyPostCodeRangeAdminService_When_agencyAdminAuthority()
+  public void createAgencyPostcodeRange_Should_ReturnCreatedAndCallAgencyPostCodeRangeAdminService_When_agencyAdminAuthority()
       throws Exception {
 
     mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
@@ -346,7 +346,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .content(VALID_POSTCODE_RANGE_DTO)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
 
     verify(this.agencyPostCodeRangeAdminService, times(1))
         .createPostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));

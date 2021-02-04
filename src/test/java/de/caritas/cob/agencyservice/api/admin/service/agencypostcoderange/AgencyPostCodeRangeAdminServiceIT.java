@@ -1,22 +1,15 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_2;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
-import de.caritas.cob.agencyservice.api.model.DefaultLinks;
-import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.PaginationLinks;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import java.util.List;
@@ -44,7 +37,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_perPageIsSetToOne() {
-    List<PostCodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(0, 1, 0L)
         .getEmbedded();
 
@@ -57,7 +50,8 @@ public class AgencyPostCodeRangeAdminServiceIT {
         .findPostCodeRangesForAgency(0, 1, 0L)
         .getEmbedded()
         .iterator()
-        .next();
+        .next()
+        .getEmbedded();
 
     assertThat(postCodeRange, notNullValue());
     assertThat(postCodeRange.getAgencyId(), notNullValue());
@@ -70,7 +64,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_pageIsSetToOneAndPerPageIsSetToOne() {
-    List<PostCodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(1, 1, 15L)
         .getEmbedded();
 
@@ -79,7 +73,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_paginationParamsAreZero() {
-    List<PostCodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(0, 0, 0L)
         .getEmbedded();
 
@@ -88,7 +82,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_paginationParamsAreNegative() {
-    List<PostCodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(-100, -10, 0L)
         .getEmbedded();
 
@@ -98,10 +92,10 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
-    List<PostCodeRangeResponseDTO> firstPage = this.agencyPostCodeRangeAdminService
+    List<AgencyPostcodeRangeResponseDTO> firstPage = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(1, 20, 15L)
         .getEmbedded();
-    List<PostCodeRangeResponseDTO> secondPage = this.agencyPostCodeRangeAdminService
+    List<AgencyPostcodeRangeResponseDTO> secondPage = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(2, 20, 15L)
         .getEmbedded();
 
@@ -143,30 +137,4 @@ public class AgencyPostCodeRangeAdminServiceIT {
     this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(agencyPostCodeRangeId);
   }
 
-
-  @Test
-  public void createPostcodeRange_Should_haveExpectedLinks_When_AllParamsAreProvided() {
-    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE)
-        .postcodeTo(VALID_POSTCODE_2);
-
-    AgencyPostcodeRangeResponseDTO agencyPostcodeRangeResponseDTO = this
-        .agencyPostCodeRangeAdminService
-        .createPostcodeRange(AGENCY_ID, postCodeRangeDTO);
-
-    DefaultLinks defaultLinks = agencyPostcodeRangeResponseDTO.getLinks();
-    Long generatedId = agencyPostcodeRangeResponseDTO.getEmbedded().getId();
-
-    assertThat(defaultLinks.getSelf(), notNullValue());
-    assertThat(defaultLinks.getSelf().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderange/" + generatedId));
-    assertEquals(defaultLinks.getSelf().getMethod().getValue(), MethodEnum.GET.getValue());
-    assertThat(defaultLinks.getDelete(), notNullValue());
-    assertThat(defaultLinks.getDelete().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderange/" + generatedId));
-    assertEquals(defaultLinks.getDelete().getMethod().getValue(), MethodEnum.DELETE.getValue());
-    assertThat(defaultLinks.getUpdate(), notNullValue());
-    assertThat(defaultLinks.getUpdate().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderange/" + generatedId));
-    assertEquals(defaultLinks.getUpdate().getMethod().getValue(), MethodEnum.PUT.getValue());
-  }
 }
