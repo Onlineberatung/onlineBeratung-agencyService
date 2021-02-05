@@ -9,8 +9,10 @@ import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
@@ -104,7 +106,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * Entry point to get the postcode ranges for a specific agency.
    *
    * @param agencyId Agency Id (required)
-   * @param page     Number of page where to start (1 &#x3D; first page) (required)
+   * @param page     Number of page where to start (1 = first page) (required)
    * @param perPage  Number of items which are being returned per page (required)
    * @return an entity containing the search result
    */
@@ -115,6 +117,21 @@ public class AgencyAdminController implements AgencyadminApi {
     AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
         .findPostCodeRangesForAgency(page, perPage, agencyId);
     return ResponseEntity.ok(postCodeRangesForAgency);
+  }
+
+  /**
+   * Entry point to create a new postcode range for the given agency.
+   *
+   * @param agencyId         Agency Id (required)
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
+   * @return an entity containing the created postcode ranges
+   */
+  @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
+      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+
+    return new ResponseEntity<>(
+        agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO),
+        HttpStatus.CREATED);
   }
 
   /**

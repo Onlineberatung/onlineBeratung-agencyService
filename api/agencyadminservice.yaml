@@ -251,6 +251,8 @@ paths:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
           description: UNAUTHORIZED - no/invalid role/authorization
+        404:
+          description: NOT FOUND - provided agency ID does not exist
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
@@ -445,22 +447,31 @@ components:
         id:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 684
         dioceseId:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 684
         name:
           type: string
+          maxLength: 100
           example: "Suchtberatung Freiburg"
         description:
           type: string
+          maxLength: 65534
           example: "Our agency provides help for the following topics: Lorem ipsum.."
         postcode:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
         city:
           type: string
+          maxLength: 100
           example: "Bonn"
         teamAgency:
           type: boolean
@@ -470,6 +481,8 @@ components:
           example: false
         consultingType:
           type: integer
+          minimum: 0
+          maximum: 127
           example: 1
         createDate:
           type: string
@@ -486,9 +499,13 @@ components:
       properties:
         postcodeFrom:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
         postcodeTo:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
 
     DioceseAdminResultDTO:
@@ -507,9 +524,12 @@ components:
         dioceseId:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 12
         name:
           type: string
+          maxLength: 100
           example: "Freiburg"
         createDate:
           type: string
@@ -529,24 +549,33 @@ components:
         dioceseId:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 12
         name:
           type: string
-          example: "Beratungstelle"
+          maxLength: 100
+          example: "Beratungsstelle"
         description:
           type: string
-          example: "Beschreibung Beratungstelle..."
+          maxLength: 10000
+          example: "Beschreibung Beratungsstelle..."
         postcode:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
         city:
           type: string
+          maxLength: 100
           example: "Muenchen"
         teamAgency:
           type: boolean
           example: false
         consultingType:
           type: integer
+          minimum: 0
+          maximum: 127
           example: 1
 
     AgencyAdminFullResponseDTO:
@@ -567,18 +596,22 @@ components:
         dioceseId:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 12
         name:
           type: string
-          example: "Beratungstelle"
+          example: "Beratungsstelle"
           minLength: 1
           maxLength: 100
         description:
           type: string
-          example: "Beschreibung Beratungstelle..."
+          example: "Beschreibung Beratungsstelle..."
           maxLength: 10000
         postcode:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
         city:
           type: string
@@ -620,16 +653,24 @@ components:
         id:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 684
         agencyId:
           type: integer
           format: int64
+          minimum: 0
+          maximum: 9223372036854775807
           example: 684
         postcodeFrom:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
         postcodeTo:
           type: string
+          minLength: 5
+          maxLength: 5
           example: "79106"
         createDate:
           type: string

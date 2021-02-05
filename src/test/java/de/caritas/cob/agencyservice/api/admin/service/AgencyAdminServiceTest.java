@@ -11,6 +11,7 @@ import de.caritas.cob.agencyservice.api.service.LogService;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_SUCHT;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -46,7 +47,7 @@ public class AgencyAdminServiceTest {
   @Test(expected = InternalServerErrorException.class)
   public void saveAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
 
-    when(agencyRepository.save(Mockito.any())).thenThrow(Mockito.mock(DataAccessException.class));
+    when(agencyRepository.save(Mockito.any())).thenThrow(mock(DataAccessException.class));
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
@@ -61,7 +62,7 @@ public class AgencyAdminServiceTest {
   public void updateAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
 
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(AGENCY_SUCHT));
-    when(agencyRepository.save(Mockito.any())).thenThrow(Mockito.mock(DataAccessException.class));
+    when(agencyRepository.save(Mockito.any())).thenThrow(mock(DataAccessException.class));
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
@@ -82,4 +83,20 @@ public class AgencyAdminServiceTest {
 
   }
 
+  @Test(expected = InternalServerErrorException.class)
+  public void findAgencyById_Should_logExpectedMessage_WhenDatabaseError() {
+    when(agencyRepository.findById(AGENCY_ID)).thenThrow(mock(DataAccessException.class));
+
+    agencyAdminService.findAgencyById(AGENCY_ID);
+
+    verify(this.logger, times(1))
+        .info(eq(String.format("Database error while getting agency with id %s", AGENCY_ID)));
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void findAgencyById_Should_ThrowNotFoundException_WhenAgencyIsNotFound() {
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
+
+    agencyAdminService.findAgencyById(AGENCY_ID);
+  }
 }
