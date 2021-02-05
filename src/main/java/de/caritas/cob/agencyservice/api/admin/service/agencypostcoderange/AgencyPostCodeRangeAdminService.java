@@ -2,7 +2,6 @@ package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create.PostcodeRangeValidator;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
@@ -12,12 +11,10 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import java.util.function.Predicate;
-import de.caritas.cob.agencyservice.api.service.LogService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -105,8 +102,8 @@ public class AgencyPostCodeRangeAdminService {
     Agency agency = agencyAdminService.findAgencyById(agencyId);
     postcodeRangeValidator.validatePostcodeRangeForAgency(postCodeRangeDTO,
         agency.getAgencyPostCodeRanges());
-    AgencyPostCodeRange agencyPostCodeRange = this
-        .savePostcodeRange(fromPostCodeRangeDTO(postCodeRangeDTO, agency));
+    AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
+        .save(fromPostCodeRangeDTO(postCodeRangeDTO, agency));
 
     return AgencyPostcodeRangeResponseDTOBuilder.getInstance(agencyPostCodeRange)
         .build();
@@ -121,17 +118,5 @@ public class AgencyPostCodeRangeAdminService {
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
-  }
-
-  private AgencyPostCodeRange savePostcodeRange(AgencyPostCodeRange agencyPostCodeRange) {
-    try {
-      return agencyPostCodeRangeRepository.save(agencyPostCodeRange);
-    } catch (DataAccessException ex) {
-      throw new InternalServerErrorException(
-          LogService::logDatabaseError, String
-          .format("Could not create postcode range %s-%s for agency id %s",
-              agencyPostCodeRange.getPostCodeFrom(), agencyPostCodeRange.getPostCodeTo(),
-              agencyPostCodeRange.getAgency().getId()));
-    }
   }
 }

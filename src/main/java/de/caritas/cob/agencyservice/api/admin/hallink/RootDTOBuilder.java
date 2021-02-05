@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.admin.hallink;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
@@ -27,6 +28,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
         .links(new RootLinks()
             .self(buildSelfLink())
             .agencies(buildSearchLink())
+            .agency(buildCreateAgencyLink())
             .dioceses(buildDiocesesLink())
             .agencypostcodes(buildAgencyPostCodeRangesLink()));
   }
@@ -39,6 +41,12 @@ public class RootDTOBuilder implements HalLinkBuilder {
     return buildHalLink(
         methodOn(AgencyadminApi.class).searchAgencies(DEFAULT_PAGE, DEFAULT_PER_PAGE, null),
         MethodEnum.GET);
+  }
+
+  private HalLink buildCreateAgencyLink() {
+    return buildHalLink(
+        methodOn(AgencyadminApi.class).createAgency(new AgencyDTO()),
+        MethodEnum.POST);
   }
 
   private HalLink buildAgencyPostCodeRangesLink() {

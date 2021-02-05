@@ -252,7 +252,7 @@ paths:
         401:
           description: UNAUTHORIZED - no/invalid role/authorization
         404:
-          description: NOT FOUND - provided agency ID doesn not exist
+          description: NOT FOUND - provided agency ID does not exist
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:

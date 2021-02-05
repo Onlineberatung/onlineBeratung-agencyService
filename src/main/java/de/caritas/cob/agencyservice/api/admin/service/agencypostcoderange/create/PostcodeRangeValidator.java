@@ -8,6 +8,9 @@ import java.util.List;
 import org.apache.commons.lang3.Range;
 import org.springframework.stereotype.Component;
 
+/**
+ * Postcode range validation class.
+ */
 @Component
 public class PostcodeRangeValidator {
 
@@ -40,6 +43,15 @@ public class PostcodeRangeValidator {
     }
   }
 
+  private boolean isPostcodeFromBiggerThanPostcodeTo(PostCodeRangeDTO postCodeRangeDTO) {
+    try {
+      return Integer.parseInt(postCodeRangeDTO.getPostcodeFrom()) > Integer
+          .parseInt(postCodeRangeDTO.getPostcodeTo());
+    } catch (NumberFormatException exception) {
+      throw new InvalidPostcodeException();
+    }
+  }
+
   private boolean rangeOverlapsRangeList(List<AgencyPostCodeRange> postCodeRangeList,
       Range<Integer> providedRange) {
     return postCodeRangeList.stream()
@@ -54,14 +66,5 @@ public class PostcodeRangeValidator {
         .postCodeFrom(Integer.parseInt(postCodeFrom))
         .postCodeTo(Integer.parseInt(postCodeTo))
         .build();
-  }
-
-  private boolean isPostcodeFromBiggerThanPostcodeTo(PostCodeRangeDTO postCodeRangeDTO) {
-    try {
-      return Integer.parseInt(postCodeRangeDTO.getPostcodeFrom()) > Integer
-          .parseInt(postCodeRangeDTO.getPostcodeTo());
-    } catch (NumberFormatException exception) {
-      throw new InvalidPostcodeException();
-    }
   }
 }
