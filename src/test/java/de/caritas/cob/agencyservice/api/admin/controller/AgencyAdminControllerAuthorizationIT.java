@@ -9,6 +9,7 @@ import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminContr
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PER_PAGE_PARAM;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.UPDATE_AGENCY_PATH;
+import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.UPDATE_AGENCY_POSTCODE_RANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_UPDATE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_RANGE_DTO;
@@ -185,7 +186,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyPostCodeRangeAdminService, times(1)).findPostCodeRangesForAgency(anyInt(),
+    verify(this.agencyPostCodeRangeAdminService, times(1)).findPostcodeRangesForAgency(anyInt(),
         anyInt(), anyLong());
   }
 
@@ -350,5 +351,45 @@ public class AgencyAdminControllerAuthorizationIT {
 
     verify(this.agencyPostCodeRangeAdminService, times(1))
         .createPostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));
+  }
+
+  @Test
+  public void updateAgencyPostcodeRange_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
+      throws Exception {
+
+    mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(this.agencyPostCodeRangeAdminService);
+  }
+
+  @Test
+  public void updateAgencyPostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
+      throws Exception {
+
+    mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isUnauthorized());
+
+    verifyNoMoreInteractions(this.agencyPostCodeRangeAdminService);
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  public void updateAgencyPostcodeRange_Should_ReturnOkAndCallAgencyPostCodeRangeAdminService_When_agencyAdminAuthority()
+      throws Exception {
+
+    mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(VALID_POSTCODE_RANGE_DTO)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isOk());
+
+    verify(this.agencyPostCodeRangeAdminService, times(1))
+        .updatePostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));
   }
 }

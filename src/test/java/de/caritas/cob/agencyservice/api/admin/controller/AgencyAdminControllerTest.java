@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.admin.controller;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_PREGNANCY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_2;
 import static org.hamcrest.Matchers.endsWith;
@@ -63,6 +64,8 @@ public class AgencyAdminControllerTest {
       + "/postcoderange/";
   protected static final String CREATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
       + "/agency/1/postcoderange";
+  protected static final String UPDATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
+      + "/postcoderange/1";
 
   @Autowired
   private MockMvc mvc;
@@ -226,7 +229,7 @@ public class AgencyAdminControllerTest {
         .andExpect(status().isOk());
 
     Mockito.verify(this.agencyPostCodeRangeAdminService, Mockito.times(1))
-        .findPostCodeRangesForAgency(eq(0), eq(1), eq(1L));
+        .findPostcodeRangesForAgency(eq(0), eq(1), eq(1L));
   }
 
   @Test
@@ -340,7 +343,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void createAgencyPostcodeRange_Should_returnCreated_When_requiredPaginationParamsAreGiven()
+  public void createAgencyPostcodeRange_Should_returnCreated_When_AllParamsAreValid()
       throws Exception {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO()
         .postcodeFrom(VALID_POSTCODE)
@@ -350,5 +353,44 @@ public class AgencyAdminControllerTest {
         .content(new ObjectMapper().writeValueAsString(postCodeRangeDTO))
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated());
+  }
+
+  @Test
+  public void createAgencyPostcodeRange_Should_returnBadRequest_When_PostCodeIsInvalid()
+      throws Exception {
+    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO()
+        .postcodeFrom(INVALID_POSTCODE)
+        .postcodeTo(VALID_POSTCODE_2);
+
+    this.mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
+        .content(new ObjectMapper().writeValueAsString(postCodeRangeDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void updateAgencyPostcodeRange_Should_returnOk_When_AllParamsAreValid()
+      throws Exception {
+    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO()
+        .postcodeFrom(VALID_POSTCODE)
+        .postcodeTo(VALID_POSTCODE_2);
+
+    this.mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+        .content(new ObjectMapper().writeValueAsString(postCodeRangeDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void updateAgencyPostcodeRange_Should_returnBadRequest_When_PostCodeIsInvalid()
+      throws Exception {
+    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO()
+        .postcodeFrom(INVALID_POSTCODE)
+        .postcodeTo(VALID_POSTCODE_2);
+
+    this.mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+        .content(new ObjectMapper().writeValueAsString(postCodeRangeDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
   }
 }

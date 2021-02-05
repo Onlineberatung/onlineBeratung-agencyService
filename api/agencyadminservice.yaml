@@ -138,7 +138,7 @@ paths:
       parameters:
         - name: agencyId
           in: path
-          description: Agency Id
+          description: Agency ID
           required: true
           schema:
             type: integer
@@ -151,7 +151,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
         204:
-          description: NO CONTENT - agency with the specific id was not found
+          description: NO CONTENT - agency with the provided ID does not exist
         400:
           description: BAD REQUEST - invalid/incomplete request
         401:
@@ -323,7 +323,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
         204:
-          description: NO CONTENT - agency postcode range with the specific id was not found
+          description: NO CONTENT - agency postcode range with the provided ID does not exist
         400:
           description: BAD REQUEST - invalid/incomplete request
         401:
@@ -352,8 +352,8 @@ paths:
             type: integer
             format: int64
       responses:
-        201:
-          description: CREATED - agency postcode range was created successfully
+        200:
+          description: OK - agency postcode range was successfully updated
           content:
             'application/hal+json':
               schema:
@@ -362,6 +362,8 @@ paths:
           description: BAD REQUEST - invalid/incomplete request or body object
         401:
           description: UNAUTHORIZED - no/invalid role/authorization
+        404:
+          description: NOT FOUND - agency postcode range with the provided ID does not exist
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
@@ -387,7 +389,7 @@ paths:
         401:
           description: UNAUTHORIZED - no/invalid role/authorization
         404:
-          description: NOT FOUND - agency postcode range with the specific id was not found
+          description: NOT FOUND - agency postcode range with the provided ID does not exist
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
