@@ -38,7 +38,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_perPageIsSetToOne() {
     List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(0, 1, 0L)
+        .findPostcodeRangesForAgency(0, 1, 0L)
         .getEmbedded();
 
     assertThat(postCodeRanges, hasSize(1));
@@ -47,7 +47,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_returnExpectedResult_When_perPageIsSetToOne() {
     PostCodeRangeResponseDTO postCodeRange = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(0, 1, 0L)
+        .findPostcodeRangesForAgency(0, 1, 0L)
         .getEmbedded()
         .iterator()
         .next()
@@ -65,7 +65,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_pageIsSetToOneAndPerPageIsSetToOne() {
     List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(1, 1, 15L)
+        .findPostcodeRangesForAgency(1, 1, 15L)
         .getEmbedded();
 
     assertThat(postCodeRanges, hasSize(1));
@@ -74,7 +74,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_paginationParamsAreZero() {
     List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(0, 0, 0L)
+        .findPostcodeRangesForAgency(0, 0, 0L)
         .getEmbedded();
 
     assertThat(postCodeRanges, hasSize(1));
@@ -83,7 +83,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_paginationParamsAreNegative() {
     List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(-100, -10, 0L)
+        .findPostcodeRangesForAgency(-100, -10, 0L)
         .getEmbedded();
 
     assertThat(postCodeRanges, hasSize(1));
@@ -93,10 +93,10 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
     List<AgencyPostcodeRangeResponseDTO> firstPage = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(1, 20, 15L)
+        .findPostcodeRangesForAgency(1, 20, 15L)
         .getEmbedded();
     List<AgencyPostcodeRangeResponseDTO> secondPage = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(2, 20, 15L)
+        .findPostcodeRangesForAgency(2, 20, 15L)
         .getEmbedded();
 
     assertThat(firstPage, hasSize(20));
@@ -106,7 +106,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   public void findPostCodeRangesForAgency_Should_haveExpectedLinks_When_AllParamsAreProvided() {
     PaginationLinks paginationLinks = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(2, 2, 15L).getLinks();
+        .findPostcodeRangesForAgency(2, 2, 15L).getLinks();
 
     assertThat(paginationLinks.getSelf(), notNullValue());
     assertThat(paginationLinks.getSelf().getHref(),

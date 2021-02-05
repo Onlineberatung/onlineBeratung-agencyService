@@ -40,10 +40,11 @@ public class PostcodeRangeValidatorTest {
 
   @Test
   public void validatePostcodeRange_ShouldNot_ThrowException_WhenPostcodeFromIsSmallerThanPostcodeTo() {
-    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE)
-        .postcodeTo(VALID_POSTCODE_2);
+    PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE_5)
+        .postcodeTo(VALID_POSTCODE_5);
 
-    this.postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO);
+    this.postcodeRangeValidator
+        .validatePostcodeRange(postCodeRangeDTO, this.agencyPostCodeRangeList);
   }
 
   @Test(expected = InvalidPostcodeException.class)
@@ -51,7 +52,8 @@ public class PostcodeRangeValidatorTest {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE_2)
         .postcodeTo(VALID_POSTCODE);
 
-    this.postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO);
+    this.postcodeRangeValidator
+        .validatePostcodeRange(postCodeRangeDTO, this.agencyPostCodeRangeList);
   }
 
   @Test(expected = InvalidPostcodeException.class)
@@ -59,7 +61,8 @@ public class PostcodeRangeValidatorTest {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(INVALID_POSTCODE)
         .postcodeTo(VALID_POSTCODE);
 
-    this.postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO);
+    this.postcodeRangeValidator
+        .validatePostcodeRange(postCodeRangeDTO, this.agencyPostCodeRangeList);
   }
 
   @Test(expected = InvalidPostcodeException.class)
@@ -67,24 +70,25 @@ public class PostcodeRangeValidatorTest {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE)
         .postcodeTo(INVALID_POSTCODE);
 
-    this.postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO);
+    this.postcodeRangeValidator
+        .validatePostcodeRange(postCodeRangeDTO, this.agencyPostCodeRangeList);
   }
 
   @Test
-  public void validatePostcodeRangeForAgency_ShouldNot_ThrowException_WhenPostcodeIsNotWithinRangeList() {
+  public void validatePostcodeRange_ShouldNot_ThrowException_WhenPostcodeIsNotWithinRangeList() {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE_5)
         .postcodeTo(VALID_POSTCODE_5);
 
     this.postcodeRangeValidator
-        .validatePostcodeRangeForAgency(postCodeRangeDTO, agencyPostCodeRangeList);
+        .validatePostcodeRange(postCodeRangeDTO, agencyPostCodeRangeList);
   }
 
   @Test(expected = InvalidPostcodeException.class)
-  public void validatePostcodeRangeForAgency_Should_ThrowInvalidPostcodeException_WhenPostcodeIsWithinRangeList() {
+  public void validatePostcodeRange_Should_ThrowInvalidPostcodeException_WhenPostcodeIsWithinRangeList() {
     PostCodeRangeDTO postCodeRangeDTO = new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE_6)
         .postcodeTo(VALID_POSTCODE_6);
 
     this.postcodeRangeValidator
-        .validatePostcodeRangeForAgency(postCodeRangeDTO, agencyPostCodeRangeList);
+        .validatePostcodeRange(postCodeRangeDTO, agencyPostCodeRangeList);
   }
 }

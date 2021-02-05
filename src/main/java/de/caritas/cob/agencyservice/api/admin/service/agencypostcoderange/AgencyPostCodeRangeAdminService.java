@@ -41,7 +41,7 @@ public class AgencyPostCodeRangeAdminService {
    * @param agencyId the agency id
    * @return {@link AgencyPostcodeRangesResultDTO}
    */
-  public AgencyPostcodeRangesResultDTO findPostCodeRangesForAgency(Integer page,
+  public AgencyPostcodeRangesResultDTO findPostcodeRangesForAgency(Integer page,
       Integer perPage, Long agencyId) {
     Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(perPage, 1));
 
@@ -97,26 +97,50 @@ public class AgencyPostCodeRangeAdminService {
   @Transactional
   public AgencyPostcodeRangeResponseDTO createPostcodeRange(Long agencyId,
       PostCodeRangeDTO postCodeRangeDTO) {
-
-    postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO);
     Agency agency = agencyAdminService.findAgencyById(agencyId);
-    postcodeRangeValidator.validatePostcodeRangeForAgency(postCodeRangeDTO,
+
+    return validateAndSavePostcodeRange(postCodeRangeDTO, agency, null);
+  }
+
+  private AgencyPostcodeRangeResponseDTO validateAndSavePostcodeRange(
+      PostCodeRangeDTO postCodeRangeDTO, Agency agency, Long postcodeId) {
+    postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO,
         agency.getAgencyPostCodeRanges());
     AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
-        .save(fromPostCodeRangeDTO(postCodeRangeDTO, agency));
+        .save(fromPostcodeRangeDTO(postCodeRangeDTO, agency, postcodeId));
 
     return AgencyPostcodeRangeResponseDTOBuilder.getInstance(agencyPostCodeRange)
         .build();
   }
 
-  private AgencyPostCodeRange fromPostCodeRangeDTO(PostCodeRangeDTO postCodeRangeDTO,
-      Agency agency) {
+  private AgencyPostCodeRange fromPostcodeRangeDTO(PostCodeRangeDTO postCodeRangeDTO,
+      Agency agency, Long postcodeId) {
     return AgencyPostCodeRange.builder()
+        .id(postcodeId)
         .postCodeFrom(postCodeRangeDTO.getPostcodeFrom())
         .postCodeTo(postCodeRangeDTO.getPostcodeTo())
         .agency(agency)
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
+  }
+
+  /**
+   * Updates the postcode range for the given postcode range Id.
+   *
+   * @param postcodeRangeId  Postcode range Id
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO}
+   * @return {@link AgencyPostcodeRangeResponseDTO}
+   */
+  public AgencyPostcodeRangeResponseDTO updatePostcodeRange(Long postcodeRangeId,
+      PostCodeRangeDTO postCodeRangeDTO) {
+    AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
+        .findById(postcodeRangeId)
+        .orElseThrow(NotFoundException::new);
+    agencyPostCodeRange.getAgency().getAgencyPostCodeRanges()
+        .removeIf(range -> range.equals(agencyPostCodeRange));
+
+    return validateAndSavePostcodeRange(postCodeRangeDTO, agencyPostCodeRange.getAgency(),
+        agencyPostCodeRange.getId());
   }
 }

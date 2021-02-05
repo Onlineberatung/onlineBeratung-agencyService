@@ -52,6 +52,23 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * Entry point to return all dioceses.
+   *
+   * @param page    Number of page where to start in the query (1 = first page) (required)
+   * @param perPage Number of items which are being returned per page (required)
+   * @return {@link DioceseAdminResultDTO}
+   */
+  @Override
+  public ResponseEntity<DioceseAdminResultDTO> getDioceses(
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
+
+    DioceseAdminResultDTO dioceseAdminResultDTO =
+        dioceseAdminService.findAllDioceses(page, perPage);
+
+    return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
+  }
+
+  /**
    * Entry point to search for agencies.
    *
    * @param page    Number of page where to start in the query (1 = first page) (required)
@@ -67,23 +84,6 @@ public class AgencyAdminController implements AgencyadminApi {
         this.agencyAdminSearchService.searchAgencies(q, page, perPage);
 
     return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);
-  }
-
-  /**
-   * Entry point to return all dioceses.
-   *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
-   * @param perPage Number of items which are being returned per page (required)
-   * @return {@link DioceseAdminResultDTO}
-   */
-  @Override
-  public ResponseEntity<DioceseAdminResultDTO> getDioceses(
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
-
-    DioceseAdminResultDTO dioceseAdminResultDTO =
-        dioceseAdminService.findAllDioceses(page, perPage);
-
-    return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
   }
 
   /**
@@ -103,38 +103,6 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
-   * Entry point to get the postcode ranges for a specific agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param page     Number of page where to start (1 = first page) (required)
-   * @param perPage  Number of items which are being returned per page (required)
-   * @return an entity containing the search result
-   */
-  @Override
-  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
-      @PathVariable Long agencyId,
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
-    AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(page, perPage, agencyId);
-    return ResponseEntity.ok(postCodeRangesForAgency);
-  }
-
-  /**
-   * Entry point to create a new postcode range for the given agency.
-   *
-   * @param agencyId         Agency Id (required)
-   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
-   * @return an entity containing the created postcode ranges
-   */
-  @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
-      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
-
-    return new ResponseEntity<>(
-        agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO),
-        HttpStatus.CREATED);
-  }
-
-  /**
    * Entry point to update a specific agency.
    *
    * @param agencyId        Agency Id (required)
@@ -150,6 +118,53 @@ public class AgencyAdminController implements AgencyadminApi {
         .updateAgency(agencyId, updateAgencyDTO);
 
     return ResponseEntity.ok(agencyAdminFullResponseDTO);
+  }
+
+  /**
+   * Entry point to get the postcode ranges for a specific agency.
+   *
+   * @param agencyId Agency Id (required)
+   * @param page     Number of page where to start (1 = first page) (required)
+   * @param perPage  Number of items which are being returned per page (required)
+   * @return an entity containing the search result
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
+      @PathVariable Long agencyId,
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
+    AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
+        .findPostcodeRangesForAgency(page, perPage, agencyId);
+    return ResponseEntity.ok(postCodeRangesForAgency);
+  }
+
+  /**
+   * Entry point to create a new postcode range for the given agency.
+   *
+   * @param agencyId         Agency Id (required)
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
+   * @return an entity containing the created postcode range
+   */
+  @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
+      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+
+    return new ResponseEntity<>(
+        agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO),
+        HttpStatus.CREATED);
+  }
+
+  /**
+   * Entry point to update a postcode range for the given postcode range Id.
+   *
+   * @param postcodeRangeId  Postcode range Id (required)
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
+   * @return an entity containing the updated postcode range
+   */
+  @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
+      @PathVariable Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+    AgencyPostcodeRangeResponseDTO rangeResponseDTO = agencyPostCodeRangeAdminService
+        .updatePostcodeRange(postcodeRangeId, postCodeRangeDTO);
+
+    return ResponseEntity.ok(rangeResponseDTO);
   }
 
   /**

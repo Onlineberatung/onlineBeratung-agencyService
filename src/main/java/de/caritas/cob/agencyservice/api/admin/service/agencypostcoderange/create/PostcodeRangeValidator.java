@@ -2,7 +2,6 @@ package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.creat
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import java.util.List;
 import org.apache.commons.lang3.Range;
@@ -15,32 +14,18 @@ import org.springframework.stereotype.Component;
 public class PostcodeRangeValidator {
 
   /**
-   * Validates if the given postcode range is valid (postcodeFrom is smaller than postcodeTo).
+   * Validates if the given postcode range is valid (postcodeFrom is smaller than postcodeTo) and if
+   * the given postcode range already exists or intersects with the given {@link * Agency}'s data.
    *
    * @param postCodeRangeDTO {@link PostCodeRangeDTO}
    */
-  public void validatePostcodeRange(PostCodeRangeDTO postCodeRangeDTO) {
+  public void validatePostcodeRange(PostCodeRangeDTO postCodeRangeDTO,
+      List<AgencyPostCodeRange> postCodeRangeList) {
     if (isPostcodeFromBiggerThanPostcodeTo(postCodeRangeDTO)) {
       throw new InvalidPostcodeException();
     }
-  }
 
-  /**
-   * Validates if the given postcode range already exists or intersects with the given {@link
-   * Agency}'s data.
-   *
-   * @param postCodeRangeDTO  {@link PostCodeRangeDTO}
-   * @param postCodeRangeList a list of {@link AgencyPostCodeRange}
-   */
-  public void validatePostcodeRangeForAgency(PostCodeRangeDTO postCodeRangeDTO,
-      List<AgencyPostCodeRange> postCodeRangeList) {
-    Range<Integer> providedRange = Range
-        .between(Integer.valueOf(postCodeRangeDTO.getPostcodeFrom()),
-            Integer.valueOf(postCodeRangeDTO.getPostcodeTo()));
-
-    if (rangeOverlapsRangeList(postCodeRangeList, providedRange)) {
-      throw new InvalidPostcodeException();
-    }
+    validatePostcodeRangeForAgency(postCodeRangeDTO, postCodeRangeList);
   }
 
   private boolean isPostcodeFromBiggerThanPostcodeTo(PostCodeRangeDTO postCodeRangeDTO) {
@@ -48,6 +33,17 @@ public class PostcodeRangeValidator {
       return Integer.parseInt(postCodeRangeDTO.getPostcodeFrom()) > Integer
           .parseInt(postCodeRangeDTO.getPostcodeTo());
     } catch (NumberFormatException exception) {
+      throw new InvalidPostcodeException();
+    }
+  }
+
+  private void validatePostcodeRangeForAgency(PostCodeRangeDTO postCodeRangeDTO,
+      List<AgencyPostCodeRange> postCodeRangeList) {
+    Range<Integer> providedRange = Range
+        .between(Integer.valueOf(postCodeRangeDTO.getPostcodeFrom()),
+            Integer.valueOf(postCodeRangeDTO.getPostcodeTo()));
+
+    if (rangeOverlapsRangeList(postCodeRangeList, providedRange)) {
       throw new InvalidPostcodeException();
     }
   }
