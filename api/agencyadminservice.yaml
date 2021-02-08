@@ -220,6 +220,37 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
+  /agencyadmin/agency/{agencyId}/changetype:
+    post:
+      tags:
+        - admin-agency-controller
+      summary: 'Change the type of the agency [team agency or default].  [Authorization: Role:
+      agency-admin]'
+      operationId: changeAgencyType
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AgencyTypeChangeRequestDTO'
+      responses:
+        200:
+          description: OK - agency type successfully changed
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
   /agencyadmin/agency/{agencyId}/postcoderange:
     post:
       tags:
@@ -680,6 +711,16 @@ components:
         updateDate:
           type: string
           example: "2019-12-02T13:12:08"
+
+    AgencyTypeChangeRequestDTO:
+      type: object
+      required:
+        - teamAgency
+      properties:
+        teamAgency:
+          type: boolean
+          description: 'Flag to decide if assigned consultants will be removed from team
+                        sessions or tagged as team consultants.'
 
     PaginationLinks:
       type: object
