@@ -1,15 +1,9 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
-import de.caritas.cob.agencyservice.api.model.AgencyDTO;
-import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
-import de.caritas.cob.agencyservice.api.service.LogService;
-
+import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.DEFAULT_AGENCY;
+import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_SUCHT;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -17,6 +11,15 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.junit.Before;
@@ -24,9 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -34,8 +35,13 @@ public class AgencyAdminServiceTest {
 
   @InjectMocks
   AgencyAdminService agencyAdminService;
+
   @Mock
   AgencyRepository agencyRepository;
+
+  @Mock
+  UserAdminService userAdminService;
+
   @Mock
   private Logger logger;
 
@@ -44,32 +50,12 @@ public class AgencyAdminServiceTest {
     setInternalState(LogService.class, "LOGGER", logger);
   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void saveAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
+  @Test(expected = BadRequestException.class)
+  public void saveAgency_Should_throwBadREquestException_When_consultingTypeInAgencyDtoDoesNotExist() {
+    AgencyDTO agencyDTO = new EasyRandom().nextObject(AgencyDTO.class);
+    agencyDTO.setConsultingType(-10);
 
-    when(agencyRepository.save(Mockito.any())).thenThrow(mock(DataAccessException.class));
-
-    EasyRandom easyRandom = new EasyRandom();
-    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setConsultingType(ConsultingType.SOCIAL.getValue());
-    agencyAdminService.saveAgency(agencyDTO);
-
-    verify(this.logger, times(1)).error(eq("Database error while saving agency"));
-
-  }
-
-  @Test(expected = InternalServerErrorException.class)
-  public void updateAgency_Should_logExpectedErrorMessage_WhenDatabaseError() {
-
-    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(AGENCY_SUCHT));
-    when(agencyRepository.save(Mockito.any())).thenThrow(mock(DataAccessException.class));
-
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
-
-    verify(this.logger, times(1)).error(eq("Database error while saving agency"));
-
+    this.agencyAdminService.saveAgency(agencyDTO);
   }
 
   @Test(expected = NotFoundException.class)
@@ -83,20 +69,40 @@ public class AgencyAdminServiceTest {
 
   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void findAgencyById_Should_logExpectedMessage_WhenDatabaseError() {
-    when(agencyRepository.findById(AGENCY_ID)).thenThrow(mock(DataAccessException.class));
-
-    agencyAdminService.findAgencyById(AGENCY_ID);
-
-    verify(this.logger, times(1))
-        .info(eq(String.format("Database error while getting agency with id %s", AGENCY_ID)));
-  }
-
   @Test(expected = NotFoundException.class)
   public void findAgencyById_Should_ThrowNotFoundException_WhenAgencyIsNotFound() {
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
 
     agencyAdminService.findAgencyById(AGENCY_ID);
   }
+
+  @Test(expected = NotFoundException.class)
+  public void changeAgencyType_Should_throwNotFoundException_When_agencyWasNotFound() {
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
+
+    agencyAdminService.changeAgencyType(AGENCY_ID, mock(AgencyTypeRequestDTO.class));
+  }
+
+  @Test(expected = ConflictException.class)
+  public void changeAgencyType_Should_throwConflictException_When_agencyHasAlreadyTypeToChange() {
+    Agency agency = new EasyRandom().nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(TEAM_AGENCY);
+
+    agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+  }
+
+  @Test
+  public void changeAgencyType_Should_callUserAdminServiceAndSaveChangedAgency_When_agencyCanBeChanged() {
+    Agency agency = new EasyRandom().nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(DEFAULT_AGENCY);
+
+    agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+
+    verify(this.userAdminService, times(1)).adaptRelatedConsultantsForChange(eq(AGENCY_ID),
+        eq(requestDTO.getAgencyType().getValue()));
+    verify(this.agencyRepository, times(1)).save(any());
+  }
+
 }

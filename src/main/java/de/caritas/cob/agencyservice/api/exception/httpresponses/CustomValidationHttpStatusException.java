@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
 import static java.util.Objects.nonNull;
 
+import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.function.Consumer;
 
 /**
@@ -14,7 +15,7 @@ public abstract class CustomValidationHttpStatusException extends RuntimeExcepti
 
   CustomValidationHttpStatusException(HttpStatusExceptionReason httpStatusExceptionReason) {
     super();
-    this.loggingMethod = null;
+    this.loggingMethod = LogService::logWarning;
     this.httpStatusExceptionReason = httpStatusExceptionReason;
   }
 

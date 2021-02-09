@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
 import static java.util.Objects.nonNull;
 
+import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.function.Consumer;
 
 /**
@@ -11,7 +12,7 @@ public class InternalServerErrorException extends RuntimeException {
 
   private static final long serialVersionUID = -1101045273426330258L;
 
-  private Consumer<Exception> loggingMethod;
+  private final Consumer<Exception> loggingMethod;
 
   /**
    * InternalServerErrorException exception.
@@ -20,6 +21,7 @@ public class InternalServerErrorException extends RuntimeException {
    */
   public InternalServerErrorException(String message) {
     super(message);
+    this.loggingMethod = LogService::logInternalServerError;
   }
 
   /**

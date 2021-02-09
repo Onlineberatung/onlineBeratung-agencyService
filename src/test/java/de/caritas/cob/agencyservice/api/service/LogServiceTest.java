@@ -91,4 +91,11 @@ public class LogServiceTest {
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
+  @Test
+  public void logError_Should_LogError() {
+    LogService.logError(exception);
+    verify(logger, atLeastOnce()).error(eq("AgencyService API: {}"), anyString());
+    verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
+  }
+
 }

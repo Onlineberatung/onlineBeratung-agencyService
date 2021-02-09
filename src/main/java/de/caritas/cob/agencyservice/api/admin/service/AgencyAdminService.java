@@ -1,10 +1,14 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
+
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
+  private final @NonNull UserAdminService userAdminService;
 
   /**
    * Returns the {@link Agency} for the provided agency ID.
@@ -78,7 +83,7 @@ public class AgencyAdminService {
   /**
    * Updates an agency in the database.
    *
-   * @param agencyId the id of the agency to update
+   * @param agencyId        the id of the agency to update
    * @param updateAgencyDTO {@link UpdateAgencyDTO}
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
@@ -106,4 +111,24 @@ public class AgencyAdminService {
         .deleteDate(agency.getDeleteDate())
         .build();
   }
+
+  /**
+   * Changes the type of the agency.
+   *
+   * @param agencyId      the agency id
+   * @param agencyTypeDTO the request dto containing the agency type
+   */
+  public void changeAgencyType(Long agencyId, AgencyTypeRequestDTO agencyTypeDTO) {
+    Agency agency = findAgencyById(agencyId);
+    boolean isTeamAgency = TEAM_AGENCY.equals(agencyTypeDTO.getAgencyType());
+    if (isTeamAgency == agency.isTeamAgency()) {
+      throw new ConflictException(String.format("Agency is already type of team agency=%s",
+          isTeamAgency));
+    }
+    this.userAdminService
+        .adaptRelatedConsultantsForChange(agencyId, agencyTypeDTO.getAgencyType().getValue());
+    agency.setTeamAgency(isTeamAgency);
+    this.agencyRepository.save(agency);
+  }
+
 }
