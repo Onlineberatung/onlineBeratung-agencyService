@@ -47,8 +47,8 @@ public class AgencyService {
   }
 
   /**
-   * Returns a randomly sorted list of {@link AgencyResponseDTO} which match to the provided
-   * postCode. If no agency is found, returns the atm hard coded white spot agency id.
+   * Returns a list of {@link AgencyResponseDTO} which match to the provided postCode. If no agency
+   * is found, returns the atm hard coded white spot agency id.
    *
    * @param postCode       the postcode for regarding agencies
    * @param consultingType the type used for filtering of agencies
@@ -65,7 +65,6 @@ public class AgencyService {
 
     List<Agency> agencies = collectAgenciesByPostCodeAndConsultingType(
         postCode, consultingType);
-    Collections.shuffle(agencies);
     List<AgencyResponseDTO> agencyResponseDTOs = agencies.stream()
         .map(this::convertToAgencyResponseDTO)
         .collect(Collectors.toList());
