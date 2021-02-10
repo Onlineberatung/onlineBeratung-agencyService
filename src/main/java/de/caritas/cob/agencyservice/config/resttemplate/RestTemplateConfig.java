@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Contains some general spring boot application configuration.
+ * Contains the rest template configuration.
  */
 @Configuration
 public class RestTemplateConfig {
