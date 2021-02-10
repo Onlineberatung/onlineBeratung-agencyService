@@ -10,7 +10,7 @@ paths:
     get:
       tags:
         - agency-controller
-      summary: 'Returns the list of agencies. If no agency is found the white spot
+      summary: 'Returns a randomly sorted list of agencies. If no agency is found the white spot
         agency id is being returned. When no white spot agency is defined No Content
         is being returned. [Authorization: none]'
       operationId: getAgencies

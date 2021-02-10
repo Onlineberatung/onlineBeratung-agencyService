@@ -34,10 +34,10 @@ public class AgencyController implements AgenciesApi {
   }
 
   /**
-   * Gets a list of AgencyResponseDTOs (from database) and returns the list and a 200 OK on success
-   * depending on the post code that is given via query parameter.
+   * Gets a randomly sorted list of AgencyResponseDTOs (from database) and returns the list and a
+   * 200 OK on success depending on the post code that is given via query parameter.
    *
-   * @param postcode the postcode for regarding agencies
+   * @param postcode       the postcode for regarding agencies
    * @param consultingType the type used to filter the agencies
    * @return the List of agencies with information
    */
