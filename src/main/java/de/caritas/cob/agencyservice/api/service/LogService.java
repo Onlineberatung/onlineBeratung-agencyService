@@ -6,7 +6,6 @@ import javax.ws.rs.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 /**
  * Service for logging.
@@ -67,7 +66,7 @@ public class LogService {
    * Logs a warning.
    *
    * @param httpStatus status to be logged
-   * @param exception the exception to be logged
+   * @param exception  the exception to be logged
    */
   public static void logWarning(HttpStatus httpStatus, Exception exception) {
     LOGGER.warn("AgencyService API: {}: {}", httpStatus.getReasonPhrase(),
@@ -83,4 +82,12 @@ public class LogService {
     LOGGER.error("AgencyService API: 500 Internal Server Error: {}", getStackTrace(exception));
   }
 
+  /**
+   * Logs a error.
+   *
+   * @param exception  the exception to be logged
+   */
+  public static void logError(Exception exception) {
+    LOGGER.error("AgencyService API: {}", getStackTrace(exception));
+  }
 }

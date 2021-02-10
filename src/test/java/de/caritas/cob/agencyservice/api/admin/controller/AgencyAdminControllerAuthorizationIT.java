@@ -1,9 +1,10 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.AGENCY_SEARCH_PATH;
+import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.CHANGE_AGENCY_TYPE_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.CREATE_AGENCY_PATH;
-import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.DELETE_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.CREATE_AGENCY_POSTCODE_RANGE_PATH;
+import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.DELETE_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.GET_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PAGE_PARAM;
@@ -16,6 +17,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCO
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -25,15 +27,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import javax.servlet.http.Cookie;
+import org.jeasy.random.EasyRandom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -392,4 +397,46 @@ public class AgencyAdminControllerAuthorizationIT {
     verify(this.agencyPostCodeRangeAdminService, times(1))
         .updatePostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));
   }
+
+  @Test
+  public void changeAgencyType_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
+      throws Exception {
+
+    mvc.perform(post(CHANGE_AGENCY_TYPE_PATH)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+  }
+
+  @Test
+  public void changeAgencyType_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
+      throws Exception {
+
+    mvc.perform(post(CHANGE_AGENCY_TYPE_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isUnauthorized());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  public void changeAgencyType_Should_ReturnOkAndCallAgencyAdminService_When_agencyAdminAuthority()
+      throws Exception {
+    AgencyTypeRequestDTO requestDTO =
+        new EasyRandom().nextObject(AgencyTypeRequestDTO.class);
+
+    mvc.perform(post(CHANGE_AGENCY_TYPE_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(requestDTO))
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isOk());
+
+    verify(this.agencyAdminService, times(1)).changeAgencyType(eq(1L), eq(requestDTO));
+  }
+
 }

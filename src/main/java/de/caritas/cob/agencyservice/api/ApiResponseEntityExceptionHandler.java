@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
 import de.caritas.cob.agencyservice.api.exception.customheader.CustomHttpHeader;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomValidationHttpStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
@@ -22,9 +23,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -37,10 +40,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+  private static final Exception EMPTY_EXCEPTION = new RuntimeException();
+
   /**
    * Custom BadRequest exception.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param request web request
    * @return response entity
    */
@@ -55,7 +60,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * Constraint violations.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param request web request
    * @return response entity
    */
@@ -70,38 +75,40 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * Incoming request body could not be deserialized.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param headers http headers
-   * @param status http status
+   * @param status  http status
    * @param request web request
    * @return response entity
    */
+  @NonNull
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(
-      final HttpMessageNotReadableException ex,
-      final HttpHeaders headers,
-      final HttpStatus status,
-      final WebRequest request) {
+      final @NonNull HttpMessageNotReadableException ex,
+      final @NonNull HttpHeaders headers,
+      final @NonNull HttpStatus status,
+      final @NonNull WebRequest request) {
     LogService.logWarning(status, ex);
 
     return handleExceptionInternal(ex, null, headers, status, request);
   }
 
   /**
-   * @Valid on object fails validation.
+   * Valid on object fails validation.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param headers http headers
-   * @param status http status
+   * @param status  http status
    * @param request web request
    * @return response entity
    */
+  @NonNull
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      final MethodArgumentNotValidException ex,
-      final HttpHeaders headers,
-      final HttpStatus status,
-      final WebRequest request) {
+      final @NonNull MethodArgumentNotValidException ex,
+      final @NonNull HttpHeaders headers,
+      final @NonNull HttpStatus status,
+      final @NonNull WebRequest request) {
     LogService.logWarning(status, ex);
 
     return handleExceptionInternal(ex, null, headers, status, request);
@@ -110,7 +117,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * 409 - Conflict.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param request web request
    * @return response entity
    */
@@ -125,7 +132,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * 500 - Internal Server Error.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param request web request
    * @return response entity
    */
@@ -137,13 +144,13 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     LogService.logInternalServerError(ex);
 
     return handleExceptionInternal(
-        null, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        EMPTY_EXCEPTION, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
   /**
    * 500 - Internal Server Error with custom logging method.
    *
-   * @param ex the thrown exception
+   * @param ex      the thrown exception
    * @param request web request
    * @return response entity
    */
@@ -153,13 +160,13 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     ex.executeLogging();
 
     return handleExceptionInternal(
-        null, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        EMPTY_EXCEPTION, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
   /**
    * 400 - Bad Request.
    *
-   * @param ex CustomValidationHttpStatusException
+   * @param ex      CustomValidationHttpStatusException
    * @param request WebRequest
    * @return a ResponseEntity instance
    */
@@ -171,7 +178,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     ex.executeLogging();
 
     return handleExceptionInternal(
-        null,
+        ex,
         null,
         new CustomHttpHeader(ex.getHttpStatusExceptionReason()).buildHeader(),
         HttpStatus.BAD_REQUEST,
@@ -181,7 +188,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * 404 - Not found.
    *
-   * @param ex {@link NotFoundException}
+   * @param ex      {@link NotFoundException}
    * @param request WebRequest
    * @return a ResponseEntity instance
    */
@@ -190,10 +197,46 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final NotFoundException ex, final WebRequest request) {
 
     return handleExceptionInternal(
-        null,
+        ex,
         null,
         new HttpHeaders(),
         HttpStatus.NOT_FOUND,
         request);
   }
+
+  /**
+   * 409 - Conflict.
+   *
+   * @param ex      {@link NotFoundException}
+   * @param request WebRequest
+   * @return a ResponseEntity instance
+   */
+  @ExceptionHandler({ConflictException.class})
+  public ResponseEntity<Object> handleInternal(
+      final ConflictException ex, final WebRequest request) {
+
+    return handleExceptionInternal(
+        ex,
+        null,
+        new HttpHeaders(),
+        HttpStatus.CONFLICT,
+        request);
+  }
+
+  /**
+   * Handles generic HTTP client error status for generated apis.
+   *
+   * @param ex      {@link HttpClientErrorException}
+   * @param request {@link WebRequest}
+   * @return response entity
+   */
+  @ExceptionHandler({HttpClientErrorException.class})
+  public ResponseEntity<Object> handleInternal(final HttpClientErrorException ex,
+      final WebRequest request) {
+    LogService.logError(ex);
+
+    return handleExceptionInternal(EMPTY_EXCEPTION, null, new HttpHeaders(), ex.getStatusCode(),
+        request);
+  }
+
 }

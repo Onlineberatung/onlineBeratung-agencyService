@@ -11,6 +11,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
@@ -144,7 +145,8 @@ public class AgencyAdminController implements AgencyadminApi {
    * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
    * @return an entity containing the created postcode range
    */
-  @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
+  @Override
+  public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
       @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
 
     return new ResponseEntity<>(
@@ -159,7 +161,8 @@ public class AgencyAdminController implements AgencyadminApi {
    * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
    * @return an entity containing the updated postcode range
    */
-  @Override public ResponseEntity<AgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
+  @Override
+  public ResponseEntity<AgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
       @PathVariable Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
     AgencyPostcodeRangeResponseDTO rangeResponseDTO = agencyPostCodeRangeAdminService
         .updatePostcodeRange(postcodeRangeId, postCodeRangeDTO);
@@ -176,6 +179,20 @@ public class AgencyAdminController implements AgencyadminApi {
   @Override
   public ResponseEntity<Void> deleteAgencyPostcodeRange(Long postcodeRangeId) {
     this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(postcodeRangeId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Entry point to change the tpe of an agency.
+   *
+   * @param agencyId             Agency Id (required)
+   * @param agencyTypeRequestDTO the dto containing the flag for type change
+   * @return a {@link ResponseEntity} with the status code.
+   */
+  @Override
+  public ResponseEntity<Void> changeAgencyType(Long agencyId,
+      @Valid AgencyTypeRequestDTO agencyTypeRequestDTO) {
+    this.agencyAdminService.changeAgencyType(agencyId, agencyTypeRequestDTO);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

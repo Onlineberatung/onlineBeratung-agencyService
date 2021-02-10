@@ -53,11 +53,7 @@ public class AgencyValidator {
   private ValidateAgencyDTO fromAgencyDto(AgencyDTO agencyDto) {
     return ValidateAgencyDTO.builder()
         .dioceseId(agencyDto.getDioceseId())
-        .name(agencyDto.getName())
-        .description(agencyDto.getDescription())
         .postcode(agencyDto.getPostcode())
-        .city(agencyDto.getCity())
-        .teamAgency(agencyDto.getTeamAgency())
         .consultingType(agencyDto.getConsultingType())
         .build();
   }
@@ -66,10 +62,7 @@ public class AgencyValidator {
     return ValidateAgencyDTO.builder()
         .id(agencyId)
         .dioceseId(updateAgencyDTO.getDioceseId())
-        .name(updateAgencyDTO.getName())
-        .description(updateAgencyDTO.getDescription())
         .postcode(updateAgencyDTO.getPostcode())
-        .city(updateAgencyDTO.getCity())
         .offline(updateAgencyDTO.getOffline())
         .build();
   }

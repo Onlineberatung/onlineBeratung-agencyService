@@ -21,9 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
-import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
+import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
@@ -31,6 +31,8 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineSt
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import org.jeasy.random.EasyRandom;
@@ -66,6 +68,7 @@ public class AgencyAdminControllerTest {
       + "/agency/1/postcoderange";
   protected static final String UPDATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
       + "/postcoderange/1";
+  protected static final String CHANGE_AGENCY_TYPE_PATH = UPDATE_AGENCY_PATH + "/changetype";
 
   @Autowired
   private MockMvc mvc;
@@ -393,4 +396,29 @@ public class AgencyAdminControllerTest {
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
+
+  @Test
+  public void changeAgencyType_Should_returnOk_When_AllParamsAreValid()
+      throws Exception {
+    AgencyTypeRequestDTO agencyTypeDTO = new AgencyTypeRequestDTO()
+        .agencyType(AgencyTypeEnum.TEAM_AGENCY);
+
+    this.mvc.perform(post(CHANGE_AGENCY_TYPE_PATH)
+        .content(new ObjectMapper().writeValueAsString(agencyTypeDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void changeAgencyType_Should_returnBadRequest_When_teamAgencyIsNull()
+      throws Exception {
+    AgencyTypeRequestDTO agencyTypeDTO = new AgencyTypeRequestDTO()
+        .agencyType(null);
+
+    this.mvc.perform(post(CHANGE_AGENCY_TYPE_PATH)
+        .content(new ObjectMapper().writeValueAsString(agencyTypeDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
 }

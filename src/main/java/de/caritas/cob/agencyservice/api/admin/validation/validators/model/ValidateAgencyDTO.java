@@ -15,11 +15,7 @@ public class ValidateAgencyDTO {
 
   private Long id;
   private Long dioceseId;
-  private String name;
-  private String description;
   private String postcode;
-  private String city;
-  private Boolean teamAgency;
   private Integer consultingType;
   private Boolean offline;
 
