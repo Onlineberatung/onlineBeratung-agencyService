@@ -1,8 +1,11 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_DEFAULT_AGENCY;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -28,6 +31,7 @@ public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull UserAdminService userAdminService;
+  private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
 
   /**
    * Returns the {@link Agency} for the provided agency ID.
@@ -122,8 +126,8 @@ public class AgencyAdminService {
     Agency agency = findAgencyById(agencyId);
     boolean isTeamAgency = TEAM_AGENCY.equals(agencyTypeDTO.getAgencyType());
     if (isTeamAgency == agency.isTeamAgency()) {
-      throw new ConflictException(String.format("Agency is already type of team agency=%s",
-          isTeamAgency));
+      throw new ConflictException(
+          isTeamAgency ? AGENCY_IS_ALREADY_TEAM_AGENCY : AGENCY_IS_ALREADY_DEFAULT_AGENCY);
     }
     this.userAdminService
         .adaptRelatedConsultantsForChange(agencyId, agencyTypeDTO.getAgencyType().getValue());
@@ -131,4 +135,15 @@ public class AgencyAdminService {
     this.agencyRepository.save(agency);
   }
 
+  /**
+   * Deletes the provided agency.
+   *
+   * @param agencyId agency ID
+   */
+  public void deleteAgency(Long agencyId) {
+    Agency agency = this.findAgencyById(agencyId);
+    this.deleteAgencyValidator.validate(agency);
+    agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
+    this.agencyRepository.save(agency);
+  }
 }

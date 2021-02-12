@@ -1,8 +1,12 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_DEFAULT_AGENCY;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.DEFAULT_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -10,7 +14,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
+import static org.hamcrest.Matchers.is;
 
+import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -43,16 +49,22 @@ public class AgencyAdminServiceTest {
   UserAdminService userAdminService;
 
   @Mock
+  DeleteAgencyValidator deleteAgencyValidator;
+
+  @Mock
   private Logger logger;
+
+  private EasyRandom easyRandom;
 
   @Before
   public void setup() {
     setInternalState(LogService.class, "LOGGER", logger);
+    this.easyRandom = new EasyRandom();
   }
 
   @Test(expected = BadRequestException.class)
-  public void saveAgency_Should_throwBadREquestException_When_consultingTypeInAgencyDtoDoesNotExist() {
-    AgencyDTO agencyDTO = new EasyRandom().nextObject(AgencyDTO.class);
+  public void saveAgency_Should_throwBadRequestException_When_consultingTypeInAgencyDtoDoesNotExist() {
+    AgencyDTO agencyDTO = this.easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setConsultingType(-10);
 
     this.agencyAdminService.saveAgency(agencyDTO);
@@ -60,13 +72,22 @@ public class AgencyAdminServiceTest {
 
   @Test(expected = NotFoundException.class)
   public void updateAgency_Should_ThrowNotFoundException_WhenAgencyIsNotFound() {
-
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
 
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    UpdateAgencyDTO updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
+  }
+
+  @Test
+  public void updateAgency_Should_SaveAgencyChanges_WhenAgencyIsFound() {
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    when(agencyRepository.save(any())).thenReturn(agency);
+
+    UpdateAgencyDTO updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
+    verify(this.agencyRepository, times(1)).save(any());
   }
 
   @Test(expected = NotFoundException.class)
@@ -83,18 +104,39 @@ public class AgencyAdminServiceTest {
     agencyAdminService.changeAgencyType(AGENCY_ID, mock(AgencyTypeRequestDTO.class));
   }
 
-  @Test(expected = ConflictException.class)
-  public void changeAgencyType_Should_throwConflictException_When_agencyHasAlreadyTypeToChange() {
-    Agency agency = new EasyRandom().nextObject(Agency.class);
+  @Test
+  public void changeAgencyType_Should_throwConflictExceptionWithCorrectReason_When_agencyHasAlreadyTypeTeamAgency() {
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    agency.setTeamAgency(true);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(TEAM_AGENCY);
 
-    agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+    try {
+      agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+      fail("ConflictException not thrown");
+    } catch (ConflictException exception) {
+      assertThat(AGENCY_IS_ALREADY_TEAM_AGENCY, is(exception.getHttpStatusExceptionReason()));
+    }
+  }
+
+  @Test
+  public void changeAgencyType_Should_throwConflictExceptionWithCorrectReason_When_agencyHasAlreadyTypeDefault() {
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    agency.setTeamAgency(false);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(DEFAULT_AGENCY);
+
+    try {
+      agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+      fail("ConflictException not thrown");
+    } catch (ConflictException exception) {
+      assertThat(AGENCY_IS_ALREADY_DEFAULT_AGENCY, is(exception.getHttpStatusExceptionReason()));
+    }
   }
 
   @Test
   public void changeAgencyType_Should_callUserAdminServiceAndSaveChangedAgency_When_agencyCanBeChanged() {
-    Agency agency = new EasyRandom().nextObject(Agency.class);
+    Agency agency = this.easyRandom.nextObject(Agency.class);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(DEFAULT_AGENCY);
 
@@ -102,6 +144,24 @@ public class AgencyAdminServiceTest {
 
     verify(this.userAdminService, times(1)).adaptRelatedConsultantsForChange(eq(AGENCY_ID),
         eq(requestDTO.getAgencyType().getValue()));
+    verify(this.agencyRepository, times(1)).save(any());
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void deleteAgency_Should_ThrowNotFoundException_WhenAgencyIsNotFound() {
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
+
+    agencyAdminService.deleteAgency(AGENCY_ID);
+  }
+
+  @Test
+  public void deleteAgency_Should_callDeleteAgencyValidatorAndSaveChangedAgency_When_AgencyIsFound() {
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+
+    agencyAdminService.deleteAgency(AGENCY_ID);
+
+    verify(this.deleteAgencyValidator, times(1)).validate(agency);
     verify(this.agencyRepository, times(1)).save(any());
   }
 

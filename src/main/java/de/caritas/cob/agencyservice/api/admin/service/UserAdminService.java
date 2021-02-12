@@ -1,10 +1,13 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
-import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
-import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
+import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO.AgencyTypeEnum;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantFilter;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -38,4 +41,20 @@ public class UserAdminService {
     headers.forEach((key, value) -> apiClient.addDefaultHeader(key, value.iterator().next()));
   }
 
+  /**
+   * Returns a list of {@link ConsultantAdminResponseDTO} for the provided agency ID.
+   *
+   * @param agencyId    agency ID
+   * @param currentPage Number of page where to start in the query
+   * @param perPage     Number of items which are being returned per page
+   * @return list of {@link ConsultantAdminResponseDTO}
+   */
+  public List<ConsultantAdminResponseDTO> getConsultantsOfAgency(Long agencyId, int currentPage,
+      int perPage) {
+    addDefaultHeaders(this.adminUserControllerApi.getApiClient());
+    ConsultantFilter consultantFilter = new ConsultantFilter().agencyId(agencyId);
+    return this.adminUserControllerApi
+        .getConsultants(currentPage, perPage, consultantFilter)
+        .getEmbedded();
+  }
 }
