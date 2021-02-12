@@ -122,6 +122,18 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * Entry point to mark an agency as deleted.
+   *
+   * @param agencyId Agency Id (required)
+   * @return a {@link ResponseEntity} with the status code.
+   */
+  @Override
+  public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
+    this.agencyAdminService.deleteAgency(agencyId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
    * Entry point to get the postcode ranges for a specific agency.
    *
    * @param agencyId Agency Id (required)

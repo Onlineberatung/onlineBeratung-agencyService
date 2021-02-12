@@ -11,6 +11,8 @@ import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSup
 import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantFilter;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantSearchResultDTO;
 import org.jeasy.random.EasyRandom;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +54,22 @@ public class UserAdminServiceTest {
 
     verify(this.adminUserControllerApi, times(1)).changeAgencyType(eq(agencyId),
         eq(new AgencyTypeDTO().agencyType(TEAM_AGENCY)));
+    verify(this.apiClient, times(this.httpHeaders.size())).addDefaultHeader(any(), any());
+  }
+
+  @Test
+  public void getConsultantsOfAgency_Should_callServicesCorrectly() {
+    Long agencyId = 1L;
+    int currentPage = 1;
+    int perPage = 1;
+    when(this.adminUserControllerApi.getConsultants(any(), any(), any()))
+        .thenReturn(new EasyRandom().nextObject(ConsultantSearchResultDTO.class));
+
+    this.userAdminService.getConsultantsOfAgency(agencyId, currentPage, perPage);
+
+    verify(this.adminUserControllerApi, times(1))
+        .getConsultants(eq(currentPage), eq(perPage),
+            eq(new ConsultantFilter().agencyId(agencyId)));
     verify(this.apiClient, times(this.httpHeaders.size())).addDefaultHeader(any(), any());
   }
 

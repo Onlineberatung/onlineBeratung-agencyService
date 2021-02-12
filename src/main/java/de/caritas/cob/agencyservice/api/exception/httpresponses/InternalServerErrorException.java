@@ -1,18 +1,14 @@
 package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
-import static java.util.Objects.nonNull;
-
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.function.Consumer;
 
 /**
  * Represents the exception for an internal server error - status code 500.
  */
-public class InternalServerErrorException extends RuntimeException {
+public class InternalServerErrorException extends CustomHttpStatusException {
 
-  private static final long serialVersionUID = -1101045273426330258L;
-
-  private final Consumer<Exception> loggingMethod;
+  private static final long serialVersionUID = 6051508644381775936L;
 
   /**
    * InternalServerErrorException exception.
@@ -20,8 +16,7 @@ public class InternalServerErrorException extends RuntimeException {
    * @param message the message to be logged
    */
   public InternalServerErrorException(String message) {
-    super(message);
-    this.loggingMethod = LogService::logInternalServerError;
+    super(message, LogService::logInternalServerError);
   }
 
   /**
@@ -31,17 +26,6 @@ public class InternalServerErrorException extends RuntimeException {
    * @param message the message to be logged
    */
   public InternalServerErrorException(Consumer<Exception> loggingMethod, String message) {
-    super(message);
-    this.loggingMethod = loggingMethod;
+    super(message, loggingMethod);
   }
-
-  /**
-   * Executes the non null logging method.
-   */
-  public void executeLogging() {
-    if (nonNull(this.loggingMethod)) {
-      this.loggingMethod.accept(this);
-    }
-  }
-
 }

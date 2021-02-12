@@ -6,7 +6,14 @@ package de.caritas.cob.agencyservice.api.exception.httpresponses;
 public class ConflictException extends RuntimeException {
 
   /**
-   * Coflict exception.
+   * Conflict exception.
+   */
+  public ConflictException() {
+    super();
+  }
+
+  /**
+   * Conflict exception.
    *
    * @param message the message
    */

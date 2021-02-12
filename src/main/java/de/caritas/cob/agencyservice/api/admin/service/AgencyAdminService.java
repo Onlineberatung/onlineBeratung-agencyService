@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.service;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -28,6 +29,7 @@ public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull UserAdminService userAdminService;
+  private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
 
   /**
    * Returns the {@link Agency} for the provided agency ID.
@@ -131,4 +133,15 @@ public class AgencyAdminService {
     this.agencyRepository.save(agency);
   }
 
+  /**
+   * Deletes the provided agency.
+   *
+   * @param agencyId agency ID
+   */
+  public void deleteAgency(Long agencyId) {
+    Agency agency = this.findAgencyById(agencyId);
+    this.deleteAgencyValidator.validate(agency);
+    agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
+    this.agencyRepository.save(agency);
+  }
 }

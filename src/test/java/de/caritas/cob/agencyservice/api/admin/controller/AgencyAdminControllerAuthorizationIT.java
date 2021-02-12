@@ -9,7 +9,7 @@ import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminContr
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.PER_PAGE_PARAM;
-import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.UPDATE_AGENCY_PATH;
+import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.UPDATE_DELETE_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.UPDATE_AGENCY_POSTCODE_RANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_UPDATE_DTO;
@@ -37,6 +37,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import javax.servlet.http.Cookie;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -241,7 +242,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void updateAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
       throws Exception {
 
-    mvc.perform(put(UPDATE_AGENCY_PATH)
+    mvc.perform(put(UPDATE_DELETE_AGENCY_PATH)
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
 
@@ -253,7 +254,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void updateAgency_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
-    mvc.perform(put(UPDATE_AGENCY_PATH)
+    mvc.perform(put(UPDATE_DELETE_AGENCY_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
@@ -268,7 +269,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void updateAgency_Should_ReturnOkAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(put(UPDATE_AGENCY_PATH)
+    mvc.perform(put(UPDATE_DELETE_AGENCY_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .content(VALID_AGENCY_UPDATE_DTO)
         .cookie(CSRF_COOKIE)
@@ -439,4 +440,41 @@ public class AgencyAdminControllerAuthorizationIT {
     verify(this.agencyAdminService, times(1)).changeAgencyType(eq(1L), eq(requestDTO));
   }
 
+  @Test
+  public void deleteAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
+      throws Exception {
+
+    mvc.perform(delete(UPDATE_DELETE_AGENCY_PATH)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+  }
+
+  @Test
+  public void deleteAgency_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
+      throws Exception {
+
+    mvc.perform(delete(UPDATE_DELETE_AGENCY_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isUnauthorized());
+
+    verifyNoMoreInteractions(this.agencyAdminService);
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  public void deleteAgency_Should_ReturnOkAndCallAgencyAdminService_When_agencyAdminAuthority()
+      throws Exception {
+
+    mvc.perform(delete(UPDATE_DELETE_AGENCY_PATH)
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(CSRF_COOKIE)
+        .header(CSRF_HEADER, CSRF_VALUE))
+        .andExpect(status().isOk());
+
+    verify(this.agencyAdminService, times(1)).deleteAgency(anyLong());
+  }
 }
