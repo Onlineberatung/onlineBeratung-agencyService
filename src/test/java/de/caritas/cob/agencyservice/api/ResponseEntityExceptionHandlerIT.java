@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api;
 
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
@@ -161,7 +162,7 @@ public class ResponseEntityExceptionHandlerIT {
   public void handleException_Should_ReturnConflict_When_ConflictExceptionIsThrown()
       throws Exception {
 
-    ConflictException exception = new ConflictException(ERROR_MESSAGE);
+    ConflictException exception = new ConflictException(AGENCY_IS_ALREADY_TEAM_AGENCY);
     when(agencyService.getAgencies(any())).thenThrow(exception);
 
     mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID)

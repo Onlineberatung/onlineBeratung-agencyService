@@ -87,19 +87,20 @@ public class SpringFoxConfig {
   }
 
   /**
-   * Returns the API protocols (for documentation)
-   * 
-   * @return
+   * Returns the API protocols (for documentation).
+   *
+   * @return the supported protocols
    */
   private Set<String> protocols() {
     Set<String> protocols = new HashSet<>();
-    protocols.add("http"); // TODO remove for production mode
     protocols.add("https");
     return protocols;
   }
 
   /**
-   * Returns all content types which should be consumed/produced
+   * Returns all content types which should be consumed/produced.
+   *
+   * @return the supported content types
    */
   private Set<String> getContentTypes() {
     Set<String> contentTypes = new HashSet<>();
@@ -108,9 +109,9 @@ public class SpringFoxConfig {
   }
 
   /**
-   * Returns the API information (defined in application.properties)
-   * 
-   * @return
+   * Returns the API information (defined in application.properties).
+   *
+   * @return api information
    */
   private ApiInfo getApiInfo() {
     return new ApiInfo(docuTitle, docuDescription, docuVersion, docuTermsUrl,

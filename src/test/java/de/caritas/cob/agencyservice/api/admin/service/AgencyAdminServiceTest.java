@@ -1,8 +1,12 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_DEFAULT_AGENCY;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.DEFAULT_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -10,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
+import static org.hamcrest.Matchers.is;
 
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
@@ -99,13 +104,34 @@ public class AgencyAdminServiceTest {
     agencyAdminService.changeAgencyType(AGENCY_ID, mock(AgencyTypeRequestDTO.class));
   }
 
-  @Test(expected = ConflictException.class)
-  public void changeAgencyType_Should_throwConflictException_When_agencyHasAlreadyTypeToChange() {
+  @Test
+  public void changeAgencyType_Should_throwConflictExceptionWithCorrectReason_When_agencyHasAlreadyTypeTeamAgency() {
     Agency agency = this.easyRandom.nextObject(Agency.class);
+    agency.setTeamAgency(true);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(TEAM_AGENCY);
 
-    agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+    try {
+      agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+      fail("ConflictException not thrown");
+    } catch (ConflictException exception) {
+      assertThat(AGENCY_IS_ALREADY_TEAM_AGENCY, is(exception.getHttpStatusExceptionReason()));
+    }
+  }
+
+  @Test
+  public void changeAgencyType_Should_throwConflictExceptionWithCorrectReason_When_agencyHasAlreadyTypeDefault() {
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    agency.setTeamAgency(false);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    AgencyTypeRequestDTO requestDTO = new AgencyTypeRequestDTO().agencyType(DEFAULT_AGENCY);
+
+    try {
+      agencyAdminService.changeAgencyType(AGENCY_ID, requestDTO);
+      fail("ConflictException not thrown");
+    } catch (ConflictException exception) {
+      assertThat(AGENCY_IS_ALREADY_DEFAULT_AGENCY, is(exception.getHttpStatusExceptionReason()));
+    }
   }
 
   @Test
