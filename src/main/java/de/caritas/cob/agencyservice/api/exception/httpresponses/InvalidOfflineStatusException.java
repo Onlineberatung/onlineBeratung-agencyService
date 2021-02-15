@@ -11,4 +11,14 @@ public class InvalidOfflineStatusException extends CustomValidationHttpStatusExc
   public InvalidOfflineStatusException() {
     super(HttpStatusExceptionReason.INVALID_OFFLINE_STATUS);
   }
+
+  /*
+   * InvalidOfflineStatusException - BAD REQUEST 400.
+   *
+   * @param reason a custom reason for he invalid offline status
+   */
+  public InvalidOfflineStatusException(HttpStatusExceptionReason reason) {
+    super(reason);
+  }
+
 }
