@@ -55,6 +55,7 @@ public class AgencyAdminControllerTest {
 
   private static final String ROOT_PATH = "/agencyadmin";
   protected static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
+  protected static final String GET_AGECNY_PATH = ROOT_PATH + "/agency";
   protected static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
   protected static final String CREATE_AGENCY_PATH = ROOT_PATH + "/agency";
   protected static final String UPDATE_DELETE_AGENCY_PATH = ROOT_PATH + "/agency/1";
@@ -437,6 +438,22 @@ public class AgencyAdminControllerTest {
   public void deleteAgency_Should_returnBadRequest_When_teamAgencyIsInvalid()
       throws Exception {
     this.mvc.perform(delete(UPDATE_DELETE_AGENCY_PATH_INVALID_ID)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgency_Should_returnOk_When_AllParamsAreValid()
+      throws Exception {
+    this.mvc.perform(get(GET_AGECNY_PATH + "/1")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void getAgency_Should_returnBadRequest_When_agncyIdIsInvalid()
+      throws Exception {
+    this.mvc.perform(get(GET_AGECNY_PATH + "/ab")
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }

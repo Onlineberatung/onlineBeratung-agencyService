@@ -34,6 +34,18 @@ public class AgencyAdminService {
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
 
   /**
+   * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
+   *
+   * @param agencyId the agency id
+   * @return the created {@link AgencyAdminFullResponseDTO}
+   */
+  public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
+    Agency agency = findAgencyById(agencyId);
+    return new AgencyAdminFullResponseDTOBuilder(agency)
+        .fromAgency();
+  }
+
+  /**
    * Returns the {@link Agency} for the provided agency ID.
    *
    * @param agencyId the agency ID

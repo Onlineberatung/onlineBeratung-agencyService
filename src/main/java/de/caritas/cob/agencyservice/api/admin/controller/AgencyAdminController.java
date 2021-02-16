@@ -53,6 +53,17 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * Entry point to return one agency.
+   *
+   * @param agencyId Agency ID (required)
+   * @return {@link AgencyAdminFullResponseDTO}
+   */
+  @Override
+  public ResponseEntity<AgencyAdminFullResponseDTO> getAgency(Long agencyId) {
+    return ResponseEntity.ok(this.agencyAdminService.findAgency(agencyId));
+  }
+
+  /**
    * Entry point to return all dioceses.
    *
    * @param page    Number of page where to start in the query (1 = first page) (required)
