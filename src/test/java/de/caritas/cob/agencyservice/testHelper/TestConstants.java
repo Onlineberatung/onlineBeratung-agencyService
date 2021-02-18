@@ -155,6 +155,10 @@ public class TestConstants {
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, null, null,
       null);
+  public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
+      AGENCY_DESCRIPTION,
+      POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, null, null,
+      null);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
           false, CONSULTING_TYPE_U25, false, null, null, null, null);
