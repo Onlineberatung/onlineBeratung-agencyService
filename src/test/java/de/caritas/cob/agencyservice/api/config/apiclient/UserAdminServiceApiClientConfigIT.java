@@ -1,9 +1,12 @@
 package de.caritas.cob.agencyservice.api.config.apiclient;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.config.apiclient.UserAdminApiClient;
+import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 public class UserAdminServiceApiClientConfigIT {
 
-  @Autowired
-  private AdminUserControllerApi adminUserControllerApi;
+  @Autowired private AdminUserControllerApi adminUserControllerApi;
 
   @Value("${user.admin.service.api.url}")
   private String adminUserApiBaseUrl;
@@ -34,4 +36,10 @@ public class UserAdminServiceApiClientConfigIT {
     assertThat(apiClientUrl, is(this.adminUserApiBaseUrl));
   }
 
+  @Test
+  public void configureUserControllerApi_Should_setUserAdminApiClient() {
+    ApiClient apiClient = this.adminUserControllerApi.getApiClient();
+
+    assertThat(apiClient, instanceOf(UserAdminApiClient.class));
+  }
 }

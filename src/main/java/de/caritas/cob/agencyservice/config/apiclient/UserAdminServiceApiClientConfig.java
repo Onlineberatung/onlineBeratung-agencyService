@@ -22,7 +22,8 @@ public class UserAdminServiceApiClientConfig {
   @Bean
   @Primary
   public ApiClient adminAgencyApiClient(RestTemplate restTemplate) {
-    return new ApiClient(restTemplate).setBasePath(this.userAdminServiceApiUrl);
+    ApiClient apiClient = new UserAdminApiClient(restTemplate);
+    apiClient.setBasePath(this.userAdminServiceApiUrl);
+    return apiClient;
   }
-
 }
