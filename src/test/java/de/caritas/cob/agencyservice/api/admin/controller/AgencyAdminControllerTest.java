@@ -1,5 +1,18 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.AGENCY_SEARCH_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.CHANGE_AGENCY_TYPE_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_POSTCODE_RANGE_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.DELETE_AGENCY_POSTCODERANGE_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_POSTCODERANGE_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_DIOCESES_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.PAGE_PARAM;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.PER_PAGE_PARAM;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.ROOT_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_AGENCY_POSTCODE_RANGE_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_DELETE_AGENCY_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_DELETE_AGENCY_PATH_INVALID_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_PREGNANCY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE;
@@ -53,24 +66,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 public class AgencyAdminControllerTest {
 
-  private static final String ROOT_PATH = "/agencyadmin";
-  protected static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
-  protected static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
-  protected static final String CREATE_AGENCY_PATH = ROOT_PATH + "/agency";
-  protected static final String UPDATE_DELETE_AGENCY_PATH = ROOT_PATH + "/agency/1";
-  protected static final String UPDATE_DELETE_AGENCY_PATH_INVALID_ID = ROOT_PATH + "/agency/abc";
-  protected static final String PAGE_PARAM = "page";
-  protected static final String PER_PAGE_PARAM = "perPage";
-  protected static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
-      + "/agency/1/postcoderanges";
-  protected static final String DELETE_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
-      + "/postcoderange/";
-  protected static final String CREATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
-      + "/agency/1/postcoderange";
-  protected static final String UPDATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
-      + "/postcoderange/1";
-  protected static final String CHANGE_AGENCY_TYPE_PATH = UPDATE_DELETE_AGENCY_PATH + "/changetype";
-
   @Autowired
   private MockMvc mvc;
   @MockBean
@@ -123,7 +118,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void getDioceses_Should_returnOk_When_requiredPaginationParamsAreGiven() throws Exception {
     this.mvc
-        .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
+        .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(
+            PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
     Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(eq(0), eq(1));
@@ -160,7 +156,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgency_Should_ReturnBadRequest_WhenAgencyDtoIsMissing() throws Exception {
     this.mvc
-        .perform(post(CREATE_AGENCY_PATH).content("").contentType(MediaType.APPLICATION_JSON))
+        .perform(post(CREATE_AGENCY_PATH).content("")
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
 
@@ -285,7 +282,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void updateAgency_Should_ReturnBadRequest_WhenUpdateAgencyDtoIsMissing() throws Exception {
     this.mvc
-        .perform(put(UPDATE_DELETE_AGENCY_PATH).content("").contentType(MediaType.APPLICATION_JSON))
+        .perform(put(UPDATE_DELETE_AGENCY_PATH).content("")
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
 
