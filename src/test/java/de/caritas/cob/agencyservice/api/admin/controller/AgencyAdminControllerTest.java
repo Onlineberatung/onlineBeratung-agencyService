@@ -118,8 +118,7 @@ public class AgencyAdminControllerTest {
   @Test
   public void getDioceses_Should_returnOk_When_requiredPaginationParamsAreGiven() throws Exception {
     this.mvc
-        .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(
-            PER_PAGE_PARAM, "1"))
+        .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
     Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(eq(0), eq(1));
@@ -156,8 +155,7 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgency_Should_ReturnBadRequest_WhenAgencyDtoIsMissing() throws Exception {
     this.mvc
-        .perform(post(CREATE_AGENCY_PATH).content("")
-            .contentType(MediaType.APPLICATION_JSON))
+        .perform(post(CREATE_AGENCY_PATH).content("").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
 
@@ -282,8 +280,7 @@ public class AgencyAdminControllerTest {
   @Test
   public void updateAgency_Should_ReturnBadRequest_WhenUpdateAgencyDtoIsMissing() throws Exception {
     this.mvc
-        .perform(put(UPDATE_DELETE_AGENCY_PATH).content("")
-            .contentType(MediaType.APPLICATION_JSON))
+        .perform(put(UPDATE_DELETE_AGENCY_PATH).content("").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
 
@@ -435,6 +432,22 @@ public class AgencyAdminControllerTest {
   public void deleteAgency_Should_returnBadRequest_When_teamAgencyIsInvalid()
       throws Exception {
     this.mvc.perform(delete(UPDATE_DELETE_AGENCY_PATH_INVALID_ID)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgency_Should_returnOk_When_AllParamsAreValid()
+      throws Exception {
+    this.mvc.perform(get(GET_AGECNY_PATH + "/1")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void getAgency_Should_returnBadRequest_When_agncyIdIsInvalid()
+      throws Exception {
+    this.mvc.perform(get(GET_AGECNY_PATH + "/ab")
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }

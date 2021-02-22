@@ -176,4 +176,19 @@ public class AgencyAdminServiceIT {
                 "/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
   }
 
+  @Test
+  public void getAgency_Should_returnExpectedAgency_When_agencyWithIdExists() {
+    Long agencyId = 1L;
+
+    AgencyAdminFullResponseDTO result = this.agencyAdminService.findAgency(agencyId);
+
+    assertThat(result.getEmbedded(), notNullValue());
+    assertThat(result.getEmbedded().getCity(), notNullValue());
+    assertThat(result.getEmbedded().getId(), notNullValue());
+    assertThat(result.getEmbedded().getDescription(), notNullValue());
+    assertThat(result.getEmbedded().getConsultingType(), notNullValue());
+    assertThat(result.getEmbedded().getName(), notNullValue());
+    assertThat(result.getEmbedded().getDioceseId(), notNullValue());
+  }
+
 }
