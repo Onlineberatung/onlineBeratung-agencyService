@@ -227,7 +227,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   /**
    * 423 - Locked.
    *
-   * @param ex      {@link NotFoundException}
+   * @param ex      {@link LockedConsultingTypeException}
    * @param request WebRequest
    * @return a ResponseEntity instance
    */
