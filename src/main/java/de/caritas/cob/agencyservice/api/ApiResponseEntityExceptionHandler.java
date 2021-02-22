@@ -10,6 +10,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultin
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.net.UnknownHostException;
@@ -220,6 +221,25 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
         null,
         new HttpHeaders(),
         HttpStatus.CONFLICT,
+        request);
+  }
+
+  /**
+   * 423 - Locked.
+   *
+   * @param ex      {@link LockedConsultingTypeException}
+   * @param request WebRequest
+   * @return a ResponseEntity instance
+   */
+  @ExceptionHandler({LockedConsultingTypeException.class})
+  public ResponseEntity<Object> handleInternal(
+      final LockedConsultingTypeException ex, final WebRequest request) {
+
+    return handleExceptionInternal(
+        ex,
+        null,
+        new CustomHttpHeader(ex.getHttpStatusExceptionReason()).buildHeader(),
+        HttpStatus.LOCKED,
         request);
   }
 

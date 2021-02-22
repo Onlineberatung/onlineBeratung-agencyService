@@ -20,6 +20,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestExcept
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
@@ -199,6 +200,18 @@ public class ResponseEntityExceptionHandlerIT {
     verify(logger, times(1))
         .error(eq("AgencyService API: 500 Internal Server Error: {}"),
             eq(getStackTrace(exception)));
+  }
+
+  @Test
+  public void handleException_Should_ReturnLocked_When_LockedConsultingTypeExceptionIsThrown()
+      throws Exception {
+
+    LockedConsultingTypeException exception = new LockedConsultingTypeException();
+    when(agencyService.getAgencies(any())).thenThrow(exception);
+
+    mvc.perform(get(PATH_GET_AGENCIES_WITH_IDS + AGENCY_ID)
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isLocked());
   }
 
 }
