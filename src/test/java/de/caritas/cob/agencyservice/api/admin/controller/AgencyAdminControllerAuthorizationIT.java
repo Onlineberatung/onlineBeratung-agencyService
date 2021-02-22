@@ -5,13 +5,13 @@ import static de.caritas.cob.agencyservice.testHelper.PathConstants.CHANGE_AGENC
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_POSTCODE_RANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.DELETE_AGENCY_POSTCODERANGE_PATH;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PER_PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_DELETE_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_AGENCY_POSTCODE_RANGE_PATH;
-import static de.caritas.cob.agencyservice.api.admin.controller.AgencyAdminControllerTest.GET_AGECNY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_UPDATE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_RANGE_DTO;
@@ -482,7 +482,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void getAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
       throws Exception {
 
-    mvc.perform(get(GET_AGECNY_PATH + "/1")
+    mvc.perform(get(GET_AGENCY_PATH + "/1")
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
 
@@ -493,7 +493,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void getAgency_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
-    mvc.perform(get(GET_AGECNY_PATH + "/1")
+    mvc.perform(get(GET_AGENCY_PATH + "/1")
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
@@ -507,7 +507,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void getAgency_Should_ReturnOkAndCallAgencyAdminService_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(get(GET_AGECNY_PATH + "/1")
+    mvc.perform(get(GET_AGENCY_PATH + "/1")
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
