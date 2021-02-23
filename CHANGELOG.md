@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.5.0...v1.6.0) (2021-02-23)
+
+
+### Features
+
+* added admin call to delete an agency ([626920c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/626920c135cb9f1608217cb29ba42615da5ba039))
+* added admin call to update agency postcode ranges ([93a65f9](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/93a65f921dd5b4717ecd806914e4199408756358))
+* added call to create a new postcode range for an agency ([0d7eb08](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/0d7eb084934c8c72caa581bcd08dbaf2bc31c103))
+* added check for offline status updates on agencies ([47bb357](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/47bb3576eea12a7e5a01b4fe90ec7c743c73ec8f))
+* added single resource get endpoint or agency ([75a3fb8](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/75a3fb85644dbd94dfc720a860298282a67ee42b))
+* added tests and minor optimizations ([d4564fb](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/d4564fb991028cc5dceb906dd510661c94b52a22))
+* changed agency list to return a randomly sorted list of agencies ([ca216da](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ca216da5cecf05c18ed74298bf8cd4ec0179e41b))
+* changed agency list to return a randomly sorted list of agencies ([b6e15fb](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b6e15fbe5581a85351dc0b6f72121be5406532ad))
+* define api spec and add client api of user admin service ([3b9e0db](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/3b9e0db9528a32be96f8a9b70ba896f455f0b98e))
+* provide agency type switch logic ([bf8dc3d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/bf8dc3d1778bbab0b207755d75e3e89d47b22b79))
+
+
+### Bug Fixes
+
+* fixed broken test ([ff5405c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ff5405cbdf7b1ba8e78ac36b5ca333d950dfb74a))
+
 ## [1.5.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.4.0...v1.5.0) (2021-01-11)
 
 
