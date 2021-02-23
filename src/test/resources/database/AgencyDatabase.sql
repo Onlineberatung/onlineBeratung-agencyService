@@ -39,6 +39,9 @@ create table AGENCY_POSTCODE_RANGE
     primary key (ID),
     foreign key (AGENCY_ID) references AGENCY (ID)
 );
+CREATE SEQUENCE SEQUENCE_AGENCY_POSTCODE_RANGE
+    START WITH 100000
+    INCREMENT BY 1;
 insert into DIOCESE (ID, NAME, ID_OLD, CREATE_DATE, UPDATE_DATE)
 values (0,
         'Aachen',

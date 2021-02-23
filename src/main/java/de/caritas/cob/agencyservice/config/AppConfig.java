@@ -10,11 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Contains some general spring boot application configurations
- *
  */
 @Configuration
 @EnableCaching
@@ -23,21 +21,12 @@ public class AppConfig {
 
   /**
    * Activate the messages.properties for validation messages
-   * 
-   * @param messageSource
-   * @return
    */
   @Bean
   public LocalValidatorFactoryBean validator(MessageSource messageSource) {
     LocalValidatorFactoryBean validatorFactoryBean = new LocalValidatorFactoryBean();
     validatorFactoryBean.setValidationMessageSource(messageSource);
     return validatorFactoryBean;
-  }
-
-  // RestTemplate Bean
-  @Bean
-  public RestTemplate restTemplate() {
-    return new RestTemplate();
   }
 
   /**
@@ -47,7 +36,7 @@ public class AppConfig {
    * @return an {@link AgencyReindexer} used to reindex entities
    */
   @Bean
-  public AgencyReindexer templateReindexer(EntityManagerFactory entityManagerFactory) {
+  public AgencyReindexer agencyReindexer(EntityManagerFactory entityManagerFactory) {
     FullTextEntityManager manager =
         Search.getFullTextEntityManager(entityManagerFactory.createEntityManager());
     return new AgencyReindexer(manager);

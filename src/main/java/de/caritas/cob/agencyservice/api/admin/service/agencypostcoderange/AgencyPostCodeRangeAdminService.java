@@ -1,17 +1,25 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create.PostcodeRangeValidator;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import java.util.function.Predicate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class to handle agency postcode range admin requests.
@@ -22,6 +30,8 @@ public class AgencyPostCodeRangeAdminService {
 
   private final @NonNull AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
   private final @NonNull AgencyService agencyService;
+  private final @NonNull AgencyAdminService agencyAdminService;
+  private final @NonNull PostcodeRangeValidator postcodeRangeValidator;
 
   /**
    * Returns all post code ranges within the given page and perPage offsets by given agency id.
@@ -31,7 +41,7 @@ public class AgencyPostCodeRangeAdminService {
    * @param agencyId the agency id
    * @return {@link AgencyPostcodeRangesResultDTO}
    */
-  public AgencyPostcodeRangesResultDTO findPostCodeRangesForAgency(Integer page,
+  public AgencyPostcodeRangesResultDTO findPostcodeRangesForAgency(Integer page,
       Integer perPage, Long agencyId) {
     Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(perPage, 1));
 
@@ -77,4 +87,60 @@ public class AgencyPostCodeRangeAdminService {
     return range -> !range.equals(agencyPostCodeRange);
   }
 
+  /**
+   * Saves the given postcode range for the provided agency.
+   *
+   * @param agencyId         agency ID to save the postcode range for
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO}
+   * @return {@link AgencyPostcodeRangeResponseDTO}
+   */
+  @Transactional
+  public AgencyPostcodeRangeResponseDTO createPostcodeRange(Long agencyId,
+      PostCodeRangeDTO postCodeRangeDTO) {
+    Agency agency = agencyAdminService.findAgencyById(agencyId);
+
+    return validateAndSavePostcodeRange(postCodeRangeDTO, agency, null);
+  }
+
+  private AgencyPostcodeRangeResponseDTO validateAndSavePostcodeRange(
+      PostCodeRangeDTO postCodeRangeDTO, Agency agency, Long postcodeId) {
+    postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO,
+        agency.getAgencyPostCodeRanges());
+    AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
+        .save(fromPostcodeRangeDTO(postCodeRangeDTO, agency, postcodeId));
+
+    return AgencyPostcodeRangeResponseDTOBuilder.getInstance(agencyPostCodeRange)
+        .build();
+  }
+
+  private AgencyPostCodeRange fromPostcodeRangeDTO(PostCodeRangeDTO postCodeRangeDTO,
+      Agency agency, Long postcodeId) {
+    return AgencyPostCodeRange.builder()
+        .id(postcodeId)
+        .postCodeFrom(postCodeRangeDTO.getPostcodeFrom())
+        .postCodeTo(postCodeRangeDTO.getPostcodeTo())
+        .agency(agency)
+        .createDate(LocalDateTime.now(ZoneOffset.UTC))
+        .updateDate(LocalDateTime.now(ZoneOffset.UTC))
+        .build();
+  }
+
+  /**
+   * Updates the postcode range for the given postcode range Id.
+   *
+   * @param postcodeRangeId  Postcode range Id
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO}
+   * @return {@link AgencyPostcodeRangeResponseDTO}
+   */
+  public AgencyPostcodeRangeResponseDTO updatePostcodeRange(Long postcodeRangeId,
+      PostCodeRangeDTO postCodeRangeDTO) {
+    AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
+        .findById(postcodeRangeId)
+        .orElseThrow(NotFoundException::new);
+    agencyPostCodeRange.getAgency().getAgencyPostCodeRanges()
+        .removeIf(range -> range.equals(agencyPostCodeRange));
+
+    return validateAndSavePostcodeRange(postCodeRangeDTO, agencyPostCodeRange.getAgency(),
+        agencyPostCodeRange.getId());
+  }
 }

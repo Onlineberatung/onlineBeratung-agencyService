@@ -9,8 +9,11 @@ import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
@@ -50,21 +53,14 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
-   * Entry point to search for agencies.
+   * Entry point to return one agency.
    *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
-   * @param perPage Number of items which are being returned per page (required)
-   * @param q       The query parameter to search for (optional)
-   * @return an entity containing the search result
+   * @param agencyId Agency ID (required)
+   * @return {@link AgencyAdminFullResponseDTO}
    */
   @Override
-  public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
-
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO =
-        this.agencyAdminSearchService.searchAgencies(q, page, perPage);
-
-    return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);
+  public ResponseEntity<AgencyAdminFullResponseDTO> getAgency(Long agencyId) {
+    return ResponseEntity.ok(this.agencyAdminService.findAgency(agencyId));
   }
 
   /**
@@ -85,6 +81,24 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * Entry point to search for agencies.
+   *
+   * @param page    Number of page where to start in the query (1 = first page) (required)
+   * @param perPage Number of items which are being returned per page (required)
+   * @param q       The query parameter to search for (optional)
+   * @return an entity containing the search result
+   */
+  @Override
+  public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
+
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO =
+        this.agencyAdminSearchService.searchAgencies(q, page, perPage);
+
+    return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);
+  }
+
+  /**
    * Entry point for creating an agency.
    *
    * @param agencyDTO (required)
@@ -98,23 +112,6 @@ public class AgencyAdminController implements AgencyadminApi {
         .saveAgency(agencyDTO);
 
     return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.CREATED);
-  }
-
-  /**
-   * Entry point to get the postcode ranges for a specific agency.
-   *
-   * @param agencyId Agency Id (required)
-   * @param page     Number of page where to start (1 &#x3D; first page) (required)
-   * @param perPage  Number of items which are being returned per page (required)
-   * @return an entity containing the search result
-   */
-  @Override
-  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
-      @PathVariable Long agencyId,
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
-    AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
-        .findPostCodeRangesForAgency(page, perPage, agencyId);
-    return ResponseEntity.ok(postCodeRangesForAgency);
   }
 
   /**
@@ -136,6 +133,67 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * Entry point to mark an agency as deleted.
+   *
+   * @param agencyId Agency Id (required)
+   * @return a {@link ResponseEntity} with the status code.
+   */
+  @Override
+  public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
+    this.agencyAdminService.deleteAgency(agencyId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Entry point to get the postcode ranges for a specific agency.
+   *
+   * @param agencyId Agency Id (required)
+   * @param page     Number of page where to start (1 = first page) (required)
+   * @param perPage  Number of items which are being returned per page (required)
+   * @return an entity containing the search result
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangesResultDTO> getAgencyPostcodeRanges(
+      @PathVariable Long agencyId,
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
+    AgencyPostcodeRangesResultDTO postCodeRangesForAgency = this.agencyPostCodeRangeAdminService
+        .findPostcodeRangesForAgency(page, perPage, agencyId);
+    return ResponseEntity.ok(postCodeRangesForAgency);
+  }
+
+  /**
+   * Entry point to create a new postcode range for the given agency.
+   *
+   * @param agencyId         Agency Id (required)
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
+   * @return an entity containing the created postcode range
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangeResponseDTO> createAgencyPostcodeRange(
+      @PathVariable Long agencyId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+
+    return new ResponseEntity<>(
+        agencyPostCodeRangeAdminService.createPostcodeRange(agencyId, postCodeRangeDTO),
+        HttpStatus.CREATED);
+  }
+
+  /**
+   * Entry point to update a postcode range for the given postcode range Id.
+   *
+   * @param postcodeRangeId  Postcode range Id (required)
+   * @param postCodeRangeDTO {@link PostCodeRangeDTO} (required)
+   * @return an entity containing the updated postcode range
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangeResponseDTO> updateAgencyPostcodeRange(
+      @PathVariable Long postcodeRangeId, @Valid PostCodeRangeDTO postCodeRangeDTO) {
+    AgencyPostcodeRangeResponseDTO rangeResponseDTO = agencyPostCodeRangeAdminService
+        .updatePostcodeRange(postcodeRangeId, postCodeRangeDTO);
+
+    return ResponseEntity.ok(rangeResponseDTO);
+  }
+
+  /**
    * Entry point to delete an agency postcode range.
    *
    * @param postcodeRangeId Postcode range id (required)
@@ -144,6 +202,20 @@ public class AgencyAdminController implements AgencyadminApi {
   @Override
   public ResponseEntity<Void> deleteAgencyPostcodeRange(Long postcodeRangeId) {
     this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(postcodeRangeId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Entry point to change the tpe of an agency.
+   *
+   * @param agencyId             Agency Id (required)
+   * @param agencyTypeRequestDTO the dto containing the flag for type change
+   * @return a {@link ResponseEntity} with the status code.
+   */
+  @Override
+  public ResponseEntity<Void> changeAgencyType(Long agencyId,
+      @Valid AgencyTypeRequestDTO agencyTypeRequestDTO) {
+    this.agencyAdminService.changeAgencyType(agencyId, agencyTypeRequestDTO);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

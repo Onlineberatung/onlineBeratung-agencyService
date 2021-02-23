@@ -10,9 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -31,21 +33,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class AgencyPostCodeRange {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency_postcode_range")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_seq")
   @Column(name = "id", updatable = false, nullable = false)
   private Long id;
 
   @NonNull
   @Size(max = 5)
-  @Column(name = "postcode_from", updatable = true, nullable = false)
+  @Column(name = "postcode_from", nullable = false)
   private String postCodeFrom;
 
   @NonNull
   @Size(max = 5)
-  @Column(name = "postcode_to", updatable = true, nullable = false)
+  @Column(name = "postcode_to", nullable = false)
   private String postCodeTo;
 
   @ManyToOne(fetch = FetchType.LAZY)

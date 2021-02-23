@@ -6,7 +6,6 @@ import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.U
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AgencyValidator {
 
-  private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull ApplicationContext applicationContext;
 
   /**
@@ -53,11 +51,7 @@ public class AgencyValidator {
   private ValidateAgencyDTO fromAgencyDto(AgencyDTO agencyDto) {
     return ValidateAgencyDTO.builder()
         .dioceseId(agencyDto.getDioceseId())
-        .name(agencyDto.getName())
-        .description(agencyDto.getDescription())
         .postcode(agencyDto.getPostcode())
-        .city(agencyDto.getCity())
-        .teamAgency(agencyDto.getTeamAgency())
         .consultingType(agencyDto.getConsultingType())
         .build();
   }
@@ -66,10 +60,7 @@ public class AgencyValidator {
     return ValidateAgencyDTO.builder()
         .id(agencyId)
         .dioceseId(updateAgencyDTO.getDioceseId())
-        .name(updateAgencyDTO.getName())
-        .description(updateAgencyDTO.getDescription())
         .postcode(updateAgencyDTO.getPostcode())
-        .city(updateAgencyDTO.getCity())
         .offline(updateAgencyDTO.getOffline())
         .build();
   }

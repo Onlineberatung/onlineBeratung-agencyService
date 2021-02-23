@@ -20,7 +20,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 /**
- * Service for agencies
+ * Service for agencies.
  */
 @Service
 @RequiredArgsConstructor
@@ -47,11 +47,11 @@ public class AgencyService {
   }
 
   /**
-   * Returns a list of {@link AgencyResponseDTO} which match to the provided postCode. If no agency
-   * is found, returns the atm hard coded white spot agency id.
+   * Returns a randomly sorted list of {@link AgencyResponseDTO} which match to the provided
+   * postCode. If no agency is found, returns the atm hard coded white spot agency id.
    *
    * @param postCode       the postcode for regarding agencies
-   * @param consultingType the type used for filering of agencies
+   * @param consultingType the type used for filtering of agencies
    * @return a list containing regarding agencies
    */
   public List<AgencyResponseDTO> getAgencies(String postCode, ConsultingType consultingType) {
@@ -65,6 +65,7 @@ public class AgencyService {
 
     List<Agency> agencies = collectAgenciesByPostCodeAndConsultingType(
         postCode, consultingType);
+    Collections.shuffle(agencies);
     List<AgencyResponseDTO> agencyResponseDTOs = agencies.stream()
         .map(this::convertToAgencyResponseDTO)
         .collect(Collectors.toList());

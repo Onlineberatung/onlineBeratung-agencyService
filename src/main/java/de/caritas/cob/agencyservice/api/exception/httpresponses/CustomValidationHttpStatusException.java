@@ -1,21 +1,36 @@
 package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
 import static java.util.Objects.nonNull;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
+import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.function.Consumer;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 /**
-* Custom validation exception for http status with reason.
-*/
+ * Custom validation exception for http status with reason.
+ */
+@Getter
 public abstract class CustomValidationHttpStatusException extends RuntimeException {
 
   private final Consumer<Exception> loggingMethod;
   private final HttpStatusExceptionReason httpStatusExceptionReason;
+  private final HttpStatus httpStatus;
 
   CustomValidationHttpStatusException(HttpStatusExceptionReason httpStatusExceptionReason) {
     super();
-    this.loggingMethod = null;
+    this.loggingMethod = LogService::logWarning;
     this.httpStatusExceptionReason = httpStatusExceptionReason;
+    this.httpStatus = BAD_REQUEST;
+  }
+
+  CustomValidationHttpStatusException(HttpStatusExceptionReason httpStatusExceptionReason,
+      HttpStatus httpStatus) {
+    super();
+    this.loggingMethod = LogService::logWarning;
+    this.httpStatusExceptionReason = httpStatusExceptionReason;
+    this.httpStatus = httpStatus;
   }
 
   /**
@@ -25,14 +40,5 @@ public abstract class CustomValidationHttpStatusException extends RuntimeExcepti
     if (nonNull(this.loggingMethod)) {
       this.loggingMethod.accept(this);
     }
-  }
-
-  /**
-   * Get the {@link @HttpStatusExceptionReason} for the thrown exception.
-   *
-   * @return a value of {@link @HttpStatusExceptionReason}
-   */
-  public HttpStatusExceptionReason getHttpStatusExceptionReason() {
-    return this.httpStatusExceptionReason;
   }
 }

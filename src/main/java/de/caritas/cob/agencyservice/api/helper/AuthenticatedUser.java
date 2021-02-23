@@ -21,4 +21,7 @@ public class AuthenticatedUser {
   @NonNull
   private String username;
 
+  @NonNull
+  private String accessToken;
+
 }

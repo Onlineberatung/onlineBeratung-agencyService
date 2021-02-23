@@ -1,21 +1,25 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_DEFAULT_AGENCY;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
+import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
+
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
-import de.caritas.cob.agencyservice.api.service.LogService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,6 +30,30 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
+  private final @NonNull UserAdminService userAdminService;
+  private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
+
+  /**
+   * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
+   *
+   * @param agencyId the agency id
+   * @return the created {@link AgencyAdminFullResponseDTO}
+   */
+  public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
+    Agency agency = findAgencyById(agencyId);
+    return new AgencyAdminFullResponseDTOBuilder(agency)
+        .fromAgency();
+  }
+
+  /**
+   * Returns the {@link Agency} for the provided agency ID.
+   *
+   * @param agencyId the agency ID
+   * @return {@link Agency}
+   */
+  public Agency findAgencyById(Long agencyId) {
+    return agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
+  }
 
   /**
    * Saves an agency to the database.
@@ -34,15 +62,8 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO saveAgency(AgencyDTO agencyDTO) {
-    Agency agency;
-    try {
-      agency = agencyRepository.save(fromAgencyDTO(agencyDTO));
-    } catch (DataAccessException ex) {
-      throw new InternalServerErrorException(
-          LogService::logDatabaseError, "Database error while saving agency");
-    }
-
-    return new AgencyAdminFullResponseDTOBuilder(agency).fromAgency();
+    return new AgencyAdminFullResponseDTOBuilder(agencyRepository.save(fromAgencyDTO(agencyDTO)))
+        .fromAgency();
   }
 
   /**
@@ -65,9 +86,11 @@ public class AgencyAdminService {
         .consultingType(
             ConsultingType.valueOf(agencyDTO.getConsultingType())
                 .orElseThrow(
-                    () -> new BadRequestException(String
-                        .format("Consulting type %s of agency dto does not exist",
-                            agencyDTO.getConsultingType()))))
+                    () ->
+                        new BadRequestException(
+                            String.format(
+                                "Consulting type %s of agency dto does not exist",
+                                agencyDTO.getConsultingType()))))
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
@@ -81,16 +104,10 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
-    try {
-      Agency agency = agencyRepository.findById(agencyId)
-          .orElseThrow(NotFoundException::new);
-      return new AgencyAdminFullResponseDTOBuilder(
-          agencyRepository.save(mergeAgencies(agency, updateAgencyDTO))).fromAgency();
-    } catch (DataAccessException ex) {
-      throw new InternalServerErrorException(
-          LogService::logDatabaseError,
-          String.format("Database error while saving agency with id %s", agencyId.toString()));
-    }
+    Agency agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
+    return new AgencyAdminFullResponseDTOBuilder(
+        agencyRepository.save(mergeAgencies(agency, updateAgencyDTO)))
+        .fromAgency();
   }
 
   private Agency mergeAgencies(Agency agency, UpdateAgencyDTO updateAgencyDTO) {
@@ -111,4 +128,34 @@ public class AgencyAdminService {
         .build();
   }
 
+  /**
+   * Changes the type of the agency.
+   *
+   * @param agencyId      the agency id
+   * @param agencyTypeDTO the request dto containing the agency type
+   */
+  public void changeAgencyType(Long agencyId, AgencyTypeRequestDTO agencyTypeDTO) {
+    Agency agency = findAgencyById(agencyId);
+    boolean isTeamAgency = TEAM_AGENCY.equals(agencyTypeDTO.getAgencyType());
+    if (isTeamAgency == agency.isTeamAgency()) {
+      throw new ConflictException(
+          isTeamAgency ? AGENCY_IS_ALREADY_TEAM_AGENCY : AGENCY_IS_ALREADY_DEFAULT_AGENCY);
+    }
+    this.userAdminService
+        .adaptRelatedConsultantsForChange(agencyId, agencyTypeDTO.getAgencyType().getValue());
+    agency.setTeamAgency(isTeamAgency);
+    this.agencyRepository.save(agency);
+  }
+
+  /**
+   * Deletes the provided agency.
+   *
+   * @param agencyId agency ID
+   */
+  public void deleteAgency(Long agencyId) {
+    Agency agency = this.findAgencyById(agencyId);
+    this.deleteAgencyValidator.validate(agency);
+    agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
+    this.agencyRepository.save(agency);
+  }
 }

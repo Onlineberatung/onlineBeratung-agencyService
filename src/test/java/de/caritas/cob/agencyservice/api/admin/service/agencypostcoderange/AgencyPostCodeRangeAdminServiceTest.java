@@ -1,47 +1,63 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.PAGE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.PER_PAGE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.POSTCODE_RANGE_ID;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.reflect.Whitebox.setInternalState;
 
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create.PostcodeRangeValidator;
+import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
-import org.springframework.dao.DataAccessException;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
 public class AgencyPostCodeRangeAdminServiceTest {
 
   @InjectMocks
   private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
   @Mock
+  private AgencyAdminService agencyAdminService;
+  @Mock
   private AgencyService agencyService;
   @Mock
+  private PostcodeRangeValidator postcodeRangeValidator;
+  @Mock
   private AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
+  @Mock
+  private Logger logger;
+
+  private PostCodeRangeDTO postCodeRangeDTO;
+  private EasyRandom easyRandom;
+
+  @Before
+  public void setup() {
+    this.easyRandom = new EasyRandom();
+    this.postCodeRangeDTO = this.easyRandom.nextObject(PostCodeRangeDTO.class);
+    setInternalState(LogService.class, "LOGGER", logger);
+  }
 
   @Test
   public void deleteAgencyPostcodeRange_Should_setAgencyOffline_When_givenPostcodeRangeIsTheLast() {
@@ -68,4 +84,71 @@ public class AgencyPostCodeRangeAdminServiceTest {
     verifyNoInteractions(this.agencyService);
   }
 
+  @Test
+  public void createPostcodeRange_Should_ValidatePostcodeRanges() {
+    when(agencyAdminService.findAgencyById(anyLong()))
+        .thenReturn(easyRandom.nextObject(Agency.class));
+    when(agencyPostCodeRangeRepository.save(any())).thenReturn(easyRandom.nextObject(
+        AgencyPostCodeRange.class));
+
+    agencyPostCodeRangeAdminService.createPostcodeRange(AGENCY_ID, postCodeRangeDTO);
+
+    verify(postcodeRangeValidator, times(1))
+        .validatePostcodeRange(any(), any());
+  }
+
+  @Test
+  public void createPostcodeRange_Should_SavePostcodeRange_WhenEveryParameterIsValid() {
+    when(agencyAdminService.findAgencyById(anyLong()))
+        .thenReturn(easyRandom.nextObject(Agency.class));
+    when(agencyPostCodeRangeRepository.save(any())).thenReturn(easyRandom.nextObject(
+        AgencyPostCodeRange.class));
+
+    agencyPostCodeRangeAdminService.createPostcodeRange(AGENCY_ID, postCodeRangeDTO);
+
+    verify(agencyPostCodeRangeRepository, times(1))
+        .save(any());
+  }
+
+  @Test
+  public void updatePostcodeRange_Should_ValidatePostcodeRanges() {
+    when(agencyPostCodeRangeRepository.findById(anyLong()))
+        .thenReturn((Optional.of(easyRandom.nextObject(AgencyPostCodeRange.class))));
+    when(agencyPostCodeRangeRepository.save(any())).thenReturn(easyRandom.nextObject(
+        AgencyPostCodeRange.class));
+
+    agencyPostCodeRangeAdminService.updatePostcodeRange(AGENCY_ID, postCodeRangeDTO);
+
+    verify(postcodeRangeValidator, times(1))
+        .validatePostcodeRange(any(), any());
+  }
+
+  @Test
+  public void updatePostcodeRange_Should_SavePostcodeRange_WhenEveryParameterIsValid() {
+    when(agencyPostCodeRangeRepository.findById(anyLong()))
+        .thenReturn((Optional.of(easyRandom.nextObject(AgencyPostCodeRange.class))));
+    when(agencyPostCodeRangeRepository.save(any())).thenReturn(easyRandom.nextObject(
+        AgencyPostCodeRange.class));
+
+    agencyPostCodeRangeAdminService.updatePostcodeRange(AGENCY_ID, postCodeRangeDTO);
+
+    verify(agencyPostCodeRangeRepository, times(1))
+        .save(any());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void updatePostcodeRange_Should_RemovePostcodeToOverwrite_BeforeValidation() {
+    AgencyPostCodeRange agencyPostCodeRange = easyRandom.nextObject(AgencyPostCodeRange.class);
+
+    when(agencyPostCodeRangeRepository.findById(anyLong()))
+        .thenReturn(Optional.of(agencyPostCodeRange));
+    when(agencyPostCodeRangeRepository.save(any())).thenReturn(easyRandom.nextObject(
+        AgencyPostCodeRange.class));
+
+    agencyPostCodeRangeAdminService.updatePostcodeRange(AGENCY_ID, postCodeRangeDTO);
+    ArgumentCaptor<List<AgencyPostCodeRange>> captor = ArgumentCaptor.forClass((Class) List.class);
+    verify(postcodeRangeValidator).validatePostcodeRange(any(), captor.capture());
+    assertThat(captor.getValue(), not(hasItem(agencyPostCodeRange)));
+  }
 }

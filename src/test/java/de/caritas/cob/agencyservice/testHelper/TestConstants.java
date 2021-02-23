@@ -1,6 +1,5 @@
 package de.caritas.cob.agencyservice.testHelper;
 
-import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.ArrayList;
@@ -131,6 +130,7 @@ public class TestConstants {
   public static final Map<Integer, ConsultingTypeSettings> CONSULTING_TYPE_SETTINGS_MAP_WITH_MISSING_CONSULTING_TYPE_SETTINGS_FOR_U25 =
       new HashMap<Integer, ConsultingTypeSettings>() {
         private static final long serialVersionUID = 1L;
+
         {
           put(CONSULTING_TYPE_SUCHT.getValue(), CONSULTING_TYPE_SETTINGS_SUCHT);
         }
@@ -140,30 +140,37 @@ public class TestConstants {
   public static final String INVALID_POSTCODE = "inv";
   public static final String FIELD_AGENCY_ID = "id";
   public static final String VALID_POSTCODE = "12345";
+  public static final String VALID_POSTCODE_2 = "23456";
+  public static final String VALID_POSTCODE_3 = "33333";
+  public static final String VALID_POSTCODE_4 = "44444";
+  public static final String VALID_POSTCODE_5 = "55555";
+  public static final String VALID_POSTCODE_6 = "33445";
   public static final String AGENCY_CITY = "Test city";
   public static final String VALID_POSTCODE_QUERY = "postcode=88488";
   public static final int VALID_POSTCODE_LENGTH = 5;
   public static final Long AGENCY_ID = 98L;
-  public static final Long POSTCODE_RANGE_ID = 95L;
   public static final String AGENCY_NAME = "Test agency";
   public static final String AGENCY_DESCRIPTION = "Test description";
-  public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
+  public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
+      AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, null, null,
+      null);
+  public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
+      AGENCY_DESCRIPTION,
+      POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, null, null,
       null);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
           false, CONSULTING_TYPE_U25, false, null, null, null, null);
-  public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
+  public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
+      AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, null, null, null);
-  public static final Agency TEAM_AGENCY = new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", true, CONSULTING_TYPE_SUCHT, false, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
-      .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
+          .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
           .consultingType(CONSULTING_TYPE_SUCHT.getValue());
   public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(AGENCY_RESPONSE_DTO);
   public static final int MIN_POSTCODE_SIZE_3 = 3;
-  public static final int MIN_POSTCODE_SIZE_5 = 5;
   public static final WhiteSpot WHITESPOT_AGENCIES_SUCHT = new WhiteSpot(true, WHITESPOT_AGENCY_ID);
   public static final WhiteSpot WHITESPOT_AGENCIES_U25 = new WhiteSpot(false, WHITESPOT_AGENCY_ID);
   public static final Registration REGISTRATION_SUCHT = new Registration(MIN_POSTCODE_SIZE_3);
@@ -185,8 +192,10 @@ public class TestConstants {
 
   public static final Long INVALID_DIOCESE_ID = -1L;
 
-  public static final Integer PAGE = 1;
-  public static final Integer PER_PAGE = 1;
+  public static final Integer PAGE_1 = 1;
+  public static final Integer PAGE_2 = 2;
+  public static final Integer PAGE_3 = 3;
+  public static final Integer PER_PAGE_1 = 1;
 
   public static final String VALID_AGENCY_DTO = "{\n"
       + "  \"city\": \"City\",\n"
@@ -205,6 +214,11 @@ public class TestConstants {
       + "  \"name\": \"Agency\",\n"
       + "  \"postcode\": \"76000\",\n"
       + "  \"offline\": true\n"
+      + "}";
+
+  public static final String VALID_POSTCODE_RANGE_DTO = "{\n"
+      + "  \"postcodeFrom\": \"51107\",\n"
+      + "  \"postcodeTo\": \"51109\"\n"
       + "}";
 
 }

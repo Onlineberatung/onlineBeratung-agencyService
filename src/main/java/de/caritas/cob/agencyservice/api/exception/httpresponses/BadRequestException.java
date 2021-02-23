@@ -1,14 +1,17 @@
 package de.caritas.cob.agencyservice.api.exception.httpresponses;
 
-public class BadRequestException extends RuntimeException {
-  private static final long serialVersionUID = -3553609955386498237L;
+import de.caritas.cob.agencyservice.api.service.LogService;
+
+public class BadRequestException extends CustomHttpStatusException {
+
+  private static final long serialVersionUID = -8047408802295905803L;
 
   /**
-   * BadRequest exception
+   * BadRequest exception.
    *
-   * @param message
+   * @param message an additional message
    */
   public BadRequestException(String message) {
-    super(message);
+    super(message, LogService::logWarning);
   }
 }

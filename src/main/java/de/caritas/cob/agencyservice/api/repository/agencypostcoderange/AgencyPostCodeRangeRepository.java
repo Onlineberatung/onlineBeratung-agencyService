@@ -25,5 +25,4 @@ public interface AgencyPostCodeRangeRepository extends CrudRepository<AgencyPost
    * @return the amount of postcode ranges
    */
   long countAllByAgencyId(Long agencyId);
-
 }
