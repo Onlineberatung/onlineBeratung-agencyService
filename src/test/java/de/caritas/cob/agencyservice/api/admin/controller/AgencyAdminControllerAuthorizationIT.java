@@ -85,16 +85,6 @@ public class AgencyAdminControllerAuthorizationIT {
   private AgencyValidator agencyValidator;
 
   @Test
-  public void searchAgencies_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(get(AGENCY_SEARCH_PATH))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminFullResponseDTO);
-  }
-
-  @Test
   public void searchAgencies_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -122,16 +112,6 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void getDioceses_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(get(GET_DIOCESES_PATH))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.dioceseAdminService);
-  }
-
-  @Test
   public void getDioceses_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -156,16 +136,6 @@ public class AgencyAdminControllerAuthorizationIT {
         .andExpect(status().isOk());
 
     verify(this.dioceseAdminService, times(1)).findAllDioceses(anyInt(), anyInt());
-  }
-
-  @Test
-  public void getAgencyPostCodeRanges_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyPostCodeRangeAdminService);
   }
 
   @Test
@@ -197,18 +167,6 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void createAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(post(CREATE_AGENCY_PATH)
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminService);
-    verifyNoMoreInteractions(this.agencyValidator);
-  }
-
-  @Test
   public void createAgency_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -236,18 +194,6 @@ public class AgencyAdminControllerAuthorizationIT {
 
     verify(this.agencyValidator, times(1)).validate(Mockito.any(AgencyDTO.class));
     verify(this.agencyAdminService, times(1)).saveAgency(Mockito.any());
-  }
-
-  @Test
-  public void updateAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(put(UPDATE_DELETE_AGENCY_PATH)
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminService);
-    verifyNoMoreInteractions(this.agencyValidator);
   }
 
   @Test
@@ -282,17 +228,6 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void deletePostcodeRange_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminService);
-  }
-
-  @Test
   public void deletePostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -317,17 +252,6 @@ public class AgencyAdminControllerAuthorizationIT {
         .andExpect(status().isOk());
 
     verify(this.agencyPostCodeRangeAdminService, times(1)).deleteAgencyPostcodeRange(any());
-  }
-
-  @Test
-  public void createAgencyPostcodeRange_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyPostCodeRangeAdminService);
   }
 
   @Test
@@ -360,17 +284,6 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void updateAgencyPostcodeRange_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyPostCodeRangeAdminService);
-  }
-
-  @Test
   public void updateAgencyPostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -397,17 +310,6 @@ public class AgencyAdminControllerAuthorizationIT {
 
     verify(this.agencyPostCodeRangeAdminService, times(1))
         .updatePostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));
-  }
-
-  @Test
-  public void changeAgencyType_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(post(CHANGE_AGENCY_TYPE_PATH)
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminService);
   }
 
   @Test
@@ -441,17 +343,6 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void deleteAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(delete(UPDATE_DELETE_AGENCY_PATH)
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminService);
-  }
-
-  @Test
   public void deleteAgency_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -476,17 +367,6 @@ public class AgencyAdminControllerAuthorizationIT {
         .andExpect(status().isOk());
 
     verify(this.agencyAdminService, times(1)).deleteAgency(anyLong());
-  }
-
-  @Test
-  public void getAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
-
-    mvc.perform(get(GET_AGENCY_PATH + "/1")
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    verifyNoMoreInteractions(this.agencyAdminService);
   }
 
   @Test
