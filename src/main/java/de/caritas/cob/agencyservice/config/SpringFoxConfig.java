@@ -62,7 +62,7 @@ public class SpringFoxConfig {
   public static final String[] WHITE_LIST =
       new String[] {"/agencies/docs", "/agencies/docs/**", "/v2/api-docs", "/configuration/ui",
           "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**",
-          "/agencyadmin/**"};
+          "/agencyadmin"};
 
   @Bean
   public Docket apiDocket() {
