@@ -64,6 +64,7 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
     Cookie cookie = new Cookie(csrfCookieProperty, cookieValue);
     cookie.setMaxAge(-1);
     cookie.setPath("/");
+    cookie.setSecure(true);
     cookie.setDomain("caritas-dev.virtual-identity.com");
     response.addCookie(cookie);
   }
