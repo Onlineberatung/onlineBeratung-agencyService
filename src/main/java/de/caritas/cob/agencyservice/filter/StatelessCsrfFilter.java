@@ -35,8 +35,6 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    setCsrfCookie(response);
-
     if (requireCsrfProtectionMatcher.matches(request)) {
       final String csrfTokenValue = request.getHeader(csrfHeaderProperty);
       final Cookie[] cookies = request.getCookies();
@@ -57,16 +55,6 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
       }
     }
     filterChain.doFilter(request, response);
-  }
-
-  private void setCsrfCookie(HttpServletResponse response) {
-    String cookieValue = "test";
-    Cookie cookie = new Cookie(csrfCookieProperty, cookieValue);
-    cookie.setMaxAge(-1);
-    cookie.setPath("/");
-    cookie.setSecure(true);
-    cookie.setDomain("caritas-dev.virtual-identity.com");
-    response.addCookie(cookie);
   }
 
   public static final class DefaultRequiresCsrfMatcher implements RequestMatcher {
