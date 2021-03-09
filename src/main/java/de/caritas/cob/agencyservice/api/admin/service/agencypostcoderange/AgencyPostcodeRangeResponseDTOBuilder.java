@@ -49,8 +49,8 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
     return new PostCodeRangeResponseDTO()
         .agencyId(this.agencyPostCodeRange.getAgency().getId())
         .id(agencyPostCodeRange.getId())
-        .postcodeFrom(agencyPostCodeRange.getPostCodeFrom())
-        .postcodeTo(agencyPostCodeRange.getPostCodeTo())
+        .postcodeFrom(String.valueOf(agencyPostCodeRange.getPostCodeFrom()))
+        .postcodeTo(String.valueOf(agencyPostCodeRange.getPostCodeTo()))
         .createDate(String.valueOf(agencyPostCodeRange.getCreateDate()))
         .updateDate(String.valueOf(agencyPostCodeRange.getUpdateDate()));
   }

@@ -55,7 +55,7 @@ public class DioceseAdminService {
   private DioceseResponseDTO fromDiocese(Diocese diocese) {
     return new DioceseResponseDTO()
         .dioceseId(diocese.getDioceseId())
-        .name(diocese.getName())
+        .name(String.valueOf(diocese.getName()))
         .createDate(String.valueOf(diocese.getCreateDate()))
         .updateDate(String.valueOf(diocese.getUpdateDate()));
   }
