@@ -78,19 +78,19 @@ public class AgencyAdminServiceIT {
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agency?id=%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agency?id=%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agency?id=%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
@@ -155,19 +155,19 @@ public class AgencyAdminServiceIT {
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agency?id=%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agency?id=%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agency/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agency?id=%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),

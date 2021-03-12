@@ -387,7 +387,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void getAgency_Should_ReturnOkAndCallAgencyAdminService_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(get(GET_AGENCY_PATH + "/1")
+    mvc.perform(get(GET_AGENCY_PATH + "?id=1")
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))

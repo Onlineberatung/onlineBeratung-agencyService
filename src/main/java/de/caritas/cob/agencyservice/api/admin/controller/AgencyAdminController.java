@@ -122,8 +122,8 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return a {@link AgencyAdminFullResponseDTO} entity
    */
   @Override
-  public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(@PathVariable Long agencyId,
-      @Valid UpdateAgencyDTO updateAgencyDTO) {
+  public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(Long agencyId,
+      UpdateAgencyDTO updateAgencyDTO) {
 
     agencyValidator.validate(agencyId, updateAgencyDTO);
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService

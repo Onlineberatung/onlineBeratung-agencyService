@@ -420,14 +420,14 @@ public class AgencyAdminControllerTest {
   @Test
   public void getAgency_Should_returnOk_When_AllParamsAreValid() throws Exception {
     this.mvc
-        .perform(get(GET_AGENCY_PATH + "/1").contentType(MediaType.APPLICATION_JSON))
+        .perform(get(GET_AGENCY_PATH + "?id=1").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
   public void getAgency_Should_returnBadRequest_When_agncyIdIsInvalid() throws Exception {
     this.mvc
-        .perform(get(GET_AGENCY_PATH + "/ab").contentType(MediaType.APPLICATION_JSON))
+        .perform(get(GET_AGENCY_PATH + "?id=ab").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
 }

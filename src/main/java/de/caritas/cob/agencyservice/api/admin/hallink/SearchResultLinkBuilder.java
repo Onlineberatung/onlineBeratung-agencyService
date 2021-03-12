@@ -20,7 +20,8 @@ public class SearchResultLinkBuilder implements HalLinkBuilder {
   private Integer totalResults;
   private String keyword;
 
-  private SearchResultLinkBuilder() {}
+  private SearchResultLinkBuilder() {
+  }
 
   /**
    * Creates an {@link SearchResultLinkBuilder} instance.

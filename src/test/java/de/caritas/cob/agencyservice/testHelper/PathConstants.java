@@ -11,9 +11,9 @@ public class PathConstants {
       + "/postcoderange/";
   public static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
       + "/agency/1/postcoderanges";
-  public static final String UPDATE_DELETE_AGENCY_PATH_INVALID_ID = ROOT_PATH + "/agency/abc";
-  public static final String UPDATE_DELETE_AGENCY_PATH = ROOT_PATH + "/agency/1";
-  public static final String CHANGE_AGENCY_TYPE_PATH = UPDATE_DELETE_AGENCY_PATH + "/changetype";
+  public static final String UPDATE_DELETE_AGENCY_PATH_INVALID_ID = ROOT_PATH + "/agency?id=abc";
+  public static final String UPDATE_DELETE_AGENCY_PATH = ROOT_PATH + "/agency?id=1";
+  public static final String CHANGE_AGENCY_TYPE_PATH = ROOT_PATH + "/agency/1/changetype";
   public static final String CREATE_AGENCY_PATH = ROOT_PATH + "/agency";
   public static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
   public static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
