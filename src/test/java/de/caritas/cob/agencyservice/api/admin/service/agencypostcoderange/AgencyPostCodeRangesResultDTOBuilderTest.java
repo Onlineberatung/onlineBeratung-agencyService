@@ -59,15 +59,15 @@ public class AgencyPostCodeRangesResultDTOBuilderTest {
     PaginationLinks paginationLinks = result.getLinks();
 
     assertThat(paginationLinks.getSelf().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_2 + "&perPage="
-            + PER_PAGE_1));
+        endsWith("/agencyadmin/agencies/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_2
+            + "&perPage=" + PER_PAGE_1));
     assertEquals(paginationLinks.getSelf().getMethod().getValue(), MethodEnum.GET.getValue());
     assertThat(paginationLinks.getNext().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_3 + "&perPage="
-            + PER_PAGE_1));
+        endsWith("/agencyadmin/agencies/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_3
+            + "&perPage=" + PER_PAGE_1));
     assertThat(paginationLinks.getPrevious().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_1 + "&perPage="
-            + PER_PAGE_1));
+        endsWith("/agencyadmin/agencies/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_1
+            + "&perPage=" + PER_PAGE_1));
   }
 
   @Test
@@ -82,8 +82,8 @@ public class AgencyPostCodeRangesResultDTOBuilderTest {
 
     assertThat(paginationLinks.getPrevious(), notNullValue());
     assertThat(paginationLinks.getPrevious().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_1 + "&perPage="
-            + PER_PAGE_1));
+        endsWith("/agencyadmin/agencies/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_1
+            + "&perPage=" + PER_PAGE_1));
   }
 
   @Test
@@ -111,8 +111,8 @@ public class AgencyPostCodeRangesResultDTOBuilderTest {
 
     assertThat(paginationLinks.getNext(), notNullValue());
     assertThat(paginationLinks.getNext().getHref(),
-        endsWith("/agencyadmin/agency/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_3 + "&perPage="
-            + PER_PAGE_1));
+        endsWith("/agencyadmin/agencies/" + AGENCY_ID + "/postcoderanges?page=" + PAGE_3
+            + "&perPage=" + PER_PAGE_1));
   }
 
   @Test

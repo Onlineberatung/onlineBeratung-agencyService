@@ -25,19 +25,19 @@ public class AgencyLinksBuilderTest {
     assertThat(agencyLinks.getSelf(), notNullValue());
     assertThat(agencyLinks.getSelf().getMethod(), is(MethodEnum.GET));
     assertThat(agencyLinks.getSelf().getHref(),
-        is(String.format("/agencyadmin/agency/%s", agency.getId())));
+        is(String.format("/agencyadmin/agencies/%s", agency.getId())));
     assertThat(agencyLinks.getDelete(), notNullValue());
     assertThat(agencyLinks.getDelete().getMethod(), is(MethodEnum.DELETE));
     assertThat(agencyLinks.getDelete().getHref(),
-        is(String.format("/agencyadmin/agency/%s", agency.getId())));
+        is(String.format("/agencyadmin/agencies/%s", agency.getId())));
     assertThat(agencyLinks.getUpdate(), notNullValue());
     assertThat(agencyLinks.getUpdate().getMethod(), is(MethodEnum.PUT));
     assertThat(agencyLinks.getUpdate().getHref(),
-        is(String.format("/agencyadmin/agency/%s", agency.getId())));
+        is(String.format("/agencyadmin/agencies/%s", agency.getId())));
     assertThat(agencyLinks.getPostcoderanges(), notNullValue());
     assertThat(agencyLinks.getPostcoderanges().getMethod(), is(MethodEnum.GET));
     assertThat(agencyLinks.getPostcoderanges().getHref(),
-        is(String.format("/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", agency.getId(), 1, 20)));
+        is(String.format("/agencyadmin/agencies/%s/postcoderanges?page=%s&perPage=%s", agency.getId(), 1, 20)));
 
   }
 

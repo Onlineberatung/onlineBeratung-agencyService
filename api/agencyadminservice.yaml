@@ -66,43 +66,6 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/dioceses:
-    get:
-      tags:
-        - admin-agency-controller
-      summary: 'Returns the full list of dioceses [Authorization: Role: agency-admin]'
-      operationId: getDioceses
-      parameters:
-        - name: page
-          in: query
-          description: Number of page where to start in the query (1 = first page)
-          required: true
-          schema:
-            type: integer
-            example: 1
-        - name: perPage
-          in: query
-          description: Number of items which are being returned per page
-          required: true
-          schema:
-            type: integer
-            example: 20
-      responses:
-        200:
-          description: OK - successfull operation
-          content:
-            'application/hal+json':
-              schema:
-                $ref: '#/components/schemas/DioceseAdminResultDTO'
-        400:
-          description: BAD REQUEST - invalid/incomplete request or body object
-        401:
-          description: UNAUTHORIZED - no/invalid role/authorization
-        500:
-          description: INTERNAL SERVER ERROR - server encountered unexpected condition
-      security:
-        - Bearer: [ ]
-  /agencyadmin/agency:
     post:
       tags:
         - admin-agency-controller
@@ -129,7 +92,7 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}:
+  /agencyadmin/agencies/{agencyId}:
     get:
       tags:
         - admin-agency-controller
@@ -226,7 +189,43 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}/changetype:
+  /agencyadmin/dioceses:
+    get:
+      tags:
+        - admin-agency-controller
+      summary: 'Returns the full list of dioceses [Authorization: Role: agency-admin]'
+      operationId: getDioceses
+      parameters:
+        - name: page
+          in: query
+          description: Number of page where to start in the query (1 = first page)
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: perPage
+          in: query
+          description: Number of items which are being returned per page
+          required: true
+          schema:
+            type: integer
+            example: 20
+      responses:
+        200:
+          description: OK - successfull operation
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/DioceseAdminResultDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+  /agencyadmin/agencies/{agencyId}/changetype:
     post:
       tags:
         - admin-agency-controller
@@ -259,7 +258,7 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}/postcoderange:
+  /agencyadmin/agencies/{agencyId}/postcoderange:
     post:
       tags:
         - admin-agency-controller
@@ -296,7 +295,7 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}/postcoderanges:
+  /agencyadmin/agencies/{agencyId}/postcoderanges:
     get:
       tags:
         - admin-agency-controller
@@ -481,6 +480,8 @@ components:
             $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
         _links:
           $ref: '#/components/schemas/SearchResultLinks'
+        total:
+          type: integer
 
     AgencyAdminResponseDTO:
       type: object
@@ -558,11 +559,13 @@ components:
             $ref: '#/components/schemas/DioceseResponseDTO'
         _links:
           $ref: '#/components/schemas/PaginationLinks'
+        total:
+          type: integer
 
     DioceseResponseDTO:
       type: object
       properties:
-        dioceseId:
+        id:
           type: integer
           format: int64
           minimum: 0

@@ -70,7 +70,8 @@ public class AgencyAdminSearchService {
 
     return new AgencyAdminSearchResultDTO()
         .embedded(resultList)
-        .links(searchResultLinks);
+        .links(searchResultLinks)
+        .total(fullTextQuery.getResultSize());
   }
 
   private Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {

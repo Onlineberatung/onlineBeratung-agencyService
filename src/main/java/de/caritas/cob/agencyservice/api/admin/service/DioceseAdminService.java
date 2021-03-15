@@ -7,6 +7,7 @@ import de.caritas.cob.agencyservice.api.model.PaginationLinks;
 import de.caritas.cob.agencyservice.api.repository.diocese.Diocese;
 import de.caritas.cob.agencyservice.api.repository.diocese.DioceseRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
@@ -41,8 +42,10 @@ public class DioceseAdminService {
 
     Page<Diocese> resultPage = dioceseRepository.findAll(pageable);
 
-    return new DioceseAdminResultDTO().embedded(buildDioceseResponseList(resultPage))
-        .links(buildPaginationLinks(page, perPage, resultPage.getTotalPages()));
+    return new DioceseAdminResultDTO()
+        .embedded(buildDioceseResponseList(resultPage))
+        .links(buildPaginationLinks(page, perPage, resultPage.getTotalPages()))
+        .total((int) resultPage.getTotalElements());
   }
 
   private List<DioceseResponseDTO> buildDioceseResponseList(Page<Diocese> page) {
@@ -54,7 +57,7 @@ public class DioceseAdminService {
 
   private DioceseResponseDTO fromDiocese(Diocese diocese) {
     return new DioceseResponseDTO()
-        .dioceseId(diocese.getDioceseId())
+        .id(diocese.getDioceseId())
         .name(diocese.getName())
         .createDate(String.valueOf(diocese.getCreateDate()))
         .updateDate(String.valueOf(diocese.getUpdateDate()));
