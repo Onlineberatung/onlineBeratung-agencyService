@@ -117,17 +117,17 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to update a specific agency.
    *
-   * @param agencyId        Agency Id (required)
+   * @param id        Agency Id (required)
    * @param updateAgencyDTO (required)
    * @return a {@link AgencyAdminFullResponseDTO} entity
    */
   @Override
-  public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(Long agencyId,
-      UpdateAgencyDTO updateAgencyDTO) {
+  public ResponseEntity<AgencyAdminFullResponseDTO> updateAgency(@PathVariable Long id,
+      @Valid UpdateAgencyDTO updateAgencyDTO) {
 
-    agencyValidator.validate(agencyId, updateAgencyDTO);
+    agencyValidator.validate(id, updateAgencyDTO);
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
-        .updateAgency(agencyId, updateAgencyDTO);
+        .updateAgency(id, updateAgencyDTO);
 
     return ResponseEntity.ok(agencyAdminFullResponseDTO);
   }
@@ -135,12 +135,12 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to mark an agency as deleted.
    *
-   * @param agencyId Agency Id (required)
+   * @param id Agency Id (required)
    * @return a {@link ResponseEntity} with the status code.
    */
   @Override
-  public ResponseEntity<Void> deleteAgency(@PathVariable Long agencyId) {
-    this.agencyAdminService.deleteAgency(agencyId);
+  public ResponseEntity<Void> deleteAgency(@PathVariable Long id) {
+    this.agencyAdminService.deleteAgency(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

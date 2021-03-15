@@ -207,19 +207,19 @@ public class AgencyAdminFullResponseDTOIT {
       assertThat(agencyLinks.getSelf(), notNullValue());
       assertThat(agencyLinks.getSelf().getMethod(), is(MethodEnum.GET));
       assertThat(agencyLinks.getSelf().getHref(),
-          endsWith(String.format("/agencyadmin/agency?id=%s", result.getEmbedded().getId())));
+          endsWith(String.format("/agencyadmin/agencies/%s", result.getEmbedded().getId())));
       assertThat(agencyLinks.getDelete(), notNullValue());
       assertThat(agencyLinks.getDelete().getMethod(), is(MethodEnum.DELETE));
       assertThat(agencyLinks.getDelete().getHref(),
-          endsWith(String.format("/agencyadmin/agency?id=%s", result.getEmbedded().getId())));
+          endsWith(String.format("/agencyadmin/agencies/%s", result.getEmbedded().getId())));
       assertThat(agencyLinks.getUpdate(), notNullValue());
       assertThat(agencyLinks.getUpdate().getMethod(), is(MethodEnum.PUT));
       assertThat(agencyLinks.getUpdate().getHref(),
-          endsWith(String.format("/agencyadmin/agency?id=%s", result.getEmbedded().getId())));
+          endsWith(String.format("/agencyadmin/agencies/%s", result.getEmbedded().getId())));
       assertThat(agencyLinks.getPostcoderanges(), notNullValue());
       assertThat(agencyLinks.getPostcoderanges().getMethod(), is(MethodEnum.GET));
       assertThat(agencyLinks.getPostcoderanges().getHref(),
-          endsWith(String.format("/agencyadmin/agency/%s/postcoderanges?page=%s&perPage=%s", result.getEmbedded().getId(), 1, 20)));
+          endsWith(String.format("/agencyadmin/agencies/%s/postcoderanges?page=%s&perPage=%s", result.getEmbedded().getId(), 1, 20)));
     }
   }
 }

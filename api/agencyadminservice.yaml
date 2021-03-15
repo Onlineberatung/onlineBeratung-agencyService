@@ -66,6 +66,129 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
+    post:
+      tags:
+        - admin-agency-controller
+      summary: 'Creates a new agency [Authorization: Role: agency-admin]'
+      operationId: createAgency
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AgencyDTO'
+        required: true
+      responses:
+        201:
+          description: CREATED - agency was created successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+  /agencyadmin/agencies/{id}:
+    get:
+      tags:
+        - admin-agency-controller
+      summary: 'Get an agency [Authorization: Role: agency-admin]'
+      operationId: getAgency
+      parameters:
+        - name: id
+          in: path
+          description: Agency ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        404:
+          description: NOT FOUND - agency with the provided ID does not exist
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    delete:
+      tags:
+        - admin-agency-controller
+      summary: 'Flags an agency as deleted [Authorization: Role: agency-admin]'
+      operationId: deleteAgency
+      parameters:
+        - name: id
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency was deleted successfully
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        404:
+          description: NOT FOUND - agency not found
+        409:
+          description: CONFLICT - agency contains consultants and therefore can't be deleted
+        423:
+          description: LOCKED - agency is locked for deletion (e.g. Kreuzbund)
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    put:
+      tags:
+        - admin-agency-controller
+      summary: 'Updates an agency [Authorization: Role: agency-admin]'
+      operationId: updateAgency
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UpdateAgencyDTO'
+        required: true
+      parameters:
+        - name: id
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - agency was updated successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        404:
+          description: NOT FOUND - agency not found
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
   /agencyadmin/dioceses:
     get:
       tags:
@@ -102,130 +225,7 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency:
-    post:
-      tags:
-        - admin-agency-controller
-      summary: 'Creates a new agency [Authorization: Role: agency-admin]'
-      operationId: createAgency
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/schemas/AgencyDTO'
-        required: true
-      responses:
-        201:
-          description: CREATED - agency was created successfully
-          content:
-            'application/hal+json':
-              schema:
-                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
-        400:
-          description: BAD REQUEST - invalid/incomplete request or body object
-        401:
-          description: UNAUTHORIZED - no/invalid role/authorization
-        500:
-          description: INTERNAL SERVER ERROR - server encountered unexpected condition
-      security:
-        - Bearer: [ ]
-    get:
-      tags:
-        - admin-agency-controller
-      summary: 'Get an agency [Authorization: Role: agency-admin]'
-      operationId: getAgency
-      parameters:
-        - name: id
-          in: query
-          description: Agency ID
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: OK - agency found
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
-        400:
-          description: BAD REQUEST - invalid/incomplete request
-        401:
-          description: UNAUTHORIZED - no/invalid role/authorization
-        404:
-          description: NOT FOUND - agency with the provided ID does not exist
-        500:
-          description: INTERNAL SERVER ERROR - server encountered unexpected condition
-      security:
-        - Bearer: [ ]
-    delete:
-      tags:
-        - admin-agency-controller
-      summary: 'Flags an agency as deleted [Authorization: Role: agency-admin]'
-      operationId: deleteAgency
-      parameters:
-        - name: id
-          in: query
-          description: Agency Id
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: OK - agency was deleted successfully
-        400:
-          description: BAD REQUEST - invalid/incomplete request
-        404:
-          description: NOT FOUND - agency not found
-        409:
-          description: CONFLICT - agency contains consultants and therefore can't be deleted
-        423:
-          description: LOCKED - agency is locked for deletion (e.g. Kreuzbund)
-        401:
-          description: UNAUTHORIZED - no/invalid role/authorization
-        500:
-          description: INTERNAL SERVER ERROR - server encountered unexpected condition
-      security:
-        - Bearer: [ ]
-    put:
-      tags:
-        - admin-agency-controller
-      summary: 'Updates an agency [Authorization: Role: agency-admin]'
-      operationId: updateAgency
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/schemas/UpdateAgencyDTO'
-        required: true
-      parameters:
-        - name: id
-          in: query
-          description: Agency Id
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: OK - agency was updated successfully
-          content:
-            'application/hal+json':
-              schema:
-                $ref: '#/components/schemas/AgencyAdminFullResponseDTO'
-        400:
-          description: BAD REQUEST - invalid/incomplete request
-        404:
-          description: NOT FOUND - agency not found
-        401:
-          description: UNAUTHORIZED - no/invalid role/authorization
-        500:
-          description: INTERNAL SERVER ERROR - server encountered unexpected condition
-      security:
-        - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}/changetype:
+  /agencyadmin/agencies/{agencyId}/changetype:
     post:
       tags:
         - admin-agency-controller
@@ -258,7 +258,7 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}/postcoderange:
+  /agencyadmin/agencies/{agencyId}/postcoderange:
     post:
       tags:
         - admin-agency-controller
@@ -295,7 +295,7 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agency/{agencyId}/postcoderanges:
+  /agencyadmin/agencies/{agencyId}/postcoderanges:
     get:
       tags:
         - admin-agency-controller

@@ -110,13 +110,13 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
     assertThat(paginationLinks.getSelf(), notNullValue());
     assertThat(paginationLinks.getSelf().getHref(),
-        endsWith("/agencyadmin/agency/15/postcoderanges?page=2&perPage=2"));
+        endsWith("/agencyadmin/agencies/15/postcoderanges?page=2&perPage=2"));
     assertThat(paginationLinks.getNext(), notNullValue());
     assertThat(paginationLinks.getNext().getHref(),
-        endsWith("/agencyadmin/agency/15/postcoderanges?page=3&perPage=2"));
+        endsWith("/agencyadmin/agencies/15/postcoderanges?page=3&perPage=2"));
     assertThat(paginationLinks.getPrevious(), notNullValue());
     assertThat(paginationLinks.getPrevious().getHref(),
-        endsWith("/agencyadmin/agency/15/postcoderanges?page=1&perPage=2"));
+        endsWith("/agencyadmin/agencies/15/postcoderanges?page=1&perPage=2"));
   }
 
   @Test
