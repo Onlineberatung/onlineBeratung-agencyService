@@ -92,14 +92,14 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agencies/{id}:
+  /agencyadmin/agencies/{agencyId}:
     get:
       tags:
         - admin-agency-controller
       summary: 'Get an agency [Authorization: Role: agency-admin]'
       operationId: getAgency
       parameters:
-        - name: id
+        - name: agencyId
           in: path
           description: Agency ID
           required: true
@@ -129,7 +129,7 @@ paths:
       summary: 'Flags an agency as deleted [Authorization: Role: agency-admin]'
       operationId: deleteAgency
       parameters:
-        - name: id
+        - name: agencyId
           in: path
           description: Agency Id
           required: true
@@ -165,7 +165,7 @@ paths:
               $ref: '#/components/schemas/UpdateAgencyDTO'
         required: true
       parameters:
-        - name: id
+        - name: agencyId
           in: path
           description: Agency Id
           required: true

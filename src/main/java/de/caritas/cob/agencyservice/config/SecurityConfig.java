@@ -28,10 +28,14 @@ import org.springframework.security.web.csrf.CsrfFilter;
 
 /**
  * Provides the Keycloak/Spring Security configuration.
- *
  */
 @KeycloakConfiguration
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+
+  public static final String[] WHITE_LIST =
+      new String[]{"/agencies/docs", "/agencies/docs/**", "/v2/api-docs", "/configuration/ui",
+          "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**",
+          "/agencyadmin"};
 
   @SuppressWarnings("unused")
   private final KeycloakClientRequestFactory keycloakClientRequestFactory;
@@ -48,8 +52,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   /**
    * Processes HTTP requests and checks for a valid spring security authentication for the
    * (Keycloak) principal (authorization header).
-   * 
-   * @param keycloakClientRequestFactory
    */
   public SecurityConfig(KeycloakClientRequestFactory keycloakClientRequestFactory) {
     this.keycloakClientRequestFactory = keycloakClientRequestFactory;
@@ -59,7 +61,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * Configure spring security filter chain: disable default Spring Boot CSRF token behavior and add
    * custom {@link StatelessCsrfFilter}, set all sessions to be fully stateless, define necessary
    * Keycloak roles for specific REST API paths
-   * 
    */
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -70,7 +71,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers("/agencies/*").permitAll()
-        .antMatchers(SpringFoxConfig.WHITE_LIST).permitAll()
+        .antMatchers(WHITE_LIST).permitAll()
         .antMatchers("/agencies").permitAll()
         .antMatchers("/agencyadmin", "/agencyadmin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
@@ -79,8 +80,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   /**
    * Use the KeycloakSpringBootConfigResolver to be able to save the Keycloak settings in the spring
    * application properties.
-   * 
-   * @return
    */
   @Bean
   public KeycloakConfigResolver keyCloakConfigResolver() {
@@ -100,8 +99,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * Change the default AuthenticationProvider to KeycloakAuthenticationProvider and register it in
    * the spring security context. This maps the Kecloak roles to match the spring security roles
    * (prefix ROLE_).
-   * 
-   * @param auth
    */
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth,
@@ -117,13 +114,10 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * the web application context. Therefore, when running the Keycloak Spring Security adapter in a
    * Spring Boot environment, it may be necessary to add FilterRegistrationBeans to your security
    * configuration to prevent the Keycloak filters from being registered twice."
-   * 
+   *
    * https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc
-   * 
+   *
    * {@link package.class#member label}
-   * 
-   * @param filter
-   * @return
    */
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Bean
@@ -135,11 +129,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   }
 
   /**
-   * see above:
-   * {@link SecurityConfig#keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter)
-   * 
-   * @param filter
-   * @return
+   * see above: {@link SecurityConfig#keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter)
    */
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Bean
@@ -151,11 +141,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   }
 
   /**
-   * see above:
-   * {@link SecurityConfig#keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter)
-   * 
-   * @param filter
-   * @return
+   * see above: {@link SecurityConfig#keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter)
    */
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Bean
@@ -167,11 +153,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   }
 
   /**
-   * see above:
-   * {@link SecurityConfig#keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter)
-   * 
-   * @param filter
-   * @return
+   * see above: {@link SecurityConfig#keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter)
    */
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Bean

@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.filter;
 
-import de.caritas.cob.agencyservice.config.SpringFoxConfig;
+import static de.caritas.cob.agencyservice.config.SecurityConfig.WHITE_LIST;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -64,7 +65,7 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
     public boolean matches(HttpServletRequest request) {
 
       // Allow specific whitelist items to disable CSRF protection for Swagger UI documentation
-      if (Arrays.stream(SpringFoxConfig.WHITE_LIST).parallel()
+      if (Arrays.stream(WHITE_LIST).parallel()
           .anyMatch(request.getRequestURI().toLowerCase()::contains)) {
         return false;
       }

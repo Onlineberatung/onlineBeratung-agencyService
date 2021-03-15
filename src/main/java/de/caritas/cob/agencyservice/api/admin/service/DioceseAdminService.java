@@ -52,14 +52,13 @@ public class DioceseAdminService {
     return page
         .stream()
         .map(this::fromDiocese)
-        .sorted(Comparator.comparingLong(DioceseResponseDTO::getId))
         .collect(Collectors.toList());
   }
 
   private DioceseResponseDTO fromDiocese(Diocese diocese) {
     return new DioceseResponseDTO()
         .id(diocese.getDioceseId())
-        .name(String.valueOf(diocese.getName()))
+        .name(diocese.getName())
         .createDate(String.valueOf(diocese.getCreateDate()))
         .updateDate(String.valueOf(diocese.getUpdateDate()));
   }
