@@ -99,7 +99,8 @@ public class AgencyPostCodeRangesResultDTOBuilder implements HalLinkBuilder {
 
     return new AgencyPostcodeRangesResultDTO()
         .embedded(postCodeRanges)
-        .links(postCodeRangeLinks);
+        .links(postCodeRangeLinks)
+        .total((int) this.resultPage.getTotalElements());
   }
 
   private HalLink buildSelfLink() {

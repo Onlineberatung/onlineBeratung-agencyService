@@ -258,43 +258,6 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /agencyadmin/agencies/{agencyId}/postcoderange:
-    post:
-      tags:
-        - admin-agency-controller
-      summary: 'Creates a new postcode range for an agency [Authorization: Role: agency-admin]'
-      operationId: createAgencyPostcodeRange
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/schemas/PostCodeRangeDTO'
-        required: true
-      parameters:
-        - name: agencyId
-          in: path
-          description: Agency Id
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        201:
-          description: CREATED - agency postcode range was created successfully
-          content:
-            'application/hal+json':
-              schema:
-                $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
-        400:
-          description: BAD REQUEST - invalid/incomplete request or body object
-        401:
-          description: UNAUTHORIZED - no/invalid role/authorization
-        404:
-          description: NOT FOUND - provided agency ID does not exist
-        500:
-          description: INTERNAL SERVER ERROR - server encountered unexpected condition
-      security:
-        - Bearer: [ ]
   /agencyadmin/agencies/{agencyId}/postcoderanges:
     get:
       tags:
@@ -338,8 +301,44 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
+    post:
+      tags:
+        - admin-agency-controller
+      summary: 'Creates a new postcode range for an agency [Authorization: Role: agency-admin]'
+      operationId: createAgencyPostcodeRange
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostCodeRangeDTO'
+        required: true
+      parameters:
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        201:
+          description: CREATED - agency postcode range was created successfully
+          content:
+            'application/hal+json':
+              schema:
+                $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        404:
+          description: NOT FOUND - provided agency ID does not exist
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 
-  /agencyadmin/postcoderange/{postcodeRangeId}:
+  /agencyadmin/postcoderanges/{postcodeRangeId}:
     get:
       tags:
         - admin-agency-controller
@@ -690,6 +689,8 @@ components:
             $ref: '#/components/schemas/AgencyPostcodeRangeResponseDTO'
         _links:
           $ref: '#/components/schemas/PaginationLinks'
+        total:
+          type: integer
 
     PostCodeRangeResponseDTO:
       type: object
