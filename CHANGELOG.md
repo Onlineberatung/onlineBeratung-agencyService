@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.6.0...v1.7.0) (2021-04-12)
+
+
+### Features
+
+* adapt admin postcoderanges api to match react admin requirements ([17b20eb](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/17b20eba3160cb60100376cf592005afaa88a624))
+* adapt api def to match react admin needs ([26140dc](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/26140dc111536b47951291534368ae24bddbb9e5))
+* adapt changes for carinet react admin ([efd3690](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/efd3690e8f8454fda6ada12b5f96153f1b455a44))
+* add null values as string ([0bcb48b](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/0bcb48bd96740fe20b915008661bd8f2e036c47c))
+* switched java version for docker build, github actions and mave… ([a919329](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/a9193295dfa76bef607612eb65cb38d2fd3ff638))
+
+
+### Bug Fixes
+
+* fixed wrong path in Dockerfile ([195283e](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/195283ed7ef7794ef3f76fdea5104ff0c1cc0c20))
+
 ## [1.6.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.5.0...v1.6.0) (2021-02-23)
 
 
