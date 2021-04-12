@@ -1,6 +1,8 @@
 package de.caritas.cob.agencyservice.api.admin.validation;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_CONSULTANTS;
+import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.KREUZBUND;
+import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.SUPPORTGROUP;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
@@ -30,12 +32,12 @@ public class DeleteAgencyValidator {
    * @param agency {@link Agency}
    */
   public void validate(Agency agency) {
-    checkIfIsKreuzbundAgency(agency);
+    checkIfIsGroupChatAgency(agency.getConsultingType());
     checkIfAgencyHasAssignedConsultants(agency);
   }
 
-  private void checkIfIsKreuzbundAgency(Agency agency) {
-    if (ConsultingType.KREUZBUND.equals(agency.getConsultingType())) {
+  private void checkIfIsGroupChatAgency(ConsultingType consultingType) {
+    if (KREUZBUND.equals(consultingType) ||SUPPORTGROUP.equals(consultingType)) {
       throw new LockedConsultingTypeException();
     }
   }

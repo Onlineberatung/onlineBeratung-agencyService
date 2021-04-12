@@ -36,7 +36,8 @@ public enum ConsultingType {
   EMIGRATION(17),
   HOSPICE(18),
   REGIONAL(19),
-  MEN(20);
+  MEN(20),
+  SUPPORTGROUP(21);
 
   private final int value;
 
