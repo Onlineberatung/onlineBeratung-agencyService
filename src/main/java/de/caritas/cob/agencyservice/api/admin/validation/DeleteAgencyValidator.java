@@ -37,7 +37,7 @@ public class DeleteAgencyValidator {
   }
 
   private void checkIfIsGroupChatAgency(ConsultingType consultingType) {
-    if (KREUZBUND.equals(consultingType) ||SUPPORTGROUP.equals(consultingType)) {
+    if (KREUZBUND.equals(consultingType) || SUPPORTGROUP.equals(consultingType)) {
       throw new LockedConsultingTypeException();
     }
   }
