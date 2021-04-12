@@ -1,7 +1,11 @@
 package de.caritas.cob.agencyservice.filter;
 
+import static de.caritas.cob.agencyservice.config.SecurityConfig.WHITE_LIST;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,7 +17,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
-import de.caritas.cob.agencyservice.config.SpringFoxConfig;
 
 /**
  * This custom filter checks CSRF cookie and header token for equality
@@ -64,7 +67,9 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
     public boolean matches(HttpServletRequest request) {
 
       // Allow specific whitelist items to disable CSRF protection for Swagger UI documentation
-      if (Arrays.stream(SpringFoxConfig.WHITE_LIST).parallel()
+      List<String> csrfWhitelist = new ArrayList<>(Arrays.asList(WHITE_LIST));
+      csrfWhitelist.add("/agencyadmin");
+      if (csrfWhitelist.parallelStream()
           .anyMatch(request.getRequestURI().toLowerCase()::contains)) {
         return false;
       }

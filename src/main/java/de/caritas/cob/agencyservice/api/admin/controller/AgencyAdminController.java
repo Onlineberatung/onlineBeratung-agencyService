@@ -59,7 +59,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return {@link AgencyAdminFullResponseDTO}
    */
   @Override
-  public ResponseEntity<AgencyAdminFullResponseDTO> getAgency(Long agencyId) {
+  public ResponseEntity<AgencyAdminFullResponseDTO> getAgency(@PathVariable Long agencyId) {
     return ResponseEntity.ok(this.agencyAdminService.findAgency(agencyId));
   }
 
