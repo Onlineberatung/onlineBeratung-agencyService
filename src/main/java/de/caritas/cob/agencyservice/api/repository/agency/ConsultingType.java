@@ -36,7 +36,8 @@ public enum ConsultingType {
   EMIGRATION(17),
   HOSPICE(18),
   REGIONAL(19),
-  MEN(20);
+  MEN(20),
+  SUPPORTGROUPVECHTA(21);
 
   private final int value;
 
@@ -46,6 +47,10 @@ public enum ConsultingType {
 
   public int getValue() {
     return value;
+  }
+
+  public boolean isGroupChatAgency() {
+    return KREUZBUND.value == this.value || SUPPORTGROUPVECHTA.value == this.value;
   }
 
 }

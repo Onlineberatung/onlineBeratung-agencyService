@@ -1,8 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_NO_CONSULTANTS;
-import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE;
-import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.KREUZBUND;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_GROUP_CHAT_IS_LOCKED_TO_SET_OFFLINE;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -44,8 +43,8 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
     if (!isWhiteSpotAgency(validateAgencyDto) && !isValidOfflineStatus(validateAgencyDto)) {
       throw new InvalidOfflineStatusException();
     }
-    if (isKreuzbundAgency(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException(AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE);
+    if (isGroupChatAgency(validateAgencyDto)) {
+      throw new InvalidOfflineStatusException(AGENCY_GROUP_CHAT_IS_LOCKED_TO_SET_OFFLINE);
     }
     if (doesAgencyContainNoConsultant(validateAgencyDto)) {
       throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
@@ -74,10 +73,10 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
         || agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
   }
 
-  private boolean isKreuzbundAgency(ValidateAgencyDTO validateAgencyDTO) {
+  private boolean isGroupChatAgency(ValidateAgencyDTO validateAgencyDTO) {
     Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
-    return KREUZBUND.equals(agency.getConsultingType()) && isTrue(validateAgencyDTO.getOffline());
+    return agency.getConsultingType().isGroupChatAgency() && isTrue(validateAgencyDTO.getOffline());
   }
 
   private boolean doesAgencyContainNoConsultant(ValidateAgencyDTO validateAgencyDto) {

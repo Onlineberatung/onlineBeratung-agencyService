@@ -30,12 +30,12 @@ public class DeleteAgencyValidator {
    * @param agency {@link Agency}
    */
   public void validate(Agency agency) {
-    checkIfIsKreuzbundAgency(agency);
+    checkIfIsGroupChatAgency(agency.getConsultingType());
     checkIfAgencyHasAssignedConsultants(agency);
   }
 
-  private void checkIfIsKreuzbundAgency(Agency agency) {
-    if (ConsultingType.KREUZBUND.equals(agency.getConsultingType())) {
+  private void checkIfIsGroupChatAgency(ConsultingType consultingType) {
+    if (consultingType.isGroupChatAgency()) {
       throw new LockedConsultingTypeException();
     }
   }
