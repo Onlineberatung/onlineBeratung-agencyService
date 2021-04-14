@@ -76,8 +76,8 @@ public class WhiteSpotHelper {
   @Value("${men.white.spot.agency.id}")
   private String menWhiteSpotAgencyId;
 
-  @Value("${supportgroup.white.spot.agency.id}")
-  private String supportgroupWhiteSpotAgencyId;
+  @Value("${supportgroup.vechta.white.spot.agency.id}")
+  private String supportgroupVechtaWhiteSpotAgencyId;
 
   /**
    * Builds the mapping between consulting type and white spot agency id.
@@ -107,7 +107,7 @@ public class WhiteSpotHelper {
         .addMappingEntry(ConsultingType.HOSPICE, this.hospiceWhiteSpotAgencyId)
         .addMappingEntry(ConsultingType.REGIONAL, this.regionalWhiteSpotAgencyId)
         .addMappingEntry(ConsultingType.MEN, this.menWhiteSpotAgencyId)
-        .addMappingEntry(ConsultingType.SUPPORTGROUP, this.supportgroupWhiteSpotAgencyId)
+        .addMappingEntry(ConsultingType.SUPPORTGROUPVECHTA, this.supportgroupVechtaWhiteSpotAgencyId)
         .getWhiteSpotMapping();
   }
 

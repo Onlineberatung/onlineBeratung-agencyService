@@ -2,8 +2,6 @@ package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_NO_CONSULTANTS;
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_GROUP_CHAT_IS_LOCKED_TO_SET_OFFLINE;
-import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.KREUZBUND;
-import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.SUPPORTGROUP;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -78,11 +76,7 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   private boolean isGroupChatAgency(ValidateAgencyDTO validateAgencyDTO) {
     Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
-    return isGroupChatAgency(agency.getConsultingType()) && isTrue(validateAgencyDTO.getOffline());
-  }
-
-  private boolean isGroupChatAgency(ConsultingType consultingType) {
-    return KREUZBUND.equals(consultingType) || SUPPORTGROUP.equals(consultingType);
+    return agency.getConsultingType().isGroupChatAgency() && isTrue(validateAgencyDTO.getOffline());
   }
 
   private boolean doesAgencyContainNoConsultant(ValidateAgencyDTO validateAgencyDto) {

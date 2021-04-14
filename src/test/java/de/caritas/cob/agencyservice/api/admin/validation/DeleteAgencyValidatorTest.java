@@ -41,7 +41,7 @@ public class DeleteAgencyValidatorTest {
   @Test(expected = LockedConsultingTypeException.class)
   public void validate_Should_throwLockedConsultingTypeException_When_agencyTypeIsSupportGroup() {
     Agency agency = this.easyRandom.nextObject(Agency.class);
-    agency.setConsultingType(ConsultingType.SUPPORTGROUP);
+    agency.setConsultingType(ConsultingType.SUPPORTGROUPVECHTA);
     this.deleteAgencyValidator.validate(agency);
   }
 
