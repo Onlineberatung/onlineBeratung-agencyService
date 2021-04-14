@@ -23,7 +23,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
   </properties>
 
   <dependencies>
@@ -143,8 +143,9 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
-      <scope>test</scope><exclusions>
-    </exclusions>
+      <scope>test</scope>
+      <exclusions>
+      </exclusions>
 
     </dependency>
     <dependency>
@@ -207,7 +208,8 @@
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
-              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller</apiPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller
+              </apiPackage>
               <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
               <generateSupportingFiles>true</generateSupportingFiles>
               <output>target/generated-sources</output>
@@ -225,10 +227,30 @@
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
-              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.admin.controller</apiPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.admin.controller
+              </apiPackage>
               <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
               <generateSupportingFiles>true</generateSupportingFiles>
               <output>target/generated-sources</output>
+            </configuration>
+          </execution>
+          <!-- Generate admin API markdown files -->
+          <execution>
+            <id>agency-admin-service-markdown</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <configOptions>
+              </configOptions>
+              <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
+              <generatorName>markdown</generatorName>
+              <output>target/generated-sources/markdown/agencyservice</output>
+              <apiPackage>./</apiPackage>
+              <modelPackage>model</modelPackage>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <generateSupportingFiles>false</generateSupportingFiles>
             </configuration>
           </execution>
           <!-- Generate client API for user admin service -->
@@ -249,8 +271,11 @@
               <generateApis>true</generateApis>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
-              <apiPackage>${project.groupId}.${project.artifactId}.useradminservice.generated.web</apiPackage>
-              <modelPackage>${project.groupId}.${project.artifactId}.useradminservice.generated.web.model</modelPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.useradminservice.generated.web
+              </apiPackage>
+              <modelPackage>
+                ${project.groupId}.${project.artifactId}.useradminservice.generated.web.model
+              </modelPackage>
             </configuration>
           </execution>
         </executions>
