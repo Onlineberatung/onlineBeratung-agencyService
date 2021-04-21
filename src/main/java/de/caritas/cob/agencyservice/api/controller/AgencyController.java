@@ -43,13 +43,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<AgencyResponseDTO>> getAgencies(
       @RequestParam String postcode, @RequestParam Integer consultingType) {
 
-    List<AgencyResponseDTO> agencies;
-
-    try {
-      agencies = agencyService.getAgencies(postcode, consultingType);
-    } catch (RuntimeException e) {
-      throw new BadRequestException(e.getMessage());
-    }
+    List<AgencyResponseDTO> agencies = agencyService.getAgencies(postcode, consultingType);
 
     return !CollectionUtils.isEmpty(agencies)
         ? new ResponseEntity<>(agencies, HttpStatus.OK)
