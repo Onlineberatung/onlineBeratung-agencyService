@@ -5,6 +5,7 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
@@ -15,7 +16,6 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import lombok.NonNull;
@@ -32,6 +32,7 @@ public class AgencyAdminService {
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
+  private final @NonNull AgencyValidator agencyValidator;
 
   /**
    * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
@@ -62,6 +63,12 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO saveAgency(AgencyDTO agencyDTO) {
+    try {
+      agencyValidator.validate(agencyDTO);
+    } catch (RuntimeException e) {
+      throw new BadRequestException(e.getMessage());
+    }
+
     return new AgencyAdminFullResponseDTOBuilder(agencyRepository.save(fromAgencyDTO(agencyDTO)))
         .fromAgency();
   }
@@ -83,14 +90,7 @@ public class AgencyAdminService {
         .city(agencyDTO.getCity())
         .offline(true)
         .teamAgency(agencyDTO.getTeamAgency())
-        .consultingType(
-            ConsultingType.valueOf(agencyDTO.getConsultingType())
-                .orElseThrow(
-                    () ->
-                        new BadRequestException(
-                            String.format(
-                                "Consulting type %s of agency dto does not exist",
-                                agencyDTO.getConsultingType()))))
+        .consultingTypeId(agencyDTO.getConsultingType())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
@@ -121,7 +121,7 @@ public class AgencyAdminService {
         .city(updateAgencyDTO.getCity())
         .offline(updateAgencyDTO.getOffline())
         .teamAgency(agency.isTeamAgency())
-        .consultingType(agency.getConsultingType())
+        .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .deleteDate(agency.getDeleteDate())

@@ -6,7 +6,6 @@ import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
 import lombok.NonNull;
@@ -35,7 +34,8 @@ public class DeleteAgencyValidator {
   }
 
   private void checkIfIsKreuzbundAgency(Agency agency) {
-    if (ConsultingType.KREUZBUND.equals(agency.getConsultingType())) {
+    // TODO: remove hard-coded reference to "kreuzbund"
+    if (agency.getConsultingTypeId() == 15) {
       throw new LockedConsultingTypeException();
     }
   }

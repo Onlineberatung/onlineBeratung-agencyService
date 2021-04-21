@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.service;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_PREGNANCY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -7,11 +8,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +37,7 @@ public class AgencyServiceIT {
     String postCode = "88662";
 
     List<AgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, ConsultingType.PREGNANCY);
+        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY);
 
     assertThat(resultAgencies, hasSize(1));
     AgencyResponseDTO resultAgency = resultAgencies.get(0);

@@ -1,6 +1,8 @@
 {
+	"consultingTypeId": 13,
 	"whiteSpot": {
-		"whiteSpotAgencyAssigned": true
+		"whiteSpotAgencyAssigned": true,
+		"whiteSpotAgencyId": 638
 	},
 	"registration": {
 		"minPostcodeSize": 3

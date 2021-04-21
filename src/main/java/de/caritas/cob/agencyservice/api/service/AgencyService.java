@@ -8,7 +8,6 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSet
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -51,20 +50,20 @@ public class AgencyService {
    * postCode. If no agency is found, returns the atm hard coded white spot agency id.
    *
    * @param postCode       the postcode for regarding agencies
-   * @param consultingType the type used for filtering of agencies
+   * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
-  public List<AgencyResponseDTO> getAgencies(String postCode, ConsultingType consultingType) {
+  public List<AgencyResponseDTO> getAgencies(String postCode, int consultingTypeId) {
 
     ConsultingTypeSettings consultingTypeSettings = retrieveConsultingTypeSettings(
-        consultingType);
+        consultingTypeId);
 
     if (doesPostCodeNotMatchMinSize(postCode, consultingTypeSettings)) {
       return Collections.emptyList();
     }
 
     List<Agency> agencies = collectAgenciesByPostCodeAndConsultingType(
-        postCode, consultingType);
+        postCode, consultingTypeId);
     Collections.shuffle(agencies);
     List<AgencyResponseDTO> agencyResponseDTOs = agencies.stream()
         .map(this::convertToAgencyResponseDTO)
@@ -82,19 +81,19 @@ public class AgencyService {
     return postCode.length() < consultingTypeSettings.getRegistration().getMinPostcodeSize();
   }
 
-  private ConsultingTypeSettings retrieveConsultingTypeSettings(ConsultingType consultingType) {
+  private ConsultingTypeSettings retrieveConsultingTypeSettings(int consultingTypeId) {
     try {
-      return consultingTypeManager.getConsultantTypeSettings(consultingType);
+      return consultingTypeManager.getConsultantTypeSettings(consultingTypeId);
     } catch (MissingConsultingTypeException e) {
       throw new InternalServerErrorException(LogService::logInternalServerError, e.getMessage());
     }
   }
 
   private List<Agency> collectAgenciesByPostCodeAndConsultingType(String postCode,
-      ConsultingType consultingType) {
+      int consultingTypeId) {
     try {
       return agencyRepository.findByPostCodeAndConsultingType(postCode, postCode.length(),
-          consultingType);
+          consultingTypeId);
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
           "Database error while getting postcodes");
@@ -127,7 +126,7 @@ public class AgencyService {
         .description(agency.getDescription())
         .teamAgency(agency.isTeamAgency())
         .offline(agency.isOffline())
-        .consultingType(agency.getConsultingType().getValue());
+        .consultingType(agency.getConsultingTypeId());
   }
 
   /**

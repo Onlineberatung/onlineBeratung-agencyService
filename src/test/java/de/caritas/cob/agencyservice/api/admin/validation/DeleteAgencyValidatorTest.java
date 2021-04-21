@@ -1,5 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.validation;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_KREUZBUND;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -9,7 +11,6 @@ import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class DeleteAgencyValidatorTest {
   @Test(expected = LockedConsultingTypeException.class)
   public void validate_Should_throwLockedConsultingTypeException_When_agencyTypeIsKreuzbund() {
     Agency agency = this.easyRandom.nextObject(Agency.class);
-    agency.setConsultingType(ConsultingType.KREUZBUND);
+    agency.setConsultingTypeId(CONSULTING_TYPE_KREUZBUND);
     this.deleteAgencyValidator.validate(agency);
   }
 
@@ -47,7 +48,7 @@ public class DeleteAgencyValidatorTest {
                 .collect(Collectors.toList()));
 
     Agency agency = this.easyRandom.nextObject(Agency.class);
-    agency.setConsultingType(ConsultingType.SUCHT);
+    agency.setConsultingTypeId(CONSULTING_TYPE_SUCHT);
     this.deleteAgencyValidator.validate(agency);
   }
 
@@ -57,7 +58,7 @@ public class DeleteAgencyValidatorTest {
         .thenReturn(Collections.emptyList());
 
     Agency agency = this.easyRandom.nextObject(Agency.class);
-    agency.setConsultingType(ConsultingType.SUCHT);
+    agency.setConsultingTypeId(CONSULTING_TYPE_SUCHT);
     assertDoesNotThrow(() -> this.deleteAgencyValidator.validate(agency));
   }
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 
 public class TestConstants {
 
@@ -20,26 +19,26 @@ public class TestConstants {
 
   public static final String INIT_GROUP_NAME = "init";
   public static final Integer INVALID_CONSULTING_TYPE_VALUE = -1;
-  public static final ConsultingType CONSULTING_TYPE_SUCHT = ConsultingType.SUCHT;
-  public static final ConsultingType CONSULTING_TYPE_U25 = ConsultingType.U25;
-  public static final ConsultingType CONSULTING_TYPE_PREGNANCY = ConsultingType.PREGNANCY;
-  public static final ConsultingType CONSULTING_TYPE_AIDS = ConsultingType.AIDS;
-  public static final ConsultingType CONSULTING_TYPE_CHILDREN = ConsultingType.CHILDREN;
-  public static final ConsultingType CONSULTING_TYPE_CURE = ConsultingType.CURE;
-  public static final ConsultingType CONSULTING_TYPE_DEBT = ConsultingType.DEBT;
-  public static final ConsultingType CONSULTING_TYPE_DISABILITY = ConsultingType.DISABILITY;
-  public static final ConsultingType CONSULTING_TYPE_LAW = ConsultingType.LAW;
-  public static final ConsultingType CONSULTING_TYPE_OFFENDER = ConsultingType.OFFENDER;
-  public static final ConsultingType CONSULTING_TYPE_PARENTING = ConsultingType.PARENTING;
-  public static final ConsultingType CONSULTING_TYPE_PLANB = ConsultingType.PLANB;
-  public static final ConsultingType CONSULTING_TYPE_REHABILITATION = ConsultingType.REHABILITATION;
-  public static final ConsultingType CONSULTING_TYPE_SENIORITY = ConsultingType.SENIORITY;
-  public static final ConsultingType CONSULTING_TYPE_SOCIAL = ConsultingType.SOCIAL;
-  public static final ConsultingType CONSULTING_TYPE_KREUZBUND = ConsultingType.KREUZBUND;
-  public static final ConsultingType CONSULTING_TYPE_MIGRATION = ConsultingType.MIGRATION;
-  public static final ConsultingType CONSULTING_TYPE_EMIGRATION = ConsultingType.EMIGRATION;
-  public static final ConsultingType CONSULTING_TYPE_HOSPICE = ConsultingType.HOSPICE;
-  public static final ConsultingType CONSULTING_TYPE_REGIONAL = ConsultingType.REGIONAL;
+  public static final int CONSULTING_TYPE_SUCHT = 0;
+  public static final int CONSULTING_TYPE_U25 = 1;
+  public static final int CONSULTING_TYPE_PREGNANCY = 2;
+  public static final int CONSULTING_TYPE_AIDS = 12;
+  public static final int CONSULTING_TYPE_CHILDREN = 14;
+  public static final int CONSULTING_TYPE_CURE = 4;
+  public static final int CONSULTING_TYPE_DEBT = 5;
+  public static final int CONSULTING_TYPE_DISABILITY = 8;
+  public static final int CONSULTING_TYPE_LAW = 10;
+  public static final int CONSULTING_TYPE_OFFENDER = 11;
+  public static final int CONSULTING_TYPE_PARENTING = 3;
+  public static final int CONSULTING_TYPE_PLANB = 9;
+  public static final int CONSULTING_TYPE_REHABILITATION = 13;
+  public static final int CONSULTING_TYPE_SENIORITY = 7;
+  public static final int CONSULTING_TYPE_SOCIAL = 6;
+  public static final int CONSULTING_TYPE_KREUZBUND = 15;
+  public static final int CONSULTING_TYPE_MIGRATION = 16;
+  public static final int CONSULTING_TYPE_EMIGRATION = 17;
+  public static final int CONSULTING_TYPE_HOSPICE = 18;
+  public static final int CONSULTING_TYPE_REGIONAL = 19;
   public static final Long WHITESPOT_AGENCY_ID = 100L;
   public static final ConsultingTypeSettings CONSULTING_TYPE_SETTINGS_AIDS =
       new ConsultingTypeSettings(CONSULTING_TYPE_AIDS, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
@@ -105,26 +104,26 @@ public class TestConstants {
       new HashMap<Integer, ConsultingTypeSettings>() {
         private static final long serialVersionUID = 1L;
         {
-          put(CONSULTING_TYPE_SUCHT.getValue(), CONSULTING_TYPE_SETTINGS_SUCHT);
-          put(CONSULTING_TYPE_U25.getValue(), CONSULTING_TYPE_SETTINGS_U25);
-          put(CONSULTING_TYPE_PREGNANCY.getValue(), CONSULTING_TYPE_SETTINGS_PREGNANCY);
-          put(CONSULTING_TYPE_AIDS.getValue(), CONSULTING_TYPE_SETTINGS_AIDS);
-          put(CONSULTING_TYPE_CHILDREN.getValue(), CONSULTING_TYPE_SETTINGS_CHILDREN);
-          put(CONSULTING_TYPE_CURE.getValue(), CONSULTING_TYPE_SETTINGS_CURE);
-          put(CONSULTING_TYPE_DEBT.getValue(), CONSULTING_TYPE_SETTINGS_DEBT);
-          put(CONSULTING_TYPE_DISABILITY.getValue(), CONSULTING_TYPE_SETTINGS_DISABILITY);
-          put(CONSULTING_TYPE_LAW.getValue(), CONSULTING_TYPE_SETTINGS_LAW);
-          put(CONSULTING_TYPE_OFFENDER.getValue(), CONSULTING_TYPE_SETTINGS_OFFENDER);
-          put(CONSULTING_TYPE_PARENTING.getValue(), CONSULTING_TYPE_SETTINGS_PARENTING);
-          put(CONSULTING_TYPE_PLANB.getValue(), CONSULTING_TYPE_SETTINGS_PLANB);
-          put(CONSULTING_TYPE_REHABILITATION.getValue(), CONSULTING_TYPE_SETTINGS_REHABILITATION);
-          put(CONSULTING_TYPE_SENIORITY.getValue(), CONSULTING_TYPE_SETTINGS_SENIORITY);
-          put(CONSULTING_TYPE_SOCIAL.getValue(), CONSULTING_TYPE_SETTINGS_SOCIAL);
-          put(CONSULTING_TYPE_KREUZBUND.getValue(), CONSULTING_TYPE_SETTINGS_KREUZBUND);
-          put(CONSULTING_TYPE_MIGRATION.getValue(), CONSULTING_TYPE_SETTINGS_MIGRATION);
-          put(CONSULTING_TYPE_EMIGRATION.getValue(), CONSULTING_TYPE_SETTINGS_EMIGRATION);
-          put(CONSULTING_TYPE_HOSPICE.getValue(), CONSULTING_TYPE_SETTINGS_HOSPICE);
-          put(CONSULTING_TYPE_REGIONAL.getValue(), CONSULTING_TYPE_SETTINGS_REGIONAL);
+          put(CONSULTING_TYPE_SUCHT, CONSULTING_TYPE_SETTINGS_SUCHT);
+          put(CONSULTING_TYPE_U25, CONSULTING_TYPE_SETTINGS_U25);
+          put(CONSULTING_TYPE_PREGNANCY, CONSULTING_TYPE_SETTINGS_PREGNANCY);
+          put(CONSULTING_TYPE_AIDS, CONSULTING_TYPE_SETTINGS_AIDS);
+          put(CONSULTING_TYPE_CHILDREN, CONSULTING_TYPE_SETTINGS_CHILDREN);
+          put(CONSULTING_TYPE_CURE, CONSULTING_TYPE_SETTINGS_CURE);
+          put(CONSULTING_TYPE_DEBT, CONSULTING_TYPE_SETTINGS_DEBT);
+          put(CONSULTING_TYPE_DISABILITY, CONSULTING_TYPE_SETTINGS_DISABILITY);
+          put(CONSULTING_TYPE_LAW, CONSULTING_TYPE_SETTINGS_LAW);
+          put(CONSULTING_TYPE_OFFENDER, CONSULTING_TYPE_SETTINGS_OFFENDER);
+          put(CONSULTING_TYPE_PARENTING, CONSULTING_TYPE_SETTINGS_PARENTING);
+          put(CONSULTING_TYPE_PLANB, CONSULTING_TYPE_SETTINGS_PLANB);
+          put(CONSULTING_TYPE_REHABILITATION, CONSULTING_TYPE_SETTINGS_REHABILITATION);
+          put(CONSULTING_TYPE_SENIORITY, CONSULTING_TYPE_SETTINGS_SENIORITY);
+          put(CONSULTING_TYPE_SOCIAL, CONSULTING_TYPE_SETTINGS_SOCIAL);
+          put(CONSULTING_TYPE_KREUZBUND, CONSULTING_TYPE_SETTINGS_KREUZBUND);
+          put(CONSULTING_TYPE_MIGRATION, CONSULTING_TYPE_SETTINGS_MIGRATION);
+          put(CONSULTING_TYPE_EMIGRATION, CONSULTING_TYPE_SETTINGS_EMIGRATION);
+          put(CONSULTING_TYPE_HOSPICE, CONSULTING_TYPE_SETTINGS_HOSPICE);
+          put(CONSULTING_TYPE_REGIONAL, CONSULTING_TYPE_SETTINGS_REGIONAL);
         }
       };
   public static final Map<Integer, ConsultingTypeSettings> CONSULTING_TYPE_SETTINGS_MAP_WITH_MISSING_CONSULTING_TYPE_SETTINGS_FOR_U25 =
@@ -132,7 +131,7 @@ public class TestConstants {
         private static final long serialVersionUID = 1L;
 
         {
-          put(CONSULTING_TYPE_SUCHT.getValue(), CONSULTING_TYPE_SETTINGS_SUCHT);
+          put(CONSULTING_TYPE_SUCHT, CONSULTING_TYPE_SETTINGS_SUCHT);
         }
       };
 
@@ -168,7 +167,7 @@ public class TestConstants {
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
-          .consultingType(CONSULTING_TYPE_SUCHT.getValue());
+          .consultingType(CONSULTING_TYPE_SUCHT);
   public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(AGENCY_RESPONSE_DTO);
   public static final int MIN_POSTCODE_SIZE_3 = 3;
   public static final WhiteSpot WHITESPOT_AGENCIES_SUCHT = new WhiteSpot(true, WHITESPOT_AGENCY_ID);
@@ -187,7 +186,7 @@ public class TestConstants {
 
   public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
   public static final String INVALID_POSTCODE_QUERY = "postcode=12";
-  public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=99999";
+  public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=xyz";
   public static final String INVALID_AGENCY_ID = "12xX";
 
   public static final Long INVALID_DIOCESE_ID = -1L;
@@ -199,7 +198,7 @@ public class TestConstants {
 
   public static final String VALID_AGENCY_DTO = "{\n"
       + "  \"city\": \"City\",\n"
-      + "  \"consultingType\": " + CONSULTING_TYPE_AIDS.getValue() + ",\n"
+      + "  \"consultingType\": " + CONSULTING_TYPE_AIDS + ",\n"
       + "  \"description\": \"Description\",\n"
       + "  \"dioceseId\": 1,\n"
       + "  \"name\": \"Agency\",\n"
