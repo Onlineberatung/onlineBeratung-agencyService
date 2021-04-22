@@ -3,8 +3,12 @@ package de.caritas.cob.agencyservice.api.admin.validation;
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_CONSULTANTS;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
+import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Component;
 public class DeleteAgencyValidator {
 
   private final @NonNull UserAdminService userAdminService;
+  private final @NonNull ConsultingTypeManager consultingTypeManager;
   private static final int FIRST_PAGE = 1;
   private static final int PER_PAGE = 1;
 
@@ -29,13 +34,21 @@ public class DeleteAgencyValidator {
    * @param agency {@link Agency}
    */
   public void validate(Agency agency) {
-    checkIfIsKreuzbundAgency(agency);
+    checkIfIsLockedAgency(agency);
     checkIfAgencyHasAssignedConsultants(agency);
   }
 
-  private void checkIfIsKreuzbundAgency(Agency agency) {
-    // TODO: remove hard-coded reference to "kreuzbund"
-    if (agency.getConsultingTypeId() == 15) {
+  private void checkIfIsLockedAgency(Agency agency) {
+
+    ConsultingTypeSettings consultantTypeSettings;
+    try {
+      consultantTypeSettings = consultingTypeManager
+          .getConsultantTypeSettings(agency.getConsultingTypeId());
+    } catch (MissingConsultingTypeException e) {
+      throw new InvalidConsultingTypeException();
+    }
+
+    if (consultantTypeSettings.isLockedAgency()) {
       throw new LockedConsultingTypeException();
     }
   }
