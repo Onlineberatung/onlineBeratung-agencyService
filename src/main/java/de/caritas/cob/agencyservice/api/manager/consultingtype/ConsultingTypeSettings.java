@@ -16,4 +16,5 @@ public class ConsultingTypeSettings {
   private int consultingTypeId;
   private WhiteSpot whiteSpot;
   private Registration registration;
+  private boolean isLockedAgency;
 }

@@ -48,6 +48,8 @@ class AgencyOfflineStatusValidatorTest {
   static List<ConsultantAdminResponseDTO> NO_CONSULTANT = emptyList();
   static List<ConsultantAdminResponseDTO> ONE_CONSULTANT = singletonList(
       new ConsultantAdminResponseDTO());
+  static boolean IS_LOCKED_AGENCY = true;
+  static boolean IS_NOT_LOCKED_AGENCY = false;
 
   @Mock
   AgencyRepository agencyRepository;
@@ -68,11 +70,13 @@ class AgencyOfflineStatusValidatorTest {
   static Stream<Arguments> validate_Should_ThrowInvalidOfflineStatusException_Arguments() {
     return Stream.of(
         Arguments.of(IS_NOT_OFFLINE, NO_POSTCODE_RANGES, IS_NOT_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            AGENCY_SUCHT),
+            IS_NOT_LOCKED_AGENCY, AGENCY_SUCHT),
         Arguments.of(IS_NOT_OFFLINE, WITH_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            AGENCY_SUCHT),
+            IS_NOT_LOCKED_AGENCY, AGENCY_SUCHT),
         Arguments.of(IS_OFFLINE, WITH_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            AGENCY_KREUZBUND)
+            IS_LOCKED_AGENCY, AGENCY_SUCHT),
+        Arguments.of(IS_OFFLINE, WITH_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY, NO_CONSULTANT,
+            IS_LOCKED_AGENCY, AGENCY_KREUZBUND)
     );
   }
 
@@ -98,7 +102,7 @@ class AgencyOfflineStatusValidatorTest {
   @MethodSource("validate_Should_ThrowInvalidOfflineStatusException_Arguments")
   void validate_Should_ThrowInvalidOfflineStatusException(boolean isOffline,
       long numberOfAgencyPostcodeRanges, boolean isWhiteSpotAgency,
-      List<ConsultantAdminResponseDTO> assignedConsultants, Agency agency)
+      List<ConsultantAdminResponseDTO> assignedConsultants, boolean isLockedAgency, Agency agency)
       throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
@@ -106,6 +110,7 @@ class AgencyOfflineStatusValidatorTest {
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId() : validateAgencyDto.getId() + 1);
     consultingTypeSettings.setConsultingTypeId(agency.getConsultingTypeId());
+    consultingTypeSettings.setLockedAgency(isLockedAgency);
 
     when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
         .thenReturn(numberOfAgencyPostcodeRanges);

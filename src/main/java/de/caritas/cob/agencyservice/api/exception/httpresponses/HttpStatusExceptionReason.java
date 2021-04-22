@@ -10,6 +10,5 @@ public enum HttpStatusExceptionReason {
   AGENCY_CONTAINS_NO_CONSULTANTS,
   AGENCY_IS_ALREADY_TEAM_AGENCY,
   AGENCY_IS_ALREADY_DEFAULT_AGENCY,
-  // TODO: remove hard-coded reference to "kreuzbund"
-  AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE
+  AGENCY_IS_LOCKED
 }

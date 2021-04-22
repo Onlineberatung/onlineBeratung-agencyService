@@ -1,10 +1,9 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_NO_CONSULTANTS;
-import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_LOCKED;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
@@ -42,14 +41,23 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
    */
   @Override
   public void validate(ValidateAgencyDTO validateAgencyDto) {
-    if (!isWhiteSpotAgency(validateAgencyDto) && !isValidOfflineStatus(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException();
-    }
-    if (isKreuzbundAgency(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException(AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE);
-    }
-    if (doesAgencyContainNoConsultant(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
+
+    if (isFalse(validateAgencyDto.getOffline())) {
+
+      if (!isWhiteSpotAgency(validateAgencyDto) && !hasPostCodeRanges(validateAgencyDto)) {
+        throw new InvalidOfflineStatusException();
+      }
+
+      if (hasNoConsultant(validateAgencyDto)) {
+        throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
+      }
+
+    } else {
+
+      if (isLocked(validateAgencyDto)) {
+        throw new InvalidOfflineStatusException(AGENCY_IS_LOCKED);
+      }
+
     }
   }
 
@@ -74,13 +82,11 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
     }
   }
 
-  private boolean isValidOfflineStatus(ValidateAgencyDTO validateAgencyDto) {
-    return isTrue(validateAgencyDto.getOffline())
-        || agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
+  private boolean hasPostCodeRanges(ValidateAgencyDTO validateAgencyDto) {
+    return agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
   }
 
-  // TODO: remove hard-coded reference to "kreuzbund"
-  private boolean isKreuzbundAgency(ValidateAgencyDTO validateAgencyDTO) {
+  private boolean isLocked(ValidateAgencyDTO validateAgencyDTO) {
     Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
     ConsultingTypeSettings consultantTypeSettings;
@@ -90,12 +96,11 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
     } catch (MissingConsultingTypeException e) {
       throw new InvalidConsultingTypeException();
     }
-    return consultantTypeSettings.getConsultingTypeId() == 15 && isTrue(
-        validateAgencyDTO.getOffline());
+    return consultantTypeSettings.isLockedAgency();
   }
 
-  private boolean doesAgencyContainNoConsultant(ValidateAgencyDTO validateAgencyDto) {
+  private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {
     return this.userAdminService.getConsultantsOfAgency(validateAgencyDto.getId(), 1, 1)
-        .isEmpty() && isFalse(validateAgencyDto.getOffline());
+        .isEmpty();
   }
 }

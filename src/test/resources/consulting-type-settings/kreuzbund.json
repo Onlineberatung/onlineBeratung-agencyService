@@ -6,5 +6,6 @@
 	},
 	"registration": {
 		"minPostcodeSize": 3
-	}
+	},
+	"isLockedAgency": true
 }
