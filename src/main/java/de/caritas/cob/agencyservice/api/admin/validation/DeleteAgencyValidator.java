@@ -34,11 +34,11 @@ public class DeleteAgencyValidator {
    * @param agency {@link Agency}
    */
   public void validate(Agency agency) {
-    checkIfIsLockedAgency(agency);
+    checkIfIsLockedAgencies(agency);
     checkIfAgencyHasAssignedConsultants(agency);
   }
 
-  private void checkIfIsLockedAgency(Agency agency) {
+  private void checkIfIsLockedAgencies(Agency agency) {
 
     ConsultingTypeSettings consultantTypeSettings;
     try {
@@ -48,7 +48,7 @@ public class DeleteAgencyValidator {
       throw new InvalidConsultingTypeException();
     }
 
-    if (consultantTypeSettings.isLockedAgency()) {
+    if (consultantTypeSettings.isLockedAgencies()) {
       throw new LockedConsultingTypeException();
     }
   }

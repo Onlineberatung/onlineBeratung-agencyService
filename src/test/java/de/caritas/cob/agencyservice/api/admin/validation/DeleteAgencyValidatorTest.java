@@ -43,7 +43,7 @@ public class DeleteAgencyValidatorTest {
       throws MissingConsultingTypeException {
     Agency agency = this.easyRandom.nextObject(Agency.class);
     ConsultingTypeSettings consultingTypeSettings = this.easyRandom.nextObject(ConsultingTypeSettings.class);
-    consultingTypeSettings.setLockedAgency(true);
+    consultingTypeSettings.setLockedAgencies(true);
 
     when(consultingTypeManager.getConsultantTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
@@ -61,7 +61,7 @@ public class DeleteAgencyValidatorTest {
                 .collect(Collectors.toList()));
 
     ConsultingTypeSettings consultingTypeSettings = this.easyRandom.nextObject(ConsultingTypeSettings.class);
-    consultingTypeSettings.setLockedAgency(false);
+    consultingTypeSettings.setLockedAgencies(false);
     when(consultingTypeManager.getConsultantTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
     Agency agency = this.easyRandom.nextObject(Agency.class);
@@ -76,7 +76,7 @@ public class DeleteAgencyValidatorTest {
         .thenReturn(Collections.emptyList());
 
     ConsultingTypeSettings consultingTypeSettings = this.easyRandom.nextObject(ConsultingTypeSettings.class);
-    consultingTypeSettings.setLockedAgency(false);
+    consultingTypeSettings.setLockedAgencies(false);
     when(consultingTypeManager.getConsultantTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
     Agency agency = this.easyRandom.nextObject(Agency.class);

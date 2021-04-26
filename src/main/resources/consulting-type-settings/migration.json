@@ -6,5 +6,5 @@
 	"registration": {
 		"minPostcodeSize": 5
 	},
-	"lockedAgency": false
+	"lockedAgencies": false
 }

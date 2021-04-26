@@ -102,7 +102,7 @@ class AgencyOfflineStatusValidatorTest {
   @MethodSource("validate_Should_ThrowInvalidOfflineStatusException_Arguments")
   void validate_Should_ThrowInvalidOfflineStatusException(boolean isOffline,
       long numberOfAgencyPostcodeRanges, boolean isWhiteSpotAgency,
-      List<ConsultantAdminResponseDTO> assignedConsultants, boolean isLockedAgency, Agency agency)
+      List<ConsultantAdminResponseDTO> assignedConsultants, boolean isLockedAgencies, Agency agency)
       throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
@@ -110,7 +110,7 @@ class AgencyOfflineStatusValidatorTest {
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId() : validateAgencyDto.getId() + 1);
     consultingTypeSettings.setConsultingTypeId(agency.getConsultingTypeId());
-    consultingTypeSettings.setLockedAgency(isLockedAgency);
+    consultingTypeSettings.setLockedAgencies(isLockedAgencies);
 
     when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
         .thenReturn(numberOfAgencyPostcodeRanges);

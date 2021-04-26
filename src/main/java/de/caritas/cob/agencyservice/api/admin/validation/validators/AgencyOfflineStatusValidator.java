@@ -96,7 +96,7 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
     } catch (MissingConsultingTypeException e) {
       throw new InvalidConsultingTypeException();
     }
-    return consultantTypeSettings.isLockedAgency();
+    return consultantTypeSettings.isLockedAgencies();
   }
 
   private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {
