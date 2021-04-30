@@ -52,5 +52,5 @@ jobs:
           username: ${{ secrets.GH_PACKAGE_RELEASE_USER }}
           password: ${{ secrets.GH_PACKAGE_RELEASE_TOKEN }}
           registry: docker.pkg.github.com
-          repository: caritasdeutschland/caritas-onlineberatung-agencyservice/agencyservice-image
+          repository: ${{ github.repository	}}/agencyservice-image
           tag_with_ref: true
