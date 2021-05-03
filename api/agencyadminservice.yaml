@@ -602,7 +602,7 @@ components:
         description:
           type: string
           maxLength: 10000
-          example: "Beschreibung Beratungsstelle..."
+          example: "Beschreibung Beratungsstelle"
         postcode:
           type: string
           minLength: 5

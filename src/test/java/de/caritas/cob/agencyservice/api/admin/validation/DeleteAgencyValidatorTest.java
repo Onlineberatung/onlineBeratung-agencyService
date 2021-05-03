@@ -38,6 +38,13 @@ public class DeleteAgencyValidatorTest {
     this.deleteAgencyValidator.validate(agency);
   }
 
+  @Test(expected = LockedConsultingTypeException.class)
+  public void validate_Should_throwLockedConsultingTypeException_When_agencyTypeIsSupportGroup() {
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    agency.setConsultingType(ConsultingType.SUPPORTGROUPVECHTA);
+    this.deleteAgencyValidator.validate(agency);
+  }
+
   @Test(expected = ConflictException.class)
   public void validate_Should_throwConflictException_When_agencyStillHasAConsultantAssigned() {
     when(this.userAdminService.getConsultantsOfAgency(any(), anyInt(), anyInt()))
