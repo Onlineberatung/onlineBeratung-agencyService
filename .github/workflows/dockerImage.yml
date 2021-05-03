@@ -46,11 +46,15 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: targetfiles
+      - name: Prepare Docker variables
+        run: |
+          echo "DOCKER_REPOSITORY=$(echo "${{ github.repository }}/agencyservice-image" | awk '{print tolower($0)}')" >> $GITHUB_ENV
+        shell: bash
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1.1.1
         with:
           username: ${{ secrets.GH_PACKAGE_RELEASE_USER }}
           password: ${{ secrets.GH_PACKAGE_RELEASE_TOKEN }}
           registry: docker.pkg.github.com
-          repository: ${{ github.repository	}}/agencyservice-image
+          repository: ${{ env.DOCKER_REPOSITORY }}
           tag_with_ref: true
