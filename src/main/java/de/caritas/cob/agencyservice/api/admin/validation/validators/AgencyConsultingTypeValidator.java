@@ -5,7 +5,6 @@ import de.caritas.cob.agencyservice.api.admin.validation.validators.model.Valida
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
