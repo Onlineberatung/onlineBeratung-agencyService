@@ -4,12 +4,10 @@ import static java.util.Objects.requireNonNull;
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,13 +43,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<AgencyResponseDTO>> getAgencies(
       @RequestParam String postcode, @RequestParam Integer consultingType) {
 
-    Optional<ConsultingType> optionalConsultingType = ConsultingType.valueOf(consultingType);
-    if (!optionalConsultingType.isPresent()) {
-      throw new BadRequestException("Consulting type is invalid");
-    }
-
-    List<AgencyResponseDTO> agencies =
-        agencyService.getAgencies(postcode, optionalConsultingType.get());
+    List<AgencyResponseDTO> agencies = agencyService.getAgencies(postcode, consultingType);
 
     return !CollectionUtils.isEmpty(agencies)
         ? new ResponseEntity<>(agencies, HttpStatus.OK)

@@ -1,12 +1,13 @@
 package de.caritas.cob.agencyservice.api.manager.consultingtype;
 
 import static de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManagerTest.loadConsultingTypeSettings;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_MAP;
 import static org.junit.Assert.assertEquals;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -25,18 +26,22 @@ class ConsultingTypeManagerIT {
   private ConsultingTypeManager consultingTypeManager;
 
   @ParameterizedTest
-  @EnumSource(ConsultingType.class)
-  void init_Should_InitializeConsultingTypeSettingFromJsonFile(ConsultingType consultingType)
+  @MethodSource("generateConsultingTypeIds")
+  void init_Should_InitializeConsultingTypeSettingFromJsonFile(int consultingTypeId)
       throws Exception {
-    ConsultingTypeSettings consultingTypeSettings = loadConsultingTypeSettings(consultingType);
-    consultingTypeSettings.setConsultingType(consultingType);
+    ConsultingTypeSettings consultingTypeSettings = loadConsultingTypeSettings(consultingTypeId);
+    consultingTypeSettings.setConsultingTypeId(consultingTypeId);
 
     ConsultingTypeSettings result =
-        consultingTypeManager.getConsultantTypeSettings(consultingType);
+        consultingTypeManager.getConsultantTypeSettings(consultingTypeId);
 
-    assertEquals(consultingTypeSettings.getConsultingType(), result.getConsultingType());
+    assertEquals(consultingTypeSettings.getConsultingTypeId(), result.getConsultingTypeId());
     assertEquals(consultingTypeSettings.getWhiteSpot().isWhiteSpotAgencyAssigned(),
         result.getWhiteSpot().isWhiteSpotAgencyAssigned());
+  }
+
+  static Stream<Integer> generateConsultingTypeIds() {
+    return CONSULTING_TYPE_SETTINGS_MAP.keySet().stream();
   }
 
 }

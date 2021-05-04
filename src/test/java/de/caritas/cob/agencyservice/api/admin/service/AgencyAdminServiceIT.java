@@ -12,7 +12,6 @@ import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +45,7 @@ public class AgencyAdminServiceIT {
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isTeamAgency());
-    assertEquals(ConsultingType.SOCIAL, agency.getConsultingType());
+    assertEquals(0, agency.getConsultingTypeId());
     assertEquals(0L, agency.getDioceseId().longValue());
     assertEquals("12345", agency.getPostCode());
     assertEquals("Agency description", agency.getDescription());
@@ -103,7 +102,7 @@ public class AgencyAdminServiceIT {
 
     AgencyDTO agencyDTO = new AgencyDTO();
     agencyDTO.setTeamAgency(true);
-    agencyDTO.setConsultingType(ConsultingType.SOCIAL.getValue());
+    agencyDTO.setConsultingType(0);
     agencyDTO.setDioceseId(0L);
     agencyDTO.setPostcode("12345");
     agencyDTO.setDescription("Agency description");

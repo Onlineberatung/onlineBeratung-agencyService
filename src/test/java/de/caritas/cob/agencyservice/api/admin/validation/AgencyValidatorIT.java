@@ -70,7 +70,7 @@ public class AgencyValidatorIT {
   @Test
   public void validate_Should_NotThrowInvalidConsultingTypeException_WhenCreateAndAgencyConsultingTypeIsValid() {
     AgencyDTO agencyDTO = getValidAgencyDTO();
-    agencyDTO.setConsultingType(CONSULTING_TYPE_SUCHT.getValue());
+    agencyDTO.setConsultingType(CONSULTING_TYPE_SUCHT);
     agencyValidator.validate(agencyDTO);
   }
 
@@ -137,7 +137,7 @@ public class AgencyValidatorIT {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setConsultingType(CONSULTING_TYPE_SUCHT.getValue());
+    agencyDTO.setConsultingType(CONSULTING_TYPE_SUCHT);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setDioceseId(0L);
     return agencyDTO;

@@ -17,26 +17,27 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
-import de.caritas.cob.agencyservice.api.helper.WhiteSpotHelper;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import javax.annotation.PostConstruct;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsultingTypeManagerTest {
 
   @InjectMocks
   ConsultingTypeManager consultingTypeManager;
-  @Mock
-  WhiteSpotHelper whiteSpotProperties;
 
   @Test
   public void test_Should_Fail_WhenMethodInitDoesNotHavePostConstructAnnotation()
@@ -84,16 +85,23 @@ public class ConsultingTypeManagerTest {
 
   }
 
-  protected static ConsultingTypeSettings loadConsultingTypeSettings(ConsultingType consultingType)
+  protected static ConsultingTypeSettings loadConsultingTypeSettings(int consultingTypeId)
       throws IOException {
     ObjectMapper mapper = new ObjectMapper();
-    TypeReference<ConsultingTypeSettings> typeReference =
-        new TypeReference<ConsultingTypeSettings>() {};
-    InputStream inputStream = null;
-    inputStream =
-        TypeReference.class.getResourceAsStream(FIELD_NAME_CONSULTING_TYPES_SETTINGS_JSON_PATH_VALUE
-            + "/" + consultingType.name().toLowerCase() + ".json");
-    return mapper.readValue(inputStream, typeReference);
+    TypeReference<ConsultingTypeSettings> typeReference = new TypeReference<>() {};
+    File dir = new ClassPathResource(FIELD_NAME_CONSULTING_TYPES_SETTINGS_JSON_PATH_VALUE).getFile();
+    File[] directoryListing = dir.listFiles((FilenameFilter) new WildcardFileFilter("*.json"));
+    if (directoryListing != null) {
+      for (File settingsFile : directoryListing) {
+        InputStream inputStream = new FileInputStream(settingsFile);
+        ConsultingTypeSettings consultingTypeSettings = mapper
+            .readValue(inputStream, typeReference);
+        if (consultingTypeSettings.getConsultingTypeId() == consultingTypeId) {
+          return consultingTypeSettings;
+        }
+      }
+    }
+    throw new InvalidConsultingTypeException();
   }
 
 }
