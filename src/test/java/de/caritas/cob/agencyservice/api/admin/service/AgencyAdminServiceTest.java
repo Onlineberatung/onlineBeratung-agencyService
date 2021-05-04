@@ -9,7 +9,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -17,13 +16,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 import static org.hamcrest.Matchers.is;
 
-import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
-import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -55,9 +50,6 @@ public class AgencyAdminServiceTest {
   DeleteAgencyValidator deleteAgencyValidator;
 
   @Mock
-  AgencyValidator agencyValidator;
-
-  @Mock
   private Logger logger;
 
   private EasyRandom easyRandom;
@@ -66,16 +58,6 @@ public class AgencyAdminServiceTest {
   public void setup() {
     setInternalState(LogService.class, "LOGGER", logger);
     this.easyRandom = new EasyRandom();
-  }
-
-  @Test(expected = BadRequestException.class)
-  public void saveAgency_Should_throwBadRequestException_When_consultingTypeInAgencyDtoDoesNotExist() {
-    AgencyDTO agencyDTO = this.easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setConsultingType(-10);
-
-    doThrow(new InvalidConsultingTypeException()).when(agencyValidator).validate(agencyDTO);
-
-    this.agencyAdminService.saveAgency(agencyDTO);
   }
 
   @Test(expected = NotFoundException.class)

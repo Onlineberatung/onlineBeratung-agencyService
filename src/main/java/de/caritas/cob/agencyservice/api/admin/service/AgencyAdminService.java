@@ -5,9 +5,7 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
-import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
@@ -32,7 +30,6 @@ public class AgencyAdminService {
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
-  private final @NonNull AgencyValidator agencyValidator;
 
   /**
    * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
@@ -63,12 +60,6 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO saveAgency(AgencyDTO agencyDTO) {
-    try {
-      agencyValidator.validate(agencyDTO);
-    } catch (RuntimeException e) {
-      throw new BadRequestException(e.getMessage());
-    }
-
     return new AgencyAdminFullResponseDTOBuilder(agencyRepository.save(fromAgencyDTO(agencyDTO)))
         .fromAgency();
   }
