@@ -92,7 +92,7 @@ public class AgencyService {
   private List<Agency> collectAgenciesByPostCodeAndConsultingType(String postCode,
       int consultingTypeId) {
     try {
-      return agencyRepository.findByPostCodeAndConsultingType(postCode, postCode.length(),
+      return agencyRepository.findByPostCodeAndConsultingTypeId(postCode, postCode.length(),
           consultingTypeId);
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,

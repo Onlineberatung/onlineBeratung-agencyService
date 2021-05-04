@@ -29,7 +29,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
           + "AND a.consulting_type = :type "
           + "AND a.delete_date IS NULL " + "GROUP BY a.id ORDER BY a.postcode DESC",
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingType(@Param(value = "postcode") String postCode,
+  List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
