@@ -33,7 +33,7 @@ public class SecurityHeaderSupplier {
     return header;
   }
 
-  private HttpHeaders getCsrfHttpHeaders() {
+  public HttpHeaders getCsrfHttpHeaders() {
     HttpHeaders httpHeaders = new HttpHeaders();
 
     return this.addCsrfValues(httpHeaders);

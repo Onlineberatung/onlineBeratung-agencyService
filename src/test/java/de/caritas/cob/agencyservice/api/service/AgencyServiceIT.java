@@ -37,7 +37,7 @@ public class AgencyServiceIT {
     String postCode = "88662";
 
     List<AgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY);
+        .getAgencies(postCode, 1);
 
     assertThat(resultAgencies, hasSize(1));
     AgencyResponseDTO resultAgency = resultAgencies.get(0);

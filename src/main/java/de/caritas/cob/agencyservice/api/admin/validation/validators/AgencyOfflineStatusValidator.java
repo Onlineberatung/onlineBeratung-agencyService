@@ -5,6 +5,8 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 
+
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
@@ -13,7 +15,6 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultin
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
@@ -74,12 +75,8 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   }
 
   private Long getWhiteSpotAgencyIdForConsultingType(int consultingTypeId) {
-    try {
-      return consultingTypeManager.getConsultantTypeSettings(consultingTypeId).getWhiteSpot()
-          .getWhiteSpotAgencyId();
-    } catch (MissingConsultingTypeException e) {
-      throw new NotFoundException();
-    }
+      return Long.valueOf(consultingTypeManager.getConsultingTypeSettings(consultingTypeId).getWhiteSpot()
+          .getWhiteSpotAgencyId());
   }
 
   private boolean hasPostCodeRanges(ValidateAgencyDTO validateAgencyDto) {
@@ -89,14 +86,8 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   private boolean isLocked(ValidateAgencyDTO validateAgencyDTO) {
     Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
-    ConsultingTypeSettings consultantTypeSettings;
-    try {
-      consultantTypeSettings = consultingTypeManager
-          .getConsultantTypeSettings(agency.getConsultingTypeId());
-    } catch (MissingConsultingTypeException e) {
-      throw new InvalidConsultingTypeException();
-    }
-    return consultantTypeSettings.isLockedAgencies();
+    ExtendedConsultingTypeResponseDTO consultantTypeSettings = consultingTypeManager.getConsultingTypeSettings(agency.getConsultingTypeId());
+    return consultantTypeSettings.getLockedAgencies();
   }
 
   private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {

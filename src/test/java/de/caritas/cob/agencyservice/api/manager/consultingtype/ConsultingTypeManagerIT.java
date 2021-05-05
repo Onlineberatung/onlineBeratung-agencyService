@@ -1,6 +1,6 @@
-package de.caritas.cob.agencyservice.api.manager.consultingtype;
+/*package de.caritas.cob.agencyservice.api.manager.consultingtype;
 
-import static de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManagerTest.loadConsultingTypeSettings;
+
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_MAP;
 import static org.junit.Assert.assertEquals;
 
@@ -44,4 +44,4 @@ class ConsultingTypeManagerIT {
     return CONSULTING_TYPE_SETTINGS_MAP.keySet().stream();
   }
 
-}
+}*/
