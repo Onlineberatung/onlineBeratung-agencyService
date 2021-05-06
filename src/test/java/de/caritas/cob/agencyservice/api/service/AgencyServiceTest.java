@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.service;
 
+import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.U25;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_IDS_LIST;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_LIST;
@@ -20,6 +21,8 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCO
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +42,9 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -276,6 +281,11 @@ public class AgencyServiceTest {
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
     agencyService.setAgencyOffline(AGENCY_ID);
 
+  }
+
+  @Test(expected = NoSuchElementException.class)
+  public void getAgenciesByConsultingType_Should_throwNoSuchElementException_When_ConsultingTypeIsInvalid() {
+    this.agencyService.getAgencies(-10);
   }
 
 }

@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static de.caritas.cob.agencyservice.api.controller.AgencyControllerAuthorizationIT.PATH_GET_AGENCIES_BY_CONSULTINGTYPE;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
@@ -186,7 +187,7 @@ public class AgencyControllerIT {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
+    verify(logger, times(1)).error("Database error: {}", getStackTrace(dbEx));
   }
 
   @Test
@@ -201,7 +202,7 @@ public class AgencyControllerIT {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
+    verify(logger, times(1)).error("Database error: {}", getStackTrace(dbEx));
   }
 
   @Test
@@ -218,8 +219,8 @@ public class AgencyControllerIT {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Error while formatting number: {}"),
-        eq(getStackTrace(nfEx)));
+    verify(logger, times(1)).error("Error while formatting number: {}",
+        getStackTrace(nfEx));
   }
 
   @Test
@@ -228,6 +229,24 @@ public class AgencyControllerIT {
         get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
             + "consultingType=").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgenciesByConsultingType_Should_ReturnBadRequest_When_consultingTypeIsInvalid()
+      throws Exception {
+    mvc.perform(
+        get(PATH_GET_AGENCIES_BY_CONSULTINGTYPE.replace("1", "invalid"))
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgenciesByConsultingType_Should_ReturnOk_When_consultingTypeIsValid()
+      throws Exception {
+    mvc.perform(
+        get(PATH_GET_AGENCIES_BY_CONSULTINGTYPE)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
   }
 
 }

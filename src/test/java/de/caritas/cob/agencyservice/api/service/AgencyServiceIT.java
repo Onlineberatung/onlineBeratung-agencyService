@@ -1,6 +1,8 @@
 package de.caritas.cob.agencyservice.api.service;
 
+import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.U25;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
@@ -56,6 +58,13 @@ public class AgencyServiceIT {
     assertTrue(agencyAfter.isOffline());
     assertNotEquals(agencyBefore.getUpdateDate(), agencyAfter.getUpdateDate());
 
+  }
+
+  @Test
+  public void getAgenciesByConsultingType_Should_returnResults_When_ConsultingTypeIsValid() {
+    List<AgencyResponseDTO> agencies = this.agencyService.getAgencies(U25.getValue());
+
+    assertThat(agencies, hasSize(greaterThan(0)));
   }
 
 }
