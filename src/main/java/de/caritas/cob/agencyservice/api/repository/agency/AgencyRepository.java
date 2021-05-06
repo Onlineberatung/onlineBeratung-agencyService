@@ -36,4 +36,6 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
 
   List<Agency> findByIdIn(List<Long> agencyIds);
 
+  List<Agency> findByConsultingType(ConsultingType consultingType);
+
 }

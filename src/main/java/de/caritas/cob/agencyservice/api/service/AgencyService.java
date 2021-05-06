@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
@@ -47,6 +48,21 @@ public class AgencyService {
   }
 
   /**
+   * Returns a list of {@link AgencyResponseDTO} which match the provided consulting type.
+   *
+   * @param consultingType the id of the requested {@link ConsultingType}
+   * @return a list containing regarding agencies
+   */
+  public List<AgencyResponseDTO> getAgencies(int consultingType) {
+    var verifiedConsultingType = ConsultingType.valueOf(consultingType)
+        .orElseThrow(() -> new BadRequestException(
+            String.format("Consulting type with id %s does not exist", consultingType)));
+    return agencyRepository.findByConsultingType(verifiedConsultingType).stream()
+        .map(this::convertToAgencyResponseDTO)
+        .collect(Collectors.toList());
+  }
+
+  /**
    * Returns a randomly sorted list of {@link AgencyResponseDTO} which match to the provided
    * postCode. If no agency is found, returns the atm hard coded white spot agency id.
    *
@@ -56,7 +72,7 @@ public class AgencyService {
    */
   public List<AgencyResponseDTO> getAgencies(String postCode, ConsultingType consultingType) {
 
-    ConsultingTypeSettings consultingTypeSettings = retrieveConsultingTypeSettings(
+    var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingType);
 
     if (doesPostCodeNotMatchMinSize(postCode, consultingTypeSettings)) {
@@ -136,7 +152,7 @@ public class AgencyService {
    * @param agencyId the id for the agency to set offline
    */
   public void setAgencyOffline(Long agencyId) {
-    Agency agency = this.agencyRepository.findById(agencyId)
+    var agency = this.agencyRepository.findById(agencyId)
         .orElseThrow(NotFoundException::new);
     agency.setOffline(true);
     agency.setUpdateDate(LocalDateTime.now(ZoneOffset.UTC));
