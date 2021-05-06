@@ -33,6 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
@@ -283,8 +284,8 @@ public class AgencyServiceTest {
 
   }
 
-  @Test(expected = NoSuchElementException.class)
-  public void getAgenciesByConsultingType_Should_throwNoSuchElementException_When_ConsultingTypeIsInvalid() {
+  @Test(expected = BadRequestException.class)
+  public void getAgenciesByConsultingType_Should_throwBadRequestException_When_ConsultingTypeIsInvalid() {
     this.agencyService.getAgencies(-10);
   }
 

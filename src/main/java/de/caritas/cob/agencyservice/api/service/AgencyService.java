@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
@@ -54,7 +55,8 @@ public class AgencyService {
    */
   public List<AgencyResponseDTO> getAgencies(int consultingType) {
     var verifiedConsultingType = ConsultingType.valueOf(consultingType)
-        .orElseThrow();
+        .orElseThrow(() -> new BadRequestException(
+            String.format("Consulting type with id %s does not exist", consultingType)));
     return agencyRepository.findByConsultingType(verifiedConsultingType).stream()
         .map(this::convertToAgencyResponseDTO)
         .collect(Collectors.toList());
