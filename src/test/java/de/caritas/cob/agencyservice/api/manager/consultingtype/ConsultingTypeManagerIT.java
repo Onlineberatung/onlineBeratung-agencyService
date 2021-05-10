@@ -7,10 +7,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.service.ConsultingTypeService;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +35,9 @@ public class ConsultingTypeManagerIT {
   private ConsultingTypeService consultingTypeService;
 
   @Test
-  public void getConsultantTypeSettings_Should_Throw_MissingConsultingTypeException_When_RestClientException(){
-    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenThrow(new RestClientException(""));
+  public void getConsultantTypeSettings_Should_Throw_MissingConsultingTypeException_When_RestClientException() {
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
+        .thenThrow(new RestClientException(""));
 
     assertThrows(MissingConsultingTypeException.class,
         () -> consultingTypeManager.getConsultingTypeSettings(anyInt()));
@@ -46,9 +47,11 @@ public class ConsultingTypeManagerIT {
   public void getConsultantTypeSettings_Should_Return_ExtendedConsultingTypeResponseDTO()
       throws MissingConsultingTypeException {
     ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
-    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenReturn(extendedConsultingTypeResponseDTO);
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
+        .thenReturn(extendedConsultingTypeResponseDTO);
 
-    assertTrue(extendedConsultingTypeResponseDTO.equals(consultingTypeManager.getConsultingTypeSettings(anyInt())));
+    assertTrue(extendedConsultingTypeResponseDTO
+        .equals(consultingTypeManager.getConsultingTypeSettings(anyInt())));
 
   }
 
@@ -57,7 +60,8 @@ public class ConsultingTypeManagerIT {
       throws MissingConsultingTypeException {
     ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     extendedConsultingTypeResponseDTO.setConsultantBoundedToConsultingType(true);
-    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenReturn(extendedConsultingTypeResponseDTO);
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
+        .thenReturn(extendedConsultingTypeResponseDTO);
 
     assertTrue(consultingTypeManager.isConsultantBoundedToAgency(anyInt()));
   }
@@ -67,7 +71,8 @@ public class ConsultingTypeManagerIT {
       throws MissingConsultingTypeException {
     ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     extendedConsultingTypeResponseDTO.setConsultantBoundedToConsultingType(false);
-    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenReturn(extendedConsultingTypeResponseDTO);
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
+        .thenReturn(extendedConsultingTypeResponseDTO);
 
     assertFalse(consultingTypeManager.isConsultantBoundedToAgency(anyInt()));
   }

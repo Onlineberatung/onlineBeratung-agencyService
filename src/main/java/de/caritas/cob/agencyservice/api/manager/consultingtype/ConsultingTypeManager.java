@@ -1,8 +1,8 @@
 package de.caritas.cob.agencyservice.api.manager.consultingtype;
 
+import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.service.ConsultingTypeService;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
-import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,11 @@ public class ConsultingTypeManager {
    * @throws MissingConsultingTypeException when no settings for provided consulting type where
    *                                        found
    */
-  public ExtendedConsultingTypeResponseDTO getConsultingTypeSettings(int consultingTypeId) throws MissingConsultingTypeException{
+  public ExtendedConsultingTypeResponseDTO getConsultingTypeSettings(int consultingTypeId)
+      throws MissingConsultingTypeException {
     try {
       return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId);
-    }
-    catch(RestClientException ex) {
+    } catch (RestClientException ex) {
       throw new MissingConsultingTypeException(
           String.format("No settings for consulting type %s found.", consultingTypeId));
     }
@@ -42,9 +42,9 @@ public class ConsultingTypeManager {
   public boolean isConsultantBoundedToAgency(int consultingTypeId)
       throws MissingConsultingTypeException {
     try {
-      return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId).getConsultantBoundedToConsultingType();
-    }
-    catch(RestClientException ex) {
+      return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId)
+          .getConsultantBoundedToConsultingType();
+    } catch (RestClientException ex) {
       throw new MissingConsultingTypeException(
           String.format("No settings for consulting type %s found.", consultingTypeId));
     }
