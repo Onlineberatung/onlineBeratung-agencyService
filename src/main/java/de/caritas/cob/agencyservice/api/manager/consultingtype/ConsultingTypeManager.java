@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 @Service
 @Getter
@@ -23,16 +24,30 @@ public class ConsultingTypeManager {
    * @throws MissingConsultingTypeException when no settings for provided consulting type where
    *                                        found
    */
-  public ExtendedConsultingTypeResponseDTO getConsultingTypeSettings(int consultingTypeId) {
-    return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId);
+  public ExtendedConsultingTypeResponseDTO getConsultingTypeSettings(int consultingTypeId) throws MissingConsultingTypeException{
+    try {
+      return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId);
+    }
+    catch(RestClientException ex) {
+      throw new MissingConsultingTypeException(
+          String.format("No settings for consulting type %s found.", consultingTypeId));
+    }
   }
 
-  public ExtendedConsultingTypeResponseDTO getConsultingTypeSettings(String consultingTypeId) {
+  public ExtendedConsultingTypeResponseDTO getConsultingTypeSettings(String consultingTypeId)
+      throws MissingConsultingTypeException {
     return getConsultingTypeSettings(Integer.parseInt(consultingTypeId));
   }
 
-  public boolean isConsultantBoundedToAgency(int consultingTypeId) {
-    return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId).getConsultantBoundedToConsultingType();
+  public boolean isConsultantBoundedToAgency(int consultingTypeId)
+      throws MissingConsultingTypeException {
+    try {
+      return consultingTypeService.getExtendedConsultingTypeResponseDTO(consultingTypeId).getConsultantBoundedToConsultingType();
+    }
+    catch(RestClientException ex) {
+      throw new MissingConsultingTypeException(
+          String.format("No settings for consulting type %s found.", consultingTypeId));
+    }
   }
 
 }

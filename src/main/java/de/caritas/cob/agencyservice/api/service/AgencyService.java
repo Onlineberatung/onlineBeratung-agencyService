@@ -82,8 +82,12 @@ public class AgencyService {
     return postCode.length() < consultingTypeSettings.getRegistration().getMinPostcodeSize();
   }
 
-  private ExtendedConsultingTypeResponseDTO retrieveConsultingTypeSettings(int consultingTypeId) {
+  public ExtendedConsultingTypeResponseDTO retrieveConsultingTypeSettings(int consultingTypeId) {
+    try {
       return consultingTypeManager.getConsultingTypeSettings(consultingTypeId);
+    } catch (MissingConsultingTypeException e) {
+      throw new InternalServerErrorException(LogService::logInternalServerError, e.getMessage());
+    }
   }
 
   private List<Agency> collectAgenciesByPostCodeAndConsultingType(String postCode,

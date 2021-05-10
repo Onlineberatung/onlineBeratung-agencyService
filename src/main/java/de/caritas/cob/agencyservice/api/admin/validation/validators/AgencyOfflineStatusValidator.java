@@ -75,8 +75,13 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   }
 
   private Long getWhiteSpotAgencyIdForConsultingType(int consultingTypeId) {
-      return Long.valueOf(consultingTypeManager.getConsultingTypeSettings(consultingTypeId).getWhiteSpot()
-          .getWhiteSpotAgencyId());
+    try {
+      return Long
+          .valueOf(consultingTypeManager.getConsultingTypeSettings(consultingTypeId).getWhiteSpot()
+              .getWhiteSpotAgencyId());
+    } catch (MissingConsultingTypeException e) {
+      throw new NotFoundException();
+    }
   }
 
   private boolean hasPostCodeRanges(ValidateAgencyDTO validateAgencyDto) {
@@ -86,8 +91,14 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   private boolean isLocked(ValidateAgencyDTO validateAgencyDTO) {
     Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
-    ExtendedConsultingTypeResponseDTO consultantTypeSettings = consultingTypeManager.getConsultingTypeSettings(agency.getConsultingTypeId());
-    return consultantTypeSettings.getLockedAgencies();
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO;
+    try {
+      extendedConsultingTypeResponseDTO = consultingTypeManager
+          .getConsultingTypeSettings(agency.getConsultingTypeId());
+    } catch (MissingConsultingTypeException e) {
+      throw new InvalidConsultingTypeException();
+    }
+    return extendedConsultingTypeResponseDTO.getLockedAgencies();
   }
 
   private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {

@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.service;
 
+import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.config.ConsultingTypeCachingConfig;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
 /**
@@ -28,14 +30,15 @@ public class ConsultingTypeService {
    *
    * @param consultingTypeId the consulting type ID for the extended consulting type response DTO
    * @return ExtendedConsultingTypeResponseDTO {@link ExtendedConsultingTypeResponseDTO}
+   * @throws RestClientException if http response code is not 2xx
    */
   @Cacheable(value = ConsultingTypeCachingConfig.CONSULTING_TYPE_CACHE, key = "#consultingTypeId")
-  public ExtendedConsultingTypeResponseDTO getExtendedConsultingTypeResponseDTO(int consultingTypeId) {
+  public ExtendedConsultingTypeResponseDTO getExtendedConsultingTypeResponseDTO(int consultingTypeId) throws RestClientException {
     addDefaultHeaders(this.consultingTypeControllerApi.getApiClient());
     try {
       return this.consultingTypeControllerApi.getExtendedConsultingTypeById(consultingTypeId);
     } catch(RestClientException ex) {
-      return null;
+      throw ex;
     }
   }
 

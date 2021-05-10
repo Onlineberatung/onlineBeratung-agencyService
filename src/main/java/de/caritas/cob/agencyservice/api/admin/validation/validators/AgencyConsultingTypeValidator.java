@@ -25,6 +25,11 @@ public class AgencyConsultingTypeValidator implements ConcreteAgencyValidator {
    * @param validateAgencyDto (required)
    */
   public void validate(ValidateAgencyDTO validateAgencyDto) {
+
+    try {
       consultingTypeManager.getConsultingTypeSettings(validateAgencyDto.getConsultingType());
+    } catch (MissingConsultingTypeException e) {
+      throw new InvalidConsultingTypeException();
+    }
   }
 }

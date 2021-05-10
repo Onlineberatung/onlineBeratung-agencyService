@@ -130,7 +130,7 @@ class AgencyOfflineStatusValidatorTest {
   @MethodSource("validate_Should_NotThrowInvalidOfflineStatusException_Arguments")
   void validate_Should_NotThrowInvalidOfflineStatusException(
       boolean isOffline, long numberOfAgencyPostcodeRanges, boolean isWhiteSpotAgency,
-      List<ConsultantAdminResponseDTO> assignedConsultants) {
+      List<ConsultantAdminResponseDTO> assignedConsultants) throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
 
