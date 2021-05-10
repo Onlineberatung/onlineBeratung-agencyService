@@ -25,6 +25,7 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -106,6 +107,7 @@ class AgencyOfflineStatusValidatorTest {
       throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
+    this.validateAgencyDto.setId((long) new Random().nextInt());
 
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId().intValue() : validateAgencyDto.getId().intValue() + 1);
@@ -133,10 +135,12 @@ class AgencyOfflineStatusValidatorTest {
       List<ConsultantAdminResponseDTO> assignedConsultants) throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
+    this.validateAgencyDto.setId((long) new Random().nextInt());
 
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId().intValue() : validateAgencyDto.getId().intValue() + 1);
     consultingTypeSettings.setId(AGENCY_SUCHT.getConsultingTypeId());
+    consultingTypeSettings.setLockedAgencies(!isOffline);
     when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
         .thenReturn(numberOfAgencyPostcodeRanges);
     when(agencyRepository.findById(validateAgencyDto.getId()))

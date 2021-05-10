@@ -1,6 +1,11 @@
 package de.caritas.cob.agencyservice.api.service;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_PREGNANCY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_KREUZBUND;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_PREGNANCY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_U25;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_U25;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -44,11 +49,11 @@ public class AgencyServiceIT {
   public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven()
       throws MissingConsultingTypeException {
 
-    when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(CONSULTING_TYPE_SETTINGS_U25);
+    when(consultingTypeManager.getConsultingTypeSettings(CONSULTING_TYPE_PREGNANCY)).thenReturn(CONSULTING_TYPE_SETTINGS_PREGNANCY);
     String postCode = "88662";
 
     List<AgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, 1);
+        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY);
 
     assertThat(resultAgencies, hasSize(1));
     AgencyResponseDTO resultAgency = resultAgencies.get(0);

@@ -1,47 +1,74 @@
-/*package de.caritas.cob.agencyservice.api.manager.consultingtype;
+package de.caritas.cob.agencyservice.api.manager.consultingtype;
 
 
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_MAP;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.service.ConsultingTypeService;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
-class ConsultingTypeManagerIT {
+public class ConsultingTypeManagerIT {
 
   @Autowired
   private ConsultingTypeManager consultingTypeManager;
 
-  @ParameterizedTest
-  @MethodSource("generateConsultingTypeIds")
-  void init_Should_InitializeConsultingTypeSettingFromJsonFile(int consultingTypeId)
-      throws Exception {
-    ConsultingTypeSettings consultingTypeSettings = loadConsultingTypeSettings(consultingTypeId);
-    consultingTypeSettings.setConsultingTypeId(consultingTypeId);
+  @MockBean
+  private ConsultingTypeService consultingTypeService;
 
-    ConsultingTypeSettings result =
-        consultingTypeManager.getConsultantTypeSettings(consultingTypeId);
+  @Test
+  public void getConsultantTypeSettings_Should_Throw_MissingConsultingTypeException_When_RestClientException(){
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenThrow(new RestClientException(""));
 
-    assertEquals(consultingTypeSettings.getConsultingTypeId(), result.getConsultingTypeId());
-    assertEquals(consultingTypeSettings.getWhiteSpot().isWhiteSpotAgencyAssigned(),
-        result.getWhiteSpot().isWhiteSpotAgencyAssigned());
+    assertThrows(MissingConsultingTypeException.class,
+        () -> consultingTypeManager.getConsultingTypeSettings(anyInt()));
   }
 
-  static Stream<Integer> generateConsultingTypeIds() {
-    return CONSULTING_TYPE_SETTINGS_MAP.keySet().stream();
+  @Test
+  public void getConsultantTypeSettings_Should_Return_ExtendedConsultingTypeResponseDTO()
+      throws MissingConsultingTypeException {
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenReturn(extendedConsultingTypeResponseDTO);
+
+    assertTrue(extendedConsultingTypeResponseDTO.equals(consultingTypeManager.getConsultingTypeSettings(anyInt())));
+
   }
 
-}*/
+  @Test
+  public void isConsultantBoundedToAgency_Should_Return_True()
+      throws MissingConsultingTypeException {
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
+    extendedConsultingTypeResponseDTO.setConsultantBoundedToConsultingType(true);
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenReturn(extendedConsultingTypeResponseDTO);
+
+    assertTrue(consultingTypeManager.isConsultantBoundedToAgency(anyInt()));
+  }
+
+  @Test
+  public void isConsultantBoundedToAgency_Should_Return_False()
+      throws MissingConsultingTypeException {
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
+    extendedConsultingTypeResponseDTO.setConsultantBoundedToConsultingType(false);
+    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt())).thenReturn(extendedConsultingTypeResponseDTO);
+
+    assertFalse(consultingTypeManager.isConsultantBoundedToAgency(anyInt()));
+  }
+}
