@@ -1,14 +1,15 @@
 package de.caritas.cob.agencyservice.api.service;
 
 
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -47,10 +48,30 @@ public class AgencyService {
   }
 
   /**
+   * Returns a list of {@link AgencyResponseDTO} which match the provided consulting type.
+   *
+   * @param consultingTypeId the id of the request
+   * @return a list containing regarding agencies
+   */
+  public List<AgencyResponseDTO> getAgencies(int consultingTypeId) {
+    try {
+      consultingTypeManager.getConsultingTypeSettings(consultingTypeId);
+
+      return agencyRepository.findByConsultingTypeId(consultingTypeId).stream()
+          .map(this::convertToAgencyResponseDTO)
+          .collect(Collectors.toList());
+
+    } catch (MissingConsultingTypeException ex) {
+      throw new BadRequestException(
+          String.format("Consulting type with id %s does not exist", consultingTypeId));
+    }
+  }
+
+  /**
    * Returns a randomly sorted list of {@link AgencyResponseDTO} which match to the provided
    * postCode. If no agency is found, returns the atm hard coded white spot agency id.
    *
-   * @param postCode       the postcode for regarding agencies
+   * @param postCode         the postcode for regarding agencies
    * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
@@ -78,7 +99,7 @@ public class AgencyService {
   }
 
   private boolean doesPostCodeNotMatchMinSize(String postCode,
-       ExtendedConsultingTypeResponseDTO consultingTypeSettings) {
+      ExtendedConsultingTypeResponseDTO consultingTypeSettings) {
     return postCode.length() < consultingTypeSettings.getRegistration().getMinPostcodeSize();
   }
 
@@ -136,7 +157,7 @@ public class AgencyService {
    * @param agencyId the id for the agency to set offline
    */
   public void setAgencyOffline(Long agencyId) {
-    Agency agency = this.agencyRepository.findById(agencyId)
+    var agency = this.agencyRepository.findById(agencyId)
         .orElseThrow(NotFoundException::new);
     agency.setOffline(true);
     agency.setUpdateDate(LocalDateTime.now(ZoneOffset.UTC));

@@ -5,8 +5,6 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 
-
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
@@ -18,6 +16,7 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeMan
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -58,7 +57,6 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
       if (isLocked(validateAgencyDto)) {
         throw new InvalidOfflineStatusException(AGENCY_IS_LOCKED);
       }
-
     }
   }
 

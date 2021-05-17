@@ -1,8 +1,12 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import javax.servlet.http.Cookie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +32,16 @@ import de.caritas.cob.agencyservice.api.service.AgencyService;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class AgencyControllerAuthorizationIT {
 
-  private final String PATH_GET_FULL_LIST_OF_AGENCIES = "/agencies";
-  private final String PATH_GET_AGENCY_DATA = "/agencies/data/100";
-  private final String ROLE_NONE = "none";
+  private static final String PATH_GET_FULL_LIST_OF_AGENCIES = "/agencies";
+  private static final String PATH_GET_AGENCY_DATA = "/agencies/data/100";
+  static final String PATH_GET_AGENCIES_BY_CONSULTINGTYPE = "/agencies/consultingtype/1";
+  private static final String ROLE_NONE = "none";
 
   @Autowired
   private MockMvc mvc;
 
   @MockBean
   private AgencyService agencyService;
-
-  /**
-   * GET on /agencies
-   *
-   */
 
   @Test
   @WithMockUser(roles = {ROLE_NONE})
@@ -54,11 +54,6 @@ public class AgencyControllerAuthorizationIT {
     verifyNoMoreInteractions(agencyService);
   }
 
-  /**
-   * GET ON /agencies/data/{agencyId}
-   *
-   */
-
   @Test
   @WithMockUser(roles = {ROLE_NONE})
   public void getAgency_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens() throws Exception {
@@ -68,4 +63,17 @@ public class AgencyControllerAuthorizationIT {
 
     verifyNoMoreInteractions(agencyService);
   }
+
+  @Test
+  @WithMockUser(roles = {ROLE_NONE})
+  public void getAgenciesByConsultingType_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens() throws Exception {
+
+    mvc.perform(get(PATH_GET_AGENCIES_BY_CONSULTINGTYPE)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(agencyService);
+  }
+
 }

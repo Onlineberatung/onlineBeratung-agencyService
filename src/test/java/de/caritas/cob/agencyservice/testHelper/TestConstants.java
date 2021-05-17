@@ -40,6 +40,9 @@ public class TestConstants {
   public static final int CONSULTING_TYPE_HOSPICE = 18;
   public static final int CONSULTING_TYPE_REGIONAL = 19;
   public static final Long WHITESPOT_AGENCY_ID = 100L;
+  public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_LOCKED_AGENCIES =
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_KREUZBUND, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), true);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_AIDS =
       ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_AIDS, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
           new Registration(3), false);
