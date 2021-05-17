@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.7.0...v1.8.0) (2021-05-03)
+
+
+### Features
+
+* added generation of admin api markdown and push workflow ([6a02c6f](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/6a02c6f1484a65172be3fb9ffbb9fcaf92ef070f))
+* added supportgroup consutling type ([76fa237](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/76fa237fc0779d187814bf038ad9e56a44f7df1d))
+* rename consulting type supportgroup ([5fe1b77](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5fe1b77bc97f12e21866af09da13a6856b7d7b8a))
+
 ## [1.7.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.6.0...v1.7.0) (2021-04-12)
 
 

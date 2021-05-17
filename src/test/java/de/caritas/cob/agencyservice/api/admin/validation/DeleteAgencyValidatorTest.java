@@ -1,5 +1,8 @@
 package de.caritas.cob.agencyservice.api.admin.validation;
 
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_KREUZBUND;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_KREUZBUND;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_LOCKED_AGENCIES;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +50,16 @@ public class DeleteAgencyValidatorTest {
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
     agency.setConsultingTypeId(CONSULTING_TYPE_SUCHT);
+    this.deleteAgencyValidator.validate(agency);
+  }
+
+  @Test(expected = LockedConsultingTypeException.class)
+  public void validate_Should_throwLockedConsultingTypeException_When_agencyTypeIsSupportGroup()
+      throws MissingConsultingTypeException {
+    when(consultingTypeManager.getConsultingTypeSettings(CONSULTING_TYPE_KREUZBUND)).thenReturn(CONSULTING_TYPE_SETTINGS_LOCKED_AGENCIES);
+    Agency agency = this.easyRandom.nextObject(Agency.class);
+    agency.setConsultingTypeId(CONSULTING_TYPE_KREUZBUND);
+
     this.deleteAgencyValidator.validate(agency);
   }
 

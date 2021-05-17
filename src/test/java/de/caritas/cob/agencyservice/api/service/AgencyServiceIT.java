@@ -1,12 +1,10 @@
 package de.caritas.cob.agencyservice.api.service;
 
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_PREGNANCY;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_KREUZBUND;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_PREGNANCY;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_U25;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_U25;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
@@ -71,6 +69,13 @@ public class AgencyServiceIT {
     assertTrue(agencyAfter.isOffline());
     assertNotEquals(agencyBefore.getUpdateDate(), agencyAfter.getUpdateDate());
 
+  }
+
+  @Test
+  public void getAgenciesByConsultingType_Should_returnResults_When_ConsultingTypeIsValid() {
+    List<AgencyResponseDTO> agencies = this.agencyService.getAgencies(CONSULTING_TYPE_U25);
+
+    assertThat(agencies, hasSize(greaterThan(0)));
   }
 
 }

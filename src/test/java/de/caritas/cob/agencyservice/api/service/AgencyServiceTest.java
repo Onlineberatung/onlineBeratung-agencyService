@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
@@ -40,7 +41,9 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -276,6 +279,13 @@ public class AgencyServiceTest {
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
     agencyService.setAgencyOffline(AGENCY_ID);
 
+  }
+
+  @Test(expected = BadRequestException.class)
+  public void getAgenciesByConsultingType_Should_throwBadRequestException_When_ConsultingTypeIsInvalid()
+      throws MissingConsultingTypeException {
+    when(consultingTypeManager.getConsultingTypeSettings(-10)).thenThrow(new MissingConsultingTypeException(""));
+    this.agencyService.getAgencies(-10);
   }
 
 }

@@ -1,14 +1,12 @@
 package de.caritas.cob.agencyservice.api.controller;
 
-import static java.util.Objects.requireNonNull;
-
-import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -18,18 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for agency API requests
- *
  */
 @RestController
 @Api(tags = "agency-controller")
+@RequiredArgsConstructor
 public class AgencyController implements AgenciesApi {
 
-  private final AgencyService agencyService;
-
-  @Autowired
-  public AgencyController(AgencyService agencyService) {
-    this.agencyService = requireNonNull(agencyService);
-  }
+  private final @NonNull AgencyService agencyService;
 
   /**
    * Gets a randomly sorted list of AgencyResponseDTOs (from database) and returns the list and a
@@ -64,5 +57,20 @@ public class AgencyController implements AgenciesApi {
 
     return agencies.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
         : new ResponseEntity<>(agencies, HttpStatus.OK);
+  }
+
+  /**
+   * Returns all agencies by given consulting type id.
+   *
+   * @param consultingTypeId the consulting type id (required)
+   * @return the list of agencies
+   */
+  @Override
+  public ResponseEntity<List<AgencyResponseDTO>> getAgenciesByConsultingType(
+      Integer consultingTypeId) {
+
+    List<AgencyResponseDTO> agencies = this.agencyService.getAgencies(consultingTypeId);
+
+    return new ResponseEntity<>(agencies, HttpStatus.OK);
   }
 }
