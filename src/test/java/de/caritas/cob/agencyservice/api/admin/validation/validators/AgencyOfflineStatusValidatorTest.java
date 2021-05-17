@@ -12,19 +12,20 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -65,7 +66,7 @@ class AgencyOfflineStatusValidatorTest {
 
   ValidateAgencyDTO validateAgencyDto;
 
-  ConsultingTypeSettings consultingTypeSettings;
+  ExtendedConsultingTypeResponseDTO consultingTypeSettings;
 
   static Stream<Arguments> validate_Should_ThrowInvalidOfflineStatusException_Arguments() {
     return Stream.of(
@@ -95,7 +96,7 @@ class AgencyOfflineStatusValidatorTest {
     initMocks(this);
     EasyRandom easyRandom = new EasyRandom();
     this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDTO.class);
-    this.consultingTypeSettings = easyRandom.nextObject(ConsultingTypeSettings.class);
+    this.consultingTypeSettings = easyRandom.nextObject(ExtendedConsultingTypeResponseDTO.class);
   }
 
   @ParameterizedTest
@@ -106,10 +107,11 @@ class AgencyOfflineStatusValidatorTest {
       throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
+    this.validateAgencyDto.setId((long) new Random().nextInt());
 
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
-    consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId() : validateAgencyDto.getId() + 1);
-    consultingTypeSettings.setConsultingTypeId(agency.getConsultingTypeId());
+    consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId().intValue() : validateAgencyDto.getId().intValue() + 1);
+    consultingTypeSettings.setId(agency.getConsultingTypeId());
     consultingTypeSettings.setLockedAgencies(isLockedAgencies);
 
     when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
@@ -118,7 +120,7 @@ class AgencyOfflineStatusValidatorTest {
         .thenReturn(Optional.of(agency));
     when(this.userAdminService.getConsultantsOfAgency(anyLong(), anyInt(), anyInt()))
         .thenReturn(assignedConsultants);
-    when(consultingTypeManager.getConsultantTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
     AgencyOfflineStatusValidator agencyOfflineStatusValidator = new AgencyOfflineStatusValidator(
         agencyRepository, agencyPostCodeRangeRepository, userAdminService, consultingTypeManager);
@@ -133,18 +135,19 @@ class AgencyOfflineStatusValidatorTest {
       List<ConsultantAdminResponseDTO> assignedConsultants) throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
+    this.validateAgencyDto.setId((long) new Random().nextInt());
 
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
-    consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId() : validateAgencyDto.getId() + 1);
-    consultingTypeSettings.setConsultingTypeId(AGENCY_SUCHT.getConsultingTypeId());
-
+    consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId().intValue() : validateAgencyDto.getId().intValue() + 1);
+    consultingTypeSettings.setId(AGENCY_SUCHT.getConsultingTypeId());
+    consultingTypeSettings.setLockedAgencies(!isOffline);
     when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
         .thenReturn(numberOfAgencyPostcodeRanges);
     when(agencyRepository.findById(validateAgencyDto.getId()))
         .thenReturn(Optional.of(AGENCY_SUCHT));
     when(this.userAdminService.getConsultantsOfAgency(anyLong(), anyInt(), anyInt()))
         .thenReturn(assignedConsultants);
-    when(consultingTypeManager.getConsultantTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
     assertDoesNotThrow(() -> new AgencyOfflineStatusValidator(agencyRepository,
         agencyPostCodeRangeRepository, userAdminService, consultingTypeManager)

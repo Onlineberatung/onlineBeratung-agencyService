@@ -1,10 +1,11 @@
 package de.caritas.cob.agencyservice.api.service;
 
+
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -55,7 +56,7 @@ public class AgencyService {
    */
   public List<AgencyResponseDTO> getAgencies(String postCode, int consultingTypeId) {
 
-    ConsultingTypeSettings consultingTypeSettings = retrieveConsultingTypeSettings(
+    ExtendedConsultingTypeResponseDTO consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
 
     if (doesPostCodeNotMatchMinSize(postCode, consultingTypeSettings)) {
@@ -77,13 +78,13 @@ public class AgencyService {
   }
 
   private boolean doesPostCodeNotMatchMinSize(String postCode,
-      ConsultingTypeSettings consultingTypeSettings) {
+       ExtendedConsultingTypeResponseDTO consultingTypeSettings) {
     return postCode.length() < consultingTypeSettings.getRegistration().getMinPostcodeSize();
   }
 
-  private ConsultingTypeSettings retrieveConsultingTypeSettings(int consultingTypeId) {
+  public ExtendedConsultingTypeResponseDTO retrieveConsultingTypeSettings(int consultingTypeId) {
     try {
-      return consultingTypeManager.getConsultantTypeSettings(consultingTypeId);
+      return consultingTypeManager.getConsultingTypeSettings(consultingTypeId);
     } catch (MissingConsultingTypeException e) {
       throw new InternalServerErrorException(LogService::logInternalServerError, e.getMessage());
     }
@@ -100,12 +101,12 @@ public class AgencyService {
     }
   }
 
-  private void addWhiteSpotAgency(ConsultingTypeSettings consultingTypeSettings,
+  private void addWhiteSpotAgency(ExtendedConsultingTypeResponseDTO consultingTypeSettings,
       List<AgencyResponseDTO> agencyResponseDTOs) {
-    if (consultingTypeSettings.getWhiteSpot().isWhiteSpotAgencyAssigned()) {
+    if (consultingTypeSettings.getWhiteSpot().getWhiteSpotAgencyAssigned()) {
       try {
         agencyRepository.findByIdAndDeleteDateNull(
-            consultingTypeSettings.getWhiteSpot().getWhiteSpotAgencyId())
+            Long.valueOf(consultingTypeSettings.getWhiteSpot().getWhiteSpotAgencyId()))
             .ifPresent(agency -> agencyResponseDTOs.add(convertToAgencyResponseDTO(agency)));
       } catch (DataAccessException ex) {
         throw new InternalServerErrorException(LogService::logDatabaseError,

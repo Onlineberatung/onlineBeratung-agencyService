@@ -8,8 +8,8 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictExceptio
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
 import lombok.NonNull;
@@ -40,15 +40,16 @@ public class DeleteAgencyValidator {
 
   private void checkIfIsLockedAgencies(Agency agency) {
 
-    ConsultingTypeSettings consultantTypeSettings;
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO;
+
     try {
-      consultantTypeSettings = consultingTypeManager
-          .getConsultantTypeSettings(agency.getConsultingTypeId());
+      extendedConsultingTypeResponseDTO = consultingTypeManager
+          .getConsultingTypeSettings(agency.getConsultingTypeId());
     } catch (MissingConsultingTypeException e) {
       throw new InvalidConsultingTypeException();
     }
 
-    if (consultantTypeSettings.isLockedAgencies()) {
+    if (extendedConsultingTypeResponseDTO.getLockedAgencies()) {
       throw new LockedConsultingTypeException();
     }
   }
