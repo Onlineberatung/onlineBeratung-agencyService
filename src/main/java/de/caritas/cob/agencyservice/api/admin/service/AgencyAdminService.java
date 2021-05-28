@@ -6,7 +6,6 @@ import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.Agency
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
@@ -15,7 +14,6 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import lombok.NonNull;
@@ -83,14 +81,7 @@ public class AgencyAdminService {
         .city(agencyDTO.getCity())
         .offline(true)
         .teamAgency(agencyDTO.getTeamAgency())
-        .consultingType(
-            ConsultingType.valueOf(agencyDTO.getConsultingType())
-                .orElseThrow(
-                    () ->
-                        new BadRequestException(
-                            String.format(
-                                "Consulting type %s of agency dto does not exist",
-                                agencyDTO.getConsultingType()))))
+        .consultingTypeId(agencyDTO.getConsultingType())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
@@ -121,7 +112,7 @@ public class AgencyAdminService {
         .city(updateAgencyDTO.getCity())
         .offline(updateAgencyDTO.getOffline())
         .teamAgency(agency.isTeamAgency())
-        .consultingType(agency.getConsultingType())
+        .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .deleteDate(agency.getDeleteDate())
