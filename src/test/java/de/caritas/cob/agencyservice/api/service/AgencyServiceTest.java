@@ -41,9 +41,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -108,15 +106,13 @@ public class AgencyServiceTest {
   public void getListOfAgencies_Should_ReturnServiceException_OnDatabaseErrorfindByIdAndDeleteDateNull()
       throws MissingConsultingTypeException {
 
-    DataAccessException dbEx = new DataAccessException("db error") {
-    };
-
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenReturn(EMPTY_AGENCY_LIST);
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
-    when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenThrow(dbEx);
+    when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong()))
+        .thenThrow(new NumberFormatException(""));
 
     try {
       agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT);
@@ -284,7 +280,8 @@ public class AgencyServiceTest {
   @Test(expected = BadRequestException.class)
   public void getAgenciesByConsultingType_Should_throwBadRequestException_When_ConsultingTypeIsInvalid()
       throws MissingConsultingTypeException {
-    when(consultingTypeManager.getConsultingTypeSettings(-10)).thenThrow(new MissingConsultingTypeException(""));
+    when(consultingTypeManager.getConsultingTypeSettings(-10))
+        .thenThrow(new MissingConsultingTypeException(""));
     this.agencyService.getAgencies(-10);
   }
 

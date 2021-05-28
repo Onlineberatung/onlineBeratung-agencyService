@@ -27,20 +27,20 @@ public class SecurityHeaderSupplier {
    * @return the created {@link HttpHeaders}
    */
   public HttpHeaders getKeycloakAndCsrfHttpHeaders() {
-    HttpHeaders header = getCsrfHttpHeaders();
+    var header = getCsrfHttpHeaders();
     this.addKeycloakAuthorizationHeader(header);
 
     return header;
   }
 
   public HttpHeaders getCsrfHttpHeaders() {
-    HttpHeaders httpHeaders = new HttpHeaders();
+    var httpHeaders = new HttpHeaders();
 
     return this.addCsrfValues(httpHeaders);
   }
 
   private HttpHeaders addCsrfValues(HttpHeaders httpHeaders) {
-    String csrfToken = UUID.randomUUID().toString();
+    var csrfToken = UUID.randomUUID().toString();
 
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
     httpHeaders.add("Cookie", csrfCookieProperty + "=" + csrfToken);

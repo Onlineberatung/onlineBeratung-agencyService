@@ -108,7 +108,7 @@ public class Agency {
   @PositiveOrZero
   @Column(name = "consulting_type", updatable = false, nullable = false)
   @NonNull
-  private int consultingTypeId;
+  private Integer consultingTypeId;
 
   @Column(name = "is_offline", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")

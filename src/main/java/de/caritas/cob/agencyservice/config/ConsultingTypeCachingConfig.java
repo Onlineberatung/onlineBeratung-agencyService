@@ -1,10 +1,10 @@
 package de.caritas.cob.agencyservice.config;
 
+import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
-import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,13 +28,13 @@ public class ConsultingTypeCachingConfig {
 
   @Bean(destroyMethod = "shutdown")
   public net.sf.ehcache.CacheManager ehCacheManager() {
-    CacheConfiguration cacheConfiguration = new CacheConfiguration();
+    var cacheConfiguration = new CacheConfiguration();
     cacheConfiguration.setName(CONSULTING_TYPE_CACHE);
     cacheConfiguration.setMaxEntriesLocalHeap(maxEntriesLocalHeap);
     cacheConfiguration.setEternal(eternal);
     cacheConfiguration.setTimeToIdleSeconds(timeToIdleSeconds);
     cacheConfiguration.setTimeToLiveSeconds(timeToLiveSeconds);
-    net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
+    var config = new net.sf.ehcache.config.Configuration();
     config.addCache(cacheConfiguration);
 
     return net.sf.ehcache.CacheManager.newInstance(config);

@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.validation;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_CONSULTANTS;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
@@ -49,7 +50,7 @@ public class DeleteAgencyValidator {
       throw new InvalidConsultingTypeException();
     }
 
-    if (extendedConsultingTypeResponseDTO.getLockedAgencies()) {
+    if (isTrue(extendedConsultingTypeResponseDTO.getLockedAgencies())) {
       throw new LockedConsultingTypeException();
     }
   }

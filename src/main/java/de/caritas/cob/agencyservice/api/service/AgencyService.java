@@ -1,6 +1,9 @@
 package de.caritas.cob.agencyservice.api.service;
 
 
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
@@ -55,7 +58,7 @@ public class AgencyService {
    */
   public List<AgencyResponseDTO> getAgencies(int consultingTypeId) {
     try {
-      consultingTypeManager.getConsultingTypeSettings(consultingTypeId);
+      verifyConsultingTypeExists(consultingTypeId);
 
       return agencyRepository.findByConsultingTypeId(consultingTypeId).stream()
           .map(this::convertToAgencyResponseDTO)
@@ -77,7 +80,7 @@ public class AgencyService {
    */
   public List<AgencyResponseDTO> getAgencies(String postCode, int consultingTypeId) {
 
-    ExtendedConsultingTypeResponseDTO consultingTypeSettings = retrieveConsultingTypeSettings(
+    var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
 
     if (doesPostCodeNotMatchMinSize(postCode, consultingTypeSettings)) {
@@ -98,9 +101,16 @@ public class AgencyService {
     return agencyResponseDTOs;
   }
 
+  private void verifyConsultingTypeExists(int consultingTypeId)
+      throws MissingConsultingTypeException {
+    consultingTypeManager.getConsultingTypeSettings(consultingTypeId);
+  }
+
   private boolean doesPostCodeNotMatchMinSize(String postCode,
       ExtendedConsultingTypeResponseDTO consultingTypeSettings) {
-    return postCode.length() < consultingTypeSettings.getRegistration().getMinPostcodeSize();
+    var registration = consultingTypeSettings.getRegistration();
+    return nonNull(registration) && nonNull(registration.getMinPostcodeSize())
+        && postCode.length() < registration.getMinPostcodeSize();
   }
 
   public ExtendedConsultingTypeResponseDTO retrieveConsultingTypeSettings(int consultingTypeId) {
@@ -124,14 +134,13 @@ public class AgencyService {
 
   private void addWhiteSpotAgency(ExtendedConsultingTypeResponseDTO consultingTypeSettings,
       List<AgencyResponseDTO> agencyResponseDTOs) {
-    if (consultingTypeSettings.getWhiteSpot().getWhiteSpotAgencyAssigned()) {
+    var whiteSpot = consultingTypeSettings.getWhiteSpot();
+    if (nonNull(whiteSpot) && nonNull(whiteSpot.getWhiteSpotAgencyId()) && isTrue(
+        whiteSpot.getWhiteSpotAgencyAssigned())) {
       try {
         agencyRepository.findByIdAndDeleteDateNull(
-            Long.valueOf(consultingTypeSettings.getWhiteSpot().getWhiteSpotAgencyId()))
+            Long.valueOf(whiteSpot.getWhiteSpotAgencyId()))
             .ifPresent(agency -> agencyResponseDTOs.add(convertToAgencyResponseDTO(agency)));
-      } catch (DataAccessException ex) {
-        throw new InternalServerErrorException(LogService::logDatabaseError,
-            "Database error while getting white spot agency");
       } catch (NumberFormatException nfEx) {
         throw new InternalServerErrorException(LogService::logNumberFormatException,
             "Invalid white spot agency id");

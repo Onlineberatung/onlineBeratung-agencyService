@@ -4,6 +4,7 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_LOCKED;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
@@ -13,7 +14,6 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultin
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -62,8 +62,9 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
 
   private boolean isWhiteSpotAgency(ValidateAgencyDTO validateAgencyDto) {
     int consultingTypeId = obtainConsultingTypeOfAgency(validateAgencyDto);
-    return nonNull(getWhiteSpotAgencyIdForConsultingType(consultingTypeId))
-        && getWhiteSpotAgencyIdForConsultingType(consultingTypeId)
+    var whiteSpotAgencyIdForConsultingType = getWhiteSpotAgencyIdForConsultingType(
+        consultingTypeId);
+    return nonNull(whiteSpotAgencyIdForConsultingType) && whiteSpotAgencyIdForConsultingType
         .equals(validateAgencyDto.getId());
   }
 
@@ -74,12 +75,19 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
 
   private Long getWhiteSpotAgencyIdForConsultingType(int consultingTypeId) {
     try {
-      return Long
-          .valueOf(consultingTypeManager.getConsultingTypeSettings(consultingTypeId).getWhiteSpot()
-              .getWhiteSpotAgencyId());
+      var consultingTypeSettings = consultingTypeManager
+          .getConsultingTypeSettings(consultingTypeId);
+      return obtainCheckedWhiteSpotAgencyId(consultingTypeSettings);
     } catch (MissingConsultingTypeException e) {
       throw new NotFoundException();
     }
+  }
+
+  private Long obtainCheckedWhiteSpotAgencyId(
+      ExtendedConsultingTypeResponseDTO consultingTypeResponseDTO) {
+    return nonNull(consultingTypeResponseDTO.getWhiteSpot()) && nonNull(
+        consultingTypeResponseDTO.getWhiteSpot().getWhiteSpotAgencyId())
+        ? consultingTypeResponseDTO.getWhiteSpot().getWhiteSpotAgencyId().longValue() : null;
   }
 
   private boolean hasPostCodeRanges(ValidateAgencyDTO validateAgencyDto) {
@@ -87,7 +95,7 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   }
 
   private boolean isLocked(ValidateAgencyDTO validateAgencyDTO) {
-    Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
+    var agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
     ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO;
     try {
@@ -96,7 +104,7 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
     } catch (MissingConsultingTypeException e) {
       throw new InvalidConsultingTypeException();
     }
-    return extendedConsultingTypeResponseDTO.getLockedAgencies();
+    return isTrue(extendedConsultingTypeResponseDTO.getLockedAgencies());
   }
 
   private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {

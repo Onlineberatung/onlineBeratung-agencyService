@@ -8,9 +8,7 @@ import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.Ex
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 
 /**
  * Service class to communicate with the ConsultingTypeService.
@@ -28,21 +26,16 @@ public class ConsultingTypeService {
    *
    * @param consultingTypeId the consulting type ID for the extended consulting type response DTO
    * @return ExtendedConsultingTypeResponseDTO {@link ExtendedConsultingTypeResponseDTO}
-   * @throws RestClientException if http response code is not 2xx
    */
   @Cacheable(value = ConsultingTypeCachingConfig.CONSULTING_TYPE_CACHE, key = "#consultingTypeId")
   public ExtendedConsultingTypeResponseDTO getExtendedConsultingTypeResponseDTO(
-      int consultingTypeId) throws RestClientException {
+      int consultingTypeId) {
     addDefaultHeaders(this.consultingTypeControllerApi.getApiClient());
-    try {
-      return this.consultingTypeControllerApi.getExtendedConsultingTypeById(consultingTypeId);
-    } catch (RestClientException ex) {
-      throw ex;
-    }
+    return this.consultingTypeControllerApi.getExtendedConsultingTypeById(consultingTypeId);
   }
 
   private void addDefaultHeaders(ApiClient apiClient) {
-    HttpHeaders headers = this.securityHeaderSupplier.getCsrfHttpHeaders();
+    var headers = this.securityHeaderSupplier.getCsrfHttpHeaders();
     headers.forEach((key, value) -> apiClient.addDefaultHeader(key, value.iterator().next()));
   }
 }

@@ -1,9 +1,8 @@
 package de.caritas.cob.agencyservice.api.manager.consultingtype;
 
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -50,30 +49,9 @@ public class ConsultingTypeManagerIT {
     when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
 
-    assertTrue(extendedConsultingTypeResponseDTO
-        .equals(consultingTypeManager.getConsultingTypeSettings(anyInt())));
+    assertEquals(extendedConsultingTypeResponseDTO,
+        consultingTypeManager.getConsultingTypeSettings(anyInt()));
 
   }
 
-  @Test
-  public void isConsultantBoundedToAgency_Should_Return_True()
-      throws MissingConsultingTypeException {
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
-    extendedConsultingTypeResponseDTO.setConsultantBoundedToConsultingType(true);
-    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
-        .thenReturn(extendedConsultingTypeResponseDTO);
-
-    assertTrue(consultingTypeManager.isConsultantBoundedToAgency(anyInt()));
-  }
-
-  @Test
-  public void isConsultantBoundedToAgency_Should_Return_False()
-      throws MissingConsultingTypeException {
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
-    extendedConsultingTypeResponseDTO.setConsultantBoundedToConsultingType(false);
-    when(consultingTypeService.getExtendedConsultingTypeResponseDTO(anyInt()))
-        .thenReturn(extendedConsultingTypeResponseDTO);
-
-    assertFalse(consultingTypeManager.isConsultantBoundedToAgency(anyInt()));
-  }
 }

@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +46,7 @@ public class AgencyAdminServiceIT {
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isTeamAgency());
-    assertEquals(0, agency.getConsultingTypeId());
+    assertThat(0, is(agency.getConsultingTypeId()));
     assertEquals(0L, agency.getDioceseId().longValue());
     assertEquals("12345", agency.getPostCode());
     assertEquals("Agency description", agency.getDescription());
