@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -104,9 +105,10 @@ public class Agency {
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean teamAgency;
 
+  @PositiveOrZero
   @Column(name = "consulting_type", updatable = false, nullable = false)
   @NonNull
-  private ConsultingType consultingType;
+  private Integer consultingTypeId;
 
   @Column(name = "is_offline", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")

@@ -26,14 +26,16 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
           + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
-          + "AND a.consulting_type = :#{T(de.caritas.cob.agencyservice.api.repository.agency.ConsultingType).#type.value} "
+          + "AND a.consulting_type = :type "
           + "AND a.delete_date IS NULL " + "GROUP BY a.id ORDER BY a.postcode DESC",
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingType(@Param(value = "postcode") String postCode,
-      @Param(value = "length") int length, @Param(value = "type") ConsultingType consultingType);
+  List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
+      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
 
   List<Agency> findByIdIn(List<Long> agencyIds);
+
+  List<Agency> findByConsultingTypeId(int consultingTypeId);
 
 }

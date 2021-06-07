@@ -1,8 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_NO_CONSULTANTS;
-import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE;
-import static de.caritas.cob.agencyservice.api.repository.agency.ConsultingType.KREUZBUND;
+import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_LOCKED;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -10,13 +9,14 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
+import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
-import de.caritas.cob.agencyservice.api.helper.WhiteSpotHelper;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -31,8 +31,8 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
 
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
-  private final @NonNull WhiteSpotHelper whiteSpotHelper;
   private final @NonNull UserAdminService userAdminService;
+  private final @NonNull ConsultingTypeManager consultingTypeManager;
 
   /**
    * Validates the offline status of an {@link ValidateAgencyDTO}.
@@ -41,47 +41,74 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
    */
   @Override
   public void validate(ValidateAgencyDTO validateAgencyDto) {
-    if (!isWhiteSpotAgency(validateAgencyDto) && !isValidOfflineStatus(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException();
-    }
-    if (isKreuzbundAgency(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException(AGENCY_KREUZBUND_IS_LOCKED_TO_SET_OFFLINE);
-    }
-    if (doesAgencyContainNoConsultant(validateAgencyDto)) {
-      throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
+
+    if (isFalse(validateAgencyDto.getOffline())) {
+
+      if (!isWhiteSpotAgency(validateAgencyDto) && !hasPostCodeRanges(validateAgencyDto)) {
+        throw new InvalidOfflineStatusException();
+      }
+
+      if (hasNoConsultant(validateAgencyDto)) {
+        throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
+      }
+
+    } else {
+
+      if (isLocked(validateAgencyDto)) {
+        throw new InvalidOfflineStatusException(AGENCY_IS_LOCKED);
+      }
     }
   }
 
   private boolean isWhiteSpotAgency(ValidateAgencyDTO validateAgencyDto) {
-    ConsultingType consultingType = obtainConsultingTypeOfAgency(validateAgencyDto);
-    return nonNull(getWhiteSpotAgencyIdForConsultingType(consultingType))
-        && getWhiteSpotAgencyIdForConsultingType(consultingType)
+    int consultingTypeId = obtainConsultingTypeOfAgency(validateAgencyDto);
+    var whiteSpotAgencyIdForConsultingType = getWhiteSpotAgencyIdForConsultingType(
+        consultingTypeId);
+    return nonNull(whiteSpotAgencyIdForConsultingType) && whiteSpotAgencyIdForConsultingType
         .equals(validateAgencyDto.getId());
   }
 
-  private ConsultingType obtainConsultingTypeOfAgency(ValidateAgencyDTO validateAgencyDto) {
+  private int obtainConsultingTypeOfAgency(ValidateAgencyDTO validateAgencyDto) {
     return agencyRepository.findById(validateAgencyDto.getId())
-        .orElseThrow(NotFoundException::new).getConsultingType();
+        .orElseThrow(NotFoundException::new).getConsultingTypeId();
   }
 
-  private Long getWhiteSpotAgencyIdForConsultingType(ConsultingType consultingType) {
-    return whiteSpotHelper.getWhiteSpotAgenciesMap()
-        .get(consultingType.getValue());
+  private Long getWhiteSpotAgencyIdForConsultingType(int consultingTypeId) {
+    try {
+      var consultingTypeSettings = consultingTypeManager
+          .getConsultingTypeSettings(consultingTypeId);
+      return obtainCheckedWhiteSpotAgencyId(consultingTypeSettings);
+    } catch (MissingConsultingTypeException e) {
+      throw new NotFoundException();
+    }
   }
 
-  private boolean isValidOfflineStatus(ValidateAgencyDTO validateAgencyDto) {
-    return isTrue(validateAgencyDto.getOffline())
-        || agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
+  private Long obtainCheckedWhiteSpotAgencyId(
+      ExtendedConsultingTypeResponseDTO consultingTypeResponseDTO) {
+    return nonNull(consultingTypeResponseDTO.getWhiteSpot()) && nonNull(
+        consultingTypeResponseDTO.getWhiteSpot().getWhiteSpotAgencyId())
+        ? consultingTypeResponseDTO.getWhiteSpot().getWhiteSpotAgencyId().longValue() : null;
   }
 
-  private boolean isKreuzbundAgency(ValidateAgencyDTO validateAgencyDTO) {
-    Agency agency = this.agencyRepository.findById(validateAgencyDTO.getId())
+  private boolean hasPostCodeRanges(ValidateAgencyDTO validateAgencyDto) {
+    return agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
+  }
+
+  private boolean isLocked(ValidateAgencyDTO validateAgencyDTO) {
+    var agency = this.agencyRepository.findById(validateAgencyDTO.getId())
         .orElseThrow(NotFoundException::new);
-    return KREUZBUND.equals(agency.getConsultingType()) && isTrue(validateAgencyDTO.getOffline());
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO;
+    try {
+      extendedConsultingTypeResponseDTO = consultingTypeManager
+          .getConsultingTypeSettings(agency.getConsultingTypeId());
+    } catch (MissingConsultingTypeException e) {
+      throw new InvalidConsultingTypeException();
+    }
+    return isTrue(extendedConsultingTypeResponseDTO.getLockedAgencies());
   }
 
-  private boolean doesAgencyContainNoConsultant(ValidateAgencyDTO validateAgencyDto) {
+  private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {
     return this.userAdminService.getConsultantsOfAgency(validateAgencyDto.getId(), 1, 1)
-        .isEmpty() && isFalse(validateAgencyDto.getOffline());
+        .isEmpty();
   }
 }

@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static de.caritas.cob.agencyservice.api.controller.AgencyControllerAuthorizationIT.PATH_GET_AGENCIES_BY_CONSULTINGTYPE;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
@@ -12,6 +13,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSUL
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_QUERY;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
@@ -25,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.ConsultingType;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.any(ConsultingType.class)))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
         .thenReturn(null);
 
     mvc.perform(
@@ -127,7 +128,7 @@ public class AgencyControllerIT {
     List<AgencyResponseDTO> agencies = new ArrayList<AgencyResponseDTO>();
     agencies.add(AGENCY_RESPONSE_DTO);
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.any(ConsultingType.class)))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
         .thenReturn(agencies);
 
     mvc.perform(
@@ -138,7 +139,7 @@ public class AgencyControllerIT {
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
     verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyString(),
-        Mockito.any(ConsultingType.class));
+        Mockito.anyInt());
   }
 
   @Test
@@ -179,14 +180,14 @@ public class AgencyControllerIT {
 
     InternalServerErrorException dbEx = new InternalServerErrorException(
         LogService::logDatabaseError, "message");
-    when(agencyService.getAgencies(any(), any())).thenThrow(dbEx);
+    when(agencyService.getAgencies(any(), anyInt())).thenThrow(dbEx);
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
+    verify(logger, times(1)).error("Database error: {}", getStackTrace(dbEx));
   }
 
   @Test
@@ -201,7 +202,7 @@ public class AgencyControllerIT {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Database error: {}"), eq(getStackTrace(dbEx)));
+    verify(logger, times(1)).error("Database error: {}", getStackTrace(dbEx));
   }
 
   @Test
@@ -211,15 +212,15 @@ public class AgencyControllerIT {
     InternalServerErrorException nfEx = new InternalServerErrorException(
         LogService::logNumberFormatException, "message");
 
-    when(agencyService.getAgencies(any(), any())).thenThrow(nfEx);
+    when(agencyService.getAgencies(any(), anyInt())).thenThrow(nfEx);
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isInternalServerError());
 
-    verify(logger, times(1)).error(eq("Error while formatting number: {}"),
-        eq(getStackTrace(nfEx)));
+    verify(logger, times(1)).error("Error while formatting number: {}",
+        getStackTrace(nfEx));
   }
 
   @Test
@@ -228,6 +229,24 @@ public class AgencyControllerIT {
         get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
             + "consultingType=").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgenciesByConsultingType_Should_ReturnBadRequest_When_consultingTypeIsInvalid()
+      throws Exception {
+    mvc.perform(
+        get(PATH_GET_AGENCIES_BY_CONSULTINGTYPE.replace("1", "invalid"))
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getAgenciesByConsultingType_Should_ReturnOk_When_consultingTypeIsValid()
+      throws Exception {
+    mvc.perform(
+        get(PATH_GET_AGENCIES_BY_CONSULTINGTYPE)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
   }
 
 }

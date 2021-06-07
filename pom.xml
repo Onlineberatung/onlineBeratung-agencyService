@@ -42,6 +42,10 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-hateoas</artifactId>
     </dependency>
     <dependency>
@@ -143,8 +147,9 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
-      <scope>test</scope><exclusions>
-    </exclusions>
+      <scope>test</scope>
+      <exclusions>
+      </exclusions>
 
     </dependency>
     <dependency>
@@ -159,6 +164,11 @@
       <scope>test</scope>
       <version>2.0.2</version>
     </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>2.10.6</version>
+    </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
     <dependency>
@@ -172,6 +182,11 @@
       <artifactId>easy-random-core</artifactId>
       <version>4.3.0</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>2.3.5.RELEASE</version>
     </dependency>
   </dependencies>
 
@@ -207,7 +222,8 @@
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
-              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller</apiPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.controller
+              </apiPackage>
               <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
               <generateSupportingFiles>true</generateSupportingFiles>
               <output>target/generated-sources</output>
@@ -225,10 +241,30 @@
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
-              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.admin.controller</apiPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.generated.api.admin.controller
+              </apiPackage>
               <modelPackage>${project.groupId}.${project.artifactId}.api.model</modelPackage>
               <generateSupportingFiles>true</generateSupportingFiles>
               <output>target/generated-sources</output>
+            </configuration>
+          </execution>
+          <!-- Generate admin API markdown files -->
+          <execution>
+            <id>agency-admin-service-markdown</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <configOptions>
+              </configOptions>
+              <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
+              <generatorName>markdown</generatorName>
+              <output>target/generated-sources/markdown/agencyservice</output>
+              <apiPackage>./</apiPackage>
+              <modelPackage>model</modelPackage>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <generateSupportingFiles>false</generateSupportingFiles>
             </configuration>
           </execution>
           <!-- Generate client API for user admin service -->
@@ -249,8 +285,36 @@
               <generateApis>true</generateApis>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
-              <apiPackage>${project.groupId}.${project.artifactId}.useradminservice.generated.web</apiPackage>
-              <modelPackage>${project.groupId}.${project.artifactId}.useradminservice.generated.web.model</modelPackage>
+              <apiPackage>${project.groupId}.${project.artifactId}.useradminservice.generated.web
+              </apiPackage>
+              <modelPackage>
+                ${project.groupId}.${project.artifactId}.useradminservice.generated.web.model
+              </modelPackage>
+            </configuration>
+          </execution>
+          <execution>
+            <id>consulting-type-service-client-model</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <configOptions>
+                <sourceFolder>/</sourceFolder>
+                <library>resttemplate</library>
+                <dateLibrary>java8</dateLibrary>
+              </configOptions>
+              <inputSpec>${project.basedir}/services/consultingtypeservice.yaml</inputSpec>
+              <generatorName>java</generatorName>
+              <generateApis>true</generateApis>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <apiPackage>
+                ${project.groupId}.${project.artifactId}.consultingtypeservice.generated.web
+              </apiPackage>
+              <modelPackage>
+                ${project.groupId}.${project.artifactId}.consultingtypeservice.generated.web.model
+              </modelPackage>
             </configuration>
           </execution>
         </executions>

@@ -25,11 +25,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
@@ -48,7 +50,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,9 +69,9 @@ public class AgencyServiceTest {
     DataAccessException dbEx = new DataAccessException("db error") {
     };
 
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
-    when(agencyRepository.findByPostCodeAndConsultingType(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+    when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenThrow(dbEx);
 
     try {
@@ -87,9 +88,9 @@ public class AgencyServiceTest {
 
     NumberFormatException nfEx = new NumberFormatException();
 
-    when(agencyRepository.findByPostCodeAndConsultingType(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+    when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenReturn(EMPTY_AGENCY_LIST);
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
     when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenThrow(nfEx);
 
@@ -105,15 +106,13 @@ public class AgencyServiceTest {
   public void getListOfAgencies_Should_ReturnServiceException_OnDatabaseErrorfindByIdAndDeleteDateNull()
       throws MissingConsultingTypeException {
 
-    DataAccessException dbEx = new DataAccessException("db error") {
-    };
-
-    when(agencyRepository.findByPostCodeAndConsultingType(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+    when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenReturn(EMPTY_AGENCY_LIST);
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
-    when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenThrow(dbEx);
+    when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong()))
+        .thenThrow(new NumberFormatException(""));
 
     try {
       agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT);
@@ -127,9 +126,9 @@ public class AgencyServiceTest {
   public void getListOfAgencies_Should_ReturnListOfAgencyResponseDTO_WhenDBSelectIsSuccessfull()
       throws MissingConsultingTypeException {
 
-    when(agencyRepository.findByPostCodeAndConsultingType(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+    when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenReturn(AGENCY_LIST);
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
     assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT),
@@ -144,10 +143,10 @@ public class AgencyServiceTest {
 
     Optional<Agency> agency = Optional.of(AGENCY_SUCHT);
 
-    when(agencyRepository.findByPostCodeAndConsultingType(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+    when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenReturn(EMPTY_AGENCY_LIST);
     when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenReturn(agency);
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
     assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT))
@@ -158,9 +157,9 @@ public class AgencyServiceTest {
   public void getListOfAgencies_Should_ReturnEmptyList_WhenNoAgencyFoundForGivenPostcodeAndAgencyHasNotSetWhiteSpotAgency()
       throws MissingConsultingTypeException {
 
-    when(agencyRepository.findByPostCodeAndConsultingType(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+    when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT)).thenReturn(new ArrayList<>());
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY);
 
     assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT),
@@ -171,7 +170,7 @@ public class AgencyServiceTest {
   public void getListOfAgencies_Should_ReturnEmptyList_When_PostcodeSizeIsSmallerThanMinSettingsValue()
       throws MissingConsultingTypeException {
 
-    when(consultingTypeManager.getConsultantTypeSettings(Mockito.any()))
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_EMIGRATION);
 
     assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_EMIGRATION),
@@ -252,9 +251,9 @@ public class AgencyServiceTest {
   public void getAgencies_Should_ThrowInternalServerError_When_MissingConsultingTypeExceptionIsThrown()
       throws MissingConsultingTypeException {
 
-    when(consultingTypeManager.getConsultantTypeSettings(any()))
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenThrow(new MissingConsultingTypeException(""));
-    agencyService.getAgencies("", null);
+    agencyService.getAgencies("", 0);
   }
 
   @Test
@@ -276,6 +275,14 @@ public class AgencyServiceTest {
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.empty());
     agencyService.setAgencyOffline(AGENCY_ID);
 
+  }
+
+  @Test(expected = BadRequestException.class)
+  public void getAgenciesByConsultingType_Should_throwBadRequestException_When_ConsultingTypeIsInvalid()
+      throws MissingConsultingTypeException {
+    when(consultingTypeManager.getConsultingTypeSettings(-10))
+        .thenThrow(new MissingConsultingTypeException(""));
+    this.agencyService.getAgencies(-10);
   }
 
 }
