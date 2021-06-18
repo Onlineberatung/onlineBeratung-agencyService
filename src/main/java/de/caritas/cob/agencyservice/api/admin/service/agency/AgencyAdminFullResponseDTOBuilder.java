@@ -34,7 +34,7 @@ public class AgencyAdminFullResponseDTOBuilder {
         .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
         .city(this.agency.getCity())
-        .consultingType(this.agency.getConsultingType().getValue())
+        .consultingType(this.agency.getConsultingTypeId())
         .description(this.agency.getDescription())
         .postcode(this.agency.getPostCode())
         .teamAgency(this.agency.isTeamAgency())

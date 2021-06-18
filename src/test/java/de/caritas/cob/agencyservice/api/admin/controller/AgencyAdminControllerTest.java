@@ -129,7 +129,7 @@ public class AgencyAdminControllerTest {
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
-    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
         easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
@@ -158,7 +158,7 @@ public class AgencyAdminControllerTest {
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
-    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     doThrow(new InvalidConsultingTypeException()).when(agencyValidator).validate(agencyDTO);
     this.mvc
         .perform(
@@ -176,7 +176,7 @@ public class AgencyAdminControllerTest {
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
-    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     doThrow(new InvalidDioceseException()).when(agencyValidator).validate(agencyDTO);
     this.mvc
         .perform(
@@ -194,7 +194,7 @@ public class AgencyAdminControllerTest {
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
-    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY.getValue());
+    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(agencyDTO);
     this.mvc
         .perform(

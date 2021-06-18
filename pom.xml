@@ -42,6 +42,10 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-hateoas</artifactId>
     </dependency>
     <dependency>
@@ -61,7 +65,7 @@
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>
-      <version>4.3.1</version>
+      <version>5.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -90,17 +94,17 @@
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-security-adapter</artifactId>
-      <version>4.4.0.Final</version>
+      <version>13.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-boot-starter</artifactId>
-      <version>4.4.0.Final</version>
+      <version>13.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-admin-client</artifactId>
-      <version>4.4.0.Final</version>
+      <version>13.0.1</version>
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -160,6 +164,11 @@
       <scope>test</scope>
       <version>2.0.2</version>
     </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>2.10.6</version>
+    </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
     <dependency>
@@ -173,6 +182,11 @@
       <artifactId>easy-random-core</artifactId>
       <version>4.3.0</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>2.3.5.RELEASE</version>
     </dependency>
   </dependencies>
 
@@ -194,7 +208,7 @@
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>4.3.1</version>
+        <version>5.1.1</version>
         <executions>
           <execution>
             <id>agency-service</id>
@@ -275,6 +289,31 @@
               </apiPackage>
               <modelPackage>
                 ${project.groupId}.${project.artifactId}.useradminservice.generated.web.model
+              </modelPackage>
+            </configuration>
+          </execution>
+          <execution>
+            <id>consulting-type-service-client-model</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <configOptions>
+                <sourceFolder>/</sourceFolder>
+                <library>resttemplate</library>
+                <dateLibrary>java8</dateLibrary>
+              </configOptions>
+              <inputSpec>${project.basedir}/services/consultingtypeservice.yaml</inputSpec>
+              <generatorName>java</generatorName>
+              <generateApis>true</generateApis>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <apiPackage>
+                ${project.groupId}.${project.artifactId}.consultingtypeservice.generated.web
+              </apiPackage>
+              <modelPackage>
+                ${project.groupId}.${project.artifactId}.consultingtypeservice.generated.web.model
               </modelPackage>
             </configuration>
           </execution>

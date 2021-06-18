@@ -1,13 +1,13 @@
 package de.caritas.cob.agencyservice.api.manager.consultingtype.registration;
 
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeSettings;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * {@link ConsultingTypeSettings} for registration
+ * {@link ExtendedConsultingTypeResponseDTO} for registration
  *
  */
 
