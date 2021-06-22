@@ -1,4 +1,4 @@
 ALTER TABLE `agencyservice`.`agency`
 DROP `url`;
 ALTER TABLE `agencyservice`.`agency`
-DROP `external`;
+DROP `is_external`;

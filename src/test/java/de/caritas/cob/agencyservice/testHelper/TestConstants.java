@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.testHelper;
 
+import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -104,7 +105,7 @@ public class TestConstants {
       ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_REGIONAL, new WhiteSpot(false, null),
           new Registration(3), false);
   public static final Map<Integer, ExtendedConsultingTypeResponseDTO> CONSULTING_TYPE_SETTINGS_MAP =
-      new HashMap<Integer, ExtendedConsultingTypeResponseDTO>() {
+      new HashMap<>() {
         private static final long serialVersionUID = 1L;
         {
           put(CONSULTING_TYPE_SUCHT, CONSULTING_TYPE_SETTINGS_SUCHT);
@@ -130,7 +131,7 @@ public class TestConstants {
         }
       };
   public static final Map<Integer, ExtendedConsultingTypeResponseDTO> CONSULTING_TYPE_SETTINGS_MAP_WITH_MISSING_CONSULTING_TYPE_SETTINGS_FOR_U25 =
-      new HashMap<Integer, ExtendedConsultingTypeResponseDTO>() {
+      new HashMap<>() {
         private static final long serialVersionUID = 1L;
 
         {
@@ -155,23 +156,30 @@ public class TestConstants {
   public static final String AGENCY_DESCRIPTION = "Test description";
   public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, null, null,
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, false, null, null, null,
       null);
   public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, null, null,
+      POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, false, null, null, null,
       null);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
-          false, CONSULTING_TYPE_U25, false, null, null, null, null);
+          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, null, null, null);
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
           .consultingType(CONSULTING_TYPE_SUCHT);
-  public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(AGENCY_RESPONSE_DTO);
+  public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(
+      AGENCY_RESPONSE_DTO);
+  public static final FullAgencyResponseDTO FULL_AGENCY_RESPONSE_DTO =
+      new FullAgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
+          .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
+          .consultingType(CONSULTING_TYPE_SUCHT).url(null).external(false);
+  public static final List<FullAgencyResponseDTO> FULL_AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(
+      FULL_AGENCY_RESPONSE_DTO);
   public static final int MIN_POSTCODE_SIZE_3 = 3;
   public static final WhiteSpot WHITESPOT_AGENCIES_SUCHT = new WhiteSpot(true, WHITESPOT_AGENCY_ID);
   public static final WhiteSpot WHITESPOT_AGENCIES_U25 = new WhiteSpot(false, WHITESPOT_AGENCY_ID);

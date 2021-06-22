@@ -14,15 +14,15 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
 
   /**
    * Returns a list of {@link Agency}s that are assigned to the given post code.
-   * 
-   * @param postCode
-   * @param length
-   * @return
+   *
+   * @param postCode the postcode
+   * @param length the length
+   * @return a {@link List} of {@link Agency} instances
    */
   @Query(
       value = "SELECT a.id, a.diocese_id, a.name, a.description, a.postcode, a.city, a"
-          + ".is_team_agency, a.consulting_type, a.is_offline, a.delete_date, a.create_date, "
-          + "a.update_date FROM agency a "
+          + ".is_team_agency, a.consulting_type, a.is_offline, a.url, a.is_external, "
+          + "a.delete_date, a.create_date, a.update_date FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
           + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
