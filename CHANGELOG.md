@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.8.0...v1.9.0) (2021-06-18)
+
+
+### Features
+
+* adapt new keycloak version ([ae1daa5](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ae1daa5103bcb5db8d48d294dfb1b353d9e4ee41))
+* add endpoint to retrieve agencies by consulting type ([b6ffccc](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b6ffcccfe6ba101174d4aa9a0e273fb622208dad))
+* added showAskerProfile in consultingtypeservice.yaml ([97bdec0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/97bdec0a9aac0dbded68d37eabce51be1aacb81b))
+* impl. connection to consultingTypeService, started test refactoring ([bc9a989](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/bc9a9899fa01f206d622af51374361d09ea59024))
+* impl. ConsultingTypeService error handling, fixing tests ([2634ae7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/2634ae75e79b12cf490acbff3ae3d481919e90d5))
+* impl. test for ConsultingTypeManager and fixed all tests ([ca9cd82](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/ca9cd822914ab9535162f344bd2a634f5b409264))
+* merged caritas dev into diakonie dev ([78af354](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/78af354d5fa6c627213fc69169a530a091a17bf3))
+
+
+### Bug Fixes
+
+* adjust name of property to avoid deserialization problems ([3c051d3](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/3c051d3e8c091663bce8971234c516ea629bcff9))
+* correct refactor change which changed exception handling behaviour ([72ee88c](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/72ee88c5a227c4eb17bd9d8e7464cd0fe4487f10))
+* formatted ([b2b2068](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b2b2068766012c4ee3e57122a65b99b0389733e3))
+* increased time to live ([5e817b9](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5e817b9c104cd75a4112fb77784154699e904d47))
+* removed consulting type setting files ([a9fd839](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/a9fd8391db3c53ae9b592ee0a2603864c62222eb))
+* removed dev dependencies ([545a280](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/545a280deb453f99c96b8cd98fe63760162ae96e))
+* removed value from properties file ([bc568bd](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/bc568bdafab0ef933550f877cbb8f3046c220419))
+* removed white spot agency id ([b92fd2a](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b92fd2a6912c0e234ffbc797b81bd38903a9876c))
+* replaced !=null with nonNull ([eaef8aa](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/eaef8aaa16bad13e1fa0317b2f0e79976fb84181))
+* set correct case (lowercase) for docker repository value ([5579fd0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5579fd02d3ed956d3d7bc622381c0823eb5d824e))
+* updated consultingtypeservice.yaml ([a2a0a1f](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/a2a0a1f6f3a8077762c3e52f73830d2efadaa2d8))
+
 ## [1.8.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.7.0...v1.8.0) (2021-05-03)
 
 

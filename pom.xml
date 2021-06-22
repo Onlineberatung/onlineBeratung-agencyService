@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>
-      <version>4.3.1</version>
+      <version>5.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -94,17 +94,17 @@
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-security-adapter</artifactId>
-      <version>4.4.0.Final</version>
+      <version>13.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-boot-starter</artifactId>
-      <version>4.4.0.Final</version>
+      <version>13.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-admin-client</artifactId>
-      <version>4.4.0.Final</version>
+      <version>13.0.1</version>
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -208,7 +208,7 @@
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>4.3.1</version>
+        <version>5.1.1</version>
         <executions>
           <execution>
             <id>agency-service</id>
