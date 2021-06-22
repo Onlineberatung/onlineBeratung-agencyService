@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,4 +8,5 @@
 	<include file="db/changelog/changeset/0003_agency_consulting_type/0003_changeSet.xml"/>
 	<include file="db/changelog/changeset/0004_agency_offline/0004_changeSet.xml"/>
 	<include file="db/changelog/changeset/0005_agency_delete_flag/0005_changeSet.xml"/>
+	<include file="db/changelog/changeset/0006_agency_url_and_external_flag/0006_changeSet.xml"/>
 </databaseChangeLog>
