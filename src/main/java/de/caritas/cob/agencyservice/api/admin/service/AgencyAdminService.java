@@ -82,6 +82,8 @@ public class AgencyAdminService {
         .offline(true)
         .teamAgency(agencyDTO.getTeamAgency())
         .consultingTypeId(agencyDTO.getConsultingType())
+        .url(agencyDTO.getUrl())
+        .isExternal(agencyDTO.getExternal())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
@@ -95,7 +97,7 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
-    Agency agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
+    var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
     return new AgencyAdminFullResponseDTOBuilder(
         agencyRepository.save(mergeAgencies(agency, updateAgencyDTO)))
         .fromAgency();
@@ -112,6 +114,8 @@ public class AgencyAdminService {
         .city(updateAgencyDTO.getCity())
         .offline(updateAgencyDTO.getOffline())
         .teamAgency(agency.isTeamAgency())
+        .url(updateAgencyDTO.getUrl())
+        .isExternal(updateAgencyDTO.getExternal())
         .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))

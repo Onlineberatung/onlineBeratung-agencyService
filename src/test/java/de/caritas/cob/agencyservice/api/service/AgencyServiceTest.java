@@ -104,7 +104,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnServiceException_OnDatabaseErrorfindByIdAndDeleteDateNull()
+  public void getListOfAgencies_Should_ReturnServiceException_OnDatabaseErrorFindByIdAndDeleteDateNull()
       throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
@@ -124,7 +124,7 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getListOfAgencies_Should_ReturnListOfAgencyResponseDTO_WhenDBSelectIsSuccessfull()
+  public void getListOfAgencies_Should_ReturnListOfFullAgencyResponseDTO_WhenDBSelectIsSuccessfull()
       throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,

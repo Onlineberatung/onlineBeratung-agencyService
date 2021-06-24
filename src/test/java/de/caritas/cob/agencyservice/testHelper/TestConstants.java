@@ -214,7 +214,9 @@ public class TestConstants {
       + "  \"dioceseId\": 1,\n"
       + "  \"name\": \"Agency\",\n"
       + "  \"postcode\": \"76000\",\n"
-      + "  \"teamAgency\": false\n"
+      + "  \"teamAgency\": false,\n"
+      + "  \"url\": \"https://www.domain.com\",\n"
+      + "  \"external\": true\n"
       + "}";
 
   public static final String VALID_AGENCY_UPDATE_DTO = "{\n"
@@ -223,7 +225,8 @@ public class TestConstants {
       + "  \"dioceseId\": 1,\n"
       + "  \"name\": \"Agency\",\n"
       + "  \"postcode\": \"76000\",\n"
-      + "  \"offline\": true\n"
+      + "  \"offline\": true,\n"
+      + "  \"external\": false\n"
       + "}";
 
   public static final String VALID_POSTCODE_RANGE_DTO = "{\n"

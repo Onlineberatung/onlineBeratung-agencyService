@@ -108,6 +108,8 @@ public class AgencyAdminServiceIT {
     agencyDTO.setPostcode("12345");
     agencyDTO.setDescription("Agency description");
     agencyDTO.setName("Agency name");
+    agencyDTO.setUrl("https://www.domain.com");
+    agencyDTO.setExternal(true);
     return agencyDTO;
   }
 
@@ -140,6 +142,8 @@ public class AgencyAdminServiceIT {
     updateAgencyDTO.postcode("00000");
     updateAgencyDTO.city(agency.getCity() + "x");
     updateAgencyDTO.setOffline(!agency.isOffline());
+    updateAgencyDTO.setUrl("https://www.domain.com");
+    updateAgencyDTO.setExternal(true);
     return updateAgencyDTO;
 
   }
