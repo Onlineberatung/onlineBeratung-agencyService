@@ -167,14 +167,16 @@ public class AgencyAdminFullResponseDTOIT {
     assertThat(firstSearchResult.getEmbedded().getId(), is(846L));
     assertThat(firstSearchResult.getEmbedded().getCity(), is("Schwelm"));
     assertThat(firstSearchResult.getEmbedded().getConsultingType(), is(2));
-    assertThat(firstSearchResult.getEmbedded().getCreateDate(), is("2019-08-23T08:52:05"));
-    assertThat(firstSearchResult.getEmbedded().getUpdateDate(), is("2019-08-23T08:52:05"));
+    assertThat(firstSearchResult.getEmbedded().getCreateDate(), is("2019-08-23T06:52:05"));
+    assertThat(firstSearchResult.getEmbedded().getUpdateDate(), is("2019-08-23T06:52:05"));
     assertThat(firstSearchResult.getEmbedded().getDeleteDate(), is("null"));
     assertThat(firstSearchResult.getEmbedded().getDioceseId(), is(10L));
     assertThat(firstSearchResult.getEmbedded().getName(), is("Schwangerschaftsberatungsstelle Schwelm"));
     assertThat(firstSearchResult.getEmbedded().getOffline(), is(false));
     assertThat(firstSearchResult.getEmbedded().getPostcode(), is("58332"));
     assertThat(firstSearchResult.getEmbedded().getTeamAgency(), is(false));
+    assertThat(firstSearchResult.getEmbedded().getUrl(), is("https://www.domain.com"));
+    assertThat(firstSearchResult.getEmbedded().getIsExternal(), is(true));
 
   }
 

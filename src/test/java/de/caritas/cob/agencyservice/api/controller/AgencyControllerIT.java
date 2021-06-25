@@ -6,6 +6,7 @@ import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIS
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO_LIST;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.FULL_AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
@@ -14,7 +15,6 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCO
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
-import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.ArrayList;
@@ -125,8 +125,8 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_Should_ReturnListAndOk_When_ServiceReturnsList() throws Exception {
 
-    List<AgencyResponseDTO> agencies = new ArrayList<AgencyResponseDTO>();
-    agencies.add(AGENCY_RESPONSE_DTO);
+    List<FullAgencyResponseDTO> agencies = new ArrayList<>();
+    agencies.add(FULL_AGENCY_RESPONSE_DTO);
 
     when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
         .thenReturn(agencies);
