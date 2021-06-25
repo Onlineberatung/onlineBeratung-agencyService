@@ -526,7 +526,7 @@ components:
         url:
           type: string
           maxLength: 500
-          example: "Bonn"
+          example: https://www.domain.com
         is_external:
           type: boolean
           example: false
