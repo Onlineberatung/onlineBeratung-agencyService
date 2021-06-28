@@ -92,7 +92,7 @@ public class AgencyAdminController implements AgencyadminApi {
   public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
       @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
 
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO =
+    var agencyAdminSearchResultDTO =
         this.agencyAdminSearchService.searchAgencies(q, page, perPage);
 
     return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);

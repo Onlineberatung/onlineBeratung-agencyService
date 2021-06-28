@@ -527,7 +527,7 @@ components:
           type: string
           maxLength: 500
           example: https://www.domain.com
-        is_external:
+        external:
           type: boolean
           example: false
         createDate:

@@ -176,7 +176,7 @@ public class AgencyAdminFullResponseDTOIT {
     assertThat(firstSearchResult.getEmbedded().getPostcode(), is("58332"));
     assertThat(firstSearchResult.getEmbedded().getTeamAgency(), is(false));
     assertThat(firstSearchResult.getEmbedded().getUrl(), is("https://www.domain.com"));
-    assertThat(firstSearchResult.getEmbedded().getIsExternal(), is(true));
+    assertThat(firstSearchResult.getEmbedded().getExternal(), is(true));
 
   }
 

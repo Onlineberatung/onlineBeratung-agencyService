@@ -39,7 +39,7 @@ public class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(agency.getCity(), result.getEmbedded().getCity());
     assertEquals(agency.isOffline(), result.getEmbedded().getOffline());
     assertEquals(agency.getUrl(), result.getEmbedded().getUrl());
-    assertEquals(agency.isExternal(), result.getEmbedded().getIsExternal());
+    assertEquals(agency.isExternal(), result.getEmbedded().getExternal());
     assertEquals(agency.getConsultingTypeId(), result.getEmbedded().getConsultingType());
     assertEquals(String.valueOf(agency.getCreateDate()), result.getEmbedded().getCreateDate());
     assertEquals(String.valueOf(agency.getUpdateDate()), result.getEmbedded().getUpdateDate());

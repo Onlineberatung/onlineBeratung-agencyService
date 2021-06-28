@@ -38,7 +38,7 @@ public class AgencyAdminService {
    * @return the created {@link AgencyAdminFullResponseDTO}
    */
   public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
-    Agency agency = findAgencyById(agencyId);
+    var agency = findAgencyById(agencyId);
     return new AgencyAdminFullResponseDTOBuilder(agency)
         .fromAgency();
   }
@@ -130,7 +130,7 @@ public class AgencyAdminService {
    * @param agencyTypeDTO the request dto containing the agency type
    */
   public void changeAgencyType(Long agencyId, AgencyTypeRequestDTO agencyTypeDTO) {
-    Agency agency = findAgencyById(agencyId);
+    var agency = findAgencyById(agencyId);
     boolean isTeamAgency = TEAM_AGENCY.equals(agencyTypeDTO.getAgencyType());
     if (isTeamAgency == agency.isTeamAgency()) {
       throw new ConflictException(
@@ -148,7 +148,7 @@ public class AgencyAdminService {
    * @param agencyId agency ID
    */
   public void deleteAgency(Long agencyId) {
-    Agency agency = this.findAgencyById(agencyId);
+    var agency = this.findAgencyById(agencyId);
     this.deleteAgencyValidator.validate(agency);
     agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
     this.agencyRepository.save(agency);
