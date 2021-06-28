@@ -41,14 +41,9 @@ public class AgencyService {
    * @return a list containing regarding agencies
    */
   public List<AgencyResponseDTO> getAgencies(List<Long> agencyIds) {
-    try {
-      return agencyRepository.findByIdIn(agencyIds).stream()
-          .map(this::convertToAgencyResponseDTO)
-          .collect(Collectors.toList());
-    } catch (DataAccessException ex) {
-      throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting agencies");
-    }
+    return agencyRepository.findByIdIn(agencyIds).stream()
+        .map(this::convertToAgencyResponseDTO)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -88,10 +83,10 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-    List<Agency> agencies = collectAgenciesByPostCodeAndConsultingType(
+    var agencies = collectAgenciesByPostCodeAndConsultingType(
         postCode, consultingTypeId);
     Collections.shuffle(agencies);
-    List<FullAgencyResponseDTO> agencyResponseDTOs = agencies.stream()
+    var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
         .collect(Collectors.toList());
 

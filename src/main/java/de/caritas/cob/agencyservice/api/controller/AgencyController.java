@@ -37,7 +37,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<FullAgencyResponseDTO>> getAgencies(
       @RequestParam String postcode, @RequestParam Integer consultingType) {
 
-    List<FullAgencyResponseDTO> agencies = agencyService.getAgencies(postcode, consultingType);
+    var agencies = agencyService.getAgencies(postcode, consultingType);
 
     return !CollectionUtils.isEmpty(agencies)
         ? new ResponseEntity<>(agencies, HttpStatus.OK)
@@ -54,7 +54,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<AgencyResponseDTO>> getAgenciesByIds(
       @PathVariable("agencyIds") List<Long> agencyIds) {
 
-    List<AgencyResponseDTO> agencies = agencyService.getAgencies(agencyIds);
+    var agencies = agencyService.getAgencies(agencyIds);
 
     return agencies.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
         : new ResponseEntity<>(agencies, HttpStatus.OK);
@@ -70,7 +70,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<AgencyResponseDTO>> getAgenciesByConsultingType(
       Integer consultingTypeId) {
 
-    List<AgencyResponseDTO> agencies = this.agencyService.getAgencies(consultingTypeId);
+    var agencies = this.agencyService.getAgencies(consultingTypeId);
 
     return new ResponseEntity<>(agencies, HttpStatus.OK);
   }

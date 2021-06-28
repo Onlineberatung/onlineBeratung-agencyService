@@ -179,23 +179,6 @@ public class AgencyServiceTest {
   }
 
   @Test
-  public void getAgencies_With_Ids_Should_ReturnServiceException_OnDatabaseError() {
-
-    List<Long> agencyIds = Collections.singletonList(AGENCY_ID);
-    DataAccessException dbEx = new DataAccessException("db error") {
-    };
-
-    when(agencyRepository.findByIdIn(AGENCY_IDS_LIST)).thenThrow(dbEx);
-
-    try {
-      agencyService.getAgencies(agencyIds);
-      fail("Expected exception: ServiceException");
-    } catch (InternalServerErrorException internalServerErrorException) {
-      assertTrue("Excepted ServiceException thrown", true);
-    }
-  }
-
-  @Test
   public void getAgencies_With_Ids_Should_ReturnListOfAgencyResponseDTO_When_DBSelectIsSuccessfull() {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
