@@ -48,7 +48,7 @@ public class AgencyAdminController implements AgencyadminApi {
    */
   @Override
   public ResponseEntity<RootDTO> getRoot() {
-    RootDTO rootDTO = new RootDTOBuilder().buildRootDTO();
+    var rootDTO = new RootDTOBuilder().buildRootDTO();
     return new ResponseEntity<>(rootDTO, HttpStatus.OK);
   }
 
@@ -74,7 +74,7 @@ public class AgencyAdminController implements AgencyadminApi {
   public ResponseEntity<DioceseAdminResultDTO> getDioceses(
       @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
 
-    DioceseAdminResultDTO dioceseAdminResultDTO =
+    var dioceseAdminResultDTO =
         dioceseAdminService.findAllDioceses(page, perPage);
 
     return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
@@ -92,7 +92,7 @@ public class AgencyAdminController implements AgencyadminApi {
   public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
       @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
 
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO =
+    var agencyAdminSearchResultDTO =
         this.agencyAdminSearchService.searchAgencies(q, page, perPage);
 
     return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);
@@ -108,7 +108,7 @@ public class AgencyAdminController implements AgencyadminApi {
   public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
 
     agencyValidator.validate(agencyDTO);
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
+    var agencyAdminFullResponseDTO = agencyAdminService
         .saveAgency(agencyDTO);
 
     return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.CREATED);
@@ -126,7 +126,7 @@ public class AgencyAdminController implements AgencyadminApi {
       @Valid UpdateAgencyDTO updateAgencyDTO) {
 
     agencyValidator.validate(agencyId, updateAgencyDTO);
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
+    var agencyAdminFullResponseDTO = agencyAdminService
         .updateAgency(agencyId, updateAgencyDTO);
 
     return ResponseEntity.ok(agencyAdminFullResponseDTO);

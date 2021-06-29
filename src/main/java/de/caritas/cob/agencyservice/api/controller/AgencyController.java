@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.controller;
 
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
@@ -33,10 +34,10 @@ public class AgencyController implements AgenciesApi {
    * @return the List of agencies with information
    */
   @Override
-  public ResponseEntity<List<AgencyResponseDTO>> getAgencies(
+  public ResponseEntity<List<FullAgencyResponseDTO>> getAgencies(
       @RequestParam String postcode, @RequestParam Integer consultingType) {
 
-    List<AgencyResponseDTO> agencies = agencyService.getAgencies(postcode, consultingType);
+    var agencies = agencyService.getAgencies(postcode, consultingType);
 
     return !CollectionUtils.isEmpty(agencies)
         ? new ResponseEntity<>(agencies, HttpStatus.OK)
@@ -53,7 +54,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<AgencyResponseDTO>> getAgenciesByIds(
       @PathVariable("agencyIds") List<Long> agencyIds) {
 
-    List<AgencyResponseDTO> agencies = agencyService.getAgencies(agencyIds);
+    var agencies = agencyService.getAgencies(agencyIds);
 
     return agencies.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
         : new ResponseEntity<>(agencies, HttpStatus.OK);
@@ -69,7 +70,7 @@ public class AgencyController implements AgenciesApi {
   public ResponseEntity<List<AgencyResponseDTO>> getAgenciesByConsultingType(
       Integer consultingTypeId) {
 
-    List<AgencyResponseDTO> agencies = this.agencyService.getAgencies(consultingTypeId);
+    var agencies = this.agencyService.getAgencies(consultingTypeId);
 
     return new ResponseEntity<>(agencies, HttpStatus.OK);
   }
