@@ -1,6 +1,5 @@
 package de.caritas.cob.agencyservice.api.controller;
 
-import static de.caritas.cob.agencyservice.api.controller.AgencyControllerAuthorizationIT.PATH_GET_AGENCIES_BY_CONSULTINGTYPE;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
@@ -51,6 +50,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(AgencyController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AgencyControllerIT {
+
+  static final String PATH_GET_AGENCIES_BY_CONSULTINGTYPE = "/agencies/consultingtype/1";
 
   @Autowired
   private MockMvc mvc;
