@@ -114,6 +114,15 @@ public class Agency {
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean offline;
 
+  @Size(max = 500)
+  @Column(name = "url")
+  @Field
+  private String url;
+
+  @Column(name = "is_external", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean isExternal;
+
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;
 

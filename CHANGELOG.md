@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.9.0...v1.10.0) (2021-07-26)
+
+
+### Features
+
+* add new agency properties url and external to agency admin api ([b7cba5d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b7cba5db4a41f199d207ce88910e132f163b5beb))
+* added database change set ([d0aae3f](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/d0aae3f8fe8b63f51682ca7945b162c02d6c79fb))
+* extension of api endpoint ([c35d711](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/c35d711dc485b67b37f7516de473069b11535737))
+
 ## [1.9.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.8.0...v1.9.0) (2021-06-18)
 
 

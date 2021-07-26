@@ -10,6 +10,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerEr
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -40,14 +41,9 @@ public class AgencyService {
    * @return a list containing regarding agencies
    */
   public List<AgencyResponseDTO> getAgencies(List<Long> agencyIds) {
-    try {
-      return agencyRepository.findByIdIn(agencyIds).stream()
-          .map(this::convertToAgencyResponseDTO)
-          .collect(Collectors.toList());
-    } catch (DataAccessException ex) {
-      throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting agencies");
-    }
+    return agencyRepository.findByIdIn(agencyIds).stream()
+        .map(this::convertToAgencyResponseDTO)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -78,7 +74,7 @@ public class AgencyService {
    * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
-  public List<AgencyResponseDTO> getAgencies(String postCode, int consultingTypeId) {
+  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId) {
 
     var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
@@ -87,11 +83,11 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-    List<Agency> agencies = collectAgenciesByPostCodeAndConsultingType(
+    var agencies = collectAgenciesByPostCodeAndConsultingType(
         postCode, consultingTypeId);
     Collections.shuffle(agencies);
-    List<AgencyResponseDTO> agencyResponseDTOs = agencies.stream()
-        .map(this::convertToAgencyResponseDTO)
+    var agencyResponseDTOs = agencies.stream()
+        .map(this::convertToFullAgencyResponseDTO)
         .collect(Collectors.toList());
 
     if (agencyResponseDTOs.isEmpty()) {
@@ -133,14 +129,14 @@ public class AgencyService {
   }
 
   private void addWhiteSpotAgency(ExtendedConsultingTypeResponseDTO consultingTypeSettings,
-      List<AgencyResponseDTO> agencyResponseDTOs) {
+      List<FullAgencyResponseDTO> agencyResponseDTOs) {
     var whiteSpot = consultingTypeSettings.getWhiteSpot();
     if (nonNull(whiteSpot) && nonNull(whiteSpot.getWhiteSpotAgencyId()) && isTrue(
         whiteSpot.getWhiteSpotAgencyAssigned())) {
       try {
         agencyRepository.findByIdAndDeleteDateNull(
             Long.valueOf(whiteSpot.getWhiteSpotAgencyId()))
-            .ifPresent(agency -> agencyResponseDTOs.add(convertToAgencyResponseDTO(agency)));
+            .ifPresent(agency -> agencyResponseDTOs.add(convertToFullAgencyResponseDTO(agency)));
       } catch (NumberFormatException nfEx) {
         throw new InternalServerErrorException(LogService::logNumberFormatException,
             "Invalid white spot agency id");
@@ -158,6 +154,21 @@ public class AgencyService {
         .teamAgency(agency.isTeamAgency())
         .offline(agency.isOffline())
         .consultingType(agency.getConsultingTypeId());
+  }
+
+  private FullAgencyResponseDTO convertToFullAgencyResponseDTO(Agency agency) {
+    return new FullAgencyResponseDTO()
+        .id(agency.getId())
+        .name(agency.getName())
+        .postcode(agency.getPostCode())
+        .city(agency.getCity())
+        .description(agency.getDescription())
+        .teamAgency(agency.isTeamAgency())
+        .offline(agency.isOffline())
+        .consultingType(agency.getConsultingTypeId())
+        .url(agency.getUrl())
+        .external(agency.isExternal());
+
   }
 
   /**

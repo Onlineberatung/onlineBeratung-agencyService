@@ -15,6 +15,7 @@ import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.List;
@@ -50,11 +51,11 @@ public class AgencyServiceIT {
     when(consultingTypeManager.getConsultingTypeSettings(CONSULTING_TYPE_PREGNANCY)).thenReturn(CONSULTING_TYPE_SETTINGS_PREGNANCY);
     String postCode = "88662";
 
-    List<AgencyResponseDTO> resultAgencies = agencyService
+    List<FullAgencyResponseDTO> resultAgencies = agencyService
         .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY);
 
     assertThat(resultAgencies, hasSize(1));
-    AgencyResponseDTO resultAgency = resultAgencies.get(0);
+    FullAgencyResponseDTO resultAgency = resultAgencies.get(0);
     assertThat(resultAgency.getId(), is(883L));
   }
 

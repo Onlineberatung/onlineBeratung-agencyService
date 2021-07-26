@@ -38,7 +38,7 @@ public class AgencyAdminService {
    * @return the created {@link AgencyAdminFullResponseDTO}
    */
   public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
-    Agency agency = findAgencyById(agencyId);
+    var agency = findAgencyById(agencyId);
     return new AgencyAdminFullResponseDTOBuilder(agency)
         .fromAgency();
   }
@@ -82,6 +82,8 @@ public class AgencyAdminService {
         .offline(true)
         .teamAgency(agencyDTO.getTeamAgency())
         .consultingTypeId(agencyDTO.getConsultingType())
+        .url(agencyDTO.getUrl())
+        .isExternal(agencyDTO.getExternal())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
@@ -95,7 +97,7 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
-    Agency agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
+    var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
     return new AgencyAdminFullResponseDTOBuilder(
         agencyRepository.save(mergeAgencies(agency, updateAgencyDTO)))
         .fromAgency();
@@ -112,6 +114,8 @@ public class AgencyAdminService {
         .city(updateAgencyDTO.getCity())
         .offline(updateAgencyDTO.getOffline())
         .teamAgency(agency.isTeamAgency())
+        .url(updateAgencyDTO.getUrl())
+        .isExternal(updateAgencyDTO.getExternal())
         .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
@@ -126,7 +130,7 @@ public class AgencyAdminService {
    * @param agencyTypeDTO the request dto containing the agency type
    */
   public void changeAgencyType(Long agencyId, AgencyTypeRequestDTO agencyTypeDTO) {
-    Agency agency = findAgencyById(agencyId);
+    var agency = findAgencyById(agencyId);
     boolean isTeamAgency = TEAM_AGENCY.equals(agencyTypeDTO.getAgencyType());
     if (isTeamAgency == agency.isTeamAgency()) {
       throw new ConflictException(
@@ -144,7 +148,7 @@ public class AgencyAdminService {
    * @param agencyId agency ID
    */
   public void deleteAgency(Long agencyId) {
-    Agency agency = this.findAgencyById(agencyId);
+    var agency = this.findAgencyById(agencyId);
     this.deleteAgencyValidator.validate(agency);
     agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
     this.agencyRepository.save(agency);

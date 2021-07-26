@@ -38,6 +38,8 @@ public class AgencyAdminFullResponseDTOBuilder {
         .description(this.agency.getDescription())
         .postcode(this.agency.getPostCode())
         .teamAgency(this.agency.isTeamAgency())
+        .url(this.agency.getUrl())
+        .external((this.agency.isExternal()))
         .offline(this.agency.isOffline())
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
