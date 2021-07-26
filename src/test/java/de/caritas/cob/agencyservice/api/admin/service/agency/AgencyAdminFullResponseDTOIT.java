@@ -113,6 +113,15 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
+  public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlauts() {
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+        .searchAgencies("Überlingen", 0, 4)
+        .getEmbedded();
+
+    agencies.forEach(agency -> assertThat(agency.getEmbedded().getName(), containsString("Überlingen")));
+  }
+
+  @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsValidPlz() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
         .searchAgencies("88662", 0, 5)
