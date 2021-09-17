@@ -162,6 +162,19 @@ public class AgencyAdminController implements AgencyadminApi {
   }
 
   /**
+   * Entry point to get a postcode range by id.
+   *
+   * @param postcodeRangeId the postcode range id (required)
+   * @return an entity containing the search result
+   */
+  @Override
+  public ResponseEntity<AgencyPostcodeRangeResponseDTO> getAgencyPostcodeRange(
+      Long postcodeRangeId) {
+    var postCodeRange = this.agencyPostCodeRangeAdminService.findPostcodeRangeById(postcodeRangeId);
+    return ResponseEntity.ok(postCodeRange);
+  }
+
+  /**
    * Entry point to create a new postcode range for the given agency.
    *
    * @param agencyId         Agency Id (required)

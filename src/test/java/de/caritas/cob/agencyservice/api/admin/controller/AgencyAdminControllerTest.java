@@ -10,6 +10,7 @@ import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_P
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PER_PAGE_PARAM;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.POSTCODE_RANGE_BASE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.ROOT_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_AGENCY_POSTCODE_RANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_DELETE_AGENCY_PATH;
@@ -20,6 +21,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POST
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_2;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -43,8 +45,10 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultin
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
@@ -67,14 +71,22 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 public class AgencyAdminControllerTest {
 
-  @Autowired private MockMvc mvc;
-  @MockBean private AgencyAdminService agencyAdminService;
-  @MockBean private AgencyValidator agencyValidator;
-  @MockBean private AgencyAdminSearchService agencyAdminFullResponseDTO;
-  @MockBean private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
-  @MockBean private LinkDiscoverers linkDiscoverers;
-  @MockBean private DioceseAdminService dioceseAdminService;
-  @MockBean private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
+  @Autowired
+  private MockMvc mvc;
+  @MockBean
+  private AgencyAdminService agencyAdminService;
+  @MockBean
+  private AgencyValidator agencyValidator;
+  @MockBean
+  private AgencyAdminSearchService agencyAdminFullResponseDTO;
+  @MockBean
+  private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
+  @MockBean
+  private LinkDiscoverers linkDiscoverers;
+  @MockBean
+  private DioceseAdminService dioceseAdminService;
+  @MockBean
+  private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
 
   @Test
   public void searchAgencies_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
@@ -113,7 +125,7 @@ public class AgencyAdminControllerTest {
         .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
-    Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(eq(0), eq(1));
+    Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(0, 1);
   }
 
   @Test
@@ -125,8 +137,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgency_Should_returnCreated_When_AgencyDtoIsGiven() throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
@@ -154,8 +166,8 @@ public class AgencyAdminControllerTest {
   public void createAgency_Should_ReturnBadRequest_WhenAgencyConsultingType_IsInvalid()
       throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
@@ -172,8 +184,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgency_Should_ReturnBadRequest_WhenAgencyDiocese_IsInvalid() throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
@@ -190,8 +202,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgency_Should_ReturnBadRequest_WhenAgencyPostcode_IsInvalid() throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
@@ -214,7 +226,7 @@ public class AgencyAdminControllerTest {
         .andExpect(status().isOk());
 
     Mockito.verify(this.agencyPostCodeRangeAdminService, Mockito.times(1))
-        .findPostcodeRangesForAgency(eq(0), eq(1), eq(1L));
+        .findPostcodeRangesForAgency(0, 1, 1L);
   }
 
   @Test
@@ -229,7 +241,7 @@ public class AgencyAdminControllerTest {
     this.mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")).andExpect(status().isOk());
 
     Mockito.verify(this.agencyPostCodeRangeAdminService, Mockito.times(1))
-        .deleteAgencyPostcodeRange(eq(1L));
+        .deleteAgencyPostcodeRange(1L);
   }
 
   @Test
@@ -243,8 +255,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void updateAgency_Should_returnOk_When_UpdateAgencyDtoIsGiven() throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
@@ -272,8 +284,8 @@ public class AgencyAdminControllerTest {
   public void updateAgency_Should_ReturnBadRequest_WhenAgencyOfflineStatus_IsInvalid()
       throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
     doThrow(new InvalidOfflineStatusException())
@@ -291,8 +303,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void updateAgency_Should_ReturnBadRequest_WhenAgencyDiocese_IsInvalid() throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
     doThrow(new InvalidDioceseException()).when(agencyValidator).validate(1L, updateAgencyDTO);
@@ -308,8 +320,8 @@ public class AgencyAdminControllerTest {
   @Test
   public void updateAgency_Should_ReturnBadRequest_WhenAgencyPostcode_IsInvalid() throws Exception {
 
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    var easyRandom = new EasyRandom();
+    var updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
     doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(1L, updateAgencyDTO);
@@ -325,7 +337,7 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgencyPostcodeRange_Should_returnCreated_When_AllParamsAreValid()
       throws Exception {
-    PostCodeRangeDTO postCodeRangeDTO =
+    var postCodeRangeDTO =
         new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE).postcodeTo(VALID_POSTCODE_2);
 
     this.mvc
@@ -339,7 +351,7 @@ public class AgencyAdminControllerTest {
   @Test
   public void createAgencyPostcodeRange_Should_returnBadRequest_When_PostCodeIsInvalid()
       throws Exception {
-    PostCodeRangeDTO postCodeRangeDTO =
+    var postCodeRangeDTO =
         new PostCodeRangeDTO().postcodeFrom(INVALID_POSTCODE).postcodeTo(VALID_POSTCODE_2);
 
     this.mvc
@@ -352,7 +364,7 @@ public class AgencyAdminControllerTest {
 
   @Test
   public void updateAgencyPostcodeRange_Should_returnOk_When_AllParamsAreValid() throws Exception {
-    PostCodeRangeDTO postCodeRangeDTO =
+    var postCodeRangeDTO =
         new PostCodeRangeDTO().postcodeFrom(VALID_POSTCODE).postcodeTo(VALID_POSTCODE_2);
 
     this.mvc
@@ -366,7 +378,7 @@ public class AgencyAdminControllerTest {
   @Test
   public void updateAgencyPostcodeRange_Should_returnBadRequest_When_PostCodeIsInvalid()
       throws Exception {
-    PostCodeRangeDTO postCodeRangeDTO =
+    var postCodeRangeDTO =
         new PostCodeRangeDTO().postcodeFrom(INVALID_POSTCODE).postcodeTo(VALID_POSTCODE_2);
 
     this.mvc
@@ -379,8 +391,7 @@ public class AgencyAdminControllerTest {
 
   @Test
   public void changeAgencyType_Should_returnOk_When_AllParamsAreValid() throws Exception {
-    AgencyTypeRequestDTO agencyTypeDTO =
-        new AgencyTypeRequestDTO().agencyType(AgencyTypeEnum.TEAM_AGENCY);
+    var agencyTypeDTO = new AgencyTypeRequestDTO().agencyType(AgencyTypeEnum.TEAM_AGENCY);
 
     this.mvc
         .perform(
@@ -392,7 +403,7 @@ public class AgencyAdminControllerTest {
 
   @Test
   public void changeAgencyType_Should_returnBadRequest_When_teamAgencyIsNull() throws Exception {
-    AgencyTypeRequestDTO agencyTypeDTO = new AgencyTypeRequestDTO().agencyType(null);
+    var agencyTypeDTO = new AgencyTypeRequestDTO().agencyType(null);
 
     this.mvc
         .perform(
@@ -425,9 +436,47 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void getAgency_Should_returnBadRequest_When_agncyIdIsInvalid() throws Exception {
+  public void getAgency_Should_returnBadRequest_When_agencyIdIsInvalid() throws Exception {
     this.mvc
         .perform(get(GET_AGENCY_PATH + "/ab").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
+
+  @Test
+  public void getPostcodeRange_Should_returnBadRequest_When_postcodeRangeIdIsInvalid()
+      throws Exception {
+    this.mvc
+        .perform(get(POSTCODE_RANGE_BASE_PATH + "/ab")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void getPostcodeRange_Should_returnNotFound_When_postcodeRangeDoesNotExist()
+      throws Exception {
+    when(this.agencyPostCodeRangeAdminService.findPostcodeRangeById(1L))
+        .thenThrow(new NotFoundException());
+
+    this.mvc
+        .perform(get(POSTCODE_RANGE_BASE_PATH + "/1")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void getPostcodeRange_Should_returnOk_When_postcodeRangeExists()
+      throws Exception {
+    var postcodeRange = new EasyRandom().nextObject(AgencyPostcodeRangeResponseDTO.class);
+    when(this.agencyPostCodeRangeAdminService.findPostcodeRangeById(1L))
+        .thenReturn(postcodeRange);
+
+    this.mvc
+        .perform(get(POSTCODE_RANGE_BASE_PATH + "/1")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$._links").exists())
+        .andExpect(jsonPath("$._embedded").exists())
+        .andExpect(jsonPath("$._embedded.id", is(postcodeRange.getEmbedded().getId())));
+  }
+
 }

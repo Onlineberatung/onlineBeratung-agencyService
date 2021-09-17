@@ -3,12 +3,11 @@ package de.caritas.cob.agencyservice.testHelper;
 public class PathConstants {
 
   public static final String ROOT_PATH = "/agencyadmin";
-  public static final String UPDATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
-      + "/postcoderanges/1";
+  public static final String POSTCODE_RANGE_BASE_PATH = ROOT_PATH + "/postcoderanges/";
+  public static final String UPDATE_AGENCY_POSTCODE_RANGE_PATH = POSTCODE_RANGE_BASE_PATH + "1";
   public static final String CREATE_AGENCY_POSTCODE_RANGE_PATH = ROOT_PATH
       + "/agencies/1/postcoderanges";
-  public static final String DELETE_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
-      + "/postcoderanges/";
+  public static final String DELETE_AGENCY_POSTCODERANGE_PATH = POSTCODE_RANGE_BASE_PATH;
   public static final String GET_AGENCY_POSTCODERANGE_PATH = ROOT_PATH
       + "/agencies/1/postcoderanges";
   public static final String UPDATE_DELETE_AGENCY_PATH_INVALID_ID = ROOT_PATH + "/agencies/abc";

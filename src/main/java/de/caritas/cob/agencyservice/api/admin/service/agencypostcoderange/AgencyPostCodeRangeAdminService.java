@@ -2,22 +2,20 @@ package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.create.PostcodeRangeValidator;
-import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangesResultDTO;
 import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
-import java.util.function.Predicate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.function.Predicate;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +41,9 @@ public class AgencyPostCodeRangeAdminService {
    */
   public AgencyPostcodeRangesResultDTO findPostcodeRangesForAgency(Integer page,
       Integer perPage, Long agencyId) {
-    Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(perPage, 1));
+    var pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(perPage, 1));
 
-    Page<AgencyPostCodeRange> agencyPostCodeRanges =
+    var agencyPostCodeRanges =
         this.agencyPostCodeRangeRepository.findAllByAgencyId(agencyId, pageable);
 
     return AgencyPostCodeRangesResultDTOBuilder.getInstance()
@@ -67,9 +65,9 @@ public class AgencyPostCodeRangeAdminService {
   }
 
   private void markAgencyOfflineIfPostcodeRangeIsLast(Long postcodeRangeId) {
-    AgencyPostCodeRange agencyPostCodeRange = this.agencyPostCodeRangeRepository
-          .findById(postcodeRangeId)
-          .orElseThrow(NotFoundException::new);
+    var agencyPostCodeRange = this.agencyPostCodeRangeRepository
+        .findById(postcodeRangeId)
+        .orElseThrow(NotFoundException::new);
 
     if (isTheLastPostcodeRangeOfAgency(agencyPostCodeRange)) {
       this.agencyService.setAgencyOffline(agencyPostCodeRange.getAgency().getId());
@@ -97,7 +95,7 @@ public class AgencyPostCodeRangeAdminService {
   @Transactional
   public AgencyPostcodeRangeResponseDTO createPostcodeRange(Long agencyId,
       PostCodeRangeDTO postCodeRangeDTO) {
-    Agency agency = agencyAdminService.findAgencyById(agencyId);
+    var agency = agencyAdminService.findAgencyById(agencyId);
 
     return validateAndSavePostcodeRange(postCodeRangeDTO, agency, null);
   }
@@ -106,7 +104,7 @@ public class AgencyPostCodeRangeAdminService {
       PostCodeRangeDTO postCodeRangeDTO, Agency agency, Long postcodeId) {
     postcodeRangeValidator.validatePostcodeRange(postCodeRangeDTO,
         agency.getAgencyPostCodeRanges());
-    AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
+    var agencyPostCodeRange = agencyPostCodeRangeRepository
         .save(fromPostcodeRangeDTO(postCodeRangeDTO, agency, postcodeId));
 
     return AgencyPostcodeRangeResponseDTOBuilder.getInstance(agencyPostCodeRange)
@@ -134,7 +132,7 @@ public class AgencyPostCodeRangeAdminService {
    */
   public AgencyPostcodeRangeResponseDTO updatePostcodeRange(Long postcodeRangeId,
       PostCodeRangeDTO postCodeRangeDTO) {
-    AgencyPostCodeRange agencyPostCodeRange = agencyPostCodeRangeRepository
+    var agencyPostCodeRange = agencyPostCodeRangeRepository
         .findById(postcodeRangeId)
         .orElseThrow(NotFoundException::new);
     agencyPostCodeRange.getAgency().getAgencyPostCodeRanges()
@@ -142,5 +140,20 @@ public class AgencyPostCodeRangeAdminService {
 
     return validateAndSavePostcodeRange(postCodeRangeDTO, agencyPostCodeRange.getAgency(),
         agencyPostCodeRange.getId());
+  }
+
+  /**
+   * Retrieves a postcoderange by given id.
+   *
+   * @param postcodeRangeId the id of the postcoderange
+   * @return the created {@link AgencyPostcodeRangeResponseDTO}
+   */
+  public AgencyPostcodeRangeResponseDTO findPostcodeRangeById(Long postcodeRangeId) {
+    var postCodeRange = this.agencyPostCodeRangeRepository.findById(postcodeRangeId)
+        .orElseThrow(NotFoundException::new);
+
+    return AgencyPostcodeRangeResponseDTOBuilder
+        .getInstance(postCodeRange)
+        .build();
   }
 }

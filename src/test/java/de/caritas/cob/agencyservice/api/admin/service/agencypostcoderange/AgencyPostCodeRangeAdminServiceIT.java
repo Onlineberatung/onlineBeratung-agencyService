@@ -37,7 +37,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_perPageIsSetToOne() {
-    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    var postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(0, 1, 0L)
         .getEmbedded();
 
@@ -46,7 +46,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnExpectedResult_When_perPageIsSetToOne() {
-    PostCodeRangeResponseDTO postCodeRange = this.agencyPostCodeRangeAdminService
+    var postCodeRange = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(0, 1, 0L)
         .getEmbedded()
         .iterator()
@@ -64,7 +64,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_pageIsSetToOneAndPerPageIsSetToOne() {
-    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    var postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(1, 1, 15L)
         .getEmbedded();
 
@@ -73,7 +73,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_paginationParamsAreZero() {
-    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    var postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(0, 0, 0L)
         .getEmbedded();
 
@@ -82,7 +82,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnOneResult_When_paginationParamsAreNegative() {
-    List<AgencyPostcodeRangeResponseDTO> postCodeRanges = this.agencyPostCodeRangeAdminService
+    var postCodeRanges = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(-100, -10, 0L)
         .getEmbedded();
 
@@ -92,10 +92,10 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
-    List<AgencyPostcodeRangeResponseDTO> firstPage = this.agencyPostCodeRangeAdminService
+    var firstPage = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(1, 20, 15L)
         .getEmbedded();
-    List<AgencyPostcodeRangeResponseDTO> secondPage = this.agencyPostCodeRangeAdminService
+    var secondPage = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(2, 20, 15L)
         .getEmbedded();
 
@@ -105,7 +105,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test
   public void findPostCodeRangesForAgency_Should_haveExpectedLinks_When_AllParamsAreProvided() {
-    PaginationLinks paginationLinks = this.agencyPostCodeRangeAdminService
+    var paginationLinks = this.agencyPostCodeRangeAdminService
         .findPostcodeRangesForAgency(2, 2, 15L).getLinks();
 
     assertThat(paginationLinks.getSelf(), notNullValue());
@@ -122,7 +122,7 @@ public class AgencyPostCodeRangeAdminServiceIT {
   @Test
   @Transactional
   public void deleteAgencyPostcodeRange_Should_deletePostcodeRange_When_postcodeRangeIdExists() {
-    Long agencyPostCodeRangeId = 14351L;
+    var agencyPostCodeRangeId = 14351L;
 
     this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(agencyPostCodeRangeId);
 
@@ -132,9 +132,23 @@ public class AgencyPostCodeRangeAdminServiceIT {
 
   @Test(expected = NotFoundException.class)
   public void deleteAgencyPostcodeRange_Should_throwNotFound_When_postcodeRangeIdNotExists() {
-    Long agencyPostCodeRangeId = -1L;
+    var agencyPostCodeRangeId = -1L;
 
     this.agencyPostCodeRangeAdminService.deleteAgencyPostcodeRange(agencyPostCodeRangeId);
+  }
+
+  @Test
+  public void findPostcodeRangeById_Should_returnExpectedPostcodeRange_When_postcodeRangeExists() {
+    var postCodeRange = this.agencyPostCodeRangeAdminService.findPostcodeRangeById(1L);
+
+    assertThat(postCodeRange, notNullValue());
+    assertThat(postCodeRange.getLinks(), notNullValue());
+    assertThat(postCodeRange.getEmbedded(), notNullValue());
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void findPostcodeRangeById_Should_throwNotFoundException_When_postcodeRangeDoesNotExists() {
+    this.agencyPostCodeRangeAdminService.findPostcodeRangeById(-1L);
   }
 
 }
