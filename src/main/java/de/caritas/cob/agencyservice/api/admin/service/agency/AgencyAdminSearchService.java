@@ -8,6 +8,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.service.QueryScanner;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,6 +32,8 @@ public class AgencyAdminSearchService {
 
   private final @NonNull EntityManagerFactory entityManagerFactory;
 
+  private final QueryScanner queryScanner;
+
   /**
    * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link
    * AgencyAdminSearchResultDTO} containing hal links.
@@ -52,6 +55,7 @@ public class AgencyAdminSearchService {
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
     fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
 
+    @SuppressWarnings("unchecked")
     Stream<Agency> resultStream = fullTextQuery.getResultStream();
     List<AgencyAdminFullResponseDTO> resultList = resultStream
         .map(AgencyAdminFullResponseDTOBuilder::new)
@@ -82,9 +86,8 @@ public class AgencyAdminSearchService {
         .createQuery();
   }
 
-  private Query buildFullTextSearchQuery(String keyword,
-      FullTextEntityManager fullTextEntityManager) {
-    return fullTextEntityManager.getSearchFactory()
+  private Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
+    return entityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)
         .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
@@ -96,8 +99,7 @@ public class AgencyAdminSearchService {
         .andField(NAME_SEARCH_FIELD)
         .andField(POST_CODE_SEARCH_FIELD)
         .andField(CITY_SEARCH_FIELD)
-        .matching(keyword)
+        .matching(queryScanner.escapeForLucene(keyword))
         .createQuery();
   }
-
 }
