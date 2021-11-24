@@ -167,6 +167,15 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
+  public void searchAgencies_Should_returnValidResult_When_keywordContainsOnlySpecialCharacters() {
+    var agencies = agencyAdminFullResponseDTO
+        .searchAgencies("§$%=#'`><", 0, 5)
+        .getEmbedded();
+
+    assertThat(agencies, notNullValue());
+  }
+
+  @Test
   public void searchAgencies_Should_returnValidResult_When_keywordHasSpecialCharacters() {
     var specialChars = "halle§$%=#'`><";
 

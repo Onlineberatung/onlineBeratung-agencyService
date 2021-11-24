@@ -9,6 +9,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.EntityManagerFactory;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AgencyAdminSearchService {
+
+  private static final Pattern ONLY_SPECIAL_CHARS = Pattern.compile("[^a-zA-Z0-9]+");
 
   private static final String NAME_SEARCH_FIELD = "name";
   private static final String POST_CODE_SEARCH_FIELD = "postCode";
@@ -46,8 +49,9 @@ public class AgencyAdminSearchService {
     FullTextEntityManager fullTextEntityManager = Search
         .getFullTextEntityManager(entityManagerFactory.createEntityManager());
 
-    Query query = isBlank(keyword) ? buildUnfilteredQuery(fullTextEntityManager) :
-        buildFullTextSearchQuery(keyword, fullTextEntityManager);
+    Query query = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
+        ? buildUnfilteredQuery(fullTextEntityManager)
+        : buildFullTextSearchQuery(keyword, fullTextEntityManager);
 
     FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
@@ -101,4 +105,7 @@ public class AgencyAdminSearchService {
         .createQuery();
   }
 
+  private boolean hasOnlySpecialCharacters(String str) {
+    return ONLY_SPECIAL_CHARS.matcher(str).matches();
+  }
 }
