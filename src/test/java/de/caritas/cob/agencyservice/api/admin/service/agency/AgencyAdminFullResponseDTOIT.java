@@ -113,6 +113,26 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
+  public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlautReplacements() {
+    agencyAdminFullResponseDTO
+        .searchAgencies("Uberlingen", 0, 4)
+        .getEmbedded()
+        .forEach(agency ->
+            assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
+        );
+  }
+
+  @Test
+  public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlauts() {
+    agencyAdminFullResponseDTO
+        .searchAgencies("Überlingen", 0, 4)
+        .getEmbedded()
+        .forEach(
+            agency -> assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
+        );
+  }
+
+  @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsValidPlz() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
         .searchAgencies("88662", 0, 5)
@@ -147,10 +167,21 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
-  public void searchAgencies_Should_returnValidResult_When_keywordareSpecialCharacters() {
-    String specialChars = "!§$%&/()=?#'*+`^^><";
+  public void searchAgencies_Should_returnValidResult_When_keywordHasSpecialCharacters() {
+    var specialChars = "halle§$%=#'`><";
 
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    var agencies = agencyAdminFullResponseDTO
+        .searchAgencies(specialChars, 0, 5)
+        .getEmbedded();
+
+    assertThat(agencies, notNullValue());
+  }
+
+  @Test
+  public void searchAgencies_Should_returnValidResult_When_keywordHasLuceneQuerySyntax() {
+    var specialChars = "halle+-&|!(){}[]^\"~*?:\\/";
+
+    var agencies = agencyAdminFullResponseDTO
         .searchAgencies(specialChars, 0, 5)
         .getEmbedded();
 

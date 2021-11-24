@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManagerFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
-import org.springframework.security.web.util.TextEscapeUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,6 +53,7 @@ public class AgencyAdminSearchService {
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
     fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
 
+    @SuppressWarnings("unchecked")
     Stream<Agency> resultStream = fullTextQuery.getResultStream();
     List<AgencyAdminFullResponseDTO> resultList = resultStream
         .map(AgencyAdminFullResponseDTOBuilder::new)
@@ -83,10 +84,8 @@ public class AgencyAdminSearchService {
         .createQuery();
   }
 
-  private Query buildFullTextSearchQuery(String keyword,
-      FullTextEntityManager fullTextEntityManager) {
-    keyword = TextEscapeUtils.escapeEntities(keyword);
-    return fullTextEntityManager.getSearchFactory()
+  private Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
+    return entityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)
         .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
@@ -98,7 +97,7 @@ public class AgencyAdminSearchService {
         .andField(NAME_SEARCH_FIELD)
         .andField(POST_CODE_SEARCH_FIELD)
         .andField(CITY_SEARCH_FIELD)
-        .matching(keyword)
+        .matching(QueryParserBase.escape(keyword))
         .createQuery();
   }
 
