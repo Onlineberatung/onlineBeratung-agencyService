@@ -1,17 +1,14 @@
 package de.caritas.cob.agencyservice.api.admin.controller;
 
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.AGENCY_POSTCODE_RANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.AGENCY_SEARCH_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CHANGE_AGENCY_TYPE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_PATH;
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_POSTCODE_RANGE_PATH;
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.DELETE_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_PATH;
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_POSTCODERANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PER_PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_DELETE_AGENCY_PATH;
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_AGENCY_POSTCODE_RANGE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGENCY_UPDATE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_RANGE_DTO;
@@ -32,11 +29,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
-import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostCodeRangeAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostcodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
+import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import javax.servlet.http.Cookie;
 import org.jeasy.random.EasyRandom;
@@ -73,7 +70,7 @@ public class AgencyAdminControllerAuthorizationIT {
   private AgencyAdminSearchService agencyAdminFullResponseDTO;
 
   @MockBean
-  private AgencyPostCodeRangeAdminService agencyPostCodeRangeAdminService;
+  private AgencyPostcodeRangeAdminService agencyPostCodeRangeAdminService;
 
   @MockBean
   private DioceseAdminService dioceseAdminService;
@@ -142,7 +139,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void getAgencyPostCodeRanges_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
-    mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH)
+    mvc.perform(get(AGENCY_POSTCODE_RANGE_PATH)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isUnauthorized());
@@ -155,15 +152,12 @@ public class AgencyAdminControllerAuthorizationIT {
   public void getAgencyPostCodeRanges_Should_ReturnOkAndCallDioceseAdminService_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(get(GET_AGENCY_POSTCODERANGE_PATH)
-        .param(PAGE_PARAM, "0")
-        .param(PER_PAGE_PARAM, "1")
+    mvc.perform(get(AGENCY_POSTCODE_RANGE_PATH)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyPostCodeRangeAdminService, times(1)).findPostcodeRangesForAgency(anyInt(),
-        anyInt(), anyLong());
+    verify(this.agencyPostCodeRangeAdminService, times(1)).findPostcodeRangesForAgency(anyLong());
   }
 
   @Test
@@ -231,7 +225,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void deletePostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
-    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH)
+    mvc.perform(delete(AGENCY_POSTCODE_RANGE_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
@@ -245,7 +239,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void deletePostcodeRange_Should_ReturnOKAndCallAgencyAdminServiceAndAgencyValidator_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(delete(DELETE_AGENCY_POSTCODERANGE_PATH + "1")
+    mvc.perform(delete(AGENCY_POSTCODE_RANGE_PATH + "1")
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
@@ -258,7 +252,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void createAgencyPostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
-    mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
+    mvc.perform(post(AGENCY_POSTCODE_RANGE_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
@@ -272,7 +266,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void createAgencyPostcodeRange_Should_ReturnCreatedAndCallAgencyPostCodeRangeAdminService_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(post(CREATE_AGENCY_POSTCODE_RANGE_PATH)
+    mvc.perform(post(AGENCY_POSTCODE_RANGE_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .content(VALID_POSTCODE_RANGE_DTO)
         .cookie(CSRF_COOKIE)
@@ -280,14 +274,14 @@ public class AgencyAdminControllerAuthorizationIT {
         .andExpect(status().isCreated());
 
     verify(this.agencyPostCodeRangeAdminService, times(1))
-        .createPostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));
+        .createPostcodeRanges(Mockito.anyLong(), Mockito.any(PostcodeRangeDTO.class));
   }
 
   @Test
   public void updateAgencyPostcodeRange_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
-    mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+    mvc.perform(put(AGENCY_POSTCODE_RANGE_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(CSRF_COOKIE)
         .header(CSRF_HEADER, CSRF_VALUE))
@@ -301,7 +295,7 @@ public class AgencyAdminControllerAuthorizationIT {
   public void updateAgencyPostcodeRange_Should_ReturnOkAndCallAgencyPostCodeRangeAdminService_When_agencyAdminAuthority()
       throws Exception {
 
-    mvc.perform(put(UPDATE_AGENCY_POSTCODE_RANGE_PATH)
+    mvc.perform(put(AGENCY_POSTCODE_RANGE_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .content(VALID_POSTCODE_RANGE_DTO)
         .cookie(CSRF_COOKIE)
@@ -309,7 +303,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .andExpect(status().isOk());
 
     verify(this.agencyPostCodeRangeAdminService, times(1))
-        .updatePostcodeRange(Mockito.anyLong(), Mockito.any(PostCodeRangeDTO.class));
+        .updatePostcodeRange(Mockito.anyLong(), Mockito.any(PostcodeRangeDTO.class));
   }
 
   @Test

@@ -218,10 +218,10 @@ public class AgencyAdminFullResponseDTOIT {
       assertThat(agencyLinks.getUpdate().getMethod(), is(MethodEnum.PUT));
       assertThat(agencyLinks.getUpdate().getHref(),
           endsWith(String.format("/agencyadmin/agencies/%s", result.getEmbedded().getId())));
-      assertThat(agencyLinks.getPostcoderanges(), notNullValue());
-      assertThat(agencyLinks.getPostcoderanges().getMethod(), is(MethodEnum.GET));
-      assertThat(agencyLinks.getPostcoderanges().getHref(),
-          endsWith(String.format("/agencyadmin/agencies/%s/postcoderanges?page=%s&perPage=%s", result.getEmbedded().getId(), 1, 20)));
+      assertThat(agencyLinks.getPostcodeRanges(), notNullValue());
+      assertThat(agencyLinks.getPostcodeRanges().getMethod(), is(MethodEnum.GET));
+      assertThat(agencyLinks.getPostcodeRanges().getHref(),
+          endsWith(String.format("/agencyadmin/postcoderanges/%s", result.getEmbedded().getId())));
     }
   }
 }

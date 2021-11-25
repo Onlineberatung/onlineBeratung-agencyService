@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.repository.agencypostcoderange;
 
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,7 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class AgencyPostCodeRange {
+public class AgencyPostcodeRange {
 
   @Id
   @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency_postcode_range")
@@ -45,12 +46,12 @@ public class AgencyPostCodeRange {
   @NonNull
   @Size(max = 5)
   @Column(name = "postcode_from", nullable = false)
-  private String postCodeFrom;
+  private String postcodeFrom;
 
   @NonNull
   @Size(max = 5)
   @Column(name = "postcode_to", nullable = false)
-  private String postCodeTo;
+  private String postcodeTo;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "agency_id", nullable = false)
@@ -61,4 +62,21 @@ public class AgencyPostCodeRange {
 
   @Column(name = "update_date")
   private LocalDateTime updateDate;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof AgencyPostcodeRange)) {
+      return false;
+    }
+    AgencyPostcodeRange that = (AgencyPostcodeRange) o;
+    return postcodeFrom.equals(that.postcodeFrom) && postcodeTo.equals(that.postcodeTo);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(postcodeFrom, postcodeTo);
+  }
 }

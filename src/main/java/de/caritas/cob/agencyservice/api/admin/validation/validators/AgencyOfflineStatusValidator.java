@@ -15,7 +15,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineSt
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
+import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRangeRepository;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
 
   private final @NonNull AgencyRepository agencyRepository;
-  private final @NonNull AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
+  private final @NonNull AgencyPostcodeRangeRepository agencyPostCodeRangeRepository;
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull ConsultingTypeManager consultingTypeManager;
 
