@@ -21,7 +21,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineSt
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRangeRepository;
+import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRangeRepository;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +56,7 @@ class AgencyOfflineStatusValidatorTest {
   AgencyRepository agencyRepository;
 
   @Mock
-  AgencyPostCodeRangeRepository agencyPostCodeRangeRepository;
+  AgencyPostcodeRangeRepository agencyPostCodeRangeRepository;
 
   @Mock
   UserAdminService userAdminService;
