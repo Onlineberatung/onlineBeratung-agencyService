@@ -21,8 +21,8 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
 
   private final Set<AgencyPostcodeRange> agencyPostcodeRanges;
   private final Long agencyId;
-  private final PostcodeRangeTransformator postcodeRangeTransformator =
-      new PostcodeRangeTransformator();
+  private final PostcodeRangeTransformer postcodeRangeTransformer =
+      new PostcodeRangeTransformer();
 
   private AgencyPostcodeRangeResponseDTOBuilder(Set<AgencyPostcodeRange> agencyPostcodeRanges,
       Long agencyId) {
@@ -55,7 +55,7 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
     return new PostcodeRangeResponseDTO()
         .id(this.agencyId)
         .postcodeRanges(
-            this.postcodeRangeTransformator.buildPostcodeRange(this.agencyPostcodeRanges));
+            this.postcodeRangeTransformer.buildPostcodeRange(this.agencyPostcodeRanges));
   }
 
   private DefaultLinks buildDefaultLinks() {
@@ -86,6 +86,6 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
   private PostcodeRangeDTO fromAgencyPostCodeRanges() {
     return new PostcodeRangeDTO()
         .postcodeRanges(
-            this.postcodeRangeTransformator.buildPostcodeRange(this.agencyPostcodeRanges));
+            this.postcodeRangeTransformer.buildPostcodeRange(this.agencyPostcodeRanges));
   }
 }

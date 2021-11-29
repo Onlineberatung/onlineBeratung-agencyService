@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -14,15 +15,15 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class PostcodeRangeTransformatorTest {
+class PostcodeRangeTransformerTest {
 
-  private final PostcodeRangeTransformator postcodeRangeTransformator =
-      new PostcodeRangeTransformator();
+  private final PostcodeRangeTransformer postcodeRangeTransformer =
+      new PostcodeRangeTransformer();
 
   @ParameterizedTest
   @NullAndEmptySource
   void extractPostcodeRanges_Should_returnEmptySet_When_inputIsEmptyOrNull(String input) {
-    var result = this.postcodeRangeTransformator.extractPostcodeRanges(input);
+    var result = this.postcodeRangeTransformer.extractPostcodeRanges(input);
 
     assertThat(result, notNullValue());
     assertThat(result, hasSize(0));
@@ -30,34 +31,32 @@ class PostcodeRangeTransformatorTest {
 
   @Test
   void extractPostcodeRanges_Should_returnExpectedRanges_When_inputIsValid() {
-    var validInput = "11111;22222-33333;44444-55555;66666;77777-99999";
+    var validInput = "01067-11111;22222-33333;44444-55555;66666;77777-99999";
 
-    var result = this.postcodeRangeTransformator.extractPostcodeRanges(validInput);
+    var result = this.postcodeRangeTransformer.extractPostcodeRanges(validInput);
 
     assertThat(result, hasSize(5));
-    var iterator = result.iterator();
-    var next = iterator.next();
-    assertThat(next.getPostcodeFrom(), is("11111"));
-    assertThat(next.getPostcodeTo(), is("11111"));
-    next = iterator.next();
-    assertThat(next.getPostcodeFrom(), is("22222"));
-    assertThat(next.getPostcodeTo(), is("33333"));
-    next = iterator.next();
-    assertThat(next.getPostcodeFrom(), is("44444"));
-    assertThat(next.getPostcodeTo(), is("55555"));
-    next = iterator.next();
-    assertThat(next.getPostcodeFrom(), is("77777"));
-    assertThat(next.getPostcodeTo(), is("99999"));
-    next = iterator.next();
-    assertThat(next.getPostcodeFrom(), is("66666"));
-    assertThat(next.getPostcodeTo(), is("66666"));
+    assertThat(result, containsInAnyOrder(
+        buildPostcodeRange("01067", "11111"),
+        buildPostcodeRange("22222", "33333"),
+        buildPostcodeRange("44444", "55555"),
+        buildPostcodeRange("66666", "66666"),
+        buildPostcodeRange("77777", "99999")
+    ));
+  }
+
+  private AgencyPostcodeRange buildPostcodeRange(String postcodeFrom, String postcodeTo) {
+    return AgencyPostcodeRange.builder()
+        .postcodeFrom(postcodeFrom)
+        .postcodeTo(postcodeTo)
+        .build();
   }
 
   @ParameterizedTest
   @NullAndEmptySource
   void buildPostcodeRange_Should_returnEmptyString_When_inputIsEmptyOrNull(
       Set<AgencyPostcodeRange> postcodeRanges) {
-    var result = this.postcodeRangeTransformator.buildPostcodeRange(postcodeRanges);
+    var result = this.postcodeRangeTransformer.buildPostcodeRange(postcodeRanges);
 
     assertThat(result, is(""));
   }
@@ -70,7 +69,7 @@ class PostcodeRangeTransformatorTest {
         AgencyPostcodeRange.builder().postcodeFrom("66666").postcodeTo("66666").build(),
         AgencyPostcodeRange.builder().postcodeFrom("11111").postcodeTo("22222").build()
     );
-    var result = this.postcodeRangeTransformator.buildPostcodeRange(postcodeRanges);
+    var result = this.postcodeRangeTransformer.buildPostcodeRange(postcodeRanges);
 
     assertThat(result, is("11111-22222;33333;44444-55555;66666;"));
   }

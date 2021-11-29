@@ -209,7 +209,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void getAgencyPostCodeRanges_Should_returnOk_When_requiredPaginationParamsAreGiven()
+  public void getAgencyPostCodeRanges_Should_returnOk()
       throws Exception {
     this.mvc
         .perform(get(AGENCY_POSTCODE_RANGE_PATH))
@@ -220,7 +220,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void deleteAgencyPostCodeRange_Should_returnOk_When_requiredPaginationParamsAreGiven()
+  public void deleteAgencyPostCodeRange_Should_returnOk()
       throws Exception {
     this.mvc.perform(delete(AGENCY_POSTCODE_RANGE_PATH))
         .andExpect(status().isOk());

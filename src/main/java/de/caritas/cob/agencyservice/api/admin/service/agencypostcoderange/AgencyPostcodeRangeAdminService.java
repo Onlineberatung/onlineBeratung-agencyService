@@ -84,7 +84,7 @@ public class AgencyPostcodeRangeAdminService {
   private AgencyPostcodeRangeResponseDTO validateAndSavePostcodeRanges(
       PostcodeRangeDTO postCodeRangeDTO, Agency agency) {
 
-    var newAgencyPostcodeRanges = new PostcodeRangeTransformator()
+    var newAgencyPostcodeRanges = new PostcodeRangeTransformer()
         .extractPostcodeRanges(postCodeRangeDTO.getPostcodeRanges());
     var existingAgencyPostcodeRanges = agency.getAgencyPostcodeRanges();
 

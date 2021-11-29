@@ -15,7 +15,7 @@ import joptsimple.internal.Strings;
 /**
  * Transformator to represent postcode range strings as entity objects and vice versa.
  */
-public class PostcodeRangeTransformator {
+public class PostcodeRangeTransformer {
 
   /**
    * Extracts a postcode range string e.g. 79100-79112;80437;56342-46440 into a {@link Set} of
