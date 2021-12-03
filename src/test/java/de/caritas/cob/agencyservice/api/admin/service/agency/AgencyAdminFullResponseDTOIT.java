@@ -113,6 +113,26 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
+  public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlautReplacements() {
+    agencyAdminFullResponseDTO
+        .searchAgencies("Uberlingen", 0, 4)
+        .getEmbedded()
+        .forEach(agency ->
+            assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
+        );
+  }
+
+  @Test
+  public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlauts() {
+    agencyAdminFullResponseDTO
+        .searchAgencies("Überlingen", 0, 4)
+        .getEmbedded()
+        .forEach(
+            agency -> assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
+        );
+  }
+
+  @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsValidPlz() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
         .searchAgencies("88662", 0, 5)
@@ -147,10 +167,30 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
-  public void searchAgencies_Should_returnValidResult_When_keywordareSpecialCharacters() {
-    String specialChars = "!§$%&/()=?#'*+`^^><";
+  public void searchAgencies_Should_returnValidResult_When_keywordContainsOnlySpecialCharacters() {
+    var agencies = agencyAdminFullResponseDTO
+        .searchAgencies("§$%=#'`><", 0, 5)
+        .getEmbedded();
 
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    assertThat(agencies, notNullValue());
+  }
+
+  @Test
+  public void searchAgencies_Should_returnValidResult_When_keywordHasSpecialCharacters() {
+    var specialChars = "halle§$%=#'`><";
+
+    var agencies = agencyAdminFullResponseDTO
+        .searchAgencies(specialChars, 0, 5)
+        .getEmbedded();
+
+    assertThat(agencies, notNullValue());
+  }
+
+  @Test
+  public void searchAgencies_Should_returnValidResult_When_keywordHasLuceneQuerySyntax() {
+    var specialChars = "halle+-&|!(){}[]^\"~*?:\\/";
+
+    var agencies = agencyAdminFullResponseDTO
         .searchAgencies(specialChars, 0, 5)
         .getEmbedded();
 
@@ -218,10 +258,10 @@ public class AgencyAdminFullResponseDTOIT {
       assertThat(agencyLinks.getUpdate().getMethod(), is(MethodEnum.PUT));
       assertThat(agencyLinks.getUpdate().getHref(),
           endsWith(String.format("/agencyadmin/agencies/%s", result.getEmbedded().getId())));
-      assertThat(agencyLinks.getPostcoderanges(), notNullValue());
-      assertThat(agencyLinks.getPostcoderanges().getMethod(), is(MethodEnum.GET));
-      assertThat(agencyLinks.getPostcoderanges().getHref(),
-          endsWith(String.format("/agencyadmin/agencies/%s/postcoderanges?page=%s&perPage=%s", result.getEmbedded().getId(), 1, 20)));
+      assertThat(agencyLinks.getPostcodeRanges(), notNullValue());
+      assertThat(agencyLinks.getPostcodeRanges().getMethod(), is(MethodEnum.GET));
+      assertThat(agencyLinks.getPostcodeRanges().getHref(),
+          endsWith(String.format("/agencyadmin/postcoderanges/%s", result.getEmbedded().getId())));
     }
   }
 }
