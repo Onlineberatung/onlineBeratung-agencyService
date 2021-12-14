@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
-import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
+import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -35,6 +35,7 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.hibernate.search.bridge.builtin.LongBridge;
+
 
 /**
  * Agency entity
@@ -133,10 +134,10 @@ public class Agency {
   private LocalDateTime updateDate;
 
   @OneToMany(
-      targetEntity = AgencyPostCodeRange.class,
+      targetEntity = AgencyPostcodeRange.class,
       mappedBy = "agency",
       fetch = FetchType.LAZY
   )
-  private List<AgencyPostCodeRange> agencyPostCodeRanges;
+  private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
 }

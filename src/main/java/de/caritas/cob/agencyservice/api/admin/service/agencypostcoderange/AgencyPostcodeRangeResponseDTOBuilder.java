@@ -7,10 +7,11 @@ import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.DefaultLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeDTO;
-import de.caritas.cob.agencyservice.api.model.PostCodeRangeResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostCodeRange;
+import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
+import de.caritas.cob.agencyservice.api.model.PostcodeRangeResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
+import java.util.Set;
 
 /**
  * Builder class to generate a {@link AgencyPostcodeRangeResponseDTO} containing navigation hal
@@ -18,10 +19,15 @@ import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminAp
  */
 public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
 
-  private final AgencyPostCodeRange agencyPostCodeRange;
+  private final Set<AgencyPostcodeRange> agencyPostcodeRanges;
+  private final Long agencyId;
+  private final PostcodeRangeTransformer postcodeRangeTransformer =
+      new PostcodeRangeTransformer();
 
-  private AgencyPostcodeRangeResponseDTOBuilder(AgencyPostCodeRange agencyPostCodeRange) {
-    this.agencyPostCodeRange = agencyPostCodeRange;
+  private AgencyPostcodeRangeResponseDTOBuilder(Set<AgencyPostcodeRange> agencyPostcodeRanges,
+      Long agencyId) {
+    this.agencyPostcodeRanges = agencyPostcodeRanges;
+    this.agencyId = agencyId;
   }
 
   /**
@@ -30,8 +36,8 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
    * @return a instance of {@link AgencyPostcodeRangeResponseDTOBuilder}
    */
   public static AgencyPostcodeRangeResponseDTOBuilder getInstance(
-      AgencyPostCodeRange agencyPostCodeRange) {
-    return new AgencyPostcodeRangeResponseDTOBuilder(agencyPostCodeRange);
+      Set<AgencyPostcodeRange> agencyPostCodeRange, Long agencyId) {
+    return new AgencyPostcodeRangeResponseDTOBuilder(agencyPostCodeRange, agencyId);
   }
 
   /**
@@ -45,14 +51,11 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
         .links(buildDefaultLinks());
   }
 
-  private PostCodeRangeResponseDTO buildEmbedded() {
-    return new PostCodeRangeResponseDTO()
-        .agencyId(this.agencyPostCodeRange.getAgency().getId())
-        .id(agencyPostCodeRange.getId())
-        .postcodeFrom(agencyPostCodeRange.getPostCodeFrom())
-        .postcodeTo(agencyPostCodeRange.getPostCodeTo())
-        .createDate(String.valueOf(agencyPostCodeRange.getCreateDate()))
-        .updateDate(String.valueOf(agencyPostCodeRange.getUpdateDate()));
+  private PostcodeRangeResponseDTO buildEmbedded() {
+    return new PostcodeRangeResponseDTO()
+        .id(this.agencyId)
+        .postcodeRanges(
+            this.postcodeRangeTransformer.buildPostcodeRange(this.agencyPostcodeRanges));
   }
 
   private DefaultLinks buildDefaultLinks() {
@@ -64,27 +67,25 @@ public class AgencyPostcodeRangeResponseDTOBuilder implements HalLinkBuilder {
 
   private HalLink buildSelfLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class).getAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
+        methodOn(AgencyadminApi.class).getAgencyPostcodeRanges(this.agencyId),
         MethodEnum.GET);
   }
 
   private HalLink buildUpdateLink() {
     return buildHalLink(
         methodOn(AgencyadminApi.class)
-            .updateAgencyPostcodeRange(this.agencyPostCodeRange.getId(),
-                fromAgencyPostCodeRange(this.agencyPostCodeRange)),
-        MethodEnum.PUT);
+            .updateAgencyPostcodeRange(this.agencyId, fromAgencyPostCodeRanges()), MethodEnum.PUT);
   }
 
   private HalLink buildDeleteLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class).deleteAgencyPostcodeRange(this.agencyPostCodeRange.getId()),
+        methodOn(AgencyadminApi.class).deleteAgencyPostcodeRange(this.agencyId),
         MethodEnum.DELETE);
   }
 
-  private PostCodeRangeDTO fromAgencyPostCodeRange(AgencyPostCodeRange range) {
-    return new PostCodeRangeDTO()
-        .postcodeFrom(range.getPostCodeFrom())
-        .postcodeTo(range.getPostCodeTo());
+  private PostcodeRangeDTO fromAgencyPostCodeRanges() {
+    return new PostcodeRangeDTO()
+        .postcodeRanges(
+            this.postcodeRangeTransformer.buildPostcodeRange(this.agencyPostcodeRanges));
   }
 }

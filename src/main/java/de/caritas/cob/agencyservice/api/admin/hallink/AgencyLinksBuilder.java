@@ -40,7 +40,7 @@ public class AgencyLinksBuilder implements HalLinkBuilder {
         .self(buildSelfLink())
         .delete(buildDeleteHalLink())
         .update(buildUpdateHalLink())
-        .postcoderanges(buildPostcodeRangesLink());
+        .postcodeRanges(buildPostcodeRangesLink());
   }
 
   private HalLink buildSelfLink() {
@@ -59,7 +59,7 @@ public class AgencyLinksBuilder implements HalLinkBuilder {
 
   private HalLink buildPostcodeRangesLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class).getAgencyPostcodeRanges(agency.getId(), RootDTOBuilder.DEFAULT_PAGE, RootDTOBuilder.DEFAULT_PER_PAGE), MethodEnum.GET);
+        methodOn(AgencyadminApi.class).getAgencyPostcodeRanges(agency.getId()), MethodEnum.GET);
   }
 
 }

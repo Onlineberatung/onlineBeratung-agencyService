@@ -91,12 +91,12 @@ public class AgencyAdminServiceIT {
         endsWith(
             String.format(
                 "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
-    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
+    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcodeRanges(), notNullValue());
     assertThat(
-        agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getPostcodeRanges().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
+                "/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
   }
 
   private AgencyDTO createAgencyDTO() {
@@ -172,12 +172,12 @@ public class AgencyAdminServiceIT {
         endsWith(
             String.format(
                 "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
-    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcoderanges(), notNullValue());
+    assertThat(agencyAdminFullResponseDTO.getLinks().getPostcodeRanges(), notNullValue());
     assertThat(
-        agencyAdminFullResponseDTO.getLinks().getPostcoderanges().getHref(),
+        agencyAdminFullResponseDTO.getLinks().getPostcodeRanges().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s/postcoderanges?page=%s&perPage=%s", agencyAdminFullResponseDTO.getEmbedded().getId(), 1, 20)));
+                "/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
   }
 
   @Test
