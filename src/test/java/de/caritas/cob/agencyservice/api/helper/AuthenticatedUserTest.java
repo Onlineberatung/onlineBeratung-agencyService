@@ -9,7 +9,7 @@ public class AuthenticatedUserTest {
 
   @Test(expected = NullPointerException.class)
   public void AuthenticatedUser_Should_ThrowNullPointerExceptionWhenArgumentsAreNull() {
-    new AuthenticatedUser(null, null, null);
+    new AuthenticatedUser(null, null, null, null);
   }
 
   @Test(expected = NullPointerException.class)
