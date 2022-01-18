@@ -44,6 +44,8 @@ public class AgencyAdminSearchService {
    * @param perPage the amount of items in one page
    * @return the result list
    */
+  //TODO: handle this case. filter is not applied in this case and
+  // hibernate filters don't work at all with this fulltext search
   public AgencyAdminSearchResultDTO searchAgencies(final String keyword, final Integer page,
       final Integer perPage) {
     FullTextEntityManager fullTextEntityManager = Search

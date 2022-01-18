@@ -25,6 +25,9 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
@@ -51,6 +54,8 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 @Setter
 @Indexed
 @Builder
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @AnalyzerDef(name = Agency.SEARCH_ANALYZER,
     tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
     filters = {
@@ -140,4 +145,6 @@ public class Agency {
   )
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
+  @Column(name = "tenant_id", nullable = false)
+  private String tenantId;
 }

@@ -4,10 +4,10 @@ import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_AD
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
+import de.caritas.cob.agencyservice.filter.TenantFilter;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticatedActionsFilter;
@@ -67,6 +67,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     http.csrf().disable()
         .addFilterBefore(new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty),
             CsrfFilter.class)
+        .addFilterAfter(new TenantFilter(), KeycloakAuthenticatedActionsFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers("/agencies/**").permitAll()
@@ -113,9 +114,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * the web application context. Therefore, when running the Keycloak Spring Security adapter in a
    * Spring Boot environment, it may be necessary to add FilterRegistrationBeans to your security
    * configuration to prevent the Keycloak filters from being registered twice."
-   *
+   * <p>
    * https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc
-   *
+   * <p>
    * {@link package.class#member label}
    */
   @SuppressWarnings({"rawtypes", "unchecked"})

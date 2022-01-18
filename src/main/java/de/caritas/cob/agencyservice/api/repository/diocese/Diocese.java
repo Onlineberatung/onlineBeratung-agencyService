@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * Diocese entity.
@@ -23,6 +26,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class Diocese {
 
   @Id
@@ -40,4 +45,7 @@ public class Diocese {
 
   @Column(name = "update_date")
   private LocalDateTime updateDate;
+
+  @Column(name = "tenant_id", nullable = false)
+  private String tenantId;
 }

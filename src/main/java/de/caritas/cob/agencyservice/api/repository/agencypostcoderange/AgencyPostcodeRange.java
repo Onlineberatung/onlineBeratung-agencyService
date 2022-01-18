@@ -21,6 +21,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * PostCodeRange entity
@@ -35,6 +38,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class AgencyPostcodeRange {
 
   @Id
@@ -62,6 +67,9 @@ public class AgencyPostcodeRange {
 
   @Column(name = "update_date")
   private LocalDateTime updateDate;
+
+  @Column(name = "tenant_id", nullable = false)
+  private String tenantId;
 
   @Override
   public boolean equals(Object o) {
