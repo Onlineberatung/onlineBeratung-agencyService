@@ -56,7 +56,7 @@ public class TenantFilter extends OncePerRequestFilter {
         ((KeycloakAuthenticationToken) request.getUserPrincipal()).getAccount()
             .getKeycloakSecurityContext();
     Map<String, Object> claimMap = keycloakSecContext.getToken().getOtherClaims();
-    logger.warn("tenantID"+claimMap.toString());
+    logger.warn("tenantID" + claimMap.toString());
     return getUserAttribute(claimMap, "tenantId");
   }
 

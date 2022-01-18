@@ -89,8 +89,8 @@ public class AgencyPostcodeRangeAdminService {
         .extractPostcodeRanges(postCodeRangeDTO.getPostcodeRanges());
     //TODO: consider this change. i replaced lazyloading with repo call, since
     // lazy loading doesnt work well with hibernate filters
-    var existingAgencyPostcodeRanges = new ArrayList<>(agencyPostCodeRangeRepository.findAllByAgencyId(agency.getId()));
-//        agency.getAgencyPostcodeRanges();
+    var existingAgencyPostcodeRanges = new ArrayList<>(
+        agencyPostCodeRangeRepository.findAllByAgencyId(agency.getId()));
 
     this.postcodeRangeValidator.validatePostcodeRanges(newAgencyPostcodeRanges);
 
