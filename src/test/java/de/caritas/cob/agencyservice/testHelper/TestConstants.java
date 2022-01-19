@@ -1,15 +1,15 @@
 package de.caritas.cob.agencyservice.testHelper;
 
-import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
-import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
 import java.util.Map;
 
 public class TestConstants {
@@ -42,109 +42,71 @@ public class TestConstants {
   public static final int CONSULTING_TYPE_REGIONAL = 19;
   public static final Long WHITESPOT_AGENCY_ID = 100L;
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_LOCKED_AGENCIES =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_KREUZBUND,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), true);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_KREUZBUND, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), true);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_AIDS =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_AIDS,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_AIDS, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_CHILDREN =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_CHILDREN,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_CHILDREN, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_CURE =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_CURE,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_CURE, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_DEBT =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_DEBT,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_DEBT, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_DISABILITY =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_DISABILITY,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_DISABILITY, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_LAW =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_LAW,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_LAW, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_OFFENDER =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_OFFENDER,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_OFFENDER, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_PARENTING =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_PARENTING,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_PARENTING, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_PLANB =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_PLANB,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_PLANB, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_PREGNANCY =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_PREGNANCY,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_PREGNANCY,
+          new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_REHABILITATION =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_REHABILITATION,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_REHABILITATION,
+          new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_SENIORITY =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SENIORITY,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SENIORITY,
+          new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_SOCIAL =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SOCIAL,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SOCIAL, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_SUCHT =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SUCHT,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SUCHT, new WhiteSpot(true, WHITESPOT_AGENCY_ID),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_U25 =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_U25, new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_U25, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_KREUZBUND =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_KREUZBUND,
-              new WhiteSpot(false, null),
-              new Registration(3), true);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_KREUZBUND, new WhiteSpot(false, null),
+          new Registration(3), true);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_MIGRATION =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_MIGRATION,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_MIGRATION, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_EMIGRATION =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_EMIGRATION,
-              new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(5), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_EMIGRATION,
+          new WhiteSpot(true, WHITESPOT_AGENCY_ID), new Registration(5), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_HOSPICE =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_HOSPICE,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_HOSPICE, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_REGIONAL =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_REGIONAL,
-              new WhiteSpot(false, null),
-              new Registration(3), false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_REGIONAL, new WhiteSpot(false, null),
+          new Registration(3), false);
   public static final Map<Integer, ExtendedConsultingTypeResponseDTO> CONSULTING_TYPE_SETTINGS_MAP =
       new HashMap<>() {
         private static final long serialVersionUID = 1L;
-
         {
           put(CONSULTING_TYPE_SUCHT, CONSULTING_TYPE_SETTINGS_SUCHT);
           put(CONSULTING_TYPE_U25, CONSULTING_TYPE_SETTINGS_U25);
@@ -205,8 +167,7 @@ public class TestConstants {
           false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null,
-      null, null);
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
@@ -217,22 +178,18 @@ public class TestConstants {
       new FullAgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
           .consultingType(CONSULTING_TYPE_SUCHT).url(null).external(false);
-  public static final List<FullAgencyResponseDTO> FULL_AGENCY_RESPONSE_DTO_LIST = Collections
-      .singletonList(
-          FULL_AGENCY_RESPONSE_DTO);
+  public static final List<FullAgencyResponseDTO> FULL_AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(
+      FULL_AGENCY_RESPONSE_DTO);
   public static final int MIN_POSTCODE_SIZE_3 = 3;
   public static final WhiteSpot WHITESPOT_AGENCIES_SUCHT = new WhiteSpot(true, WHITESPOT_AGENCY_ID);
   public static final WhiteSpot WHITESPOT_AGENCIES_U25 = new WhiteSpot(false, WHITESPOT_AGENCY_ID);
   public static final Registration REGISTRATION_SUCHT = new Registration(MIN_POSTCODE_SIZE_3);
   public static final Registration REGISTRATION_U25 = new Registration(MIN_POSTCODE_SIZE_3);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SUCHT, WHITESPOT_AGENCIES_SUCHT,
-              REGISTRATION_SUCHT, false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_SUCHT, WHITESPOT_AGENCIES_SUCHT,
+          REGISTRATION_SUCHT, false);
   public static final ExtendedConsultingTypeResponseDTO CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY =
-      ExtendedConsultingTypeResponseDTOHelper
-          .createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_U25, WHITESPOT_AGENCIES_U25,
-              REGISTRATION_U25, false);
+      ExtendedConsultingTypeResponseDTOHelper.createExtendedConsultingTypeResponseDTO(CONSULTING_TYPE_U25, WHITESPOT_AGENCIES_U25, REGISTRATION_U25, false);
 
   public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
