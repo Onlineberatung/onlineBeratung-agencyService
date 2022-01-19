@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
  * Repository for the Agency entity in tenant context
  */
 @Primary
-@ConditionalOnExpression("${tenant.feature.enabled:true}")
+@ConditionalOnExpression("${multitenancy.enabled:true}")
 public interface AgencyTenantSupportRepository extends AgencyRepository {
 
   /**

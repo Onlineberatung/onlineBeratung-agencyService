@@ -3,8 +3,8 @@ package de.caritas.cob.agencyservice.config;
 import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
+import de.caritas.cob.agencyservice.filter.HttpTenantFilter;
 import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
-import de.caritas.cob.agencyservice.filter.TenantFilter;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -48,6 +48,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Autowired
   private Environment environment;
 
+  @Value("${multitenancy.enabled}")
+  private boolean multitenancy;
+
   /**
    * Processes HTTP requests and checks for a valid spring security authentication for the
    * (Keycloak) principal (authorization header).
@@ -64,11 +67,16 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http.csrf().disable()
+    HttpSecurity httpSecurity = http.csrf().disable()
         .addFilterBefore(new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty),
-            CsrfFilter.class)
-        .addFilterAfter(new TenantFilter(), KeycloakAuthenticatedActionsFilter.class)
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            CsrfFilter.class);
+
+    if (multitenancy) {
+      httpSecurity = httpSecurity
+          .addFilterAfter(new HttpTenantFilter(), KeycloakAuthenticatedActionsFilter.class);
+    }
+
+    httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers("/agencies/**").permitAll()
         .antMatchers(WHITE_LIST).permitAll()

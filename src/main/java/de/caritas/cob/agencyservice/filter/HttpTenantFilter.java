@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -16,7 +17,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Component
-public class TenantFilter extends OncePerRequestFilter {
+@ConditionalOnExpression("${multitenancy.enabled:true}")
+public class HttpTenantFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -48,7 +50,6 @@ public class TenantFilter extends OncePerRequestFilter {
   private String resolveTenantIdFromClaim(HttpServletRequest request) {
 
     if (request.getUserPrincipal() == null) {
-      logger.warn("getUserPrincipal null");
       return null;
     }
 
