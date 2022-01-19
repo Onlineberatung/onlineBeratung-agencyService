@@ -1,6 +1,5 @@
-package de.caritas.cob.agencyservice.api.service.aspect;
+package de.caritas.cob.agencyservice.api.tenant;
 
-import de.caritas.cob.agencyservice.filter.TenantContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;

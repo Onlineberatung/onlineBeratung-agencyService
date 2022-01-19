@@ -1,6 +1,10 @@
-package de.caritas.cob.agencyservice.filter;
+package de.caritas.cob.agencyservice.api.tenant;
 
 public class TenantContext {
+
+  private TenantContext() {
+
+  }
 
   private static ThreadLocal<String> currentTenant = new ThreadLocal<>();
 
@@ -13,6 +17,6 @@ public class TenantContext {
   }
 
   public static void clear() {
-    currentTenant.set(null);
+    currentTenant.remove();
   }
 }

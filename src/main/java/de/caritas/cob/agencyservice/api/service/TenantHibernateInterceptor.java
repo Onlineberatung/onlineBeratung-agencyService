@@ -2,7 +2,7 @@ package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
-import de.caritas.cob.agencyservice.filter.TenantContext;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import java.io.Serializable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
