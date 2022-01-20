@@ -15,8 +15,6 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,16 +45,9 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
   @Autowired
   private AgencyRepository agencyRepository;
 
-  @PersistenceContext
-  EntityManager entityManager;
-
-  static {
-    TenantContext.setCurrentTenant("1");
-  }
-
   @Test
   public void saveAgency_Should_PersistsAgency() {
-
+    TenantContext.setCurrentTenant("1");
     AgencyDTO agencyDTO = createAgencyDTO();
 
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
@@ -72,11 +63,12 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
     assertEquals("Agency description", agency.getDescription());
     assertEquals("Agency name", agency.getName());
     assertTrue(agency.isOffline());
+    TenantContext.clear();
   }
 
   @Test
   public void saveAgency_Should_SetOfflineToTrue_WhenPersistsAgency() {
-
+    TenantContext.setCurrentTenant("1");
     AgencyDTO agencyDTO = createAgencyDTO();
 
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
@@ -86,11 +78,12 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.get();
     assertTrue(agency.isOffline());
+    TenantContext.clear();
   }
 
   @Test
   public void saveAgency_Should_ProvideValidAgencyLinks() {
-
+    TenantContext.setCurrentTenant("1");
     AgencyDTO agencyDTO = createAgencyDTO();
 
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
@@ -120,6 +113,7 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
             String.format(
                 "/agencyadmin/postcoderanges/%s",
                 agencyAdminFullResponseDTO.getEmbedded().getId())));
+    TenantContext.clear();
   }
 
   private AgencyDTO createAgencyDTO() {
@@ -138,7 +132,7 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
 
   @Test
   public void updateAgency_Should_PersistsAgencyChanges() {
-
+    TenantContext.setCurrentTenant("1");
     UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO
         = agencyAdminService.updateAgency(0L, updateAgencyDTO);
@@ -152,6 +146,7 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
     assertEquals(updateAgencyDTO.getName(), agency.getName());
     assertEquals(updateAgencyDTO.getCity(), agency.getCity());
     assertEquals(updateAgencyDTO.getOffline(), agency.isOffline());
+    TenantContext.clear();
   }
 
   private UpdateAgencyDTO createUpdateAgencyDtoFromExistingAgency() {
@@ -173,7 +168,7 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
 
   @Test
   public void updateAgency_Should_ProvideValidAgencyLinks() {
-
+    TenantContext.setCurrentTenant("1");
     UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
 
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService
@@ -203,10 +198,12 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
             String.format(
                 "/agencyadmin/postcoderanges/%s",
                 agencyAdminFullResponseDTO.getEmbedded().getId())));
+    TenantContext.clear();
   }
 
   @Test
   public void getAgency_Should_returnExpectedAgency_When_agencyWithIdExists() {
+    TenantContext.setCurrentTenant("1");
     Long agencyId = 1L;
 
     AgencyAdminFullResponseDTO result = this.agencyAdminService.findAgency(agencyId);
@@ -218,6 +215,7 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
     assertThat(result.getEmbedded().getConsultingType(), notNullValue());
     assertThat(result.getEmbedded().getName(), notNullValue());
     assertThat(result.getEmbedded().getDioceseId(), notNullValue());
+    TenantContext.clear();
   }
 
 }
