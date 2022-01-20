@@ -2,11 +2,7 @@ package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,15 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,12 +36,12 @@ public class AgencyServiceTenantSupportIT extends AgencyServiceITBase {
   private PlatformTransactionManager transactionManager;
 
   @Before
-  public void beforeEach(){
-    TenantContext.setCurrentTenant(1l);
+  public void beforeEach() {
+    TenantContext.setCurrentTenant(1L);
   }
 
   @After
-  public void afterEach(){
+  public void afterEach() {
     TenantContext.clear();
   }
 

@@ -28,12 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class DioceseAdminServiceTenantSupportIT extends DioceseAdminServiceITBase {
 
   @Before
-  public void beforeEach(){
-    TenantContext.setCurrentTenant(1l);
+  public void beforeEach() {
+    TenantContext.setCurrentTenant(1L);
   }
 
   @After
-  public void afterEach(){
+  public void afterEach() {
     TenantContext.clear();
   }
 

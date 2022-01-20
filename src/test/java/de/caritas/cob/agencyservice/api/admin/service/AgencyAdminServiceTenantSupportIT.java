@@ -1,15 +1,11 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,12 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
 
   @Before
-  public void beforeEach(){
-    TenantContext.setCurrentTenant(1l);
+  public void beforeEach() {
+    TenantContext.setCurrentTenant(1L);
   }
 
   @After
-  public void afterEach(){
+  public void afterEach() {
     TenantContext.clear();
   }
 
