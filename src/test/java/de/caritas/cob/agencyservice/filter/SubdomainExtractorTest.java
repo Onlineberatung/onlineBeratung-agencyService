@@ -1,10 +1,9 @@
 package de.caritas.cob.agencyservice.filter;
 
 
-import static java.util.Optional.*;
+import static java.util.Optional.of;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class SubdomainExtractorTest {

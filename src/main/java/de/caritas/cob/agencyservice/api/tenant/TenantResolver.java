@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.tenant;
 import static java.util.Optional.empty;
 
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 import org.springframework.security.access.AccessDeniedException;
 
 @Slf4j
@@ -35,7 +35,7 @@ public class TenantResolver {
   private Long resolveForNonAuthenticatedUser() {
     Optional<Long> tenantId = resolveTenantFromSubdomain();
     if (tenantId.isEmpty()) {
-        throw new AccessDeniedException("Tenant id could not be resolved");
+      throw new AccessDeniedException("Tenant id could not be resolved");
     }
     return tenantId.get();
   }

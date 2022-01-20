@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestPropertySource(properties = "multitenancy.enabled=true")
 @Transactional
 @Sql(value = "/setTenants.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT{
+public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
 
   @Autowired
   private AgencyAdminService agencyAdminService;
