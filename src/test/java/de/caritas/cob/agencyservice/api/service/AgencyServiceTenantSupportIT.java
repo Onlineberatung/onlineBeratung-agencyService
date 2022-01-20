@@ -4,6 +4,11 @@ import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +16,41 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
-public class AgencyServiceIT extends AgencyServiceITBase {
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
+@TestPropertySource(properties = "multitenancy.enabled=true")
+@Sql(value = "/setTenants.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+@Transactional(propagation = Propagation.NEVER)
+public class AgencyServiceTenantSupportIT extends AgencyServiceITBase {
+
+  @Autowired
+  private PlatformTransactionManager transactionManager;
+
+  @Before
+  public void beforeEach(){
+    TenantContext.setCurrentTenant("1");
+  }
+
+  @After
+  public void afterEach(){
+    TenantContext.clear();
+  }
 
   @Test
   public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven()

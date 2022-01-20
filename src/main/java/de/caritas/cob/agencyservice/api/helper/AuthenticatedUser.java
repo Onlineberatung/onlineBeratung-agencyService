@@ -24,6 +24,4 @@ public class AuthenticatedUser {
   @NonNull
   private String accessToken;
 
-  private Integer tenantId;
-
 }

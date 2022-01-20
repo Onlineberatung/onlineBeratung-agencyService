@@ -8,12 +8,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,10 +24,6 @@ public class AuthenticatedUserConfig {
 
   private static final String CLAIM_NAME_USER_ID = "userId";
   private static final String CLAIM_NAME_USERNAME = "username";
-
-
-  @Value("${multitenancy.enabled}")
-  private boolean multitenancyEnabled;
 
   /**
    * Returns the @KeycloakAuthenticationToken which represents the token for a Keycloak
@@ -63,30 +57,18 @@ public class AuthenticatedUserConfig {
   @Bean
   @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
   public AuthenticatedUser getAuthenticatedUser() {
-    KeycloakAuthenticationToken userPrincipal = (KeycloakAuthenticationToken) getRequest().getUserPrincipal();
-    var keycloakSecurityContext = userPrincipal.getAccount().getKeycloakSecurityContext();
-    Map<String, Object> claimMap = keycloakSecurityContext.getToken().getOtherClaims();
-    return createAuthenticatedUser(keycloakSecurityContext, claimMap);
-  }
 
-  private AuthenticatedUser createAuthenticatedUser(
-      KeycloakSecurityContext keycloakSecurityContext, Map<String, Object> claimMap) {
+    KeycloakSecurityContext keycloakSecContext =
+        ((KeycloakAuthenticationToken) getRequest().getUserPrincipal()).getAccount()
+            .getKeycloakSecurityContext();
+    Map<String, Object> claimMap = keycloakSecContext.getToken().getOtherClaims();
+
     AuthenticatedUser authenticatedUser = new AuthenticatedUser();
-    authenticatedUser.setAccessToken(getUserAccessToken(keycloakSecurityContext));
+    authenticatedUser.setAccessToken(getUserAccessToken(keycloakSecContext));
     authenticatedUser.setUserId(getUserAttribute(claimMap, CLAIM_NAME_USER_ID));
     authenticatedUser.setUsername(getUserAttribute(claimMap, CLAIM_NAME_USERNAME));
-    if (multitenancyEnabled) {
-      authenticatedUser.setTenantId(findTenantIdInAccessToken(keycloakSecurityContext));
-    }
-    return authenticatedUser;
-  }
 
-  private Integer findTenantIdInAccessToken(KeycloakSecurityContext keycloakSecurityContext) {
-    var tenantId = (Integer) keycloakSecurityContext.getToken().getOtherClaims().get("tenantId");
-    if (tenantId == null) {
-      throw new AccessDeniedException("tenantId attribute not found in the access token");
-    }
-    return tenantId;
+    return authenticatedUser;
   }
 
   private String getUserAccessToken(KeycloakSecurityContext keycloakSecContext) {
