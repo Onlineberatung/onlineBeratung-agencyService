@@ -44,7 +44,7 @@ public class AgencyServiceTenantSupportIT extends AgencyServiceITBase {
 
   @Before
   public void beforeEach(){
-    TenantContext.setCurrentTenant("1");
+    TenantContext.setCurrentTenant(1l);
   }
 
   @After

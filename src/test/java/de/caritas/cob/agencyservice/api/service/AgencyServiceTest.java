@@ -62,7 +62,7 @@ public class AgencyServiceTest {
   @Mock
   private AgencyRepository agencyRepository;
 
-  public static final String TENANT_ID = null;
+  public static final Long TENANT_ID = null;
 
   @Test
   public void getListOfAgencies_Should_ReturnServiceExceptionAndLogDatabaseError_OnDatabaseErrorFindByPostCodeAndConsultingType()

@@ -38,7 +38,7 @@ import org.hibernate.annotations.ParamDef;
 @Getter
 @Setter
 @Builder
-@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class AgencyPostcodeRange implements TenantSupport {
 
@@ -69,7 +69,7 @@ public class AgencyPostcodeRange implements TenantSupport {
   private LocalDateTime updateDate;
 
   @Column(name = "tenant_id", nullable = false)
-  private String tenantId;
+  private Long tenantId;
 
   @Override
   public boolean equals(Object o) {

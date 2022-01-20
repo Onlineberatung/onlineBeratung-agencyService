@@ -6,13 +6,13 @@ public class TenantContext {
 
   }
 
-  private static ThreadLocal<String> currentTenant = new ThreadLocal<>();
+  private static ThreadLocal<Long> currentTenant = new ThreadLocal<>();
 
-  public static String getCurrentTenant() {
+  public static Long getCurrentTenant() {
     return currentTenant.get();
   }
 
-  public static void setCurrentTenant(String tenant) {
+  public static void setCurrentTenant(Long tenant) {
     currentTenant.set(tenant);
   }
 

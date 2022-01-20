@@ -31,7 +31,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       nativeQuery = true)
   List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
-      String tenantId);
+      Long tenantId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
 

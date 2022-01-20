@@ -55,7 +55,7 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 @Setter
 @Indexed
 @Builder
-@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @AnalyzerDef(name = Agency.SEARCH_ANALYZER,
     tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
@@ -148,5 +148,5 @@ public class Agency implements TenantSupport {
 
   @Column(name = "tenant_id", nullable = false)
   @Field
-  private String tenantId;
+  private Long tenantId;
 }

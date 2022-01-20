@@ -27,7 +27,7 @@ import org.hibernate.annotations.ParamDef;
 @NoArgsConstructor
 @Getter
 @Setter
-@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class Diocese implements TenantSupport {
 
@@ -48,5 +48,5 @@ public class Diocese implements TenantSupport {
   private LocalDateTime updateDate;
 
   @Column(name = "tenant_id", nullable = false)
-  private String tenantId;
+  private Long tenantId;
 }

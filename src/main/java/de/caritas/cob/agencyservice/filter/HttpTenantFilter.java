@@ -25,7 +25,7 @@ public class HttpTenantFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
     Long tenantId = tenantResolver.resolve(request);
-    TenantContext.setCurrentTenant(tenantId.toString());
+    TenantContext.setCurrentTenant(tenantId);
     filterChain.doFilter(request, response);
     TenantContext.clear();
   }

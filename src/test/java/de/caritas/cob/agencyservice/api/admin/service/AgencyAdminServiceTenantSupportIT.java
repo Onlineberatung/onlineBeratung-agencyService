@@ -33,9 +33,9 @@ public class AgencyAdminServiceTenantSupportIT extends AgencyAdminServiceIT {
 
   @Before
   public void beforeEach(){
-    TenantContext.setCurrentTenant("1");
+    TenantContext.setCurrentTenant(1l);
   }
-  
+
   @After
   public void afterEach(){
     TenantContext.clear();
