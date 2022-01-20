@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class DioceseAdminServiceITBase {
 
   @Autowired
-  private DioceseAdminService dioceseAdminService;
+  protected DioceseAdminService dioceseAdminService;
 
   public void findAllDioceses_Should_returnOneResult_When_perPageIsSetToOne() {
     List<DioceseResponseDTO> dioceses = this.dioceseAdminService
@@ -54,18 +54,6 @@ public class DioceseAdminServiceITBase {
         .getEmbedded();
 
     assertThat(dioceses, hasSize(1));
-  }
-
-  public void findAllDioceses_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
-    List<DioceseResponseDTO> firstPage = this.dioceseAdminService
-        .findAllDioceses(0, 20)
-        .getEmbedded();
-    List<DioceseResponseDTO> secondPage = this.dioceseAdminService
-        .findAllDioceses(2, 20)
-        .getEmbedded();
-
-    assertThat(firstPage, hasSize(20));
-    assertThat(secondPage, hasSize(9));
   }
 
   public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_AllParamsAreProvided() {

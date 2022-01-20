@@ -1,7 +1,12 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.model.DioceseResponseDTO;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +64,14 @@ public class DioceseAdminServiceTenantSupportIT extends DioceseAdminServiceITBas
 
   @Test
   public void findAllDioceses_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
-    super.findAllDioceses_Should_returnPaginatedEntities_When_paginationParamsAreSplitted();
+    List<DioceseResponseDTO> firstPage = this.dioceseAdminService
+        .findAllDioceses(0, 20)
+        .getEmbedded();
+    List<DioceseResponseDTO> secondPage = this.dioceseAdminService
+        .findAllDioceses(2, 20)
+        .getEmbedded();
+    assertThat(firstPage, hasSize(20));
+    assertThat(secondPage, hasSize(8));
   }
 
   @Test
