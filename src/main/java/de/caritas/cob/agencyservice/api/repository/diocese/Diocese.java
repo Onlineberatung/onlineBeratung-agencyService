@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.diocese;
 
+import de.caritas.cob.agencyservice.api.repository.TenantSupport;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +29,7 @@ import org.hibernate.annotations.ParamDef;
 @Setter
 @FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "string")})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-public class Diocese {
+public class Diocese implements TenantSupport {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)

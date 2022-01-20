@@ -87,8 +87,6 @@ public class AgencyPostcodeRangeAdminService {
 
     var newAgencyPostcodeRanges = new PostcodeRangeTransformer()
         .extractPostcodeRanges(postCodeRangeDTO.getPostcodeRanges());
-    //TODO: consider this change. i replaced lazyloading with repo call, since
-    // lazy loading doesnt work well with hibernate filters
     var existingAgencyPostcodeRanges = new ArrayList<>(
         agencyPostCodeRangeRepository.findAllByAgencyId(agency.getId()));
 
