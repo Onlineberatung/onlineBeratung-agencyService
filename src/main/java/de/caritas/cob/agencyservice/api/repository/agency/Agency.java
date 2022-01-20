@@ -146,5 +146,6 @@ public class Agency {
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
   @Column(name = "tenant_id", nullable = false)
+  @Field
   private String tenantId;
 }
