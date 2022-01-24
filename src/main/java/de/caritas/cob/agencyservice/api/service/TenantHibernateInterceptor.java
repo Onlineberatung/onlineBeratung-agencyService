@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.service;
 
-import de.caritas.cob.agencyservice.api.repository.TenantSupport;
+import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public class TenantHibernateInterceptor extends EmptyInterceptor {
     Object entity;
     while (entities.hasNext()) {
       entity = entities.next();
-      if (entity instanceof TenantSupport) {
-        ((TenantSupport) entity).setTenantId(TenantContext.getCurrentTenant());
+      if (entity instanceof TenantAware) {
+        ((TenantAware) entity).setTenantId(TenantContext.getCurrentTenant());
       }
     }
 

@@ -32,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 @TestPropertySource(properties = "multitenancy.enabled=true")
 @Transactional
 @Sql(value = "/setTenants.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-public class AgencyPostcodeRangeAdminServiceTenantSupportIT extends AgencyPostcodeRangeAdminServiceITBase {
+public class AgencyPostcodeRangeAdminServiceTenantAwareIT extends AgencyPostcodeRangeAdminServiceITBase {
+
+  final static long AGENCY_WITH_TENANT_ID_2 = 1734L;
 
   @Before
   public void beforeEach() {
@@ -57,8 +59,9 @@ public class AgencyPostcodeRangeAdminServiceTenantSupportIT extends AgencyPostco
 
   @Test
   public void findPostcodeRangesForAgency_Should_returnExpectedResult_When_postcodeRangesExists_ButDifferentTenant() {
+
     var postcodeRange = this.agencyPostcodeRangeAdminService
-        .findPostcodeRangesForAgency(1734L)
+        .findPostcodeRangesForAgency(AGENCY_WITH_TENANT_ID_2)
         .getEmbedded();
     assertThat(postcodeRange, notNullValue());
     assertThat(postcodeRange.getId(), notNullValue());

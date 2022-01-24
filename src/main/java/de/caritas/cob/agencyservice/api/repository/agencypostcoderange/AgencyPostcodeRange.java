@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.agencypostcoderange;
 
-import de.caritas.cob.agencyservice.api.repository.TenantSupport;
+import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -40,7 +40,7 @@ import org.hibernate.annotations.ParamDef;
 @Builder
 @FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-public class AgencyPostcodeRange implements TenantSupport {
+public class AgencyPostcodeRange implements TenantAware {
 
   @Id
   @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency_postcode_range")

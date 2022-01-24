@@ -3,10 +3,11 @@ package de.caritas.cob.agencyservice.config;
 import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
+import de.caritas.cob.agencyservice.api.tenant.TenantResolver;
 import de.caritas.cob.agencyservice.filter.HttpTenantFilter;
 import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
-import de.caritas.cob.agencyservice.api.tenant.TenantResolver;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -69,14 +70,11 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    HttpSecurity httpSecurity = http.csrf().disable()
+    var httpSecurity = http.csrf().disable()
         .addFilterBefore(new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty),
             CsrfFilter.class);
 
-    if (multitenancy) {
-      httpSecurity = httpSecurity
-          .addFilterAfter(new HttpTenantFilter(tenantResolver()), KeycloakAuthenticatedActionsFilter.class);
-    }
+    httpSecurity = enableTenantFilterIfMultitenancyEnabled(httpSecurity);
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
@@ -85,6 +83,21 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .antMatchers("/agencies").permitAll()
         .antMatchers("/agencyadmin", "/agencyadmin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
+  }
+
+  /**
+   * Adds additional filter for tenant feature if enabled that sets tenant_id into current thread.
+   *
+   * @param httpSecurity
+   * @return
+   */
+  private HttpSecurity enableTenantFilterIfMultitenancyEnabled(HttpSecurity httpSecurity) {
+    if (multitenancy) {
+      httpSecurity = httpSecurity
+          .addFilterAfter(new HttpTenantFilter(tenantResolver()),
+              KeycloakAuthenticatedActionsFilter.class);
+    }
+    return httpSecurity;
   }
 
   @Bean
@@ -98,8 +111,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   }
 
   @Bean
-  de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi tenantControllerApi() {
-    return new de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi();
+  TenantControllerApi tenantControllerApi() {
+    return new TenantControllerApi();
   }
 
   /**

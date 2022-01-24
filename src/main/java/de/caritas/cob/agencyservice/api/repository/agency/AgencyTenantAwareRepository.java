@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
  */
 @Primary
 @ConditionalOnExpression("${multitenancy.enabled:true}")
-public interface AgencyTenantSupportRepository extends AgencyRepository {
+public interface AgencyTenantAwareRepository extends AgencyRepository {
 
   /**
    * Returns a list of {@link Agency}s that are assigned to the given post code based on tenant id.

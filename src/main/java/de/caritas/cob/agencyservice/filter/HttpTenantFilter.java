@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
+/**
+ * Sets tenantId for current thread needed for tenant feature.
+ */
+
 @Component
 @ConditionalOnExpression("${multitenancy.enabled:true}")
 @RequiredArgsConstructor

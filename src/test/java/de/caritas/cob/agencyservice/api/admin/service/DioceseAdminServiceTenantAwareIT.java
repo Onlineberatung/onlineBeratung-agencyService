@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestPropertySource(properties = "multitenancy.enabled=true")
 @Transactional
 @Sql(value = "/setTenants.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-public class DioceseAdminServiceTenantSupportIT extends DioceseAdminServiceITBase {
+public class DioceseAdminServiceTenantAwareIT extends DioceseAdminServiceITBase {
 
   @Before
   public void beforeEach() {
