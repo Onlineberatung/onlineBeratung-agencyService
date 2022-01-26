@@ -14,10 +14,12 @@ import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
 @ConditionalOnExpression("${multitenancy.enabled:true}")
+@Component
 public class TenantResolver {
 
   private static final String TENANT_ID = "tenantId";

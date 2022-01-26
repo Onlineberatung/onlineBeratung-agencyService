@@ -17,6 +17,10 @@ public class SubdomainExtractor {
   }
 
   Optional<String> extractSubdomain(String site) {
+    if (site.contains("onlineberatung.local")) {
+      return Optional.of(site.split(".onlineberatung.local")[0]);
+    }
+
     var domainName = InternetDomainName.from(site);
     if (domainName.hasParent()) {
       var subDomain = site.replaceAll(domainName.topPrivateDomain().toString(), "");

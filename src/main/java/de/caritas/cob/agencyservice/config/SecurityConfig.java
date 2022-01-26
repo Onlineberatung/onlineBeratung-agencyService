@@ -5,8 +5,7 @@ import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_AD
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.filter.HttpTenantFilter;
 import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
-import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
-import de.caritas.cob.agencyservice.api.tenant.TenantResolver;
+import javax.annotation.Nullable;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -34,7 +33,7 @@ import org.springframework.security.web.csrf.CsrfFilter;
 @KeycloakConfiguration
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
-  public static final String[] WHITE_LIST =
+  protected static final String[] WHITE_LIST =
       new String[]{"/agencies/docs", "/agencies/docs/**", "/v2/api-docs", "/configuration/ui",
           "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**"};
 
@@ -49,6 +48,10 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
   @Autowired
   private Environment environment;
+
+  @Autowired
+  @Nullable
+  private HttpTenantFilter httpTenantFilter;
 
   @Value("${multitenancy.enabled}")
   private boolean multitenancy;
@@ -75,7 +78,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     if (multitenancy) {
       httpSecurity = httpSecurity
-          .addFilterAfter(new HttpTenantFilter(tenantResolver()), KeycloakAuthenticatedActionsFilter.class);
+          .addFilterAfter(httpTenantFilter, KeycloakAuthenticatedActionsFilter.class);
     }
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -85,21 +88,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .antMatchers("/agencies").permitAll()
         .antMatchers("/agencyadmin", "/agencyadmin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
-  }
-
-  @Bean
-  TenantResolver tenantResolver() {
-    return new TenantResolver(subdomainExtractor(), tenantControllerApi());
-  }
-
-  @Bean
-  SubdomainExtractor subdomainExtractor() {
-    return new SubdomainExtractor();
-  }
-
-  @Bean
-  de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi tenantControllerApi() {
-    return new de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi();
   }
 
   /**
