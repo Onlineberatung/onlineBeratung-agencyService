@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
-import de.caritas.cob.agencyservice.api.repository.TenantSupport;
+import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,7 +70,7 @@ import org.hibernate.search.bridge.builtin.LongBridge;
             }
         )
     })
-public class Agency implements TenantSupport {
+public class Agency implements TenantAware {
 
   public static final String SEARCH_ANALYZER = "searchAnalyzer";
 

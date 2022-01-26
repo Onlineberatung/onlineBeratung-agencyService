@@ -1,13 +1,11 @@
-package de.caritas.cob.agencyservice.api.service;
+package de.caritas.cob.agencyservice.api.admin.service;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
@@ -28,12 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @TestPropertySource(properties = "multitenancy.enabled=true")
+@Transactional
 @Sql(value = "/setTenants.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-@Transactional(propagation = Propagation.NEVER)
-public class AgencyServiceTenantSupportIT extends AgencyServiceITBase {
-
-  @Autowired
-  private PlatformTransactionManager transactionManager;
+public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceIT {
 
   @Before
   public void beforeEach() {
@@ -46,19 +38,35 @@ public class AgencyServiceTenantSupportIT extends AgencyServiceITBase {
   }
 
   @Test
-  public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven()
-      throws MissingConsultingTypeException {
-    super.getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven();
+  public void saveAgency_Should_PersistsAgency() {
+    super.saveAgency_Should_PersistsAgency();
   }
 
   @Test
-  public void setAgencyOffline_Should_FlagAgencyAsOfflineAndSetUpdateDate() {
-    super.setAgencyOffline_Should_FlagAgencyAsOfflineAndSetUpdateDate();
+  public void saveAgency_Should_SetOfflineToTrue_WhenPersistsAgency() {
+    super.saveAgency_Should_SetOfflineToTrue_WhenPersistsAgency();
   }
 
   @Test
-  public void getAgenciesByConsultingType_Should_returnResults_When_ConsultingTypeIsValid() {
-    super.getAgenciesByConsultingType_Should_returnResults_When_ConsultingTypeIsValid();
+  public void saveAgency_Should_ProvideValidAgencyLinks() {
+    super.saveAgency_Should_ProvideValidAgencyLinks();
+  }
+
+  @Test
+  public void updateAgency_Should_PersistsAgencyChanges() {
+    super.updateAgency_Should_PersistsAgencyChanges();
+  }
+
+  @Test
+  public void updateAgency_Should_ProvideValidAgencyLinks() {
+    super.updateAgency_Should_ProvideValidAgencyLinks();
+  }
+
+  @Test
+  public void getAgency_Should_returnExpectedAgency_When_agencyWithIdExists() {
+    super.getAgency_Should_returnExpectedAgency_When_agencyWithIdExists();
   }
 
 }
+
+
