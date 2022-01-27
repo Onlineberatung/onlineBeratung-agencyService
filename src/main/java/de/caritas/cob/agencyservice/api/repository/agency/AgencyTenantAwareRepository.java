@@ -34,7 +34,7 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
       nativeQuery = true)
   List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
-      @Param(value = "tenantId") String tenantId);
+      @Param(value = "tenantId") Long tenantId);
 
   @Query("select a from Agency as a where a.id = :var ")
   Optional<Agency> findById(Long var);
