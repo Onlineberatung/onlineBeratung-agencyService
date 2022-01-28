@@ -5,11 +5,12 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
-	<!-- The base changeset contains the database state when liquibase was added to the project -->
-	<include file="db/changelog/changeset/0001_initsql/initSql.xml"/>
-	<include file="db/changelog/changeset/0002_agency_id_old_null/0002_changeSet.xml"/>
-	<include file="db/changelog/changeset/0003_agency_consulting_type/0003_changeSet.xml"/>
-	<include file="db/changelog/changeset/0004_agency_offline/0004_changeSet.xml"/>
-	<include file="db/changelog/changeset/0005_agency_delete_flag/0005_changeSet.xml"/>
-	<include file="db/changelog/changeset/0006_agency_url_and_external_flag/0006_changeSet.xml"/>
+  <!-- The base changeset contains the database state when liquibase was added to the project -->
+  <include file="db/changelog/changeset/0001_initsql/initSql.xml"/>
+  <include file="db/changelog/changeset/0002_agency_id_old_null/0002_changeSet.xml"/>
+  <include file="db/changelog/changeset/0003_agency_consulting_type/0003_changeSet.xml"/>
+  <include file="db/changelog/changeset/0004_agency_offline/0004_changeSet.xml"/>
+  <include file="db/changelog/changeset/0005_agency_delete_flag/0005_changeSet.xml"/>
+  <include file="db/changelog/changeset/0006_agency_url_and_external_flag/0006_changeSet.xml"/>
+  <include file="db/changelog/changeset/0007_tenant_id/0007_changeSet.xml"/>
 </databaseChangeLog>

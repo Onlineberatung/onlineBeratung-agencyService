@@ -12,6 +12,7 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +87,8 @@ public class AgencyPostcodeRangeAdminService {
 
     var newAgencyPostcodeRanges = new PostcodeRangeTransformer()
         .extractPostcodeRanges(postCodeRangeDTO.getPostcodeRanges());
-    var existingAgencyPostcodeRanges = agency.getAgencyPostcodeRanges();
+    var existingAgencyPostcodeRanges = new ArrayList<>(
+        agencyPostCodeRangeRepository.findAllByAgencyId(agency.getId()));
 
     this.postcodeRangeValidator.validatePostcodeRanges(newAgencyPostcodeRanges);
 

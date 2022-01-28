@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.diocese;
 
+import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * Diocese entity.
@@ -23,7 +27,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Diocese {
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
+public class Diocese implements TenantAware {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -40,4 +46,7 @@ public class Diocese {
 
   @Column(name = "update_date")
   private LocalDateTime updateDate;
+
+  @Column(name = "tenant_id", nullable = false)
+  private Long tenantId;
 }

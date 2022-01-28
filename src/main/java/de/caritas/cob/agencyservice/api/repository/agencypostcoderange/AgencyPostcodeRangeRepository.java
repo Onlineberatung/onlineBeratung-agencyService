@@ -1,7 +1,9 @@
 package de.caritas.cob.agencyservice.api.repository.agencypostcoderange;
 
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -31,4 +33,8 @@ public interface AgencyPostcodeRangeRepository extends CrudRepository<AgencyPost
    * @param agencyId the agency id
    */
   void deleteAllByAgencyId(Long agencyId);
+
+
+  @Query("select a from AgencyPostcodeRange as a where a.id = :var ")
+  Optional<AgencyPostcodeRange> findById(Long var);
 }
