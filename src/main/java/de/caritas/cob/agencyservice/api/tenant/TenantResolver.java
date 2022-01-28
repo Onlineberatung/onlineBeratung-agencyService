@@ -53,8 +53,10 @@ public class TenantResolver {
   private Optional<Long> resolveTenantFromSubdomain() {
     Optional<String> currentSubdomain = subdomainExtractor.getCurrentSubdomain();
     if (currentSubdomain.isPresent()) {
+      log.info("Resolved subdomain to : " + currentSubdomain.get());
       return Optional.of(getTenantIdBySubdomain(currentSubdomain.get()));
     } else {
+      log.info("Resolved empty subdomain");
       return empty();
     }
   }
