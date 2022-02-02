@@ -146,7 +146,7 @@ public class Agency implements TenantAware {
   )
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
-  @Column(name = "tenant_id", nullable = false)
+  @Column(name = "tenant_id")
   @Field
   private Long tenantId;
 }

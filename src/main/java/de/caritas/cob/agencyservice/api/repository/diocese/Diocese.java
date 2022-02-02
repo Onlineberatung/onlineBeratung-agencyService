@@ -47,6 +47,6 @@ public class Diocese implements TenantAware {
   @Column(name = "update_date")
   private LocalDateTime updateDate;
 
-  @Column(name = "tenant_id", nullable = false)
+  @Column(name = "tenant_id")
   private Long tenantId;
 }

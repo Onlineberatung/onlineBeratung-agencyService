@@ -1,7 +1,9 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.service.TenantHibernateInterceptor;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceIT {
 
   @Before
-  public void beforeEach() {
+  public void beforeEach() throws NoSuchFieldException, IllegalAccessException {
     TenantContext.setCurrentTenant(1L);
+    Field field = TenantHibernateInterceptor.class.getDeclaredField("multiTenancyEnabled");
+    field.setAccessible(true);
+    field.set(null, true);
   }
 
   @After
