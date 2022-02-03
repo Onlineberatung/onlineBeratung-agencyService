@@ -8,12 +8,12 @@ import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.EmptyInterceptor;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 @Slf4j
 public class TenantHibernateInterceptor extends EmptyInterceptor {
+
+  private final Long TECHNICAL_TENANT_ID = 0L;
 
   private static Boolean multiTenancyEnabled;
 
@@ -29,7 +29,11 @@ public class TenantHibernateInterceptor extends EmptyInterceptor {
       while (entities.hasNext()) {
         entity = entities.next();
         if (entity instanceof TenantAware) {
-          ((TenantAware) entity).setTenantId(TenantContext.getCurrentTenant());
+          var tenantAware = (TenantAware) entity;
+          if (tenantAware.getTenantId() == null && !Long.valueOf(TECHNICAL_TENANT_ID)
+              .equals(TenantContext.getCurrentTenant())) {
+            ((TenantAware) entity).setTenantId(TenantContext.getCurrentTenant());
+          }
         }
       }
     }
@@ -55,7 +59,7 @@ public class TenantHibernateInterceptor extends EmptyInterceptor {
       return prop.getProperty("multitenancy.enabled");
 
     } catch (IOException ex) {
-      return null;
+      throw new RuntimeException("No application-local.properties file defined");
     }
   }
 

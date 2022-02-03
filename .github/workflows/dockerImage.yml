@@ -35,7 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: targetfiles
-          path: target/*.jar
+          path: /*.jar
   push_to_registry:
     needs: [test]
     name: Push Docker image to GitHub Packages
