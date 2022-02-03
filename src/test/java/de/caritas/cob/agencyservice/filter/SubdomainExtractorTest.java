@@ -42,7 +42,7 @@ class SubdomainExtractorTest {
     // given
     String url = MUCOVISCIDOSE + ONLINBEBERATUNG_DE;
     // when, then
-    assertThat(subdomainExtractor.resolveSubdomain(url, request)).isEqualTo(of(MUCOVISCIDOSE));
+    assertThat(subdomainExtractor.resolveSubdomain(url, request)).isEqualTo(of("mucoviscidose"));
   }
 
   @Test
@@ -62,7 +62,7 @@ class SubdomainExtractorTest {
     String url = "compound.subdomain" + ONLINBEBERATUNG_DE;
     // when, then
     assertThat(subdomainExtractor.resolveSubdomain(url, request)).isEqualTo(
-        of("compound.subdomain"));
+        of("compound"));
   }
 
   @Test
