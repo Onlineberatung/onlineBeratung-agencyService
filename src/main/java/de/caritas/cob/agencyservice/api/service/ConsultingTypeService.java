@@ -5,10 +5,16 @@ import de.caritas.cob.agencyservice.config.ConsultingTypeCachingConfig;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.ConsultingTypeControllerApi;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Service class to communicate with the ConsultingTypeService.
@@ -36,6 +42,26 @@ public class ConsultingTypeService {
 
   private void addDefaultHeaders(ApiClient apiClient) {
     var headers = this.securityHeaderSupplier.getCsrfHttpHeaders();
+    addOriginHeader(headers);
     headers.forEach((key, value) -> apiClient.addDefaultHeader(key, value.iterator().next()));
   }
+
+  private void addOriginHeader(HttpHeaders headers) {
+    String originHeaderValue = getOriginHeaderValue();
+    if (originHeaderValue != null) {
+      headers.add("origin", originHeaderValue);
+    }
+  }
+
+  private String getOriginHeaderValue() {
+    HttpServletRequest request =
+        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+            .getRequest();
+
+    return Collections.list(request.getHeaderNames())
+        .stream()
+        .collect(Collectors.toMap(h -> h, request::getHeader)).get("host");
+  }
+
+
 }
