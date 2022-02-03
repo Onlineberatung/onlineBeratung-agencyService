@@ -7,7 +7,13 @@ public interface TenantAware {
 
   /**
    * Sets the fields tenantId during save operations.
+   *
    * @param tenantId
    */
   void setTenantId(Long tenantId);
+
+  /**
+   * Returns tenantId from given entity.
+   */
+  Long getTenantId();
 }
