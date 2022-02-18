@@ -26,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class ConsultingTypeService {
 
   private static final String ORIGIN_HEADER_NAME = "origin";
+  private static final String HOST_HEADER_NAME = "host";
 
   private final @NonNull ConsultingTypeControllerApi consultingTypeControllerApi;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
@@ -66,7 +67,7 @@ public class ConsultingTypeService {
         .stream()
         .collect(Collectors.toMap(headerName -> headerName, request::getHeader));
     return isNotBlank(requestHeaders.get(ORIGIN_HEADER_NAME)) ? requestHeaders
-        .get(ORIGIN_HEADER_NAME) : requestHeaders.get("host");
+        .get(ORIGIN_HEADER_NAME) : requestHeaders.get(HOST_HEADER_NAME);
   }
 
 
