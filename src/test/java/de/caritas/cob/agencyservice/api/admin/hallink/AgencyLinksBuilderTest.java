@@ -41,14 +41,11 @@ class AgencyLinksBuilderTest {
     assertThat(agencyLinks.getPostcodeRanges().getMethod(), is(MethodEnum.GET));
     assertThat(agencyLinks.getPostcodeRanges().getHref(),
         is(String.format("/agencyadmin/postcoderanges/%s", agency.getId())));
-
   }
 
   @Test
   void buildAgencyLinks_Should_ThrowNullPointerException_WhenAgencyIsNotSet() {
-    var builder = AgencyLinksBuilder.getInstance(null);
-
-    assertThrows(NullPointerException.class, builder::buildAgencyLinks);
+    assertThrows(NullPointerException.class, () -> AgencyLinksBuilder.getInstance(null));
   }
 
 }
