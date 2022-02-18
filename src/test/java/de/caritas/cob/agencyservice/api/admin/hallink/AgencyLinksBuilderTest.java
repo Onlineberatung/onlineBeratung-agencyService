@@ -3,22 +3,25 @@ package de.caritas.cob.agencyservice.api.admin.hallink;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import org.jeasy.random.EasyRandom;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class AgencyLinksBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class AgencyLinksBuilderTest {
 
   @Test
-  public void buildAgencyLinks_Should_returnAgencyLinks_When_AgencyIsSet() {
+  void buildAgencyLinks_Should_returnAgencyLinks_When_AgencyIsSet() {
 
-    EasyRandom easyRandom = new EasyRandom();
-    Agency agency = easyRandom.nextObject(Agency.class);
+    var easyRandom = new EasyRandom();
+    var agency = easyRandom.nextObject(Agency.class);
 
-    AgencyLinks agencyLinks = AgencyLinksBuilder.getInstance(agency)
+    var agencyLinks = AgencyLinksBuilder.getInstance(agency)
         .buildAgencyLinks();
 
     assertThat(agencyLinks, notNullValue());
@@ -38,14 +41,11 @@ public class AgencyLinksBuilderTest {
     assertThat(agencyLinks.getPostcodeRanges().getMethod(), is(MethodEnum.GET));
     assertThat(agencyLinks.getPostcodeRanges().getHref(),
         is(String.format("/agencyadmin/postcoderanges/%s", agency.getId())));
-
   }
 
-  @Test(expected = NullPointerException.class)
-  public void buildAgencyLinks_Should_ThrowNullPointerException_WhenAgencyIsNotSet() {
-
-    AgencyLinksBuilder.getInstance(null).buildAgencyLinks();
-
+  @Test
+  void buildAgencyLinks_Should_ThrowNullPointerException_WhenAgencyIsNotSet() {
+    assertThrows(NullPointerException.class, () -> AgencyLinksBuilder.getInstance(null));
   }
 
 }

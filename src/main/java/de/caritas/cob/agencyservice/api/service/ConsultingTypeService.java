@@ -1,5 +1,7 @@
 package de.caritas.cob.agencyservice.api.service;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.agencyservice.config.ConsultingTypeCachingConfig;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
@@ -22,6 +24,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 @RequiredArgsConstructor
 public class ConsultingTypeService {
+
+  private static final String ORIGIN_HEADER_NAME = "origin";
+  private static final String HOST_HEADER_NAME = "host";
 
   private final @NonNull ConsultingTypeControllerApi consultingTypeControllerApi;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
@@ -49,7 +54,7 @@ public class ConsultingTypeService {
   private void addOriginHeader(HttpHeaders headers) {
     String originHeaderValue = getOriginHeaderValue();
     if (originHeaderValue != null) {
-      headers.add("origin", originHeaderValue);
+      headers.add(ORIGIN_HEADER_NAME, originHeaderValue);
     }
   }
 
@@ -58,9 +63,11 @@ public class ConsultingTypeService {
         ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
             .getRequest();
 
-    return Collections.list(request.getHeaderNames())
+    var requestHeaders = Collections.list(request.getHeaderNames())
         .stream()
-        .collect(Collectors.toMap(h -> h, request::getHeader)).get("host");
+        .collect(Collectors.toMap(headerName -> headerName, request::getHeader));
+    return isNotBlank(requestHeaders.get(ORIGIN_HEADER_NAME)) ? requestHeaders
+        .get(ORIGIN_HEADER_NAME) : requestHeaders.get(HOST_HEADER_NAME);
   }
 
 

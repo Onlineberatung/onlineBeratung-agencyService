@@ -7,14 +7,16 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
-import de.caritas.cob.agencyservice.api.model.PaginationLinks;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class DiocesePaginationLinkBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class DiocesePaginationLinkBuilderTest {
 
   @Test
-  public void buildPaginationLinks_Should_returnPaginationLinks_When_allParametersAreSet() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_Should_returnPaginationLinks_When_allParametersAreSet() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(2)
         .withPerPage(20)
         .withTotalPages(5)
@@ -36,8 +38,8 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(2)
         .withPerPage(20)
         .withTotalPages(5)
@@ -49,8 +51,8 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_ShouldNot_havePreviousLink_When_currentPageIsTheFirst() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_ShouldNot_havePreviousLink_When_currentPageIsTheFirst() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(1)
         .withPerPage(20)
         .withTotalPages(5)
@@ -60,8 +62,8 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_Should_haveNextLink_When_currentPageIsNotTheLast() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_Should_haveNextLink_When_currentPageIsNotTheLast() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(2)
         .withPerPage(20)
         .withTotalPages(5)
@@ -73,8 +75,8 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_ShouldNot_haveNextLink_When_currentPageIsTheLast() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_ShouldNot_haveNextLink_When_currentPageIsTheLast() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(5)
         .withPerPage(20)
         .withTotalPages(5)
@@ -84,8 +86,8 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_Should_returnSelfLink() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_Should_returnSelfLink() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .withPage(1)
         .withPerPage(20)
         .buildPaginationLinks();
@@ -96,8 +98,8 @@ public class DiocesePaginationLinkBuilderTest {
   }
 
   @Test
-  public void buildPaginationLinks_Should_returnDefaultPaginationValues_When_noParametersAreSet() {
-    PaginationLinks paginationLinks = DiocesePaginationLinkBuilder.getInstance()
+  void buildPaginationLinks_Should_returnDefaultPaginationValues_When_noParametersAreSet() {
+    var paginationLinks = DiocesePaginationLinkBuilder.getInstance()
         .buildPaginationLinks();
 
     assertThat(paginationLinks, notNullValue());
