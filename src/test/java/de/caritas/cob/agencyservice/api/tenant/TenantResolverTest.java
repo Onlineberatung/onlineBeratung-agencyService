@@ -45,7 +45,7 @@ class TenantResolverTest {
   void resolve_Should_ResolveFromAccessTokenForAuthenticatedUser() {
     // given
     when(authenticatedRequest.getUserPrincipal()).thenReturn(token);
-    HashMap<String, Object> claimMap = givenClaimMapContainingTenantId(1L);
+    HashMap<String, Object> claimMap = givenClaimMapContainingTenantId(1);
     when(token.getAccount().getKeycloakSecurityContext().getToken().getOtherClaims())
         .thenReturn(claimMap);
 
@@ -87,7 +87,7 @@ class TenantResolverTest {
     assertThat(resolved).isEqualTo(1L);
   }
 
-  private HashMap<String, Object> givenClaimMapContainingTenantId(Long tenantId) {
+  private HashMap<String, Object> givenClaimMapContainingTenantId(Integer tenantId) {
     HashMap<String, Object> claimMap = Maps.newHashMap();
     claimMap.put("tenantId", tenantId);
     return claimMap;
