@@ -5,29 +5,38 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Maps;
+import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
+import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.HashMap;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken.Access;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @ExtendWith(MockitoExtension.class)
 class TenantResolverTest {
 
+  public static final long TECHNICAL_CONTEXT = 0L;
   @Mock
   SubdomainExtractor subdomainExtractor;
 
   @Mock
-  TenantControllerApi tenantControllerApi;
+  TenantService tenantService;
+
+  @Mock
+  TenantHeaderSupplier tenantHeaderSupplier;
 
   @Mock
   HttpServletRequest authenticatedRequest;
@@ -38,13 +47,26 @@ class TenantResolverTest {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   KeycloakAuthenticationToken token;
 
+  @Mock
+  Access access;
+
   @InjectMocks
   TenantResolver tenantResolver;
+
+  @Mock
+  private ServletRequestAttributes requestAttributes;
+
+  @Mock
+  private HttpServletRequest httpServletRequest;
 
   @Test
   void resolve_Should_ResolveFromAccessTokenForAuthenticatedUser() {
     // given
     when(authenticatedRequest.getUserPrincipal()).thenReturn(token);
+    when(subdomainExtractor.getCurrentSubdomain()).thenReturn(Optional.of("mucoviscidose"));
+    when(tenantService.getRestrictedTenantDataBySubdomain("mucoviscidose")).thenReturn(
+        new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO()
+            .id(1L));
     HashMap<String, Object> claimMap = givenClaimMapContainingTenantId(1);
     when(token.getAccount().getKeycloakSecurityContext().getToken().getOtherClaims())
         .thenReturn(claimMap);
@@ -79,12 +101,34 @@ class TenantResolverTest {
   void resolve_Should_ResolveTenantId_IfSubdomainCouldBeDetermined() {
     // given
     when(subdomainExtractor.getCurrentSubdomain()).thenReturn(Optional.of("mucoviscidose"));
-    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("mucoviscidose")).thenReturn(
-        new RestrictedTenantDTO().id(1L));
+    when(tenantService.getRestrictedTenantDataBySubdomain("mucoviscidose")).thenReturn(
+        new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO()
+            .id(1L));
     // when
     Long resolved = tenantResolver.resolve(nonAuthenticatedRequest);
     // then
     assertThat(resolved).isEqualTo(1L);
+  }
+
+  @Test
+  void resolve_Should_ResolveTenantId_ForTechnicalUserRole() {
+    // given
+    when(authenticatedRequest.getUserPrincipal()).thenReturn(token);
+    when(token.getAccount()
+        .getKeycloakSecurityContext().getToken().getResourceAccess("account")).thenReturn(access);
+    when(access.getRoles()).thenReturn(Sets.newLinkedHashSet("technical"));
+    Long resolved = tenantResolver.resolve(authenticatedRequest);
+    // then
+    assertThat(resolved).isEqualTo(TECHNICAL_CONTEXT);
+  }
+
+  @Test
+  void resolve_Should_ResolveTenantId_FromHeader() {
+    // given
+    when(tenantHeaderSupplier.getTenantFromHeader()).thenReturn(Optional.of(2L));
+    Long resolved = tenantResolver.resolve(authenticatedRequest);
+    // then
+    assertThat(resolved).isEqualTo(2L);
   }
 
   private HashMap<String, Object> givenClaimMapContainingTenantId(Integer tenantId) {
@@ -92,6 +136,5 @@ class TenantResolverTest {
     claimMap.put("tenantId", tenantId);
     return claimMap;
   }
-
 
 }

@@ -31,9 +31,6 @@ class SubdomainExtractorTest {
   @Mock
   Enumeration<String> headerNames;
 
-  @Mock
-  NonInternetDomainSubdomainExtractor nonInternetDomainSubdomainExtractor;
-
   @InjectMocks
   SubdomainExtractor subdomainExtractor;
 
@@ -42,50 +39,7 @@ class SubdomainExtractorTest {
     // given
     String url = MUCOVISCIDOSE + ONLINBEBERATUNG_DE;
     // when, then
-    assertThat(subdomainExtractor.resolveSubdomain(url, request)).isEqualTo(of("mucoviscidose"));
+    assertThat(subdomainExtractor.getSubdomain(url)).isEqualTo(of("mucoviscidose"));
   }
 
-  @Test
-  void resolveSubdomain_Should_resolveSubdomainForOnlineberatungLocal() throws URISyntaxException {
-    // given
-    String url = MUCOVISCIDOSE + ONLINBEBERATUNG_LOCAL;
-    when(request.getHeaderNames()).thenReturn(headerNames);
-    // when
-    subdomainExtractor.resolveSubdomain(url, request);
-    // then
-    Mockito.verify(nonInternetDomainSubdomainExtractor).resolveSubdomain(url, null);
-  }
-
-  @Test
-  void resolveSubdomain_Should_resolveSubdomainForCompoundSubdomain() throws URISyntaxException {
-    // given
-    String url = "compound.subdomain" + ONLINBEBERATUNG_DE;
-    // when, then
-    assertThat(subdomainExtractor.resolveSubdomain(url, request)).isEqualTo(
-        of("compound"));
-  }
-
-  @Test
-  void resolveSubdomain_Should_resolveSubdomainFromOriginHeader() throws URISyntaxException {
-    // given
-    when(request.getHeaderNames()).thenReturn(enumeration(Lists.newArrayList("origin")));
-    String originHeader = MUCOVISCIDOSE + ONLINBEBERATUNG_LOCAL;
-    when(request.getHeader("origin")).thenReturn(originHeader);
-    String url = MUCOVISCIDOSE + AGENCYSERVICE_DEFAULT;
-
-    // when
-    subdomainExtractor.resolveSubdomain(url, request);
-    // then
-    Mockito.verify(nonInternetDomainSubdomainExtractor).resolveSubdomain(url, originHeader);
-
-  }
-
-  @Test
-  void resolveSubdomain_Should_resolveEmptySubdomainForLocalhost() throws URISyntaxException {
-    // given
-    when(request.getHeaderNames()).thenReturn(headerNames);
-    String url = "localhost";
-    // when, then
-    assertThat(subdomainExtractor.resolveSubdomain(url, request)).isEmpty();
-  }
 }
