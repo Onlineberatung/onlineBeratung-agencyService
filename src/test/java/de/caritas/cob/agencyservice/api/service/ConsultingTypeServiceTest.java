@@ -1,23 +1,20 @@
 package de.caritas.cob.agencyservice.api.service;
 
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.ConsultingTypeControllerApi;
-import java.util.Collections;
-import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ConsultingTypeServiceTest {
@@ -29,58 +26,40 @@ class ConsultingTypeServiceTest {
   ConsultingTypeControllerApi consultingTypeControllerApi;
 
   @Mock
-  ApiClient apiClient;
-
-  @Mock
   SecurityHeaderSupplier securityHeaderSupplier;
 
-  @Mock
-  HttpServletRequest httpServletRequest;
+  @Spy
+  TenantHeaderSupplier tenantHeaderSupplier;
 
-  Enumeration<String> headers;
-  ServletRequestAttributes requestAttributes;
+  @Spy
+  ApiClient apiClient;
 
-  @BeforeEach
-  void setup() {
-    RequestContextHolder.setRequestAttributes(null);
-    requestAttributes = new ServletRequestAttributes(httpServletRequest);
-    when(consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
-    RequestContextHolder.setRequestAttributes(requestAttributes);
+  @Test
+  void getExtendedConsultingTypeResponseDTO_Should_addTenantHeaderForMultiTenancy() {
+    TenantContext.setCurrentTenant(1L);
+    var headers = new HttpHeaders();
+    when(this.consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
+    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
+    ReflectionTestUtils.setField(tenantHeaderSupplier, "multitenancy", true);
+    this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
+
+    HttpHeaders apiClientHeaders = (HttpHeaders) ReflectionTestUtils
+        .getField(apiClient, "defaultHeaders");
+    assertEquals(apiClientHeaders.get("tenantId").get(0), "1");
+    TenantContext.clear();
   }
 
   @Test
-  void getExtendedConsultingTypeResponseDTO_Should_useServicesCorrectly() {
-    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(new HttpHeaders());
-    headers = Collections.enumeration(Collections.emptyList());
-    when(httpServletRequest.getHeaderNames()).thenReturn(headers);
-
+  void getExtendedConsultingTypeResponseDTO_Should_addSecurityHeader() {
+    var headers = new HttpHeaders();
+    headers.add("header1", "header1");
+    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
+    when(this.consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
     this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
-
-    verify(this.consultingTypeControllerApi).getExtendedConsultingTypeById(0);
-  }
-
-  @Test
-  void getExtendedConsultingTypeResponseDTO_Should_addOriginHeader_When_originHeaderIsPresent() {
-    headers = Collections.enumeration(Collections.singletonList("origin"));
-    when(httpServletRequest.getHeaderNames()).thenReturn(headers);
-    when(httpServletRequest.getHeader("origin")).thenReturn("valid origin");
-    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(new HttpHeaders());
-
-    this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
-
-    verify(apiClient).addDefaultHeader("origin", "valid origin");
-  }
-
-  @Test
-  void getExtendedConsultingTypeResponseDTO_Should_addHostHeader_When_originHeaderIsNotPresent() {
-    headers = Collections.enumeration(Collections.singletonList("host"));
-    when(httpServletRequest.getHeaderNames()).thenReturn(headers);
-    when(httpServletRequest.getHeader("host")).thenReturn("valid host");
-    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(new HttpHeaders());
-
-    this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
-
-    verify(apiClient).addDefaultHeader("origin", "valid host");
+    HttpHeaders apiClientHeaders = (HttpHeaders) ReflectionTestUtils
+        .getField(apiClient, "defaultHeaders");
+    assertEquals(apiClientHeaders.get("header1").get(0), "header1");
+    TenantContext.clear();
   }
 
 }

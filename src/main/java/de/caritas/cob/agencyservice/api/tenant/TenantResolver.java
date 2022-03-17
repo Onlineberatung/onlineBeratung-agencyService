@@ -1,9 +1,11 @@
 package de.caritas.cob.agencyservice.api.tenant;
 
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
+import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
+import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
-import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.AccessToken.Access;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
@@ -22,9 +26,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class TenantResolver {
 
+  public static final Long TECHNICAL_TENANT_ID = 0L;
   private static final String TENANT_ID = "tenantId";
-  private @NonNull SubdomainExtractor subdomainExtractor;
-  private @NonNull TenantControllerApi tenantControllerApi;
+  private final @NonNull SubdomainExtractor subdomainExtractor;
+  private final @NonNull TenantService tenantService;
+  private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
   public Long resolve(HttpServletRequest request) {
     if (userIsAuthenticated(request)) {
@@ -35,7 +41,7 @@ public class TenantResolver {
   }
 
   private Long resolveForNonAuthenticatedUser() {
-    Optional<Long> tenantId = resolveTenantFromSubdomain();
+    Optional<Long> tenantId = resolveTenantFromHttpRequest();
     if (tenantId.isEmpty()) {
       throw new AccessDeniedException("Tenant id could not be resolved");
     }
@@ -43,26 +49,39 @@ public class TenantResolver {
   }
 
   private Long resolveForAuthenticatedUser(HttpServletRequest request) {
+    return isTechnicalUserRole(request) ? TECHNICAL_TENANT_ID
+        : resolveForAuthenticatedNonTechnicalUser(request);
+  }
+
+  private Long resolveForAuthenticatedNonTechnicalUser(HttpServletRequest request) {
     Optional<Long> tenantId = resolveTenantIdFromTokenClaims(request);
-    if (tenantId.isPresent()) {
-      return tenantId.get();
+    Optional<Long> tenantIdFromSubdomain = resolveTenantFromHttpRequest();
+    if (tenantId.isPresent() && tenantIdFromSubdomain.isPresent()) {
+      if (tenantId.get().equals(tenantIdFromSubdomain.get())) {
+        return tenantId.get();
+      }
+      throw new AccessDeniedException("Tenant id from claim and subdomain not same.");
     }
     throw new AccessDeniedException("Tenant id could not be resolved");
   }
 
-  private Optional<Long> resolveTenantFromSubdomain() {
+  private Optional<Long> resolveTenantFromHttpRequest() {
+
+    Optional<Long> tenantFromHeader = tenantHeaderSupplier.getTenantFromHeader();
+    if (tenantFromHeader.isPresent()) {
+      return tenantFromHeader;
+    }
+
     Optional<String> currentSubdomain = subdomainExtractor.getCurrentSubdomain();
     if (currentSubdomain.isPresent()) {
-      log.info("Resolved subdomain to : " + currentSubdomain.get());
-      return Optional.of(getTenantIdBySubdomain(currentSubdomain.get()));
+      return of(getTenantIdBySubdomain(currentSubdomain.get()));
     } else {
-      log.info("Resolved empty subdomain");
       return empty();
     }
   }
 
   private Long getTenantIdBySubdomain(String currentSubdomain) {
-    return tenantControllerApi.getRestrictedTenantDataBySubdomain(currentSubdomain).getId();
+    return tenantService.getRestrictedTenantDataBySubdomain(currentSubdomain).getId();
   }
 
   private Optional<Long> getUserTenantIdAttribute(Map<String, Object> claimMap) {
@@ -78,6 +97,18 @@ public class TenantResolver {
     Map<String, Object> claimMap = getClaimMap(request);
     log.debug("Found tenantId in claim : " + claimMap.toString());
     return getUserTenantIdAttribute(claimMap);
+  }
+
+  private boolean isTechnicalUserRole(HttpServletRequest request) {
+    AccessToken token = ((KeycloakAuthenticationToken) request.getUserPrincipal()).getAccount()
+        .getKeycloakSecurityContext().getToken();
+    var accountResourceAccess = token.getResourceAccess("account");
+    return hasRoles(accountResourceAccess) && accountResourceAccess.getRoles()
+        .contains("technical");
+  }
+
+  private boolean hasRoles(Access accountResourceAccess) {
+    return accountResourceAccess != null && accountResourceAccess.getRoles() != null;
   }
 
   private boolean userIsAuthenticated(HttpServletRequest request) {
