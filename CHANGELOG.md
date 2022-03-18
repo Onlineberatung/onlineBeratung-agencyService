@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.10.0...v1.11.0) (2021-12-14)
+
+
+### Features
+
+* restructure postcode admin api ([4267c39](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/4267c39856a7cbf82db953d547d2ef85ae01a095))
+* updated service api descriptions ([4cb88c0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/4cb88c0f1fce86a81b1a01bb3cf2fe2452b39680))
+
+
+### Bug Fixes
+
+* search also for special characters only ([f2920c7](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/f2920c7bdc9a4a0dd80b36b53e4e7bdceffe76d8))
+* search also for umlauts ([cdcf656](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/cdcf6566ceb805f50eba38b785be14421872f4cb))
+
 ## [1.10.0](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.9.0...v1.10.0) (2021-07-26)
 
 
