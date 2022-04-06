@@ -22,8 +22,6 @@ class SubdomainExtractorTest {
 
   private static final String MUCOVISCIDOSE = "mucoviscidose";
   private static final String ONLINBEBERATUNG_DE = ".onlineberatung.de";
-  private static final String ONLINBEBERATUNG_LOCAL = ".onlineberatung.local";
-  private static final String AGENCYSERVICE_DEFAULT = ".agencyservice.default";
 
   @Mock
   HttpServletRequest request;
