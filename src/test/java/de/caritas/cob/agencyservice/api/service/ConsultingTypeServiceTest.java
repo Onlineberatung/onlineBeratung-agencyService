@@ -1,39 +1,65 @@
 package de.caritas.cob.agencyservice.api.service;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.ConsultingTypeControllerApi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ConsultingTypeServiceTest {
 
   @InjectMocks
-  private ConsultingTypeService consultingTypeService;
+  ConsultingTypeService consultingTypeService;
 
   @Mock
-  private ConsultingTypeControllerApi consultingTypeControllerApi;
+  ConsultingTypeControllerApi consultingTypeControllerApi;
 
   @Mock
-  private SecurityHeaderSupplier securityHeaderSupplier;
+  SecurityHeaderSupplier securityHeaderSupplier;
+
+  @Spy
+  TenantHeaderSupplier tenantHeaderSupplier;
+
+  @Spy
+  ApiClient apiClient;
 
   @Test
-  void getExtendedConsultingTypeResponseDTO_Should_useServicesCorrectly() {
-    when(this.consultingTypeControllerApi.getApiClient()).thenReturn(new ApiClient());
-    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(new HttpHeaders());
-
+  void getExtendedConsultingTypeResponseDTO_Should_addTenantHeaderForMultiTenancy() {
+    TenantContext.setCurrentTenant(1L);
+    var headers = new HttpHeaders();
+    when(this.consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
+    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
+    ReflectionTestUtils.setField(tenantHeaderSupplier, "multitenancy", true);
     this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
 
-    verify(this.consultingTypeControllerApi, times(1)).getExtendedConsultingTypeById(0);
+    HttpHeaders apiClientHeaders = (HttpHeaders) ReflectionTestUtils
+        .getField(apiClient, "defaultHeaders");
+    assertEquals(apiClientHeaders.get("tenantId").get(0), "1");
+    TenantContext.clear();
+  }
+
+  @Test
+  void getExtendedConsultingTypeResponseDTO_Should_addSecurityHeader() {
+    var headers = new HttpHeaders();
+    headers.add("header1", "header1");
+    when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
+    when(this.consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
+    this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
+    HttpHeaders apiClientHeaders = (HttpHeaders) ReflectionTestUtils
+        .getField(apiClient, "defaultHeaders");
+    assertEquals(apiClientHeaders.get("header1").get(0), "header1");
+    TenantContext.clear();
   }
 
 }

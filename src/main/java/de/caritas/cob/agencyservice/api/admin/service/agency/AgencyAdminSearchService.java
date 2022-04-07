@@ -26,12 +26,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AgencyAdminSearchService {
 
-  private static final Pattern ONLY_SPECIAL_CHARS = Pattern.compile("[^a-zA-Z0-9]+");
+  protected static final Pattern ONLY_SPECIAL_CHARS = Pattern.compile("[^a-zA-Z0-9]+");
 
-  private static final String NAME_SEARCH_FIELD = "name";
-  private static final String POST_CODE_SEARCH_FIELD = "postCode";
-  private static final String CITY_SEARCH_FIELD = "city";
-  private static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
+  protected static final String NAME_SEARCH_FIELD = "name";
+  protected static final String POST_CODE_SEARCH_FIELD = "postCode";
+  protected static final String CITY_SEARCH_FIELD = "city";
+  protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
+  protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
 
   private final @NonNull EntityManagerFactory entityManagerFactory;
 
@@ -79,7 +80,7 @@ public class AgencyAdminSearchService {
         .total(fullTextQuery.getResultSize());
   }
 
-  private Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
+  protected Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
     return fullTextEntityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)
@@ -88,7 +89,7 @@ public class AgencyAdminSearchService {
         .createQuery();
   }
 
-  private Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
+  protected Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
     return entityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)

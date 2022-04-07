@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
+import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,9 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
@@ -51,6 +55,8 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 @Setter
 @Indexed
 @Builder
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @AnalyzerDef(name = Agency.SEARCH_ANALYZER,
     tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
     filters = {
@@ -64,7 +70,7 @@ import org.hibernate.search.bridge.builtin.LongBridge;
             }
         )
     })
-public class Agency {
+public class Agency implements TenantAware {
 
   public static final String SEARCH_ANALYZER = "searchAnalyzer";
 
@@ -140,4 +146,7 @@ public class Agency {
   )
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
+  @Column(name = "tenant_id")
+  @Field
+  private Long tenantId;
 }

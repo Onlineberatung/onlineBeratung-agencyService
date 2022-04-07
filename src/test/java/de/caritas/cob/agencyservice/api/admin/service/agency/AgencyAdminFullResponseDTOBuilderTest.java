@@ -3,22 +3,22 @@ package de.caritas.cob.agencyservice.api.admin.service.agency;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import org.jeasy.random.EasyRandom;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class AgencyAdminFullResponseDTOBuilderTest {
+class AgencyAdminFullResponseDTOBuilderTest {
 
-  private AgencyAdminFullResponseDTOBuilder agencyAdminFullResponseDTOBuilder;
-  private Agency agency;
+  AgencyAdminFullResponseDTOBuilder agencyAdminFullResponseDTOBuilder;
+  Agency agency;
 
-  @Before
+  @BeforeEach
   public void init() {
     EasyRandom easyRandom = new EasyRandom();
     this.agency = easyRandom.nextObject(Agency.class);
@@ -26,9 +26,9 @@ public class AgencyAdminFullResponseDTOBuilderTest {
   }
 
   @Test
-  public void fromAgency_Should_Return_ValidAgency() {
+  void fromAgency_Should_Return_ValidAgency() {
 
-    AgencyAdminFullResponseDTO result = agencyAdminFullResponseDTOBuilder.fromAgency();
+    var result = agencyAdminFullResponseDTOBuilder.fromAgency();
 
     assertEquals(agency.getId(), result.getEmbedded().getId());
     assertEquals(agency.getName(), result.getEmbedded().getName());
@@ -47,7 +47,7 @@ public class AgencyAdminFullResponseDTOBuilderTest {
   }
 
   @Test
-  public void fromAgency_Should_Return_ValidHalLinks() {
+  void fromAgency_Should_Return_ValidHalLinks() {
 
     AgencyAdminFullResponseDTO result = agencyAdminFullResponseDTOBuilder.fromAgency();
     AgencyLinks agencyLinks = result.getLinks();

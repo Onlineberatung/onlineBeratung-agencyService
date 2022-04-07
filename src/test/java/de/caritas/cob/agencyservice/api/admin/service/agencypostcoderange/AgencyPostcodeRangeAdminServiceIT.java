@@ -1,11 +1,5 @@
 package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRangeRepository;
@@ -23,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
-public class AgencyPostcodeRangeAdminServiceIT {
+public class AgencyPostcodeRangeAdminServiceIT extends AgencyPostcodeRangeAdminServiceITBase {
 
   @Autowired
   private AgencyPostcodeRangeAdminService agencyPostcodeRangeAdminService;
@@ -33,46 +27,23 @@ public class AgencyPostcodeRangeAdminServiceIT {
 
   @Test
   public void findPostcodeRangesForAgency_Should_returnExpectedResult_When_postcodeRangesExists() {
-    var postcodeRange = this.agencyPostcodeRangeAdminService
-        .findPostcodeRangesForAgency(0L)
-        .getEmbedded();
-
-    assertThat(postcodeRange, notNullValue());
-    assertThat(postcodeRange.getId(), notNullValue());
-    assertThat(postcodeRange.getPostcodeRanges(), notNullValue());
+    super.findPostcodeRangesForAgency_Should_returnExpectedResult_When_postcodeRangesExists();
   }
 
   @Test
   public void findPostcodeRangesForAgency_Should_haveExpectedLinks_When_postcodeRangesExists() {
-    var links = this.agencyPostcodeRangeAdminService
-        .findPostcodeRangesForAgency(15L).getLinks();
-
-    assertThat(links.getSelf(), notNullValue());
-    assertThat(links.getSelf().getHref(),
-        endsWith("/agencyadmin/postcoderanges/15"));
-    assertThat(links.getDelete(), notNullValue());
-    assertThat(links.getDelete().getHref(),
-        endsWith("/agencyadmin/postcoderanges/15"));
-    assertThat(links.getUpdate(), notNullValue());
-    assertThat(links.getUpdate().getHref(),
-        endsWith("/agencyadmin/postcoderanges/15"));
+    super.findPostcodeRangesForAgency_Should_haveExpectedLinks_When_postcodeRangesExists();
   }
 
   @Test
   @Transactional
   public void deleteAgencyPostcodeRange_Should_deletePostcodeRange_When_agencyIdExists() {
-    var agencyId = 15L;
-
-    this.agencyPostcodeRangeAdminService.deleteAgencyPostcodeRange(agencyId);
-
-    assertThat(this.agencyPostcodeRangeRepository.findAllByAgencyId(agencyId), hasSize(0));
+    super.deleteAgencyPostcodeRange_Should_deletePostcodeRange_When_agencyIdExists();
   }
 
   @Test(expected = NotFoundException.class)
   public void deleteAgencyPostcodeRange_Should_throwNotFound_When_agencyIdNotExists() {
-    var agencyId = -1L;
-
-    this.agencyPostcodeRangeAdminService.deleteAgencyPostcodeRange(agencyId);
+    super.deleteAgencyPostcodeRange_Should_throwNotFound_When_agencyIdNotExists();
   }
 
 }

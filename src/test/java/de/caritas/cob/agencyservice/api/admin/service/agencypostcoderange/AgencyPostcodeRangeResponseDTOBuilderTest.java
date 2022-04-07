@@ -3,27 +3,30 @@ package de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import java.util.Set;
 import org.jeasy.random.EasyRandom;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class AgencyPostcodeRangeResponseDTOBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class AgencyPostcodeRangeResponseDTOBuilderTest {
 
   private AgencyPostcodeRange agencyPostCodeRange;
 
-  @Before
+  @BeforeEach
   public void init() {
     EasyRandom easyRandom = new EasyRandom();
     this.agencyPostCodeRange = easyRandom.nextObject(AgencyPostcodeRange.class);
   }
 
   @Test
-  public void build_Should_Return_ValidAgencyPostcodeRangeResponseDTO() {
+  void build_Should_Return_ValidAgencyPostcodeRangeResponseDTO() {
 
     var result = AgencyPostcodeRangeResponseDTOBuilder
         .getInstance(Set.of(agencyPostCodeRange), agencyPostCodeRange.getAgency().getId())
@@ -36,7 +39,7 @@ public class AgencyPostcodeRangeResponseDTOBuilderTest {
   }
 
   @Test
-  public void build_Should_Return_ValidHalLinks() {
+  void build_Should_Return_ValidHalLinks() {
 
     var result = AgencyPostcodeRangeResponseDTOBuilder
         .getInstance(Set.of(this.agencyPostCodeRange), this.agencyPostCodeRange.getAgency().getId())

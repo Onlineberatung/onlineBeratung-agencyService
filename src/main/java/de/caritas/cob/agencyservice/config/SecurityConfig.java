@@ -3,11 +3,12 @@ package de.caritas.cob.agencyservice.config;
 import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
+import de.caritas.cob.agencyservice.filter.HttpTenantFilter;
 import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
+import javax.annotation.Nullable;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticatedActionsFilter;
@@ -48,6 +49,13 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Autowired
   private Environment environment;
 
+  @Autowired
+  @Nullable
+  private HttpTenantFilter httpTenantFilter;
+
+  @Value("${multitenancy.enabled}")
+  private boolean multitenancy;
+
   /**
    * Processes HTTP requests and checks for a valid spring security authentication for the
    * (Keycloak) principal (authorization header).
@@ -64,10 +72,16 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http.csrf().disable()
+    var httpSecurity = http.csrf().disable()
         .addFilterBefore(new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty),
-            CsrfFilter.class)
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            CsrfFilter.class);
+
+    if (multitenancy) {
+      httpSecurity = httpSecurity
+          .addFilterAfter(httpTenantFilter, KeycloakAuthenticatedActionsFilter.class);
+    }
+
+    httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers("/agencies/**").permitAll()
         .antMatchers(WHITE_LIST).permitAll()
@@ -113,9 +127,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * the web application context. Therefore, when running the Keycloak Spring Security adapter in a
    * Spring Boot environment, it may be necessary to add FilterRegistrationBeans to your security
    * configuration to prevent the Keycloak filters from being registered twice."
-   *
+   * <p>
    * https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc
-   *
+   * <p>
    * {@link package.class#member label}
    */
   @SuppressWarnings({"rawtypes", "unchecked"})
