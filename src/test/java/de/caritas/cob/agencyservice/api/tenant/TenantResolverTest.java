@@ -8,8 +8,6 @@ import com.google.common.collect.Maps;
 import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
 import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
-import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
-import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.HashMap;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +15,7 @@ import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.AccessToken.Access;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
@@ -46,6 +45,9 @@ class TenantResolverTest {
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   KeycloakAuthenticationToken token;
+
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  AccessToken accessToken;
 
   @Mock
   Access access;
@@ -98,6 +100,18 @@ class TenantResolverTest {
   }
 
   @Test
+  void resolve_Should_ThrowAccessDeniedException_IfTokenDoesNotHaveRealmTechnicalRoleAndTenantIdNotExistInClaims() {
+    // given, when
+    when(authenticatedRequest.getUserPrincipal()).thenReturn(token);
+    when(token.getAccount()
+        .getKeycloakSecurityContext().getToken()).thenReturn(accessToken);
+
+    when(accessToken.getRealmAccess().getRoles()).thenReturn(Sets.newLinkedHashSet("anyOtherRole"));
+    // then
+    assertThrows(AccessDeniedException.class, () -> tenantResolver.resolve(authenticatedRequest));
+  }
+
+  @Test
   void resolve_Should_ResolveTenantId_IfSubdomainCouldBeDetermined() {
     // given
     when(subdomainExtractor.getCurrentSubdomain()).thenReturn(Optional.of("mucoviscidose"));
@@ -115,8 +129,8 @@ class TenantResolverTest {
     // given
     when(authenticatedRequest.getUserPrincipal()).thenReturn(token);
     when(token.getAccount()
-        .getKeycloakSecurityContext().getToken().getResourceAccess("account")).thenReturn(access);
-    when(access.getRoles()).thenReturn(Sets.newLinkedHashSet("technical"));
+        .getKeycloakSecurityContext().getToken()).thenReturn(accessToken);
+    when(accessToken.getRealmAccess().getRoles()).thenReturn(Sets.newLinkedHashSet("technical"));
     Long resolved = tenantResolver.resolve(authenticatedRequest);
     // then
     assertThat(resolved).isEqualTo(TECHNICAL_CONTEXT);
