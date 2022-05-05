@@ -7,14 +7,16 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
-import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class SearchResultLinkBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class SearchResultLinkBuilderTest {
 
   @Test
-  public void buildSearchResultLinks_Should_returnSearchResultLinks_When_allParametersAreSet() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildSearchResultLinks_Should_returnSearchResultLinks_When_allParametersAreSet() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withKeyword("keyword")
         .withPage(2)
         .withPerPage(20)
@@ -41,8 +43,8 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildAgencyAdminSearchResult_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildAgencyAdminSearchResult_Should_havePreviousLink_When_currentPageIsNotTheFirst() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withKeyword("keyword")
         .withPage(2)
         .withPerPage(20)
@@ -55,8 +57,8 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildAgencyAdminSearchResult_ShouldNot_havePreviousLink_When_currentPageIsTheFirst() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildAgencyAdminSearchResult_ShouldNot_havePreviousLink_When_currentPageIsTheFirst() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withKeyword("keyword")
         .withPage(1)
         .withPerPage(20)
@@ -67,8 +69,8 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildAgencyAdminSearchResult_Should_haveNextLink_When_currentPageIsNotTheLast() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildAgencyAdminSearchResult_Should_haveNextLink_When_currentPageIsNotTheLast() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withKeyword("keyword")
         .withPage(2)
         .withPerPage(20)
@@ -81,8 +83,8 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildAgencyAdminSearchResult_ShouldNot_haveNextLink_When_currentPageIsTheLast() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildAgencyAdminSearchResult_ShouldNot_haveNextLink_When_currentPageIsTheLast() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withKeyword("keyword")
         .withPage(3)
         .withPerPage(20)
@@ -93,8 +95,8 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildSearchResultLinks_Should_returnPlaceHolderSelfLink_When_keywordIsNotSet() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildSearchResultLinks_Should_returnPlaceHolderSelfLink_When_keywordIsNotSet() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withPage(1)
         .withPerPage(20)
         .buildSearchResultLinks();
@@ -105,8 +107,8 @@ public class SearchResultLinkBuilderTest {
   }
 
   @Test
-  public void buildSearchResultLinks_Should_returnDefaultPaginationValues_When_noParametersAreSet() {
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+  void buildSearchResultLinks_Should_returnDefaultPaginationValues_When_noParametersAreSet() {
+    var searchResultLinks = SearchResultLinkBuilder.getInstance()
         .buildSearchResultLinks();
 
     assertThat(searchResultLinks, notNullValue());

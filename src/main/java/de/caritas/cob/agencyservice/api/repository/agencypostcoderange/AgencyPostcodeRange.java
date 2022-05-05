@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.repository.agencypostcoderange;
 
+import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -21,10 +22,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * PostCodeRange entity
- *
  */
 
 @Entity
@@ -35,7 +38,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class AgencyPostcodeRange {
+@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
+public class AgencyPostcodeRange implements TenantAware {
 
   @Id
   @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency_postcode_range")
@@ -62,6 +67,9 @@ public class AgencyPostcodeRange {
 
   @Column(name = "update_date")
   private LocalDateTime updateDate;
+
+  @Column(name = "tenant_id")
+  private Long tenantId;
 
   @Override
   public boolean equals(Object o) {

@@ -5,15 +5,17 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
-import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.RootLinks;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class RootDTOBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class RootDTOBuilderTest {
 
   @Test
-  public void buildRootDTO_Should_returnRootDTOWithHalLinks() {
-    RootDTO rootDTO = new RootDTOBuilder().buildRootDTO();
+  void buildRootDTO_Should_returnRootDTOWithHalLinks() {
+    var rootDTO = new RootDTOBuilder().buildRootDTO();
 
     assertThat(rootDTO, notNullValue());
     RootLinks rootLinks = rootDTO.getLinks();
