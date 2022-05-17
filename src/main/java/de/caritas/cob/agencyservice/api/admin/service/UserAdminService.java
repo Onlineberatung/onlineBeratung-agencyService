@@ -8,11 +8,14 @@ import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyT
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO.AgencyTypeEnum;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantFilter;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.FieldEnum;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.OrderEnum;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -56,8 +59,13 @@ public class UserAdminService {
       int perPage) {
     addDefaultHeaders(this.adminUserControllerApi.getApiClient());
     ConsultantFilter consultantFilter = new ConsultantFilter().agencyId(agencyId);
+
+    Sort sortBy = new Sort();
+    sortBy.setField(FieldEnum.LASTNAME);
+    sortBy.setOrder(OrderEnum.ASC);
+
     return this.adminUserControllerApi
-        .getConsultants(currentPage, perPage, consultantFilter)
+        .getConsultants(currentPage, perPage, consultantFilter, sortBy)
         .getEmbedded();
   }
 }

@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import static de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO.AgencyTypeEnum.TEAM_AGENCY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -15,6 +16,9 @@ import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserCont
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantFilter;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantSearchResultDTO;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.FieldEnum;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.OrderEnum;
 import java.util.List;
 import org.jeasy.random.EasyRandom;
 import org.junit.Before;
@@ -25,7 +29,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserAdminServiceTest {
@@ -70,13 +73,13 @@ public class UserAdminServiceTest {
     Long agencyId = 1L;
     int currentPage = 1;
     int perPage = 1;
-    when(this.adminUserControllerApi.getConsultants(any(), any(), any()))
+    when(this.adminUserControllerApi.getConsultants(any(), any(), any(), any()))
         .thenReturn(new EasyRandom().nextObject(ConsultantSearchResultDTO.class));
     this.userAdminService.getConsultantsOfAgency(agencyId, currentPage, perPage);
 
     verify(this.adminUserControllerApi, times(1))
         .getConsultants(eq(currentPage), eq(perPage),
-            eq(new ConsultantFilter().agencyId(agencyId)));
+            eq(new ConsultantFilter().agencyId(agencyId)), any());
     verify(this.apiClient, times(this.httpHeaders.size())).addDefaultHeader(any(), any());
   }
 
@@ -86,12 +89,21 @@ public class UserAdminServiceTest {
     ApiClient apiClient = new ApiClient();
     TenantHeaderSupplier tenantHeaderSupplier = new TenantHeaderSupplier();
     ReflectionTestUtils.setField(tenantHeaderSupplier, "multitenancy", true);
-    ReflectionTestUtils.setField(this.userAdminService, "tenantHeaderSupplier", tenantHeaderSupplier);
+    ReflectionTestUtils
+        .setField(this.userAdminService, "tenantHeaderSupplier", tenantHeaderSupplier);
     this.userAdminService.addDefaultHeaders(apiClient);
-    HttpHeaders httpHeaders = (HttpHeaders) ReflectionTestUtils.getField(apiClient, "defaultHeaders");
+    HttpHeaders httpHeaders = (HttpHeaders) ReflectionTestUtils
+        .getField(apiClient, "defaultHeaders");
     List<String> tenantId = httpHeaders.get("tenantId");
     assertEquals(tenantId.get(0), TenantContext.getCurrentTenant().toString());
     TenantContext.clear();
   }
 
+
+  private Sort getSort() {
+    Sort sortBy = new Sort();
+    sortBy.setField(FieldEnum.LASTNAME);
+    sortBy.setOrder(OrderEnum.ASC);
+    return sortBy;
+  }
 }
