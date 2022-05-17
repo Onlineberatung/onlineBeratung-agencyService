@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
+import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
@@ -19,6 +20,7 @@ public class UserAdminService {
 
   private final @NonNull AdminUserControllerApi adminUserControllerApi;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
+  private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
   /**
    * Change the assigned consultants of an agency when type of agency is changed from team-agency to
@@ -36,8 +38,9 @@ public class UserAdminService {
                 .agencyType(AgencyTypeEnum.fromValue(agencyType)));
   }
 
-  private void addDefaultHeaders(ApiClient apiClient) {
+  protected void addDefaultHeaders(ApiClient apiClient) {
     HttpHeaders headers = this.securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();
+    tenantHeaderSupplier.addTenantHeader(headers);
     headers.forEach((key, value) -> apiClient.addDefaultHeader(key, value.iterator().next()));
   }
 
