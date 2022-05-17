@@ -13,5 +13,5 @@
   <include file="db/changelog/changeset/0005_agency_delete_flag/0005_changeSet.xml"/>
   <include file="db/changelog/changeset/0006_agency_url_and_external_flag/0006_changeSet.xml"/>
   <include file="db/changelog/changeset/0007_tenant_id/0007_changeSet.xml"/>
-  <include file="db/changelog/changeset/0008_tenant_id/0008_changeSet.xml"/>
+  <include file="db/changelog/changeset/0008_tenant_id_remove/0008_changeSet.xml"/>
 </databaseChangeLog>
