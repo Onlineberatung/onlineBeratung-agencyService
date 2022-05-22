@@ -172,7 +172,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @return a ResponseEntity instance
    */
   @ExceptionHandler({InvalidPostcodeException.class, InvalidConsultingTypeException.class,
-      InvalidDioceseException.class, InvalidOfflineStatusException.class, ConflictException.class
+      InvalidDioceseException.class, InvalidOfflineStatusException.class
   })
   public ResponseEntity<Object> handleInternal(
       final CustomValidationHttpStatusException ex, final WebRequest request) {
@@ -219,7 +219,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     return handleExceptionInternal(
         ex,
         null,
-        new HttpHeaders(),
+        new CustomHttpHeader(ex.getHttpStatusExceptionReason()).buildHeader(),
         HttpStatus.CONFLICT,
         request);
   }
