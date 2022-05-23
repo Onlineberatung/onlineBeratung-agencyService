@@ -219,7 +219,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     return handleExceptionInternal(
         ex,
         null,
-        new HttpHeaders(),
+        new CustomHttpHeader(ex.getHttpStatusExceptionReason()).buildHeader(),
         HttpStatus.CONFLICT,
         request);
   }
