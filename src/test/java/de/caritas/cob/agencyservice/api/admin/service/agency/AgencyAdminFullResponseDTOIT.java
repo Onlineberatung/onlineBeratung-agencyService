@@ -87,7 +87,7 @@ public class AgencyAdminFullResponseDTOIT {
   }
 
   @Test
-  public void searchAgencies_Should_returnAllEntitiesSorted_When_SortParameterGiven() {
+  public void searchAgencies_Should_returnEntitiesSorted_When_SortParameterGiven() {
     Sort sort = new Sort();
     sort.setField(FieldEnum.NAME);
     sort.setOrder(OrderEnum.ASC);
