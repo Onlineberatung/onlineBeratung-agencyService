@@ -49,6 +49,11 @@ paths:
           schema:
             type: integer
             example: 20
+        - name: sort
+          in: query
+          description: The sort parameter containing field and order the response should be sorted
+          schema:
+            $ref: '#/components/schemas/Sort'
       responses:
         200:
           description: OK - successfull operation
@@ -715,6 +720,25 @@ components:
           properties:
             postcodeRanges:
               $ref: '#/components/schemas/HalLink'
+
+    Sort:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'name|description|postcode|city|teamAgency'
+          enum:
+            - 'name'
+            - 'description'
+            - 'postcode'
+            - 'city'
+            - 'teamAgency'
+        order:
+          type: string
+          example: 'ASC|DESC'
+          enum:
+            - 'ASC'
+            - 'DESC'
 
   securitySchemes:
     Bearer:
