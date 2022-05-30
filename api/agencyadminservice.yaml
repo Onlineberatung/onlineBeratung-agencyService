@@ -730,7 +730,7 @@ components:
           enum:
             - 'name'
             - 'description'
-            - 'postcode'
+            - 'postCode'
             - 'city'
             - 'teamAgency'
         order:
