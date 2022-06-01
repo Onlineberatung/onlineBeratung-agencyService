@@ -107,7 +107,7 @@ public class AgencyAdminControllerTest {
         .andExpect(status().isOk());
 
     Mockito.verify(this.agencyAdminFullResponseDTO, Mockito.times(1))
-        .searchAgencies(any(), eq(0), eq(1));
+        .searchAgencies(any(), eq(0), eq(1), any());
   }
 
   @Test

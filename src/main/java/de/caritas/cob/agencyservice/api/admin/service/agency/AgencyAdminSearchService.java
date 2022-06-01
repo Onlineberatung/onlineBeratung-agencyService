@@ -1,12 +1,15 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
+import de.caritas.cob.agencyservice.api.model.Sort;
+import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,6 +20,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.SortField;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -46,7 +50,7 @@ public class AgencyAdminSearchService {
    * @return the result list
    */
   public AgencyAdminSearchResultDTO searchAgencies(final String keyword, final Integer page,
-      final Integer perPage) {
+      final Integer perPage, Sort sort) {
     FullTextEntityManager fullTextEntityManager = Search
         .getFullTextEntityManager(entityManagerFactory.createEntityManager());
 
@@ -57,6 +61,7 @@ public class AgencyAdminSearchService {
     FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
     fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
+    fullTextQuery.setSort(buildSort(sort));
 
     @SuppressWarnings("unchecked")
     Stream<Agency> resultStream = fullTextQuery.getResultStream();
@@ -108,5 +113,16 @@ public class AgencyAdminSearchService {
 
   private boolean hasOnlySpecialCharacters(String str) {
     return ONLY_SPECIAL_CHARS.matcher(str).matches();
+  }
+
+  private org.apache.lucene.search.Sort buildSort(Sort sort) {
+    var luceneSort = new org.apache.lucene.search.Sort();
+    if (nonNull(sort) && nonNull(sort.getField())) {
+      var reverse = OrderEnum.DESC.equals(sort.getOrder());
+      luceneSort.setSort(SortField.FIELD_SCORE,
+          new SortField(sort.getField().getValue(), SortField.Type.STRING, reverse));
+    }
+
+    return luceneSort;
   }
 }

@@ -36,6 +36,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.hibernate.search.bridge.builtin.LongBridge;
@@ -90,26 +91,33 @@ public class Agency implements TenantAware {
   @Column(name = "name", nullable = false)
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
+  @SortableField
   private String name;
 
   @NonNull
   @Column(name = "description", nullable = false)
+  @Field
+  @SortableField
   private String description;
 
   @Size(max = 5)
   @Column(name = "postcode")
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
+  @SortableField
   private String postCode;
 
   @Size(max = 100)
   @Column(name = "city")
   @Field
   @Analyzer(definition = SEARCH_ANALYZER)
+  @SortableField
   private String city;
 
   @Column(name = "is_team_agency", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")
+  @SortableField
+  @Field
   private boolean teamAgency;
 
   @PositiveOrZero
