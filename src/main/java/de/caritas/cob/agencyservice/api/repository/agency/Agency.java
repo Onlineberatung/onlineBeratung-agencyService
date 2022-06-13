@@ -1,7 +1,9 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -153,6 +156,10 @@ public class Agency implements TenantAware {
       fetch = FetchType.LAZY
   )
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
+
+  @Transient
+  // TODO: Patric add entity mapping
+  private List<AgencyTopic> agencyTopics = Lists.newArrayList();
 
   @Column(name = "tenant_id")
   @Field

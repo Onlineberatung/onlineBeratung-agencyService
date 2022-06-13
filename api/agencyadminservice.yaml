@@ -441,7 +441,24 @@ components:
           $ref: '#/components/schemas/SearchResultLinks'
         total:
           type: integer
-
+    TopicDTO:
+      type: object
+      properties:
+        id:
+          type: long
+          example: 12132
+        name:
+          type: string
+          example: "Topic name"
+        description:
+          type: string
+          example: "Description"
+        internalIdentifier:
+          type: string
+          example: "identifier for data exports for example: alcohol"
+        status:
+          type: string
+          example: "Active"
     AgencyAdminResponseDTO:
       type: object
       properties:
@@ -492,6 +509,10 @@ components:
         external:
           type: boolean
           example: false
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicDTO'
         createDate:
           type: string
           example: "2019-08-23T08:52:05"
@@ -588,6 +609,10 @@ components:
         external:
           type: boolean
           example: false
+        topicIds:
+          type: array
+          items:
+            type: long
 
     AgencyAdminFullResponseDTO:
       type: object
@@ -639,6 +664,10 @@ components:
         external:
           type: boolean
           example: false
+        topicIds:
+          type: array
+          items:
+            type: long
 
     UpdateAgencyResponseDTO:
       type: object

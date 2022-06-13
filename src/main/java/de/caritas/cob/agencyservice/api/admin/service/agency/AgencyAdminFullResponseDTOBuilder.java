@@ -1,10 +1,16 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
+
+import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -41,15 +47,22 @@ public class AgencyAdminFullResponseDTOBuilder {
         .url(this.agency.getUrl())
         .external((this.agency.isExternal()))
         .offline(this.agency.isOffline())
+        .topics(getAgencyTopics())
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
   }
 
-  private AgencyLinks createAgencyLinks() {
-
-    return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
-
+  private List<TopicDTO> getAgencyTopics() {
+    if (agency.getAgencyTopics() != null) {
+      return this.agency.getAgencyTopics().stream().map(AgencyTopic::getTopicData).collect(
+          Collectors.toList());
+    } else {
+      return Lists.newArrayList();
+    }
   }
 
+  private AgencyLinks createAgencyLinks() {
+    return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
+  }
 }
