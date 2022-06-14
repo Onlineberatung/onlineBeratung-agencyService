@@ -1,30 +1,9 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
-import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
@@ -33,23 +12,17 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
+import org.hibernate.search.annotations.*;
 import org.hibernate.search.bridge.builtin.LongBridge;
 
+import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.List;
 
-/**
- * Agency entity
- *
- */
-
+/** Agency entity */
 @Entity
 @Table(name = "agency")
 @AllArgsConstructor
@@ -59,20 +32,22 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 @Setter
 @Indexed
 @Builder
-@FilterDef(name = "tenantFilter", parameters = {@ParamDef(name = "tenantId", type = "long")})
+@FilterDef(
+    name = "tenantFilter",
+    parameters = {@ParamDef(name = "tenantId", type = "long")})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-@AnalyzerDef(name = Agency.SEARCH_ANALYZER,
+@AnalyzerDef(
+    name = Agency.SEARCH_ANALYZER,
     tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
     filters = {
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-        @TokenFilterDef(factory = LowerCaseFilterFactory.class),
-        @TokenFilterDef(
-            factory = EdgeNGramFilterFactory.class,
-            params = {
-                @Parameter(name = "minGramSize", value = "1"),
-                @Parameter(name = "maxGramSize", value = "35")
-            }
-        )
+      @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+      @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+      @TokenFilterDef(
+          factory = EdgeNGramFilterFactory.class,
+          params = {
+            @Parameter(name = "minGramSize", value = "1"),
+            @Parameter(name = "maxGramSize", value = "35")
+          })
     })
 public class Agency implements TenantAware {
 
@@ -150,16 +125,11 @@ public class Agency implements TenantAware {
   @Column(name = "update_date", nullable = false)
   private LocalDateTime updateDate;
 
-  @OneToMany(
-      targetEntity = AgencyPostcodeRange.class,
-      mappedBy = "agency",
-      fetch = FetchType.LAZY
-  )
+  @OneToMany(targetEntity = AgencyPostcodeRange.class, mappedBy = "agency", fetch = FetchType.LAZY)
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
-  @Transient
-  // TODO: Patric add entity mapping
-  private List<AgencyTopic> agencyTopics = Lists.newArrayList();
+  @OneToMany(targetEntity = AgencyTopic.class, mappedBy = "agency", fetch = FetchType.LAZY)
+  private List<AgencyTopic> agencyTopics;
 
   @Column(name = "tenant_id")
   @Field
