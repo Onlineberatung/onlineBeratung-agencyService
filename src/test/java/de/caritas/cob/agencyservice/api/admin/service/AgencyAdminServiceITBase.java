@@ -27,8 +27,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 public class AgencyAdminServiceITBase {
 
-  @Autowired private AgencyAdminService agencyAdminService;
-  @Autowired private AgencyRepository agencyRepository;
+  @Autowired protected AgencyAdminService agencyAdminService;
+  @Autowired protected AgencyRepository agencyRepository;
 
   public void saveAgency_Should_PersistsAgency() {
 
@@ -91,7 +91,7 @@ public class AgencyAdminServiceITBase {
                 "/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
   }
 
-  private AgencyDTO createAgencyDTO() {
+  protected AgencyDTO createAgencyDTO() {
 
     AgencyDTO agencyDTO = new AgencyDTO();
     agencyDTO.setTeamAgency(true);

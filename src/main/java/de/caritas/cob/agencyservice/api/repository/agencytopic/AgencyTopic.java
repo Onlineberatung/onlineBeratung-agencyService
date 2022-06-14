@@ -1,17 +1,21 @@
 package de.caritas.cob.agencyservice.api.repository.agencytopic;
 
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import javax.persistence.Transient;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 // TODO Patric implement
 @Data
+@RequiredArgsConstructor
 public class AgencyTopic {
 
-  private Integer agencyId;
+  private @NonNull Agency agency;
 
-  private Long topicId;
+  private @NonNull Long topicId;
 
   @Transient
-  TopicDTO topicData;
+  TopicDTO topicData = new TopicDTO();
 }

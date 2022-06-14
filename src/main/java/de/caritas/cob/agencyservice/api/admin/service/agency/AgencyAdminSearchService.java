@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminSearchService {
 
   protected static final Pattern ONLY_SPECIAL_CHARS = Pattern.compile("[^a-zA-Z0-9]+");
-
   protected static final String NAME_SEARCH_FIELD = "name";
   protected static final String POST_CODE_SEARCH_FIELD = "postCode";
   protected static final String CITY_SEARCH_FIELD = "city";
@@ -39,12 +38,11 @@ public class AgencyAdminSearchService {
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
 
   private final @NonNull EntityManagerFactory entityManagerFactory;
+  private @Nullable AgencyTopicEnrichmentService agencyTopicEnrichmentService;
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
 
-
-  private @Nullable AgencyTopicEnrichmentService agencyTopicEnrichmentService;
 
   /**
    * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link

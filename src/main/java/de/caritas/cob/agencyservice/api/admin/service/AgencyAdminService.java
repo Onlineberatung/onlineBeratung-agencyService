@@ -4,7 +4,9 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -14,10 +16,15 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,6 +38,12 @@ public class AgencyAdminService {
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
 
+  @Autowired(required = false)
+  private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Value("${feature.topics.enabled}")
+  private boolean featureTopicsEnabled;
+
   /**
    * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
    *
@@ -39,6 +52,9 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
     var agency = findAgencyById(agencyId);
+    if (featureTopicsEnabled) {
+      agencyTopicEnrichmentService.enrichAgencyWithTopics(agency);
+    }
     return new AgencyAdminFullResponseDTOBuilder(agency)
         .fromAgency();
   }
@@ -98,14 +114,14 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
-    return new AgencyAdminFullResponseDTOBuilder(
-        agencyRepository.save(mergeAgencies(agency, updateAgencyDTO)))
+    Agency updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
+    return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }
 
   private Agency mergeAgencies(Agency agency, UpdateAgencyDTO updateAgencyDTO) {
 
-    return Agency.builder()
+    var agencyToUpdate = Agency.builder()
         .id(agency.getId())
         .dioceseId(updateAgencyDTO.getDioceseId())
         .name(updateAgencyDTO.getName())
@@ -119,8 +135,20 @@ public class AgencyAdminService {
         .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
-        .deleteDate(agency.getDeleteDate())
-        .build();
+        .deleteDate(agency.getDeleteDate()).build();
+
+    if (featureTopicsEnabled) {
+      agencyToUpdate.setAgencyTopics(toAgencyTopics(agencyToUpdate, updateAgencyDTO.getTopicIds()));
+    }
+    return agencyToUpdate;
+  }
+
+  private List<AgencyTopic> toAgencyTopics(Agency agency, List<Long> topicIds) {
+    if (topicIds == null || topicIds.isEmpty()) {
+      return Lists.newArrayList();
+    } else {
+      return topicIds.stream().map(id -> new AgencyTopic(agency, id)).collect(Collectors.toList());
+    }
   }
 
   /**

@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import liquibase.pro.packaged.A;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -159,7 +160,7 @@ public class Agency implements TenantAware {
 
   @Transient
   // TODO: Patric add entity mapping
-  private List<AgencyTopic> agencyTopics = Lists.newArrayList();
+  private List<AgencyTopic> agencyTopics = Lists.newArrayList(new AgencyTopic(this, 1L), new AgencyTopic(this, 2L));
 
   @Column(name = "tenant_id")
   @Field
