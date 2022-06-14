@@ -5,26 +5,20 @@ import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
-
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-/**
- * Builder to build an {@link AgencyAdminFullResponseDTO()} from an {@link Agency} instance.
- */
+/** Builder to build an {@link AgencyAdminFullResponseDTO()} from an {@link Agency} instance. */
 @RequiredArgsConstructor
 public class AgencyAdminFullResponseDTOBuilder {
 
   private final @NonNull Agency agency;
 
   /**
-   * Creates an {@link AgencyAdminFullResponseDTO()} with HAL-Links from an {@link Agency}
-   * instance.
+   * Creates an {@link AgencyAdminFullResponseDTO()} with HAL-Links from an {@link Agency} instance.
    *
    * @return an {@link AgencyAdminFullResponseDTO()} instance
    */
@@ -54,12 +48,13 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private List<TopicDTO> getAgencyTopics() {
-    if (agency.getAgencyTopics() != null) {
-      return this.agency.getAgencyTopics().stream().map(AgencyTopic::getTopicData).collect(
-          Collectors.toList());
-    } else {
-      return Lists.newArrayList();
-    }
+    //    if (agency.getAgencyTopics() != null) {
+    //      return this.agency.getAgencyTopics().stream().map(AgencyTopic::getTopicData).collect(
+    //          Collectors.toList());
+    //    } else {
+    //      return Lists.newArrayList();
+    //    }
+    return Lists.newArrayList();
   }
 
   private AgencyLinks createAgencyLinks() {
