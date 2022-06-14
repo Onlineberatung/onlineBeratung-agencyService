@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -8,6 +9,7 @@ import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.service.TenantHibernateInterceptor;
 import de.caritas.cob.agencyservice.api.service.TopicService;
@@ -19,7 +21,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -49,7 +50,7 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
 
   @Before
   public void beforeEach() throws NoSuchFieldException, IllegalAccessException {
-    when(topicService.getAllTopics()).thenReturn(Lists.newArrayList(new TopicDTO().id(1L).name("first topic"), new TopicDTO().id(2L).name("second topic")));
+    when(topicService.getAllTopics()).thenReturn(Lists.newArrayList(new TopicDTO().id(0L).name("first topic"), new TopicDTO().id(1L).name("second topic")));
     TenantContext.setCurrentTenant(1L);
     Field field = TenantHibernateInterceptor.class.getDeclaredField("multiTenancyEnabled");
     field.setAccessible(true);
@@ -94,7 +95,7 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
   @Test
   public void getAgency_Should_returnExpectedAgency_When_agencyWithIdExistsAndAssertTopics() {
     // given
-    Long agencyId = 1L;
+    Long agencyId = 0L;
 
     // when
     AgencyAdminFullResponseDTO result = this.agencyAdminService.findAgency(agencyId);
@@ -110,11 +111,36 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(result.getEmbedded().getDioceseId()).isNotNull();
     assertThat(result.getEmbedded().getTopics()).hasSize(2);
     assertThat(result.getEmbedded().getTopics()).extracting(topic -> topic.getId())
+        .contains(0L, 1L);
+  }
+
+  @Test
+  @Ignore("TODO Patric enable when cascades are fixed")
+  public void updateAgency_Should_PersistsAgencyChangesWithTopics() {
+    // given
+    UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
+    updateAgencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO
+        = agencyAdminService.updateAgency(0L, updateAgencyDTO);
+
+    // when
+    Optional<Agency> agencyOptional =
+        agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
+    Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
+
+    // then
+    assertEquals(updateAgencyDTO.getDioceseId(), agency.getDioceseId());
+    assertEquals(updateAgencyDTO.getPostcode(), agency.getPostCode());
+    assertEquals(updateAgencyDTO.getDescription(), agency.getDescription());
+    assertEquals(updateAgencyDTO.getName(), agency.getName());
+    assertEquals(updateAgencyDTO.getCity(), agency.getCity());
+    assertEquals(updateAgencyDTO.getOffline(),  agency.isOffline());
+    assertThat(agency.getAgencyTopics()).hasSize(2);
+    assertThat(agency.getAgencyTopics()).extracting(agencyTopic -> agencyTopic.getTopicId())
         .contains(1L, 2L);
   }
 
   @Test
-  @Ignore("ignored until integrated with repository changes")
   public void saveAgency_Should_PersistsAgencyWithTopics() {
 
     // given
@@ -139,7 +165,6 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(agency.getAgencyTopics()).hasSize(2);
     assertThat(agency.getAgencyTopics()).extracting(agencyTopic -> agencyTopic.getTopicId())
         .contains(1L, 2L);
-
   }
 
 }

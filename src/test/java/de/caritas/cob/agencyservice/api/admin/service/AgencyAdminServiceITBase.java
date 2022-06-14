@@ -122,7 +122,7 @@ public class AgencyAdminServiceITBase {
     assertEquals(updateAgencyDTO.getOffline(),  agency.isOffline());
   }
 
-  private UpdateAgencyDTO createUpdateAgencyDtoFromExistingAgency() {
+  protected UpdateAgencyDTO createUpdateAgencyDtoFromExistingAgency() {
 
     Optional<Agency> agencyOptional = agencyRepository.findById(0L);
     Agency agency = agencyOptional.orElseThrow(RuntimeException::new);

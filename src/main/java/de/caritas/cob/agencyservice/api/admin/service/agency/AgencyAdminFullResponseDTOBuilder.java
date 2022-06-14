@@ -5,7 +5,6 @@ import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
-
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
@@ -54,9 +53,9 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private List<TopicDTO> getAgencyTopics() {
-    if (agency.getAgencyTopics() != null) {
-      return this.agency.getAgencyTopics().stream().map(AgencyTopic::getTopicData).collect(
-          Collectors.toList());
+    List<AgencyTopic> agencyTopics = agency.getAgencyTopics();
+    if (agencyTopics != null) {
+      return agencyTopics.stream().map(AgencyTopic::getTopicData).collect(Collectors.toList());
     } else {
       return Lists.newArrayList();
     }

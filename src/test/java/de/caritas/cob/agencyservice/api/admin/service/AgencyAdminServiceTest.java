@@ -23,6 +23,7 @@ import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.service.LogService;
+import java.util.List;
 import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class AgencyAdminServiceTest {
@@ -47,6 +50,9 @@ class AgencyAdminServiceTest {
 
   @Mock
   DeleteAgencyValidator deleteAgencyValidator;
+
+  @Mock
+  AgencyTopicMergeService mergeService;
 
   @Mock
   private Logger logger;
@@ -79,6 +85,22 @@ class AgencyAdminServiceTest {
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
     verify(this.agencyRepository).save(any());
+  }
+
+  @Test
+  void updateAgency_Should_SaveAgencyChanges_WhenAgencyIsFoundAndTopicFeatureEnabled() {
+    ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", true);
+    var agency = this.easyRandom.nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    when(agencyRepository.save(any())).thenReturn(agency);
+
+    var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
+
+    verify(this.agencyRepository).save(any());
+    verify(this.mergeService).getMergedTopics(Mockito.any(Agency.class), any(List.class));
+
+    ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", false);
   }
 
   @Test

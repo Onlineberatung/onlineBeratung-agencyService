@@ -31,7 +31,7 @@ class AgencyTopicEnrichmentServiceTest {
         newArrayList(new TopicDTO().id(1L).name("first topic").description("desc"),
             new TopicDTO().id(2L).name("second topic").description("desc")));
     var agencyTopics = newArrayList(
-        new AgencyTopic(new Agency(), 1L), new AgencyTopic(new Agency(), 2L));
+        createAgencyTopic(new Agency(), 1L), createAgencyTopic(new Agency(), 2L));
 
     // when
     var agency = newAgencyWithTopics(agencyTopics);
@@ -43,6 +43,13 @@ class AgencyTopicEnrichmentServiceTest {
         .contains("first topic", "second topic");
   }
 
+  private AgencyTopic createAgencyTopic(Agency agency, long topicId) {
+    AgencyTopic agencyTopic = new AgencyTopic();
+    agencyTopic.setAgency(agency);
+    agencyTopic.setTopicId(topicId);
+    return agencyTopic;
+  }
+
   @Test
   void enrichAgencyWithTopics_Should_NotEnrichWithTopicDataIfTopicIdDoNotMatch() {
     // given
@@ -50,7 +57,7 @@ class AgencyTopicEnrichmentServiceTest {
         newArrayList(new TopicDTO().id(3L).name("third topic").description("desc"),
             new TopicDTO().id(4L).name("fourth topic").description("desc")));
     var agencyTopics = newArrayList(
-        new AgencyTopic(new Agency(), 1L), new AgencyTopic(new Agency(), 2L));
+        createAgencyTopic(new Agency(), 1L), createAgencyTopic(new Agency(), 2L));
 
     // when
     var agency = newAgencyWithTopics(agencyTopics);
