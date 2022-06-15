@@ -62,7 +62,7 @@ public class AgencyTopicMergeService {
   }
 
   private AgencyTopic createNewAgencyTopic(Agency agency, Long topicId) {
-    AgencyTopic agencyTopic = new AgencyTopic();
+    var agencyTopic = new AgencyTopic();
     agencyTopic.setAgency(agency);
     agencyTopic.setTopicId(topicId);
     agencyTopic.setCreateDate(LocalDateTime.now());

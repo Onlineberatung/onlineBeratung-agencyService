@@ -79,7 +79,7 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
-    Agency savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
+    var savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
     return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
@@ -126,7 +126,7 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
-    Agency updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
+    var updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
     return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();

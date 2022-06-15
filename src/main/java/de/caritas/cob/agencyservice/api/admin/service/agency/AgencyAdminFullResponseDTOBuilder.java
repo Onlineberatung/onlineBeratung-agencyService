@@ -46,14 +46,14 @@ public class AgencyAdminFullResponseDTOBuilder {
         .url(this.agency.getUrl())
         .external((this.agency.isExternal()))
         .offline(this.agency.isOffline())
-        .topics(getAgencyTopics())
+        .topics(getTopics())
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
   }
 
-  private List<TopicDTO> getAgencyTopics() {
-    List<AgencyTopic> agencyTopics = agency.getAgencyTopics();
+  private List<TopicDTO> getTopics() {
+    var agencyTopics = agency.getAgencyTopics();
     if (agencyTopics != null) {
       return agencyTopics.stream().map(AgencyTopic::getTopicData).collect(Collectors.toList());
     } else {

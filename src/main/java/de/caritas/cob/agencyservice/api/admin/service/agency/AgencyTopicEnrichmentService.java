@@ -35,7 +35,7 @@ public class AgencyTopicEnrichmentService {
 
   private void enrichSingleAgencyTopic(Map<Long, TopicDTO> availableTopics,
       AgencyTopic agencyTopic) {
-    TopicDTO topicData = availableTopics.get(agencyTopic.getTopicId());
+    var topicData = availableTopics.get(agencyTopic.getTopicId());
     if (topicData != null) {
       log.debug("Enriching agency with {} with topicData {}", agencyTopic.getAgency(), topicData);
       agencyTopic.setTopicData(topicData);
@@ -46,7 +46,7 @@ public class AgencyTopicEnrichmentService {
   }
 
   private Map<Long, TopicDTO> getAvailableTopicsMap() {
-    List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> allTopics = topicService.getAllTopics();
+    var allTopics = topicService.getAllTopics();
     return allTopics.stream()
         .collect(Collectors.toMap(
             de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO::getId,

@@ -109,7 +109,7 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     Long agencyId = 0L;
 
     // when
-    AgencyAdminFullResponseDTO result = this.agencyAdminService.findAgency(agencyId);
+    var result = this.agencyAdminService.findAgency(agencyId);
 
     // then
     assertThat(result.getEmbedded()).isNotNull();
@@ -132,23 +132,23 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
   @Test
   public void updateAgency_Should_PersistsAgencyChangesWithTopics() {
     // given
-    UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
+    var updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
     updateAgencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
 
     // when
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+    var agencyAdminFullResponseDTO =
         agencyAdminService.updateAgency(0L, updateAgencyDTO);
 
     // then
-    Optional<Agency> agencyOptional =
+    var agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
-    Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
-    assertEquals(updateAgencyDTO.getDioceseId(), agency.getDioceseId());
-    assertEquals(updateAgencyDTO.getPostcode(), agency.getPostCode());
-    assertEquals(updateAgencyDTO.getDescription(), agency.getDescription());
-    assertEquals(updateAgencyDTO.getName(), agency.getName());
-    assertEquals(updateAgencyDTO.getCity(), agency.getCity());
-    assertEquals(updateAgencyDTO.getOffline(), agency.isOffline());
+    var agency = agencyOptional.orElseThrow(RuntimeException::new);
+    assertThat(updateAgencyDTO.getDioceseId()).isEqualTo(agency.getDioceseId());
+    assertThat(updateAgencyDTO.getPostcode()).isEqualTo(agency.getPostCode());
+    assertThat(updateAgencyDTO.getDescription()).isEqualTo(agency.getDescription());
+    assertThat(updateAgencyDTO.getName()).isEqualTo(agency.getName());
+    assertThat(updateAgencyDTO.getCity()).isEqualTo(agency.getCity());
+    assertThat(updateAgencyDTO.getOffline()).isEqualTo(agency.isOffline());
     assertThat(agencyAdminFullResponseDTO.getEmbedded().getTopics()).hasSize(2);
     assertThat(agencyAdminFullResponseDTO.getEmbedded().getTopics())
         .extracting(agencyTopic -> agencyTopic.getId())

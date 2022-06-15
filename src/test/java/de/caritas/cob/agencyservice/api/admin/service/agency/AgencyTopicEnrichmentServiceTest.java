@@ -43,13 +43,6 @@ class AgencyTopicEnrichmentServiceTest {
         .contains("first topic", "second topic");
   }
 
-  private AgencyTopic createAgencyTopic(Agency agency, long topicId) {
-    AgencyTopic agencyTopic = new AgencyTopic();
-    agencyTopic.setAgency(agency);
-    agencyTopic.setTopicId(topicId);
-    return agencyTopic;
-  }
-
   @Test
   void enrichAgencyWithTopics_Should_NotEnrichWithTopicDataIfTopicIdDoNotMatch() {
     // given
@@ -69,8 +62,15 @@ class AgencyTopicEnrichmentServiceTest {
         .containsOnlyNulls();
   }
 
+  private AgencyTopic createAgencyTopic(Agency agency, long topicId) {
+    var agencyTopic = new AgencyTopic();
+    agencyTopic.setAgency(agency);
+    agencyTopic.setTopicId(topicId);
+    return agencyTopic;
+  }
+
   private Agency newAgencyWithTopics(ArrayList<AgencyTopic> agencyTopics) {
-    Agency agency = new Agency();
+    var agency = new Agency();
     agency.setAgencyTopics(agencyTopics);
     return agency;
   }
