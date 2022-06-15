@@ -15,12 +15,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-class AgencyRepositoryTest {
+class AgencyRepositoryIT {
 
   @Autowired private AgencyRepository agencyRepository;
 
   @Test
-  void findById_Should_loadTopics() {
+  void findById_Should_loadAgencyWithTopics() {
     // given, when
     var optionalAgency = agencyRepository.findById(0L);
     var agency = optionalAgency.orElseThrow(RuntimeException::new);
@@ -33,7 +33,7 @@ class AgencyRepositoryTest {
   }
 
   @Test
-  void merge_Should_saveTopics_When_one_is_added() {
+  void save_Should_cascadeTopics_When_newTopicIsAdded() {
     // given
     var optionalAgency = agencyRepository.findById(0L);
     var agency = optionalAgency.orElseThrow(RuntimeException::new);
@@ -50,19 +50,35 @@ class AgencyRepositoryTest {
   }
 
   @Test
-  void merge_Should_saveTopics_When_one_is_removed() {
-    // given, when
+  void save_Should_cascadeTopics_When_existingTopicIsRemoved() {
+    // given
     var optionalAgency = agencyRepository.findById(0L);
     var agency = optionalAgency.orElseThrow(RuntimeException::new);
     // when
     agency.getAgencyTopics().remove(0);
     agencyRepository.save(agency);
     // then
-    var agencyUpdated0 = agencyRepository.findById(0L);
-    assertThat(agencyUpdated0).isPresent();
-    assertThat(agencyUpdated0.get().getAgencyTopics())
+    var optionalAgencyUpdated = agencyRepository.findById(0L);
+    assertThat(optionalAgencyUpdated).isPresent();
+    var agencyUpdated = optionalAgencyUpdated.get();
+    assertThat(agencyUpdated.getAgencyTopics())
         .hasSize(1)
         .extracting(AgencyTopic::getId)
         .containsExactly(1L);
+  }
+
+  @Test
+  void save_Should_cascadeTopics_When_allTopicsAreRemoved() {
+    // given
+    var optionalAgency = agencyRepository.findById(0L);
+    var agency = optionalAgency.orElseThrow(RuntimeException::new);
+    // when
+    agency.getAgencyTopics().clear();
+    agencyRepository.save(agency);
+    // then
+    var optionalAgencyUpdated = agencyRepository.findById(0L);
+    assertThat(optionalAgencyUpdated).isPresent();
+    var agencyUpdated = optionalAgencyUpdated.get();
+    assertThat(agencyUpdated.getAgencyTopics()).isEmpty();
   }
 }

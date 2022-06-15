@@ -119,15 +119,15 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     // given
     UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
     updateAgencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
+
+    // when
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
         agencyAdminService.updateAgency(0L, updateAgencyDTO);
 
-    // when
+    // then
     Optional<Agency> agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
-
-    // then
     assertEquals(updateAgencyDTO.getDioceseId(), agency.getDioceseId());
     assertEquals(updateAgencyDTO.getPostcode(), agency.getPostCode());
     assertEquals(updateAgencyDTO.getDescription(), agency.getDescription());
@@ -142,7 +142,6 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
 
   @Test
   public void saveAgency_Should_PersistsAgencyWithTopics() {
-
     // given
     AgencyDTO agencyDTO = createAgencyDTO();
     agencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
