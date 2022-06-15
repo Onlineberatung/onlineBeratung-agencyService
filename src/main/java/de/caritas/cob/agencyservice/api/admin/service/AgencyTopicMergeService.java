@@ -30,9 +30,9 @@ public class AgencyTopicMergeService {
   }
 
   private List<AgencyTopic> getAgencyTopics(Agency agency, List<Long> requestTopicIds,
-      List<AgencyTopic> agencyTopics) {
-    var topicsIdsToAdd = getTopicIdsToAdd(requestTopicIds, agencyTopics);
-    var topicsToUpdate = agencyTopics.stream()
+      List<AgencyTopic> existingAgencyTopics) {
+    var topicsIdsToAdd = getTopicIdsToAdd(requestTopicIds, existingAgencyTopics);
+    var topicsToUpdate = existingAgencyTopics.stream()
         .filter(topicWithIdExistInTheRequest(requestTopicIds)).collect(
             Collectors.toList());
 
@@ -42,9 +42,9 @@ public class AgencyTopicMergeService {
     return resultList;
   }
 
-  private List<Long> getTopicIdsToAdd(List<Long> requestTopicIds, List<AgencyTopic> agencyTopics) {
+  private List<Long> getTopicIdsToAdd(List<Long> requestTopicIds, List<AgencyTopic> existingAgencyTopics) {
     return requestTopicIds.stream()
-        .filter(topicId -> !extractTopicIds(agencyTopics).contains(topicId)).collect(
+        .filter(topicId -> !extractTopicIds(existingAgencyTopics).contains(topicId)).collect(
             Collectors.toList());
   }
 
