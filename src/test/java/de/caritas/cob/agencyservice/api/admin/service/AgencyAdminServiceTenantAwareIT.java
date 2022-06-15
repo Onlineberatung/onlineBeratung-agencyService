@@ -19,7 +19,6 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -110,18 +109,18 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(result.getEmbedded().getName()).isNotNull();
     assertThat(result.getEmbedded().getDioceseId()).isNotNull();
     assertThat(result.getEmbedded().getTopics()).hasSize(2);
-    assertThat(result.getEmbedded().getTopics()).extracting(topic -> topic.getId())
+    assertThat(result.getEmbedded().getTopics())
+        .extracting(topic -> topic.getId())
         .contains(0L, 1L);
   }
 
   @Test
-  @Ignore("TODO Patric enable when cascades are fixed")
   public void updateAgency_Should_PersistsAgencyChangesWithTopics() {
     // given
     UpdateAgencyDTO updateAgencyDTO = createUpdateAgencyDtoFromExistingAgency();
     updateAgencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO
-        = agencyAdminService.updateAgency(0L, updateAgencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+        agencyAdminService.updateAgency(0L, updateAgencyDTO);
 
     // when
     Optional<Agency> agencyOptional =
@@ -134,9 +133,10 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertEquals(updateAgencyDTO.getDescription(), agency.getDescription());
     assertEquals(updateAgencyDTO.getName(), agency.getName());
     assertEquals(updateAgencyDTO.getCity(), agency.getCity());
-    assertEquals(updateAgencyDTO.getOffline(),  agency.isOffline());
+    assertEquals(updateAgencyDTO.getOffline(), agency.isOffline());
     assertThat(agency.getAgencyTopics()).hasSize(2);
-    assertThat(agency.getAgencyTopics()).extracting(agencyTopic -> agencyTopic.getTopicId())
+    assertThat(agency.getAgencyTopics())
+        .extracting(agencyTopic -> agencyTopic.getTopicId())
         .contains(1L, 2L);
   }
 
@@ -148,8 +148,8 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     agencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
 
     // when
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(
-        agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
+        agencyAdminService.saveAgency(agencyDTO);
 
     // then
     Optional<Agency> agencyOptional =
@@ -163,10 +163,8 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(agency.getName()).isEqualTo("Agency name");
     assertThat(agency.isOffline()).isTrue();
     assertThat(agency.getAgencyTopics()).hasSize(2);
-    assertThat(agency.getAgencyTopics()).extracting(agencyTopic -> agencyTopic.getTopicId())
+    assertThat(agency.getAgencyTopics())
+        .extracting(agencyTopic -> agencyTopic.getTopicId())
         .contains(1L, 2L);
   }
-
 }
-
-

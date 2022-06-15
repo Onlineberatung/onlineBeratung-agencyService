@@ -5,6 +5,7 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -148,7 +149,12 @@ public class Agency implements TenantAware {
   @OneToMany(targetEntity = AgencyPostcodeRange.class, mappedBy = "agency", fetch = FetchType.LAZY)
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
-  @OneToMany(targetEntity = AgencyTopic.class, mappedBy = "agency", fetch = FetchType.LAZY)
+  @OneToMany(
+      targetEntity = AgencyTopic.class,
+      mappedBy = "agency",
+      fetch = FetchType.LAZY,
+      cascade = CascadeType.ALL,
+      orphanRemoval = true)
   private List<AgencyTopic> agencyTopics;
 
   @Column(name = "tenant_id")
