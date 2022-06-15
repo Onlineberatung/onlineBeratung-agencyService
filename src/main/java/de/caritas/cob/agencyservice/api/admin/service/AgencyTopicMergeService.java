@@ -16,21 +16,30 @@ public class AgencyTopicMergeService {
     if (requestTopicIds == null || requestTopicIds.isEmpty()) {
       return Lists.newArrayList();
     } else {
-      List<AgencyTopic> agencyTopics = agency.getAgencyTopics();
-      if (agencyTopics != null) {
-        var topicsIdsToAdd = getTopicIdsToAdd(requestTopicIds, agencyTopics);
-        var topicsToUpdate = agencyTopics.stream()
-            .filter(topicWithIdExistInTheRequest(requestTopicIds)).collect(
-                Collectors.toList());
-
-        List<AgencyTopic> resultList = Lists.newArrayList();
-        resultList.addAll(topicsToUpdate);
-        resultList.addAll(createAgencyTopicList(agency, topicsIdsToAdd));
-        return resultList;
-      } else {
-        return createAgencyTopicList(agency, requestTopicIds);
-      }
+      return getMergedTopicsForNonEmptyTopicList(agency, requestTopicIds);
     }
+  }
+
+  private List<AgencyTopic> getMergedTopicsForNonEmptyTopicList(Agency agency, List<Long> requestTopicIds) {
+    List<AgencyTopic> agencyTopics = agency.getAgencyTopics();
+    if (agencyTopics != null) {
+      return getAgencyTopics(agency, requestTopicIds, agencyTopics);
+    } else {
+      return createAgencyTopicList(agency, requestTopicIds);
+    }
+  }
+
+  private List<AgencyTopic> getAgencyTopics(Agency agency, List<Long> requestTopicIds,
+      List<AgencyTopic> agencyTopics) {
+    var topicsIdsToAdd = getTopicIdsToAdd(requestTopicIds, agencyTopics);
+    var topicsToUpdate = agencyTopics.stream()
+        .filter(topicWithIdExistInTheRequest(requestTopicIds)).collect(
+            Collectors.toList());
+
+    List<AgencyTopic> resultList = Lists.newArrayList();
+    resultList.addAll(topicsToUpdate);
+    resultList.addAll(createAgencyTopicList(agency, topicsIdsToAdd));
+    return resultList;
   }
 
   private List<Long> getTopicIdsToAdd(List<Long> requestTopicIds, List<AgencyTopic> agencyTopics) {
