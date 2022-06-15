@@ -24,7 +24,7 @@ public class TopicService {
   }
 
   private void addDefaultHeaders(de.caritas.cob.agencyservice.topicservice.generated.ApiClient apiClient) {
-    var headers = this.securityHeaderSupplier.getCsrfHttpHeaders();
+    var headers = this.securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();
     tenantHeaderSupplier.addTenantHeader(headers);
     headers.forEach((key, value) -> apiClient.addDefaultHeader(key, value.iterator().next()));
   }
