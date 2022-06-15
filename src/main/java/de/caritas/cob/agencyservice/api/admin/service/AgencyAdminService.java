@@ -51,11 +51,15 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
     var agency = findAgencyById(agencyId);
+    enrichWithAgencyTopicsIfTopicFeatureEnabled(agency);
+    return new AgencyAdminFullResponseDTOBuilder(agency)
+        .fromAgency();
+  }
+
+  private void enrichWithAgencyTopicsIfTopicFeatureEnabled(Agency agency) {
     if (featureTopicsEnabled) {
       agencyTopicEnrichmentService.enrichAgencyWithTopics(agency);
     }
-    return new AgencyAdminFullResponseDTOBuilder(agency)
-        .fromAgency();
   }
 
   /**
@@ -74,9 +78,10 @@ public class AgencyAdminService {
    * @param agencyDTO (required)
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
-  public AgencyAdminFullResponseDTO saveAgency(AgencyDTO agencyDTO) {
-    Agency save = agencyRepository.save(fromAgencyDTO(agencyDTO));
-    return new AgencyAdminFullResponseDTOBuilder(save)
+  public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
+    Agency savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
+    enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
+    return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
   }
 
@@ -122,6 +127,7 @@ public class AgencyAdminService {
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
     Agency updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
+    enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
     return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }

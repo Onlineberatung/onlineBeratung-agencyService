@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -55,6 +56,9 @@ class AgencyAdminServiceTest {
   AgencyTopicMergeService mergeService;
 
   @Mock
+  AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Mock
   private Logger logger;
 
   private EasyRandom easyRandom;
@@ -62,6 +66,7 @@ class AgencyAdminServiceTest {
   @BeforeEach
   public void setup() {
     setInternalState(LogService.class, "LOGGER", logger);
+    ReflectionTestUtils.setField(agencyAdminService, "agencyTopicEnrichmentService", agencyTopicEnrichmentService);
     this.easyRandom = new EasyRandom();
   }
 
@@ -89,17 +94,20 @@ class AgencyAdminServiceTest {
 
   @Test
   void updateAgency_Should_SaveAgencyChanges_WhenAgencyIsFoundAndTopicFeatureEnabled() {
+    // given
     ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", true);
     var agency = this.easyRandom.nextObject(Agency.class);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
-
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+
+    // when
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
+    // then
     verify(this.agencyRepository).save(any());
     verify(this.mergeService).getMergedTopics(Mockito.any(Agency.class), any(List.class));
-
+    verify(this.agencyTopicEnrichmentService).enrichAgencyWithTopics(agency);
     ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", false);
   }
 

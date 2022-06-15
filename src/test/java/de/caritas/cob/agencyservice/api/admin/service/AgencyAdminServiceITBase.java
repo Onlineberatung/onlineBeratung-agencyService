@@ -7,23 +7,13 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class AgencyAdminServiceITBase {
 
@@ -34,7 +24,7 @@ public class AgencyAdminServiceITBase {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.createAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
@@ -52,7 +42,7 @@ public class AgencyAdminServiceITBase {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.createAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
@@ -64,7 +54,7 @@ public class AgencyAdminServiceITBase {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.createAgency(agencyDTO);
     assertThat(agencyAdminFullResponseDTO.getLinks().getDelete(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),

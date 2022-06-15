@@ -44,16 +44,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Sql(value = "/setTenants.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
 
+  private static final String FIRST_TOPIC = "first topic name";
+  private static final String SECOND_TOPIC = "second topic name";
+  private static final String THIRD_TOPIC = "third topic name";
+
   @MockBean
   private TopicService topicService;
 
   @Before
   public void beforeEach() throws NoSuchFieldException, IllegalAccessException {
-    when(topicService.getAllTopics()).thenReturn(Lists.newArrayList(new TopicDTO().id(0L).name("first topic"), new TopicDTO().id(1L).name("second topic")));
+    givenTopicServiceReturnsListOfTopics();
     TenantContext.setCurrentTenant(1L);
     Field field = TenantHibernateInterceptor.class.getDeclaredField("multiTenancyEnabled");
     field.setAccessible(true);
     field.set(null, true);
+  }
+
+  private void givenTopicServiceReturnsListOfTopics() {
+    when(topicService.getAllTopics()).thenReturn(
+        Lists.newArrayList(
+          new TopicDTO().id(0L).name(FIRST_TOPIC),
+          new TopicDTO().id(1L).name(SECOND_TOPIC),
+          new TopicDTO().id(2L).name(THIRD_TOPIC)));
   }
 
   @After
@@ -112,6 +124,9 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(result.getEmbedded().getTopics())
         .extracting(topic -> topic.getId())
         .contains(0L, 1L);
+    assertThat(result.getEmbedded().getTopics())
+        .extracting(topic -> topic.getName())
+        .containsExactly(FIRST_TOPIC, SECOND_TOPIC);
   }
 
   @Test
@@ -134,21 +149,25 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertEquals(updateAgencyDTO.getName(), agency.getName());
     assertEquals(updateAgencyDTO.getCity(), agency.getCity());
     assertEquals(updateAgencyDTO.getOffline(), agency.isOffline());
-    assertThat(agency.getAgencyTopics()).hasSize(2);
-    assertThat(agency.getAgencyTopics())
-        .extracting(agencyTopic -> agencyTopic.getTopicId())
-        .contains(1L, 2L);
+    assertThat(agencyAdminFullResponseDTO.getEmbedded().getTopics()).hasSize(2);
+    assertThat(agencyAdminFullResponseDTO.getEmbedded().getTopics())
+        .extracting(agencyTopic -> agencyTopic.getId())
+        .containsExactly(1L, 2L);
+    assertThat(agencyAdminFullResponseDTO.getEmbedded().getTopics())
+        .extracting(agencyTopic -> agencyTopic.getName())
+        .containsExactly(SECOND_TOPIC, THIRD_TOPIC);
+
   }
 
   @Test
-  public void saveAgency_Should_PersistsAgencyWithTopics() {
+  public void createAgency_Should_CreateAgencyWithTopics() {
     // given
     AgencyDTO agencyDTO = createAgencyDTO();
     agencyDTO.setTopicIds(Lists.newArrayList(1L, 2L));
 
     // when
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
-        agencyAdminService.saveAgency(agencyDTO);
+        agencyAdminService.createAgency(agencyDTO);
 
     // then
     Optional<Agency> agencyOptional =
@@ -165,5 +184,8 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(agency.getAgencyTopics())
         .extracting(agencyTopic -> agencyTopic.getTopicId())
         .contains(1L, 2L);
+    assertThat(agencyAdminFullResponseDTO.getEmbedded().getTopics())
+        .extracting(agencyTopic -> agencyTopic.getName())
+        .containsExactly(SECOND_TOPIC, THIRD_TOPIC);
   }
 }
