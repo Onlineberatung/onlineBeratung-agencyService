@@ -16,13 +16,14 @@ public class TopicServiceApiClientConfig {
 
   @Bean
   public TopicControllerApi topicControllerApi(ApiClient apiClient) {
+    apiClient.setDebugging(true);
     return new de.caritas.cob.agencyservice.topicservice.generated.web.TopicControllerApi(apiClient);
   }
 
   @Bean
   @Primary
   public ApiClient topicApiClient(RestTemplate restTemplate) {
-    de.caritas.cob.agencyservice.topicservice.generated.ApiClient apiClient = new TopicServiceApiClient(restTemplate);
+    de.caritas.cob.agencyservice.topicservice.generated.ApiClient apiClient = new ApiClient(restTemplate);
     apiClient.setBasePath(this.topicServiceApiUrl);
     return apiClient;
   }
