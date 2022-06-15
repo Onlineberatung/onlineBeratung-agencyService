@@ -13,7 +13,6 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import javax.persistence.EntityManagerFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ import org.apache.lucene.search.SortField;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -38,11 +38,12 @@ public class AgencyAdminSearchService {
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
 
   private final @NonNull EntityManagerFactory entityManagerFactory;
-  private @Nullable AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Autowired(required = false)
+  private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
-
 
   /**
    * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link
