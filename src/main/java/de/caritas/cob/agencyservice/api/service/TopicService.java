@@ -8,6 +8,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO;
+import de.caritas.cob.agencyservice.topicservice.generated.ApiClient;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +20,12 @@ public class TopicService {
   private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
   @Cacheable(cacheNames = CacheManagerConfig.TOPICS_CACHE)
-  public List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> getAllTopics() {
+  public List<TopicDTO> getAllTopics() {
     addDefaultHeaders(this.topicControllerApi.getApiClient());
     return topicControllerApi.getAllTopics();
   }
 
-  private void addDefaultHeaders(de.caritas.cob.agencyservice.topicservice.generated.ApiClient apiClient) {
+  private void addDefaultHeaders(ApiClient apiClient) {
     var headers = this.securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();
     tenantHeaderSupplier.addTenantHeader(headers);
     headers.forEach((key, value) -> apiClient.addDefaultHeader(key, value.iterator().next()));

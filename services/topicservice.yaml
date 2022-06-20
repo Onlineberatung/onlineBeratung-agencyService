@@ -132,7 +132,7 @@ components:
         description:
           type: string
           example: "Description"
-          maxLength: 100
+          maxLength: 200
         internalIdentifier:
           type: string
           example: "identifier for data exports for example: alcohol"
