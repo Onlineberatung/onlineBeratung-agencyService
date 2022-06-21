@@ -89,7 +89,7 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-    List<Agency> agencies = findAgencies(postCode, consultingTypeId, topicId);
+    var agencies = findAgencies(postCode, consultingTypeId, topicId);
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
@@ -104,16 +104,14 @@ public class AgencyService {
 
   private List<Agency> findAgencies(String postCode, int consultingTypeId,
       Optional<Integer> optionalTopicId) {
-    List<Agency> agencies;
     if (isTopicFeatureEnabledAndActivatedInRegistration()) {
       assertTopicIdIsProvided(optionalTopicId);
-      agencies = collectAgenciesByPostCodeAndConsultingTypeAndTopicId(
+      return collectAgenciesByPostCodeAndConsultingTypeAndTopicId(
           postCode, consultingTypeId, optionalTopicId.get());
     } else {
-      agencies = collectAgenciesByPostCodeAndConsultingType(
+      return collectAgenciesByPostCodeAndConsultingType(
           postCode, consultingTypeId);
     }
-    return agencies;
   }
 
   private void assertTopicIdIsProvided(Optional<Integer> topicId) {
@@ -123,12 +121,11 @@ public class AgencyService {
   }
 
   private boolean isTopicFeatureEnabledAndActivatedInRegistration() {
-
     return topicsFeatureEnabled && isTopicFeatureActivatedInRegistration();
   }
 
   private boolean isTopicFeatureActivatedInRegistration() {
-    // TODO implement within VIC-797
+    // TODO get this flag from the tenant service,  implement within VIC-797
     return true;
   }
 

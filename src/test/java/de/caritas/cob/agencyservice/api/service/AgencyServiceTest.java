@@ -39,12 +39,15 @@ import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.RegistrationDTO;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import javax.swing.text.html.Option;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -52,18 +55,26 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataAccessException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AgencyServiceTest {
 
-  @Mock
-  ConsultingTypeManager consultingTypeManager;
   @InjectMocks
   private AgencyService agencyService;
+
+  @Mock
+  ConsultingTypeManager consultingTypeManager;
+
   @Mock
   private AgencyRepository agencyRepository;
 
-  public static final Long TENANT_ID = null;
+  private static final Long TENANT_ID = null;
+
+  @After
+  public void tearDown() {
+    ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", false);
+  }
 
   @Test
   public void getListOfAgencies_Should_ReturnServiceExceptionAndLogDatabaseError_OnDatabaseErrorFindByPostCodeAndConsultingType()
@@ -242,12 +253,9 @@ public class AgencyServiceTest {
 
     EasyRandom easyRandom = new EasyRandom();
     Agency agency = easyRandom.nextObject(Agency.class);
-
     when(agencyRepository.findById(agency.getId())).thenReturn(Optional.of(agency));
     agencyService.setAgencyOffline(agency.getId());
-
     verify(agencyRepository, times(1)).save(any());
-
   }
 
   @Test(expected = NotFoundException.class)
@@ -266,4 +274,30 @@ public class AgencyServiceTest {
     this.agencyService.getAgencies(-10);
   }
 
+  @Test(expected = BadRequestException.class)
+  public void getAgencies_Should_throwBadRequestException_When_TopicIdNotProvidedAndFeatureEnabled()
+      throws MissingConsultingTypeException {
+    // given
+    ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", true);
+    ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(new RegistrationDTO().minPostcodeSize(5));
+    when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(dto);
+
+    // when
+    this.agencyService.getAgencies("12123", 1, Optional.empty());
+  }
+
+  @Test
+  public void getAgencies_Should_searchByTopicId_When_TopicIdProvidedAndFeatureEnabled()
+      throws MissingConsultingTypeException {
+    // given
+    ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", true);
+    ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(new RegistrationDTO().minPostcodeSize(5));
+    when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(dto);
+
+    // when
+    this.agencyService.getAgencies("12123", 1, Optional.of(2));
+
+    // then
+    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5,1, 2, TENANT_ID);
+  }
 }
