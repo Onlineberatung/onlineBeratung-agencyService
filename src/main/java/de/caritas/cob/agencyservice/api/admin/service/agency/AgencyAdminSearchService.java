@@ -5,13 +5,11 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,6 +22,8 @@ import org.apache.lucene.search.SortField;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminSearchService {
 
   protected static final Pattern ONLY_SPECIAL_CHARS = Pattern.compile("[^a-zA-Z0-9]+");
-
   protected static final String NAME_SEARCH_FIELD = "name";
   protected static final String POST_CODE_SEARCH_FIELD = "postCode";
   protected static final String CITY_SEARCH_FIELD = "city";
@@ -39,6 +38,12 @@ public class AgencyAdminSearchService {
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
 
   private final @NonNull EntityManagerFactory entityManagerFactory;
+
+  @Autowired(required = false)
+  private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Value("${feature.topics.enabled}")
+  private boolean topicsFeatureEnabled;
 
   /**
    * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link
@@ -65,7 +70,12 @@ public class AgencyAdminSearchService {
 
     @SuppressWarnings("unchecked")
     Stream<Agency> resultStream = fullTextQuery.getResultStream();
-    List<AgencyAdminFullResponseDTO> resultList = resultStream
+
+    if (topicsFeatureEnabled) {
+      resultStream = resultStream.map(agencyTopicEnrichmentService::enrichAgencyWithTopics);
+    }
+
+    var resultList = resultStream
         .map(AgencyAdminFullResponseDTOBuilder::new)
         .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
         .collect(Collectors.toList());

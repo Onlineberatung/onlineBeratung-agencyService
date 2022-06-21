@@ -14,6 +14,7 @@ public class CacheManagerConfig {
 
   public static final String CONSULTING_TYPE_CACHE = "consultingTypeCache";
   public static final String TENANT_CACHE = "tenantCache";
+  public static final String TOPICS_CACHE = "topicsCache";
 
   @Value("${cache.consulting.type.configuration.maxEntriesLocalHeap}")
   private long consultingTypeMaxEntriesLocalHeap;
@@ -39,6 +40,18 @@ public class CacheManagerConfig {
   @Value("${cache.tenant.configuration.timeToLiveSeconds}")
   private long tenantTimeToLiveSeconds;
 
+  @Value("${cache.topic.configuration.maxEntriesLocalHeap}")
+  private long topicMaxEntriesLocalHeap;
+
+  @Value("${cache.topic.configuration.eternal}")
+  private boolean topicEternal;
+
+  @Value("${cache.topic.configuration.timeToIdleSeconds}")
+  private long topicTimeToIdleSeconds;
+
+  @Value("${cache.topic.configuration.timeToLiveSeconds}")
+  private long topicTimeToLiveSeconds;
+
   @Bean
   public CacheManager cacheManager() {
     return new EhCacheCacheManager(ehCacheManager());
@@ -49,8 +62,18 @@ public class CacheManagerConfig {
     var config = new net.sf.ehcache.config.Configuration();
     config.addCache(buildConsultingTypeCacheConfiguration());
     config.addCache(buildTenantCacheConfiguration());
-
+    config.addCache(buildTopicCacheConfiguration());
     return net.sf.ehcache.CacheManager.newInstance(config);
+  }
+
+  private CacheConfiguration buildTopicCacheConfiguration() {
+    var topicCacheConfiguration = new CacheConfiguration();
+    topicCacheConfiguration.setName(TOPICS_CACHE);
+    topicCacheConfiguration.setMaxEntriesLocalHeap(topicMaxEntriesLocalHeap);
+    topicCacheConfiguration.setEternal(topicEternal);
+    topicCacheConfiguration.setTimeToIdleSeconds(topicTimeToIdleSeconds);
+    topicCacheConfiguration.setTimeToLiveSeconds(topicTimeToLiveSeconds);
+    return topicCacheConfiguration;
   }
 
   private CacheConfiguration buildConsultingTypeCacheConfiguration() {
@@ -72,6 +95,4 @@ public class CacheManagerConfig {
     tenantCacheConfiguration.setTimeToLiveSeconds(tenantTimeToLiveSeconds);
     return tenantCacheConfiguration;
   }
-
-
 }

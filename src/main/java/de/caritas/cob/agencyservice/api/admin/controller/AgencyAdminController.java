@@ -15,8 +15,6 @@ import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.Sort;
-import de.caritas.cob.agencyservice.api.model.Sort.FieldEnum;
-import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
@@ -112,7 +110,7 @@ public class AgencyAdminController implements AgencyadminApi {
 
     agencyValidator.validate(agencyDTO);
     var agencyAdminFullResponseDTO = agencyAdminService
-        .saveAgency(agencyDTO);
+        .createAgency(agencyDTO);
 
     return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.CREATED);
   }
