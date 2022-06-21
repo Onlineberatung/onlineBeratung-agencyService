@@ -42,6 +42,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -76,8 +77,13 @@ public class AgencyServiceTest {
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT, TENANT_ID)).thenThrow(dbEx);
 
+    callGetAgencies();
+  }
+
+  private void callGetAgencies() {
+    Optional<Integer> emptyTopicIds = Optional.empty();
     try {
-      agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT);
+      agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, emptyTopicIds);
       fail("Expected exception: ServiceException");
     } catch (InternalServerErrorException internalServerErrorException) {
       assertTrue("Excepted ServiceException thrown", true);
@@ -96,12 +102,7 @@ public class AgencyServiceTest {
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
     when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenThrow(nfEx);
 
-    try {
-      agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT);
-      fail("Expected exception: ServiceException");
-    } catch (InternalServerErrorException internalServerErrorException) {
-      assertTrue("Excepted ServiceException thrown", true);
-    }
+    callGetAgencies();
   }
 
   @Test
@@ -116,12 +117,7 @@ public class AgencyServiceTest {
     when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong()))
         .thenThrow(new NumberFormatException(""));
 
-    try {
-      agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT);
-      fail("Expected exception: ServiceException");
-    } catch (InternalServerErrorException internalServerErrorException) {
-      assertTrue("Excepted ServiceException thrown", true);
-    }
+    callGetAgencies();
   }
 
   @Test
@@ -133,9 +129,9 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT),
+    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()),
         everyItem(instanceOf(FullAgencyResponseDTO.class)));
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT))
+    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()))
         .extracting(POSTCODE).contains(POSTCODE);
   }
 
@@ -151,7 +147,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT))
+    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()))
         .extracting(FIELD_AGENCY_ID).contains(AGENCY_ID);
   }
 
@@ -164,7 +160,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT),
+    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()),
         IsEmptyCollection.empty());
   }
 
@@ -175,7 +171,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_EMIGRATION);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_EMIGRATION),
+    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_EMIGRATION, Optional.empty()),
         IsEmptyCollection.empty());
   }
 
@@ -238,7 +234,7 @@ public class AgencyServiceTest {
 
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenThrow(new MissingConsultingTypeException(""));
-    agencyService.getAgencies("", 0);
+    agencyService.getAgencies("", 0, Optional.empty());
   }
 
   @Test

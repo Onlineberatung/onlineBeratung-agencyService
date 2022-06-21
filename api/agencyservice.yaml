@@ -30,6 +30,14 @@ paths:
             type: integer
             format: int32
             example: 5
+        - name: topicId
+          in: query
+          required: false
+          description: The main topic of the registration form
+          schema:
+            type: integer
+            format: int32
+            example: 7
       responses:
         200:
           description: OK - successfull operation
