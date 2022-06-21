@@ -298,6 +298,7 @@ public class AgencyServiceTest {
     this.agencyService.getAgencies("12123", 1, Optional.of(2));
 
     // then
-    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5,1, 2, TENANT_ID);
+    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2,
+        TENANT_ID);
   }
 }
