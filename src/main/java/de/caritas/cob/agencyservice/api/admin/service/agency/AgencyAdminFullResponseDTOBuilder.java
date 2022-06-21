@@ -55,10 +55,14 @@ public class AgencyAdminFullResponseDTOBuilder {
   private List<TopicDTO> getTopics() {
     var agencyTopics = agency.getAgencyTopics();
     if (agencyTopics != null) {
-      return agencyTopics.stream().map(AgencyTopic::getTopicData).collect(Collectors.toList());
+      return getTopics(agencyTopics);
     } else {
       return Lists.newArrayList();
     }
+  }
+
+  private List<TopicDTO> getTopics(List<AgencyTopic> agencyTopics) {
+    return agencyTopics.stream().map(AgencyTopic::getTopicData).collect(Collectors.toList());
   }
 
   private AgencyLinks createAgencyLinks() {

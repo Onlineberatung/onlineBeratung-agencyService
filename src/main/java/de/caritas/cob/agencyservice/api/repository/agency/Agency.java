@@ -43,7 +43,6 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.hibernate.search.bridge.builtin.LongBridge;
 
-/** Agency entity */
 @Entity
 @Table(name = "agency")
 @AllArgsConstructor
