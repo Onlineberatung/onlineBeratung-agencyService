@@ -107,7 +107,7 @@ public class AgencyAdminControllerTest {
         .andExpect(status().isOk());
 
     Mockito.verify(this.agencyAdminFullResponseDTO, Mockito.times(1))
-        .searchAgencies(any(), eq(0), eq(1));
+        .searchAgencies(any(), eq(0), eq(1), any());
   }
 
   @Test
@@ -116,7 +116,7 @@ public class AgencyAdminControllerTest {
         .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
         .andExpect(status().isOk());
 
-    Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(eq(0), eq(1));
+    Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(0, 1);
   }
 
   @Test
@@ -136,7 +136,7 @@ public class AgencyAdminControllerTest {
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
         easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
 
-    when(agencyAdminService.saveAgency(agencyDTO)).thenReturn(agencyAdminFullResponseDTO);
+    when(agencyAdminService.createAgency(agencyDTO)).thenReturn(agencyAdminFullResponseDTO);
 
     this.mvc
         .perform(
@@ -216,7 +216,7 @@ public class AgencyAdminControllerTest {
         .andExpect(status().isOk());
 
     Mockito.verify(this.agencyPostCodeRangeAdminService, Mockito.times(1))
-        .findPostcodeRangesForAgency(eq(1L));
+        .findPostcodeRangesForAgency(1L);
   }
 
   @Test

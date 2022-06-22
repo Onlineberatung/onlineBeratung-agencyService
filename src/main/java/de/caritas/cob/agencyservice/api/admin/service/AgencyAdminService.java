@@ -5,6 +5,7 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -14,10 +15,14 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +35,13 @@ public class AgencyAdminService {
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
+  private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
+
+  @Autowired(required = false)
+  private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Value("${feature.topics.enabled}")
+  private boolean featureTopicsEnabled;
 
   /**
    * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
@@ -39,8 +51,15 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO findAgency(Long agencyId) {
     var agency = findAgencyById(agencyId);
+    enrichWithAgencyTopicsIfTopicFeatureEnabled(agency);
     return new AgencyAdminFullResponseDTOBuilder(agency)
         .fromAgency();
+  }
+
+  private void enrichWithAgencyTopicsIfTopicFeatureEnabled(Agency agency) {
+    if (featureTopicsEnabled) {
+      agencyTopicEnrichmentService.enrichAgencyWithTopics(agency);
+    }
   }
 
   /**
@@ -59,8 +78,10 @@ public class AgencyAdminService {
    * @param agencyDTO (required)
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
-  public AgencyAdminFullResponseDTO saveAgency(AgencyDTO agencyDTO) {
-    return new AgencyAdminFullResponseDTOBuilder(agencyRepository.save(fromAgencyDTO(agencyDTO)))
+  public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
+    var savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
+    enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
+    return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
   }
 
@@ -73,7 +94,7 @@ public class AgencyAdminService {
    */
   private Agency fromAgencyDTO(AgencyDTO agencyDTO) {
 
-    return Agency.builder()
+    Agency agencyToCreate = Agency.builder()
         .dioceseId(agencyDTO.getDioceseId())
         .name(agencyDTO.getName())
         .description(agencyDTO.getDescription())
@@ -87,6 +108,13 @@ public class AgencyAdminService {
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .build();
+
+    if (featureTopicsEnabled) {
+      List<AgencyTopic> agencyTopics = agencyTopicMergeService.getMergedTopics(agencyToCreate,
+          agencyDTO.getTopicIds());
+      agencyToCreate.setAgencyTopics(agencyTopics);
+    }
+    return agencyToCreate;
   }
 
   /**
@@ -98,14 +126,15 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO updateAgency(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
-    return new AgencyAdminFullResponseDTOBuilder(
-        agencyRepository.save(mergeAgencies(agency, updateAgencyDTO)))
+    var updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
+    enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
+    return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }
 
   private Agency mergeAgencies(Agency agency, UpdateAgencyDTO updateAgencyDTO) {
 
-    return Agency.builder()
+    var agencyToUpdate = Agency.builder()
         .id(agency.getId())
         .dioceseId(updateAgencyDTO.getDioceseId())
         .name(updateAgencyDTO.getName())
@@ -119,9 +148,16 @@ public class AgencyAdminService {
         .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
-        .deleteDate(agency.getDeleteDate())
-        .build();
+        .deleteDate(agency.getDeleteDate()).build();
+
+    if (featureTopicsEnabled) {
+      List<AgencyTopic> agencyTopics = agencyTopicMergeService.getMergedTopics(agencyToUpdate,
+          updateAgencyDTO.getTopicIds());
+      agencyToUpdate.setAgencyTopics(agencyTopics);
+    }
+    return agencyToUpdate;
   }
+
 
   /**
    * Changes the type of the agency.

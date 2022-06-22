@@ -19,10 +19,12 @@ import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -47,7 +49,7 @@ public class AgencyServiceITBase {
     String postCode = "88662";
 
     List<FullAgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY);
+        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty());
 
     assertThat(resultAgencies, hasSize(1));
     FullAgencyResponseDTO resultAgency = resultAgencies.get(0);

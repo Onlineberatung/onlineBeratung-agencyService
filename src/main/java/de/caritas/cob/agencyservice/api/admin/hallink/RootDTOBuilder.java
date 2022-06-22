@@ -38,7 +38,7 @@ public class RootDTOBuilder implements HalLinkBuilder {
 
   private HalLink buildSearchLink() {
     return buildHalLink(
-        methodOn(AgencyadminApi.class).searchAgencies(DEFAULT_PAGE, DEFAULT_PER_PAGE, null),
+        methodOn(AgencyadminApi.class).searchAgencies(DEFAULT_PAGE, DEFAULT_PER_PAGE, null, null),
         MethodEnum.GET);
   }
 
