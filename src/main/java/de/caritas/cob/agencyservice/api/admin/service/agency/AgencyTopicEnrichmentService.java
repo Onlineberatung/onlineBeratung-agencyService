@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
+import com.google.common.collect.Maps;
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
@@ -47,6 +48,11 @@ public class AgencyTopicEnrichmentService {
 
   private Map<Long, TopicDTO> getAvailableTopicsMap() {
     var allTopics = topicService.getAllTopics();
+    return allTopics.isEmpty() ? Maps.newHashMap() : getAvailableTopicsMap(allTopics);
+  }
+
+  private Map<Long, TopicDTO> getAvailableTopicsMap(
+      List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> allTopics) {
     return allTopics.stream()
         .collect(Collectors.toMap(
             de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO::getId,
