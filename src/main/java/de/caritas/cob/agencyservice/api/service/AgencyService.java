@@ -19,9 +19,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,9 @@ public class AgencyService {
 
   private final @NonNull ConsultingTypeManager consultingTypeManager;
   private final @NonNull AgencyRepository agencyRepository;
+
+  @Value("${feature.topics.enabled}")
+  private boolean topicsFeatureEnabled;
 
   /**
    * Returns a list of {@link AgencyResponseDTO} which match the provided agencyIds.
@@ -75,7 +80,7 @@ public class AgencyService {
    * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId) {
+  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId, Optional<Integer> topicId) {
 
     var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
@@ -84,8 +89,7 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-    var agencies = collectAgenciesByPostCodeAndConsultingType(
-        postCode, consultingTypeId);
+    var agencies = findAgencies(postCode, consultingTypeId, topicId);
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
@@ -96,6 +100,33 @@ public class AgencyService {
     }
 
     return agencyResponseDTOs;
+  }
+
+  private List<Agency> findAgencies(String postCode, int consultingTypeId,
+      Optional<Integer> optionalTopicId) {
+    if (isTopicFeatureEnabledAndActivatedInRegistration()) {
+      assertTopicIdIsProvided(optionalTopicId);
+      return collectAgenciesByPostCodeAndConsultingTypeAndTopicId(
+          postCode, consultingTypeId, optionalTopicId.get());
+    } else {
+      return collectAgenciesByPostCodeAndConsultingType(
+          postCode, consultingTypeId);
+    }
+  }
+
+  private void assertTopicIdIsProvided(Optional<Integer> topicId) {
+    if (!topicId.isPresent()) {
+      throw new BadRequestException("Topic id not provided in the search");
+    }
+  }
+
+  private boolean isTopicFeatureEnabledAndActivatedInRegistration() {
+    return topicsFeatureEnabled && isTopicFeatureActivatedInRegistration();
+  }
+
+  private boolean isTopicFeatureActivatedInRegistration() {
+    // TODO get this flag from the tenant service,  implement within VIC-797
+    return true;
   }
 
   private void verifyConsultingTypeExists(int consultingTypeId)
@@ -124,8 +155,18 @@ public class AgencyService {
       return agencyRepository
           .findByPostCodeAndConsultingTypeId(postCode, postCode.length(), consultingTypeId,
               TenantContext.getCurrentTenant());
+    } catch (DataAccessException ex) {
+      throw new InternalServerErrorException(LogService::logDatabaseError,
+          "Database error while getting postcodes");
+    }
+  }
 
-
+  private List<Agency> collectAgenciesByPostCodeAndConsultingTypeAndTopicId(String postCode,
+      int consultingTypeId, int topicId) {
+    try {
+      return agencyRepository
+          .findByPostCodeAndConsultingTypeIdAndTopicId(postCode, postCode.length(), consultingTypeId, topicId,
+              TenantContext.getCurrentTenant());
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
           "Database error while getting postcodes");

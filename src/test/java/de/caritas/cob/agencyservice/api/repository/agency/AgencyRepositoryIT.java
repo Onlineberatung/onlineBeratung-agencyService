@@ -33,6 +33,25 @@ class AgencyRepositoryIT {
   }
 
   @Test
+  void findByPostCodeAndConsultingTypeId_Should_findAgencyByPostcodeAndConsultingType() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("53113", 5, 0, 1L);
+    // then
+    assertThat(agencyList).hasSize(2);
+  }
+
+
+  @Test
+  void findByPostCodeAndConsultingTypeId_Should_findAgencyByPostcodeAndConsultingTypeAndTopicId() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeIdAndTopicId("53113", 5, 0, 1, 1L);
+    // then
+    assertThat(agencyList).hasSize(1);
+    assertThat(agencyList.get(0).getId()).isZero();
+    assertThat(agencyList.get(0).getAgencyTopics()).extracting("topicId").containsExactly(0L, 1L);
+  }
+
+  @Test
   void save_Should_cascadeTopics_When_newTopicIsAdded() {
     // given
     var optionalAgency = agencyRepository.findById(0L);
