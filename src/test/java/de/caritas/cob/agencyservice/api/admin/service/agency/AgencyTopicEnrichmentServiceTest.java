@@ -62,6 +62,25 @@ class AgencyTopicEnrichmentServiceTest {
         .containsOnlyNulls();
   }
 
+
+  @Test
+  void enrichAgencyWithTopics_Should_NotEnrichIfTopicsListIsNull() {
+    // given
+    when(topicService.getAllTopics()).thenReturn(
+        null);
+    var agencyTopics = newArrayList(
+        createAgencyTopic(new Agency(), 1L), createAgencyTopic(new Agency(), 2L));
+
+    // when
+    var agency = newAgencyWithTopics(agencyTopics);
+    agencyTopicEnrichmentService.enrichAgencyWithTopics(agency);
+
+    // then
+    assertThat(agency.getAgencyTopics())
+        .extracting(agencyTopic -> agencyTopic.getTopicData().getName())
+        .containsOnlyNulls();
+  }
+
   @Test
   void enrichAgencyWithTopics_Should_NotEnrichWithTopicDataIfTopicIdDoNotMatch() {
     // given

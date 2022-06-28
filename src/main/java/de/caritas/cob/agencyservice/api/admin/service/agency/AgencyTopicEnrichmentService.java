@@ -48,7 +48,12 @@ public class AgencyTopicEnrichmentService {
 
   private Map<Long, TopicDTO> getAvailableTopicsMap() {
     var allTopics = topicService.getAllTopics();
-    return allTopics.isEmpty() ? Maps.newHashMap() : getAvailableTopicsMap(allTopics);
+    return isEmptyOrNull(allTopics) ? Maps.newHashMap() : getAvailableTopicsMap(allTopics);
+  }
+
+  private boolean isEmptyOrNull(
+      List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> allTopics) {
+    return allTopics == null || allTopics.isEmpty();
   }
 
   private Map<Long, TopicDTO> getAvailableTopicsMap(
