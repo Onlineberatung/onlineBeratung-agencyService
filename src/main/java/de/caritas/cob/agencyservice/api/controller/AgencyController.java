@@ -32,6 +32,7 @@ public class AgencyController implements AgenciesApi {
    *
    * @param postcode       the postcode for regarding agencies
    * @param consultingType the type used to filter the agencies
+   * @param topicId        the (optional) main topicId to filter the agencies
    * @return the List of agencies with information
    */
   @Override

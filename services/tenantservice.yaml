@@ -26,6 +26,30 @@ paths:
                 $ref: '#/components/schemas/TenantDTO'
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid Keycloak token
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+    get:
+      tags:
+        - tenant-controller
+      summary: 'Get all tenants'
+      operationId: getAllTenants
+      responses:
+        200:
+          description: OK - successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BasicTenantLicensingDTO'
+        204:
+          description: NO CONTENT - no content found
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid Keycloak token
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
   /tenant/{id}:
@@ -51,10 +75,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TenantDTO'
-        404:
-          description: Not found
         400:
           description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid Keycloak token
+        404:
+          description: Not found
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
     put:
@@ -82,6 +108,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TenantDTO'
+        401:
+          description: UNAUTHORIZED - no/invalid Keycloak token
         409:
           description: CONFLICT - unique constraint validation fails
         500:
@@ -114,6 +142,55 @@ paths:
           description: BAD REQUEST - invalid/incomplete request or body object
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
+  /tenant/public/id/{tenantId}:
+    summary: 'Represents a publicly allowed tenant data'
+    description: This resource represents an individual tenant in a system.
+    get:
+      tags:
+        - tenant-controller
+      summary: 'Gets a tenant public information [Authorization: no-auth]'
+      operationId: getRestrictedTenantDataByTenantId
+      parameters:
+        - name: tenantId
+          in: path
+          description: Tenant ID
+          required: true
+          schema:
+            type: long
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestrictedTenantDTO'
+        404:
+          description: Not found
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+  /tenant/public/single:
+    summary: 'Represents a publicly allowed tenant data'
+    description: This resource represents the tenant in a single-tenant system.
+    get:
+      tags:
+        - tenant-controller
+      summary: 'Gets a tenant public information [Authorization: no-auth]'
+      operationId: getRestrictedSingleTenantData
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestrictedTenantDTO'
+        404:
+          description: Not found
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
 components:
   schemas:
     TenantDTO:
@@ -129,7 +206,7 @@ components:
         name:
           type: string
           example: "Company name AG"
-          maxLength: 100
+          maxLength: 40
         subdomain:
           type: string
           example: "companyname"
@@ -146,6 +223,33 @@ components:
         content:
           $ref:
             '#/components/schemas/Content'
+        settings:
+          $ref:
+            '#/components/schemas/Settings'
+    BasicTenantLicensingDTO:
+      type: object
+      required:
+        - id
+        - name
+        - subdomain
+      properties:
+        id:
+          type: long
+          example: 12132
+        name:
+          type: string
+          example: "Company name AG"
+          maxLength: 40
+        subdomain:
+          type: string
+          example: "companyname"
+          maxLength: 100
+        createDate:
+          type: string
+        updateDate:
+          type: string
+        licensing:
+          $ref: '#/components/schemas/Licensing'
     RestrictedTenantDTO:
       type: object
       required:
@@ -158,6 +262,10 @@ components:
         name:
           type: string
           example: "Company name AG"
+          maxLength: 40
+        subdomain:
+          type: string
+          example: "subdomain"
           maxLength: 100
         theming:
           $ref:
@@ -165,6 +273,9 @@ components:
         content:
           $ref:
             '#/components/schemas/Content'
+        settings:
+          $ref:
+            '#/components/schemas/Settings'
     Licensing:
       type: object
       required:
@@ -199,3 +310,18 @@ components:
         claim:
           type: string
           example: "Llorem ipsum..."
+          maxLength: 40
+        privacy:
+          type: string
+          example: "Llorem ipsum..."
+        termsAndConditions:
+          type: string
+          example: "Llorem ipsum..."
+    Settings:
+      type: object
+      required:
+        - impressum
+      properties:
+        topicsInRegistrationEnabled:
+          type: boolean
+          example: "false"

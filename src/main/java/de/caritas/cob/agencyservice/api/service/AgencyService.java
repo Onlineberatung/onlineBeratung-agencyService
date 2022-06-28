@@ -13,8 +13,9 @@ import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -36,9 +37,13 @@ public class AgencyService {
 
   private final @NonNull ConsultingTypeManager consultingTypeManager;
   private final @NonNull AgencyRepository agencyRepository;
+  private final @NonNull TenantService tenantService;
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
+
+  @Value("${multitenancy.enabled}")
+  private boolean multitenancy;
 
   /**
    * Returns a list of {@link AgencyResponseDTO} which match the provided agencyIds.
@@ -125,8 +130,19 @@ public class AgencyService {
   }
 
   private boolean isTopicFeatureActivatedInRegistration() {
-    // TODO get this flag from the tenant service,  implement within VIC-797
-    return true;
+    RestrictedTenantDTO restrictedTenantDTO;
+    if (multitenancy) {
+      Long tenantId = TenantContext.getCurrentTenant();
+      restrictedTenantDTO = tenantService.getRestrictedTenantDataByTenantId(tenantId);
+    } else {
+      restrictedTenantDTO = tenantService.getRestrictedTenantDataForSingleTenant();
+    }
+
+    if (nonNull(restrictedTenantDTO) && nonNull(restrictedTenantDTO.getSettings())) {
+      return Boolean.TRUE.equals(
+          restrictedTenantDTO.getSettings().getTopicsInRegistrationEnabled());
+    }
+    return false;
   }
 
   private void verifyConsultingTypeExists(int consultingTypeId)
