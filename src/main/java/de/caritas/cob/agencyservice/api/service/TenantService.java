@@ -19,5 +19,13 @@ public class TenantService {
     return tenantControllerApi.getRestrictedTenantDataBySubdomainWithHttpInfo(subdomain).getBody();
   }
 
+  @Cacheable(cacheNames = CacheManagerConfig.TENANT_ID_CACHE, key = "#tenantId")
+  public RestrictedTenantDTO getRestrictedTenantDataByTenantId(Long tenantId) {
+    return tenantControllerApi.getRestrictedTenantDataByTenantId(tenantId);
+  }
 
+  @Cacheable(cacheNames = CacheManagerConfig.SINGLE_TENANT_CACHE)
+  public RestrictedTenantDTO getRestrictedTenantDataForSingleTenant() {
+    return tenantControllerApi.getRestrictedSingleTenantData();
+  }
 }
