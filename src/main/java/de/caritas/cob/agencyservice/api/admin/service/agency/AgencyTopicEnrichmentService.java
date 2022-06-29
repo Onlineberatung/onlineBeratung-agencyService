@@ -51,17 +51,17 @@ public class AgencyTopicEnrichmentService {
     return isEmptyOrNull(allTopics) ? Maps.newHashMap() : getAvailableTopicsMap(allTopics);
   }
 
-  private boolean isEmptyOrNull(
-      List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> allTopics) {
-    return allTopics == null || allTopics.isEmpty();
-  }
-
   private Map<Long, TopicDTO> getAvailableTopicsMap(
       List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> allTopics) {
     return allTopics.stream()
         .collect(Collectors.toMap(
             de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO::getId,
             this::convertToAgencyServiceTopicViewDTO));
+  }
+
+  private boolean isEmptyOrNull(
+      List<de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO> allTopics) {
+    return allTopics == null || allTopics.isEmpty();
   }
 
   private TopicDTO convertToAgencyServiceTopicViewDTO(
