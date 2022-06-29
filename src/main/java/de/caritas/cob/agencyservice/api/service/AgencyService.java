@@ -130,19 +130,21 @@ public class AgencyService {
   }
 
   private boolean isTopicFeatureActivatedInRegistration() {
-    RestrictedTenantDTO restrictedTenantDTO;
-    if (multitenancy) {
-      Long tenantId = TenantContext.getCurrentTenant();
-      restrictedTenantDTO = tenantService.getRestrictedTenantDataByTenantId(tenantId);
-    } else {
-      restrictedTenantDTO = tenantService.getRestrictedTenantDataForSingleTenant();
-    }
-
+    RestrictedTenantDTO restrictedTenantDTO = getRestrictedTenantData();
     if (nonNull(restrictedTenantDTO) && nonNull(restrictedTenantDTO.getSettings())) {
       return Boolean.TRUE.equals(
           restrictedTenantDTO.getSettings().getTopicsInRegistrationEnabled());
     }
     return false;
+  }
+
+  private RestrictedTenantDTO getRestrictedTenantData() {
+    if (multitenancy) {
+      Long tenantId = TenantContext.getCurrentTenant();
+      return tenantService.getRestrictedTenantDataByTenantId(tenantId);
+    } else {
+      return tenantService.getRestrictedTenantDataForSingleTenant();
+    }
   }
 
   private void verifyConsultingTypeExists(int consultingTypeId)
