@@ -41,10 +41,11 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.RegistrationDTO;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
 import org.junit.After;
@@ -67,6 +68,9 @@ public class AgencyServiceTest {
   ConsultingTypeManager consultingTypeManager;
 
   @Mock
+  TenantService tenantService;
+
+  @Mock
   private AgencyRepository agencyRepository;
 
   private static final Long TENANT_ID = null;
@@ -74,6 +78,7 @@ public class AgencyServiceTest {
   @After
   public void tearDown() {
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", false);
+    ReflectionTestUtils.setField(agencyService, "multitenancy", false);
   }
 
   @Test
@@ -279,8 +284,12 @@ public class AgencyServiceTest {
       throws MissingConsultingTypeException {
     // given
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", true);
-    ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(new RegistrationDTO().minPostcodeSize(5));
+    ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(
+        new RegistrationDTO().minPostcodeSize(5));
     when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(dto);
+    RestrictedTenantDTO restrictedTenantDTO = new RestrictedTenantDTO().settings(
+        new Settings().topicsInRegistrationEnabled(true));
+    when(tenantService.getRestrictedTenantDataForSingleTenant()).thenReturn(restrictedTenantDTO);
 
     // when
     this.agencyService.getAgencies("12123", 1, Optional.empty());
@@ -291,8 +300,12 @@ public class AgencyServiceTest {
       throws MissingConsultingTypeException {
     // given
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", true);
-    ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(new RegistrationDTO().minPostcodeSize(5));
+    ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(
+        new RegistrationDTO().minPostcodeSize(5));
     when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(dto);
+    RestrictedTenantDTO restrictedTenantDTO = new RestrictedTenantDTO().settings(
+        new Settings().topicsInRegistrationEnabled(true));
+    when(tenantService.getRestrictedTenantDataForSingleTenant()).thenReturn(restrictedTenantDTO);
 
     // when
     this.agencyService.getAgencies("12123", 1, Optional.of(2));
