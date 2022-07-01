@@ -27,7 +27,7 @@ public class AgencyTopicEnrichmentService {
     var availableTopics = getAvailableTopicsMap();
     var agencyTopics = agency.getAgencyTopics();
     log.debug("Enriching agency with {} with information about the topics", agency.getId());
-    log.debug("Available topics list has size: {} ", agencyTopics.size());
+    log.debug("Available topics list has size: {} ", availableTopics.size());
     for (AgencyTopic agencyTopic : agencyTopics) {
       enrichSingleAgencyTopic(availableTopics, agencyTopic);
     }
