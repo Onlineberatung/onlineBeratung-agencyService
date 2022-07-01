@@ -8,6 +8,7 @@ create table DIOCESE
     UPDATE_DATE timestamp,
     primary key (ID)
 );
+
 create table AGENCY
 (
     ID              bigint        not null,
@@ -23,6 +24,9 @@ create table AGENCY
     URL             varchar(500)  null     default null,
     IS_EXTERNAL     tinyint       not null default 0,
     ID_OLD          bigint        null     default null,
+    AGE_FROM        smallint      null     default null,
+    AGE_TO          smallint      null     default null,
+    GENDER          varchar(50)   null     default null,
     CREATE_DATE     timestamp,
     UPDATE_DATE     timestamp,
     DELETE_DATE     timestamp     null     default null,

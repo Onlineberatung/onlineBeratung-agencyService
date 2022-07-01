@@ -20,9 +20,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
    * @return a {@link List} of {@link Agency} instances
    */
   @Query(
-      value = "SELECT a.id, a.diocese_id, a.name, a.description, a.postcode, a.city, a"
-          + ".is_team_agency, a.consulting_type, a.is_offline, a.url, a.is_external, "
-          + "a.delete_date, a.create_date, a.update_date, a.tenant_id, :tenantId FROM agency a "
+      value = "SELECT {a.*}, :tenantId  FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
           + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
@@ -30,14 +28,11 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
           + "AND a.delete_date IS NULL " + "GROUP BY a.id ORDER BY a.postcode DESC",
       nativeQuery = true)
   List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
-      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
-      Long tenantId);
+      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId, Long tenantId);
 
 
   @Query(
-      value = "SELECT a.id, a.diocese_id, a.name, a.description, a.postcode, a.city, a"
-          + ".is_team_agency, a.consulting_type, a.is_offline, a.url, a.is_external, "
-          + "a.delete_date, a.create_date, a.update_date, a.tenant_id, :tenantId FROM agency a "
+      value = "SELECT {a.*}, :tenantId FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "INNER JOIN agency_topic at ON a.id = at.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "

@@ -11,6 +11,7 @@ import java.util.List;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
 import java.util.Map;
+import liquibase.pro.packaged.A;
 
 public class TestConstants {
 
@@ -154,20 +155,29 @@ public class TestConstants {
   public static final Long AGENCY_ID = 98L;
   public static final String AGENCY_NAME = "Test agency";
   public static final String AGENCY_DESCRIPTION = "Test description";
-  public static final Agency AGENCY_SUCHT = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
-      AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, false, null, false, null, null, null,
-      null, null, null);
+  public static final Agency AGENCY_SUCHT = Agency.builder()
+      .id(AGENCY_ID)
+      .dioceseId(10L)
+      .name(AGENCY_NAME)
+      .description(AGENCY_DESCRIPTION)
+      .postCode(POSTCODE)
+      .city("Test city")
+      .teamAgency(false)
+      .consultingTypeId(CONSULTING_TYPE_SUCHT)
+      .offline(false)
+      .isExternal(false)
+      .build();
+
   public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, false, null, null, null,
-      null, null, null);
+      null, null, null, null, null, null);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
-          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null);
+          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null, null, null, null);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null);
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)

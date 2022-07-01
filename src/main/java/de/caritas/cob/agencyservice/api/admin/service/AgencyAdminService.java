@@ -12,9 +12,12 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundExceptio
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agency.Agency.AgencyBuilder;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agency.Gender;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -42,6 +45,9 @@ public class AgencyAdminService {
 
   @Value("${feature.topics.enabled}")
   private boolean featureTopicsEnabled;
+
+  @Value("${feature.demographics.enabled}")
+  private boolean featureDemographicsEnabled;
 
   /**
    * Returns the {@link AgencyAdminFullResponseDTO} for the provided agency ID.
@@ -94,7 +100,7 @@ public class AgencyAdminService {
    */
   private Agency fromAgencyDTO(AgencyDTO agencyDTO) {
 
-    Agency agencyToCreate = Agency.builder()
+    var agencyBuilder = Agency.builder()
         .dioceseId(agencyDTO.getDioceseId())
         .name(agencyDTO.getName())
         .description(agencyDTO.getDescription())
@@ -106,8 +112,13 @@ public class AgencyAdminService {
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
-        .updateDate(LocalDateTime.now(ZoneOffset.UTC))
-        .build();
+        .updateDate(LocalDateTime.now(ZoneOffset.UTC));
+
+    if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
+      convertGender(agencyDTO.getDemographics(), agencyBuilder);
+    }
+
+    var agencyToCreate = agencyBuilder.build();
 
     if (featureTopicsEnabled) {
       List<AgencyTopic> agencyTopics = agencyTopicMergeService.getMergedTopics(agencyToCreate,
@@ -115,6 +126,12 @@ public class AgencyAdminService {
       agencyToCreate.setAgencyTopics(agencyTopics);
     }
     return agencyToCreate;
+  }
+
+  private void convertGender(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
+    if (demographicsDTO.getGender() != null) {
+      agencyBuilder.gender(Gender.valueOf(demographicsDTO.getGender()));
+    }
   }
 
   /**
@@ -134,7 +151,7 @@ public class AgencyAdminService {
 
   private Agency mergeAgencies(Agency agency, UpdateAgencyDTO updateAgencyDTO) {
 
-    var agencyToUpdate = Agency.builder()
+    var agencyBuilder = Agency.builder()
         .id(agency.getId())
         .dioceseId(updateAgencyDTO.getDioceseId())
         .name(updateAgencyDTO.getName())
@@ -148,7 +165,13 @@ public class AgencyAdminService {
         .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
-        .deleteDate(agency.getDeleteDate()).build();
+        .deleteDate(agency.getDeleteDate());
+
+    if (featureDemographicsEnabled && updateAgencyDTO.getDemographics() != null) {
+      convertGender(updateAgencyDTO.getDemographics(), agencyBuilder);
+    }
+
+    var agencyToUpdate = agencyBuilder.build();
 
     if (featureTopicsEnabled) {
       List<AgencyTopic> agencyTopics = agencyTopicMergeService.getMergedTopics(agencyToUpdate,
