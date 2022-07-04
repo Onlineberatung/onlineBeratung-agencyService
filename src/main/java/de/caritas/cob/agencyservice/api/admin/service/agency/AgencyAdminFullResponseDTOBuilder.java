@@ -5,6 +5,7 @@ import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Builder to build an {@link AgencyAdminFullResponseDTO()} from an {@link Agency} instance.
@@ -20,6 +22,9 @@ import lombok.RequiredArgsConstructor;
 public class AgencyAdminFullResponseDTOBuilder {
 
   private final @NonNull Agency agency;
+
+  @Value("${feature.demographics.enabled}")
+  private boolean featureDemographicsEnabled;
 
   /**
    * Creates an {@link AgencyAdminFullResponseDTO()} with HAL-Links from an {@link Agency}
@@ -34,7 +39,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private AgencyAdminResponseDTO createAgency() {
-    return new AgencyAdminResponseDTO()
+    var responseDTO = new AgencyAdminResponseDTO()
         .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
@@ -50,6 +55,19 @@ public class AgencyAdminFullResponseDTOBuilder {
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
+
+    if (featureDemographicsEnabled) {
+      responseDTO.demographics(getDemographics());
+    }
+    return responseDTO;
+  }
+
+  private DemographicsDTO getDemographics() {
+    return new DemographicsDTO().ageTo(toInteger(agency.getAgeTo())).ageFrom(toInteger(agency.getAgeFrom())).gender(agency.getGender().name());
+  }
+
+  private Integer toInteger(Short ageTo) {
+    return ageTo != null ? Integer.valueOf(ageTo) : null;
   }
 
   private List<TopicDTO> getTopics() {

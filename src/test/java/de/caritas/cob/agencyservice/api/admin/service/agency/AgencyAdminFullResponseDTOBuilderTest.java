@@ -10,8 +10,10 @@ import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class AgencyAdminFullResponseDTOBuilderTest {
 
@@ -25,11 +27,20 @@ class AgencyAdminFullResponseDTOBuilderTest {
     this.agencyAdminFullResponseDTOBuilder = new AgencyAdminFullResponseDTOBuilder(agency);
   }
 
+  @AfterEach
+  void tearDown() {
+    ReflectionTestUtils.setField(agencyAdminFullResponseDTOBuilder, "featureDemographicsEnabled", false);
+  }
+
   @Test
   void fromAgency_Should_Return_ValidAgency() {
 
     var result = agencyAdminFullResponseDTOBuilder.fromAgency();
 
+    assertBaseDTOAttributesAreMapped(result);
+  }
+
+  private void assertBaseDTOAttributesAreMapped(AgencyAdminFullResponseDTO result) {
     assertEquals(agency.getId(), result.getEmbedded().getId());
     assertEquals(agency.getName(), result.getEmbedded().getName());
     assertEquals(agency.getDescription(), result.getEmbedded().getDescription());
@@ -44,6 +55,21 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(String.valueOf(agency.getCreateDate()), result.getEmbedded().getCreateDate());
     assertEquals(String.valueOf(agency.getUpdateDate()), result.getEmbedded().getUpdateDate());
     assertEquals(String.valueOf(agency.getDeleteDate()), result.getEmbedded().getDeleteDate());
+  }
+
+  @Test
+  void fromAgency_Should_Return_ValidAgency_ForDemographics() {
+    ReflectionTestUtils.setField(agencyAdminFullResponseDTOBuilder, "featureDemographicsEnabled",
+        true);
+    var result = agencyAdminFullResponseDTOBuilder.fromAgency();
+    assertBaseDTOAttributesAreMapped(result);
+    assertEquals(toInteger(agency.getAgeFrom()), result.getEmbedded().getDemographics().getAgeFrom());
+    assertEquals(toInteger(agency.getAgeTo()), result.getEmbedded().getDemographics().getAgeTo());
+    assertEquals(agency.getGender().toString(), result.getEmbedded().getDemographics().getGender());
+  }
+
+  private Integer toInteger(Short value) {
+    return value != null ? value.intValue() : null;
   }
 
   @Test
