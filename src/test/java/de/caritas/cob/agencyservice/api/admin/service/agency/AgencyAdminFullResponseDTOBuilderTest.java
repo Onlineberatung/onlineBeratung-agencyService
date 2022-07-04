@@ -4,16 +4,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agency.Gender;
 import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 class AgencyAdminFullResponseDTOBuilderTest {
 
@@ -25,11 +25,6 @@ class AgencyAdminFullResponseDTOBuilderTest {
     EasyRandom easyRandom = new EasyRandom();
     this.agency = easyRandom.nextObject(Agency.class);
     this.agencyAdminFullResponseDTOBuilder = new AgencyAdminFullResponseDTOBuilder(agency);
-  }
-
-  @AfterEach
-  void tearDown() {
-    ReflectionTestUtils.setField(agencyAdminFullResponseDTOBuilder, "featureDemographicsEnabled", false);
   }
 
   @Test
@@ -58,14 +53,33 @@ class AgencyAdminFullResponseDTOBuilderTest {
   }
 
   @Test
-  void fromAgency_Should_Return_ValidAgency_ForDemographics() {
-    ReflectionTestUtils.setField(agencyAdminFullResponseDTOBuilder, "featureDemographicsEnabled",
-        true);
+  void fromAgency_Should_Return_ValidAgencyWithDemographics_IfAtLeastOneDemographicsAttributeIsAdded() {
+    // given
+    agency.setAgeFrom((short) 15);
+    agency.setAgeTo(null);
+    agency.setGender(Gender.MALE);
+    // when
     var result = agencyAdminFullResponseDTOBuilder.fromAgency();
+
+    // then
     assertBaseDTOAttributesAreMapped(result);
     assertEquals(toInteger(agency.getAgeFrom()), result.getEmbedded().getDemographics().getAgeFrom());
     assertEquals(toInteger(agency.getAgeTo()), result.getEmbedded().getDemographics().getAgeTo());
     assertEquals(agency.getGender().toString(), result.getEmbedded().getDemographics().getGender());
+  }
+
+  @Test
+  void fromAgency_Should_Return_ValidAgency_WithoutDemographics_IfNoneDemographicsAttributeAreSet() {
+    // given
+    agency.setAgeFrom(null);
+    agency.setAgeTo(null);
+    agency.setGender(null);
+    // when
+    var result = agencyAdminFullResponseDTOBuilder.fromAgency();
+
+    // then
+    assertBaseDTOAttributesAreMapped(result);
+    assertNull(result.getEmbedded().getDemographics());
   }
 
   private Integer toInteger(Short value) {

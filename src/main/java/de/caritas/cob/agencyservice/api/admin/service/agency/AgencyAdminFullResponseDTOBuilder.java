@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Builder to build an {@link AgencyAdminFullResponseDTO()} from an {@link Agency} instance.
@@ -22,9 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 public class AgencyAdminFullResponseDTOBuilder {
 
   private final @NonNull Agency agency;
-
-  @Value("${feature.demographics.enabled}")
-  private boolean featureDemographicsEnabled;
 
   /**
    * Creates an {@link AgencyAdminFullResponseDTO()} with HAL-Links from an {@link Agency}
@@ -56,17 +52,26 @@ public class AgencyAdminFullResponseDTOBuilder {
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
 
-    if (featureDemographicsEnabled) {
+    if (hasAnyNonNullDemographicsAttribute()) {
       responseDTO.demographics(getDemographics());
     }
     return responseDTO;
   }
 
-  private DemographicsDTO getDemographics() {
-    return new DemographicsDTO().ageTo(toInteger(agency.getAgeTo())).ageFrom(toInteger(agency.getAgeFrom())).gender(agency.getGender().name());
+  private boolean hasAnyNonNullDemographicsAttribute() {
+    return this.agency.getAgeTo() != null || this.agency.getAgeFrom() != null || this.agency.getGender() != null;
   }
 
-  private Integer toInteger(Short ageTo) {
+  private DemographicsDTO getDemographics() {
+    return new DemographicsDTO().ageTo(nullSafeToInteger(agency.getAgeTo()))
+        .ageFrom(nullSafeToInteger(agency.getAgeFrom())).gender(getGenderName());
+  }
+
+  private String getGenderName() {
+    return agency.getGender() != null ? agency.getGender().name() : null;
+  }
+
+  private Integer nullSafeToInteger(Short ageTo) {
     return ageTo != null ? Integer.valueOf(ageTo) : null;
   }
 
