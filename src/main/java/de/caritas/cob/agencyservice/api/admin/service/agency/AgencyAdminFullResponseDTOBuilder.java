@@ -1,12 +1,10 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
-import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
@@ -54,27 +52,13 @@ public class AgencyAdminFullResponseDTOBuilder {
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
 
     if (hasAnyNonNullDemographicsAttribute()) {
-      responseDTO.demographics(getDemographics());
+      responseDTO.demographics(new DemographicsConverter().convertToDTO(agency));
     }
     return responseDTO;
   }
 
   private boolean hasAnyNonNullDemographicsAttribute() {
     return this.agency.getAgeTo() != null || this.agency.getAgeFrom() != null || this.agency.getGender() != null;
-  }
-
-  private DemographicsDTO getDemographics() {
-    return new DemographicsDTO().ageTo(nullSafeToInteger(agency.getAgeTo()))
-        .ageFrom(nullSafeToInteger(agency.getAgeFrom())).genders(getGenderNames());
-  }
-
-  private List<String> getGenderNames() {
-    return Splitter.on(",").trimResults()
-        .splitToList(agency.getGender());
-  }
-
-  private Integer nullSafeToInteger(Short ageTo) {
-    return ageTo != null ? Integer.valueOf(ageTo) : null;
   }
 
   private List<TopicDTO> getTopics() {

@@ -4,27 +4,22 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
-import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agency.Agency.AgencyBuilder;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.repository.agency.Gender;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +40,9 @@ public class AgencyAdminService {
 
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Autowired(required = false)
+  private DemographicsConverter demographicsConverter;
 
   @Value("${feature.topics.enabled}")
   private boolean featureTopicsEnabled;
@@ -118,7 +116,7 @@ public class AgencyAdminService {
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
 
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
-      convertDemographics(agencyDTO.getDemographics(), agencyBuilder);
+      demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
     }
 
     var agencyToCreate = agencyBuilder.build();
@@ -131,38 +129,6 @@ public class AgencyAdminService {
     return agencyToCreate;
   }
 
-  private void convertDemographics(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
-    convertGender(demographicsDTO, agencyBuilder);
-    agencyBuilder.ageTo(toShort(demographicsDTO.getAgeTo()));
-    agencyBuilder.ageFrom(toShort(demographicsDTO.getAgeFrom()));
-  }
-
-  private Short toShort(Integer age) {
-    return age != null ? age.shortValue() : null;
-  }
-
-  private void convertGender(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
-    List<String> genders = getValidatedGenders(demographicsDTO);
-    if (genders != null) {
-      agencyBuilder.gender(joinToCommaSeparatedValues(genders));
-    }
-  }
-
-  private List<String> getValidatedGenders(
-      DemographicsDTO demographicsDTO) {
-    return (demographicsDTO.getGenders() != null) ? getValidatedGendersForNonEmptyCollection(demographicsDTO) : Lists.newArrayList();
-  }
-
-  private List<String> getValidatedGendersForNonEmptyCollection(DemographicsDTO demographicsDTO) {
-    return demographicsDTO.getGenders().stream()
-        .map(genderName -> Gender.valueOf(genderName).name())
-        .collect(Collectors.toList());
-  }
-
-
-  private String joinToCommaSeparatedValues(List<String> genders) {
-    return Joiner.on(",").skipNulls().join(genders);
-  }
 
   /**
    * Updates an agency in the database.
@@ -198,8 +164,7 @@ public class AgencyAdminService {
         .deleteDate(agency.getDeleteDate());
 
     if (featureDemographicsEnabled && updateAgencyDTO.getDemographics() != null) {
-      convertDemographics(updateAgencyDTO.getDemographics(), agencyBuilder);
-      convertGender(updateAgencyDTO.getDemographics(), agencyBuilder);
+      demographicsConverter.convertToEntity(updateAgencyDTO.getDemographics(), agencyBuilder);
     }
 
     var agencyToUpdate = agencyBuilder.build();
