@@ -115,7 +115,7 @@ public class AgencyAdminService {
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
 
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
-      convertGender(agencyDTO.getDemographics(), agencyBuilder);
+      convertDemographics(agencyDTO.getDemographics(), agencyBuilder);
     }
 
     var agencyToCreate = agencyBuilder.build();
@@ -126,6 +126,16 @@ public class AgencyAdminService {
       agencyToCreate.setAgencyTopics(agencyTopics);
     }
     return agencyToCreate;
+  }
+
+  private void convertDemographics(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
+    convertGender(demographicsDTO, agencyBuilder);
+    agencyBuilder.ageTo(toShort(demographicsDTO.getAgeTo()));
+    agencyBuilder.ageFrom(toShort(demographicsDTO.getAgeFrom()));
+  }
+
+  private Short toShort(Integer age) {
+    return age != null ? age.shortValue() : null;
   }
 
   private void convertGender(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
@@ -168,6 +178,7 @@ public class AgencyAdminService {
         .deleteDate(agency.getDeleteDate());
 
     if (featureDemographicsEnabled && updateAgencyDTO.getDemographics() != null) {
+      convertDemographics(updateAgencyDTO.getDemographics(), agencyBuilder);
       convertGender(updateAgencyDTO.getDemographics(), agencyBuilder);
     }
 
