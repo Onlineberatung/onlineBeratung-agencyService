@@ -41,7 +41,7 @@ class AgencyRepositoryIT {
     assertThat(agency.getId()).isEqualTo(1735);
     assertThat(agency.getAgeFrom()).isEqualTo((short) 15);
     assertThat(agency.getAgeTo()).isEqualTo((short) 100);
-    assertThat(agency.getGender()).isEqualTo(Gender.MALE);
+    assertThat(agency.getGender()).isEqualTo(Gender.MALE.toString());
   }
 
   @Test

@@ -4,6 +4,8 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
@@ -22,6 +24,7 @@ import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,9 +142,26 @@ public class AgencyAdminService {
   }
 
   private void convertGender(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
-    if (demographicsDTO.getGender() != null) {
-      agencyBuilder.gender(Gender.valueOf(demographicsDTO.getGender()));
+    List<String> genders = getValidatedGenders(demographicsDTO);
+    if (genders != null) {
+      agencyBuilder.gender(joinToCommaSeparatedValues(genders));
     }
+  }
+
+  private List<String> getValidatedGenders(
+      DemographicsDTO demographicsDTO) {
+    return (demographicsDTO.getGenders() != null) ? getValidatedGendersForNonEmptyCollection(demographicsDTO) : Lists.newArrayList();
+  }
+
+  private List<String> getValidatedGendersForNonEmptyCollection(DemographicsDTO demographicsDTO) {
+    return demographicsDTO.getGenders().stream()
+        .map(genderName -> Gender.valueOf(genderName).name())
+        .collect(Collectors.toList());
+  }
+
+
+  private String joinToCommaSeparatedValues(List<String> genders) {
+    return Joiner.on(",").skipNulls().join(genders);
   }
 
   /**

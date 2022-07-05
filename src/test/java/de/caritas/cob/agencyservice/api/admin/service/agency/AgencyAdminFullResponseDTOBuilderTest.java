@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
@@ -57,7 +58,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     // given
     agency.setAgeFrom((short) 15);
     agency.setAgeTo(null);
-    agency.setGender(Gender.MALE);
+    agency.setGender(Gender.MALE.toString());
     // when
     var result = agencyAdminFullResponseDTOBuilder.fromAgency();
 
@@ -65,7 +66,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertBaseDTOAttributesAreMapped(result);
     assertEquals(toInteger(agency.getAgeFrom()), result.getEmbedded().getDemographics().getAgeFrom());
     assertEquals(toInteger(agency.getAgeTo()), result.getEmbedded().getDemographics().getAgeTo());
-    assertEquals(agency.getGender().toString(), result.getEmbedded().getDemographics().getGender());
+    assertTrue(result.getEmbedded().getDemographics().getGenders().contains(agency.getGender()));
   }
 
   @Test

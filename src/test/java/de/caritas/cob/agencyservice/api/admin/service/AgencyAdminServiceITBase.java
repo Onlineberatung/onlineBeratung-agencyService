@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
@@ -96,7 +97,7 @@ public class AgencyAdminServiceITBase {
     DemographicsDTO demographics = new DemographicsDTO();
     demographics.setAgeTo(15);
     demographics.setAgeTo(100);
-    demographics.setGender("MALE");
+    demographics.setGenders(Lists.newArrayList("MALE"));
     agencyDTO.setDemographics(demographics);
     return agencyDTO;
   }

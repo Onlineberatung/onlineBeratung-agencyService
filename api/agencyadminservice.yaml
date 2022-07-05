@@ -688,9 +688,11 @@ components:
           minimum: 0
           maximum: 200
           example: 55
-        gender:
-          type: string
-          example: "FEMALE"
+        genders:
+          type: array
+          items:
+            type: string
+          example: "[MALE,FEMALE,DIVERS]"
 
     UpdateAgencyResponseDTO:
       type: object

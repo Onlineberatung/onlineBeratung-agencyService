@@ -147,8 +147,7 @@ public class Agency implements TenantAware {
   private Short ageTo;
 
   @Column(name = "gender")
-  @Enumerated(EnumType.STRING)
-  private Gender gender;
+  private String gender;
 
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;

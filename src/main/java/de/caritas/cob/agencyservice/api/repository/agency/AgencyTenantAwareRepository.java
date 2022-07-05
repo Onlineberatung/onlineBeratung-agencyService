@@ -22,7 +22,7 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
    * @return a {@link List} of {@link Agency} instances
    */
   @Query(
-      value = "SELECT {a.*} FROM agency a "
+      value = "SELECT a.* FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
           + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "

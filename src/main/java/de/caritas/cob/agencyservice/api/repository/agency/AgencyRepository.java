@@ -20,7 +20,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
    * @return a {@link List} of {@link Agency} instances
    */
   @Query(
-      value = "SELECT {a.*}, :tenantId  FROM agency a "
+      value = "SELECT a.*, :tenantId  FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
           + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
@@ -32,7 +32,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
 
 
   @Query(
-      value = "SELECT {a.*}, :tenantId FROM agency a "
+      value = "SELECT a.*, :tenantId FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "INNER JOIN agency_topic at ON a.id = at.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "

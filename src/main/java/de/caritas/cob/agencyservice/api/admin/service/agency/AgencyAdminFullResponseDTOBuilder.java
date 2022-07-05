@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
@@ -64,11 +65,12 @@ public class AgencyAdminFullResponseDTOBuilder {
 
   private DemographicsDTO getDemographics() {
     return new DemographicsDTO().ageTo(nullSafeToInteger(agency.getAgeTo()))
-        .ageFrom(nullSafeToInteger(agency.getAgeFrom())).gender(getGenderName());
+        .ageFrom(nullSafeToInteger(agency.getAgeFrom())).genders(getGenderNames());
   }
 
-  private String getGenderName() {
-    return agency.getGender() != null ? agency.getGender().name() : null;
+  private List<String> getGenderNames() {
+    return Splitter.on(",").trimResults()
+        .splitToList(agency.getGender());
   }
 
   private Integer nullSafeToInteger(Short ageTo) {
