@@ -48,6 +48,8 @@ public class AgencyServiceTenantAwareTest {
   @After
   public void tearDown() {
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", false);
+    ReflectionTestUtils.setField(agencyService, "multitenancy", false);
+    TenantContext.clear();
   }
 
   @Test(expected = BadRequestException.class)
