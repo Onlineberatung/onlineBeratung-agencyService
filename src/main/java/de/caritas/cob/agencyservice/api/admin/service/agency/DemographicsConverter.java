@@ -29,18 +29,18 @@ public class DemographicsConverter {
 
   public void convertToEntity(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
     convertGender(demographicsDTO, agencyBuilder);
-    agencyBuilder.ageTo(toShort(demographicsDTO.getAgeTo()));
-    agencyBuilder.ageFrom(toShort(demographicsDTO.getAgeFrom()));
+    agencyBuilder.ageTo(nullSafeToShort(demographicsDTO.getAgeTo()));
+    agencyBuilder.ageFrom(nullSafeToShort(demographicsDTO.getAgeFrom()));
   }
 
-  private Short toShort(Integer age) {
+  private Short nullSafeToShort(Integer age) {
     return age != null ? age.shortValue() : null;
   }
 
   private void convertGender(DemographicsDTO demographicsDTO, AgencyBuilder agencyBuilder) {
     List<String> genders = getValidatedGenders(demographicsDTO);
     if (genders != null) {
-      agencyBuilder.gender(joinToCommaSeparatedValues(genders));
+      agencyBuilder.genders(joinToCommaSeparatedValues(genders));
     }
   }
 
@@ -61,8 +61,8 @@ public class DemographicsConverter {
 
   private List<String> getGenderNames(
       Agency agency) {
-    return isEmpty(agency.getGender()) ? Lists.newArrayList()
-        : splitGenderToList(agency.getGender());
+    return isEmpty(agency.getGenders()) ? Lists.newArrayList()
+        : splitGenderToList(agency.getGenders());
   }
 
   private List<String> splitGenderToList(String gender) {

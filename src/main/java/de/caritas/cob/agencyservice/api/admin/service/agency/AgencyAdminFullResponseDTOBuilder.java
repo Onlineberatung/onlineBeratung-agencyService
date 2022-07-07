@@ -58,7 +58,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private boolean hasAnyNonNullDemographicsAttribute() {
-    return this.agency.getAgeTo() != null || this.agency.getAgeFrom() != null || this.agency.getGender() != null;
+    return this.agency.getAgeTo() != null || this.agency.getAgeFrom() != null || this.agency.getGenders() != null;
   }
 
   private List<TopicDTO> getTopics() {

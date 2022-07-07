@@ -58,7 +58,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     // given
     agency.setAgeFrom((short) 15);
     agency.setAgeTo(null);
-    agency.setGender(Gender.MALE.toString());
+    agency.setGenders(Gender.MALE.toString());
     // when
     var result = agencyAdminFullResponseDTOBuilder.fromAgency();
 
@@ -66,7 +66,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertBaseDTOAttributesAreMapped(result);
     assertEquals(toInteger(agency.getAgeFrom()), result.getEmbedded().getDemographics().getAgeFrom());
     assertEquals(toInteger(agency.getAgeTo()), result.getEmbedded().getDemographics().getAgeTo());
-    assertTrue(result.getEmbedded().getDemographics().getGenders().contains(agency.getGender()));
+    assertTrue(result.getEmbedded().getDemographics().getGenders().contains(agency.getGenders()));
   }
 
   @Test
@@ -74,7 +74,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     // given
     agency.setAgeFrom(null);
     agency.setAgeTo(null);
-    agency.setGender(null);
+    agency.setGenders(null);
     // when
     var result = agencyAdminFullResponseDTOBuilder.fromAgency();
 

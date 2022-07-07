@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class DemographicsConverterTest {
 
   @Test
-  void fromAgency_Should_ConvertEmptyGenderListIfGenderIsNull() {
+  void fromAgency_Should_ConvertEmptyGenderListWhenGenderIsNull() {
     // given
     Agency agency = givenAgencyWithDemographicsGenderValue(null);
     DemographicsConverter demographicsConverter = new DemographicsConverter();
@@ -22,7 +22,7 @@ class DemographicsConverterTest {
   }
 
   @Test
-  void fromAgency_Should_ConvertToEmptyGenderListIfEmptyString() {
+  void fromAgency_Should_ConvertToEmptyGenderListWhenEmptyString() {
     // given
     Agency agency = givenAgencyWithDemographicsGenderValue("");
     DemographicsConverter demographicsConverter = new DemographicsConverter();
@@ -49,7 +49,7 @@ class DemographicsConverterTest {
 
   private Agency givenAgencyWithDemographicsGenderValue(String gender) {
     Agency agency = givenAgencyWithAgeRange();
-    agency.setGender(gender);
+    agency.setGenders(gender);
     return agency;
   }
 
