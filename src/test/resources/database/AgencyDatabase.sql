@@ -8,6 +8,7 @@ create table DIOCESE
     UPDATE_DATE timestamp,
     primary key (ID)
 );
+
 create table AGENCY
 (
     ID              bigint        not null,
@@ -23,6 +24,9 @@ create table AGENCY
     URL             varchar(500)  null     default null,
     IS_EXTERNAL     tinyint       not null default 0,
     ID_OLD          bigint        null     default null,
+    AGE_FROM        smallint      null     default null,
+    AGE_TO          smallint      null     default null,
+    GENDERS         varchar(50)   null     default null,
     CREATE_DATE     timestamp,
     UPDATE_DATE     timestamp,
     DELETE_DATE     timestamp     null     default null,
@@ -1225,6 +1229,10 @@ INSERT INTO AGENCY (ID, TENANT_ID, NAME, DESCRIPTION, POSTCODE, CITY, IS_TEAM_AG
 INSERT INTO AGENCY (ID, TENANT_ID, NAME, DESCRIPTION, POSTCODE, CITY, IS_TEAM_AGENCY, CONSULTING_TYPE, IS_OFFLINE, URL, IS_EXTERNAL, ID_OLD, CREATE_DATE, UPDATE_DATE, DELETE_DATE, DIOCESE_ID) VALUES (1732, null, 'Hospice Test', '', '20255', 'Hamburg', 0, 18, 0, null, 0, null, '2020-05-11 10:33:40', '2020-05-11 10:33:40', null, 14);
 INSERT INTO AGENCY (ID, TENANT_ID, NAME, DESCRIPTION, POSTCODE, CITY, IS_TEAM_AGENCY, CONSULTING_TYPE, IS_OFFLINE, URL, IS_EXTERNAL, ID_OLD, CREATE_DATE, UPDATE_DATE, DELETE_DATE, DIOCESE_ID) VALUES (1733, null, 'Regional Test', '', '45879', 'Gelsenkirchen', 0, 19, 0, null, 0, null, '2020-05-11 10:33:40', '2020-05-11 10:33:40', null, 10);
 INSERT INTO AGENCY (ID, TENANT_ID, NAME, DESCRIPTION, POSTCODE, CITY, IS_TEAM_AGENCY, CONSULTING_TYPE, IS_OFFLINE, URL, IS_EXTERNAL, ID_OLD, CREATE_DATE, UPDATE_DATE, DELETE_DATE, DIOCESE_ID) VALUES (1734, null, 'Ohne Postcoderanges', '', '45879', 'Gelsenkirchen', 0, 19, 0, null, 0, null, '2020-05-11 10:33:40', '2020-05-11 10:33:40', null, 10);
+
+-- insert agency with demographics
+INSERT INTO AGENCY (ID, TENANT_ID, NAME, DESCRIPTION, POSTCODE, CITY, IS_TEAM_AGENCY, CONSULTING_TYPE, IS_OFFLINE, URL, IS_EXTERNAL, ID_OLD, CREATE_DATE, UPDATE_DATE, DELETE_DATE, DIOCESE_ID, AGE_FROM, AGE_TO, GENDERS)
+VALUES             (1735, null, 'Ohne Postcoderanges', '', '45879', 'Gelsenkirchen with Demographics', 0, 19, 0, null, 0, null, '2020-05-11 10:33:40', '2020-05-11 10:33:40', null, 10, 15, 100, 'MALE');
 
 
 INSERT INTO AGENCY_POSTCODE_RANGE (ID, TENANT_ID, AGENCY_ID, POSTCODE_FROM, POSTCODE_TO, CREATE_DATE, UPDATE_DATE) VALUES (0, null, 0, '53001', '53229', '2018-12-11 11:19:37', '2019-04-08 11:28:50');

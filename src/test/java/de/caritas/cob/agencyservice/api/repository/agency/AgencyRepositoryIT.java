@@ -33,6 +33,18 @@ class AgencyRepositoryIT {
   }
 
   @Test
+  void findById_Should_loadAgencyWithDemographics() {
+    // given, when
+    var optionalAgency = agencyRepository.findById(1735L);
+    var agency = optionalAgency.orElseThrow(RuntimeException::new);
+    // then
+    assertThat(agency.getId()).isEqualTo(1735);
+    assertThat(agency.getAgeFrom()).isEqualTo((short) 15);
+    assertThat(agency.getAgeTo()).isEqualTo((short) 100);
+    assertThat(agency.getGenders()).isEqualTo(Gender.MALE.toString());
+  }
+
+  @Test
   void findByPostCodeAndConsultingTypeId_Should_findAgencyByPostcodeAndConsultingType() {
     // given, when
     var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("53113", 5, 0, 1L);

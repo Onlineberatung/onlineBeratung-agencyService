@@ -39,6 +39,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.RegistrationDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
@@ -77,6 +78,7 @@ public class AgencyServiceTest {
 
   @After
   public void tearDown() {
+    TenantContext.clear();
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", false);
     ReflectionTestUtils.setField(agencyService, "multitenancy", false);
   }
