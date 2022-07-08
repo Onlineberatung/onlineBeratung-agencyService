@@ -169,7 +169,15 @@ class AgencyAdminControllerIT {
   }
 
   @Test
-  void createAgency_Should_returnForbidden_When_calledAsUnauthenticatedUser()
+  void getAgency_Should_returnUnauthorized_When_calledAsUnauthenticatedUser()
+      throws Exception {
+    mockMvc.perform(get(PATH_GET_AGENCY_BY_ID)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void createAgency_Should_returnUnauthorized_When_calledAsUnauthenticatedUser()
       throws Exception {
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
@@ -181,7 +189,7 @@ class AgencyAdminControllerIT {
   }
 
   @Test
-  void updateAgency_Should_returnForbidden_When_calledAsUnauthenticatedUser()
+  void updateAgency_Should_returnUnauthorized_When_calledAsUnauthenticatedUser()
       throws Exception {
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO agencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
@@ -193,12 +201,41 @@ class AgencyAdminControllerIT {
   }
 
   @Test
-  void getAgency_Should_returnForbidden_When_calledAsUnauthenticatedUser()
+  @WithMockUser(authorities = {"NOT_AUTHORIZED"})
+  void getAgency_Should_returnIsForbidden_When_calledAsUnauthorizedUser()
       throws Exception {
     mockMvc.perform(get(PATH_GET_AGENCY_BY_ID)
             .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isForbidden());
   }
+
+  @Test
+  @WithMockUser(authorities = {"NOT_AUTHORIZED"})
+  void createAgency_Should_returnForbidden_When_calledAsUnauthorizedUser()
+      throws Exception {
+    EasyRandom easyRandom = new EasyRandom();
+    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
+    String payload = JsonConverter.convert(agencyDTO);
+    mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
+            .content(payload)
+            .contentType(APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"NOT_AUTHORIZED"})
+  void updateAgency_Should_returnForbidden_When_calledAsUnauthorizedUser()
+      throws Exception {
+    EasyRandom easyRandom = new EasyRandom();
+    UpdateAgencyDTO agencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    String payload = JsonConverter.convert(agencyDTO);
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .content(payload)
+            .contentType(APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+
 }
 
 
