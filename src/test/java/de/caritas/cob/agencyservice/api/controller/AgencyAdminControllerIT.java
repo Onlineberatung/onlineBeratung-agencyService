@@ -2,6 +2,8 @@ package de.caritas.cob.agencyservice.api.controller;
 
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,7 +21,6 @@ import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -86,7 +87,7 @@ class AgencyAdminControllerIT {
   void createAgency_Should_returnStatusCreated_When_calledWithValidCreateParamsAndValidAuthority()
       throws Exception {
     // given
-    Mockito.when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(new ExtendedConsultingTypeResponseDTO());
 
     AgencyDTO agencyDTO = new AgencyDTO()
@@ -131,7 +132,7 @@ class AgencyAdminControllerIT {
     // given
     ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
         false);
-    Mockito.when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
@@ -234,8 +235,4 @@ class AgencyAdminControllerIT {
             .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
-
-
 }
-
-
