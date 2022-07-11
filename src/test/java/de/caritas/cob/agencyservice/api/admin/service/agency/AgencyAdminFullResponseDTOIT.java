@@ -96,7 +96,7 @@ public class AgencyAdminFullResponseDTOIT {
         .getEmbedded().stream().map(el -> el.getEmbedded().getName()).collect(Collectors.toList());
 
     agenciesSorted.forEach(el -> {
-      Assertions.assertEquals(el.charAt(0), 'A');
+      Assertions.assertEquals('A', el.charAt(0));
     });
 
     sort.setField(FieldEnum.NAME);
@@ -107,7 +107,7 @@ public class AgencyAdminFullResponseDTOIT {
         .collect(Collectors.toList());
 
     agenciesSorted.forEach(el -> {
-      Assertions.assertEquals(el.charAt(0), 'Z');
+      Assertions.assertEquals('Z', el.charAt(0));
     });
   }
 
@@ -131,7 +131,7 @@ public class AgencyAdminFullResponseDTOIT {
         .getEmbedded();
 
     assertThat(firstPage, hasSize(1000));
-    assertThat(secondPage, hasSize(134));
+    assertThat(secondPage, hasSize(135));
   }
 
   @Test
