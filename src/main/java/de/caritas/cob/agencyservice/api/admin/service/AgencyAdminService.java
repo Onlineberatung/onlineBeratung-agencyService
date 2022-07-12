@@ -154,6 +154,10 @@ public class AgencyAdminService {
       List<AgencyTopic> agencyTopics = agencyTopicMergeService.getMergedTopics(agencyToUpdate,
           updateAgencyDTO.getTopicIds());
       agencyToUpdate.setAgencyTopics(agencyTopics);
+    } else {
+      // If the Topic feature is not enabled, Hibernate use an empty PersistentBag,
+      // and we have to consider this and pass it for merging.
+      agencyToUpdate.setAgencyTopics(agency.getAgencyTopics());
     }
     return agencyToUpdate;
   }
