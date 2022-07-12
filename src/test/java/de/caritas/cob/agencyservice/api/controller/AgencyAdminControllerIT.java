@@ -64,7 +64,6 @@ class AgencyAdminControllerIT {
     mockMvc.perform(get(PATH_GET_AGENCY_BY_ID)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("_embedded.length()").value(15))
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").exists())
         .andExpect(jsonPath("_embedded.dioceseId").exists())
