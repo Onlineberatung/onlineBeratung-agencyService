@@ -34,7 +34,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private AgencyAdminResponseDTO createAgency() {
-    return new AgencyAdminResponseDTO()
+    var responseDTO = new AgencyAdminResponseDTO()
         .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
@@ -50,6 +50,15 @@ public class AgencyAdminFullResponseDTOBuilder {
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
+
+    if (hasAnyNonNullDemographicsAttribute()) {
+      responseDTO.demographics(new DemographicsConverter().convertToDTO(agency));
+    }
+    return responseDTO;
+  }
+
+  private boolean hasAnyNonNullDemographicsAttribute() {
+    return this.agency.getAgeTo() != null || this.agency.getAgeFrom() != null || this.agency.getGenders() != null;
   }
 
   private List<TopicDTO> getTopics() {

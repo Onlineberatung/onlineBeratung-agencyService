@@ -136,6 +136,17 @@ public class Agency implements TenantAware {
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean isExternal;
 
+  @PositiveOrZero
+  @Column(name = "age_from")
+  private Short ageFrom;
+
+  @PositiveOrZero
+  @Column(name = "age_to")
+  private Short ageTo;
+
+  @Column(name = "genders")
+  private String genders;
+
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;
 
