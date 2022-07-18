@@ -42,7 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
 @TestPropertySource(properties = "feature.demographics.enabled=true")
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
-class AgencyDemographicsAdminControllerIT {
+class AgencyAdminControllerWithDemographicsIT {
 
   static final String PATH_GET_AGENCY_BY_ID = "/agencyadmin/agencies/1735";
 
