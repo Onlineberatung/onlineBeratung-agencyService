@@ -319,9 +319,13 @@ components:
           example: "Llorem ipsum..."
     Settings:
       type: object
-      required:
-        - impressum
       properties:
         topicsInRegistrationEnabled:
+          type: boolean
+          example: "false"
+        featureTopicsEnabled:
+          type: boolean
+          example: "false"
+        featureDemographicsEnabled:
           type: boolean
           example: "false"
