@@ -1,5 +1,5 @@
 {
-  "name": "caritas-online-beratung-agencyservice",
+  "name": "online-beratung-agencyservice",
   "version": "1.11.0",
   "scripts": {
     "release": "standard-version"
