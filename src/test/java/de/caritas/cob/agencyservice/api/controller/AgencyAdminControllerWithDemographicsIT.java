@@ -44,7 +44,7 @@ import org.springframework.web.context.WebApplicationContext;
 @Transactional
 class AgencyAdminControllerWithDemographicsIT {
 
-  static final String PATH_GET_AGENCY_BY_ID = "/agencyadmin/agencies/1735";
+  static final String PATH_GET_AGENCY_BY_ID = "/agencyadmin/agencies/1736";
 
   private MockMvc mockMvc;
 
@@ -69,7 +69,7 @@ class AgencyAdminControllerWithDemographicsIT {
     mockMvc.perform(get(PATH_GET_AGENCY_BY_ID)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("_embedded.id").value(1735))
+        .andExpect(jsonPath("_embedded.id").value(1736))
         .andExpect(jsonPath("_embedded.demographics.ageTo").exists())
         .andExpect(jsonPath("_embedded.demographics.ageFrom").exists())
         .andExpect(jsonPath("_embedded.demographics.genders").exists());

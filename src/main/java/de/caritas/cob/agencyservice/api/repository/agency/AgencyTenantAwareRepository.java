@@ -34,6 +34,22 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "tenantId") Long tenantId);
 
+  @Query(
+      value = "SELECT a.* FROM agency a "
+          + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
+          + "INNER JOIN agency_topic at ON a.id = at.agency_id "
+          + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+          + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
+          + "AND a.consulting_type = :type "
+          + "AND at.topic_id = :topicId "
+          + "AND a.tenant_id = :tenantId "
+          + "AND a.delete_date IS NULL " + "GROUP BY a.id ORDER BY a.postcode DESC",
+      nativeQuery = true)
+  List<Agency> findByPostCodeAndConsultingTypeIdAndTopicId(@Param(value = "postcode") String postCode,
+      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "topicId") int topicId,
+      Long tenantId);
+
   @Query("select a from Agency as a where a.id = :agencyId ")
   Optional<Agency> findById(Long agencyId);
 

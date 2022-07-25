@@ -35,10 +35,10 @@ class AgencyRepositoryIT {
   @Test
   void findById_Should_loadAgencyWithDemographics() {
     // given, when
-    var optionalAgency = agencyRepository.findById(1735L);
+    var optionalAgency = agencyRepository.findById(1736L);
     var agency = optionalAgency.orElseThrow(RuntimeException::new);
     // then
-    assertThat(agency.getId()).isEqualTo(1735);
+    assertThat(agency.getId()).isEqualTo(1736);
     assertThat(agency.getAgeFrom()).isEqualTo((short) 15);
     assertThat(agency.getAgeTo()).isEqualTo((short) 100);
     assertThat(agency.getGenders()).isEqualTo(Gender.MALE.toString());
