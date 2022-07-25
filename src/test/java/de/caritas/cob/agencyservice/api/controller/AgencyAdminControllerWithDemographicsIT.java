@@ -42,7 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
 @TestPropertySource(properties = "feature.demographics.enabled=true")
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
-class AgencyDemographicsAdminControllerIT {
+class AgencyAdminControllerWithDemographicsIT {
 
   static final String PATH_GET_AGENCY_BY_ID = "/agencyadmin/agencies/1736";
 
@@ -138,6 +138,32 @@ class AgencyDemographicsAdminControllerIT {
         .andExpect(jsonPath("_embedded.demographics.ageTo").value(21))
         .andExpect(jsonPath("_embedded.demographics.genders").value(
             contains("NOT_PROVIDED")));
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  void updateAgency_Should_returnStatusBadRequest_When_calledWithMissingDemographicsDataAndDemographicsFeatureIsOn()
+      throws Exception {
+    // given
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
+        false);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
+        .thenReturn(extendedConsultingTypeResponseDTO);
+
+    UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
+        .dioceseId(0L)
+        .name("Test update name")
+        .description("Test update description")
+        .external(true)
+        .offline(true)
+        .demographics(new DemographicsDTO());
+    String payload = JsonConverter.convert(agencyDTO);
+
+    // when, then
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(payload))
+        .andExpect(status().isBadRequest());
   }
 }
 
