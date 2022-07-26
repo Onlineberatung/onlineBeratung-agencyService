@@ -171,7 +171,7 @@ public class AgencyService {
       int consultingTypeId) {
     try {
       return agencyRepository
-          .findByPostCodeAndConsultingTypeId(postCode, postCode.length(), consultingTypeId,
+          .findByPostCodeAndConsultingTypeId(postCode, postCode.length(), consultingTypeId, null, null,
               TenantContext.getCurrentTenant());
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
@@ -184,6 +184,7 @@ public class AgencyService {
     try {
       return agencyRepository
           .findByPostCodeAndConsultingTypeIdAndTopicId(postCode, postCode.length(), consultingTypeId, topicId,
+              null, null,
               TenantContext.getCurrentTenant());
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
@@ -193,6 +194,7 @@ public class AgencyService {
 
   private void addWhiteSpotAgency(ExtendedConsultingTypeResponseDTO consultingTypeSettings,
       List<FullAgencyResponseDTO> agencyResponseDTOs) {
+
     var whiteSpot = consultingTypeSettings.getWhiteSpot();
     if (nonNull(whiteSpot) && nonNull(whiteSpot.getWhiteSpotAgencyId()) && isTrue(
         whiteSpot.getWhiteSpotAgencyAssigned())) {

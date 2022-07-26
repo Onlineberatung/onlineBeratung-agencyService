@@ -37,7 +37,11 @@ public class AgencyController implements AgenciesApi {
    */
   @Override
   public ResponseEntity<List<FullAgencyResponseDTO>> getAgencies(
-      @RequestParam String postcode, @RequestParam Integer consultingType, @RequestParam(value = "topicId", required = false) Integer topicId) {
+      @RequestParam String postcode, @RequestParam Integer consultingType,
+      @RequestParam(value = "topicId", required = false) Integer topicId,
+      @RequestParam(value = "age", required = false) Integer age,
+      @RequestParam(value = "gender", required = false) String gender
+  ) {
 
     var agencies = agencyService.getAgencies(postcode, consultingType, Optional.ofNullable(topicId));
 

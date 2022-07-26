@@ -69,7 +69,8 @@ public class AgencyServiceTenantAwareTest {
     this.agencyService.getAgencies("12123", 1, Optional.empty());
 
     // then
-    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2,
+    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2, null,
+        null,
         TENANT_ID);
   }
 
@@ -90,7 +91,8 @@ public class AgencyServiceTenantAwareTest {
     this.agencyService.getAgencies("12123", 1, Optional.of(2));
 
     // then
-    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2,
+    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2, null,
+        null,
         TENANT_ID);
   }
 }

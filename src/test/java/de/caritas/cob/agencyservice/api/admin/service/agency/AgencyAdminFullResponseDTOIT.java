@@ -131,7 +131,7 @@ public class AgencyAdminFullResponseDTOIT {
         .getEmbedded();
 
     assertThat(firstPage, hasSize(1000));
-    assertThat(secondPage, hasSize(136));
+    assertThat(secondPage, hasSize(138));
   }
 
   @Test
