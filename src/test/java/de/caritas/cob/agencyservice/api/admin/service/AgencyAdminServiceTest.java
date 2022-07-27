@@ -16,10 +16,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -74,6 +76,8 @@ class AgencyAdminServiceTest {
   public void setup() {
     setInternalState(LogService.class, "LOGGER", logger);
     ReflectionTestUtils.setField(agencyAdminService, "agencyTopicEnrichmentService", agencyTopicEnrichmentService);
+    ReflectionTestUtils.setField(agencyAdminService, "demographicsConverter", demographicsConverter);
+
     this.easyRandom = new EasyRandom();
   }
 
