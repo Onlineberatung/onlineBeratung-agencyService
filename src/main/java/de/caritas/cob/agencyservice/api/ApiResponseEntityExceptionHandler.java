@@ -7,6 +7,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictExceptio
 import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomValidationHttpStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
+import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDemographicsException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
@@ -172,7 +173,8 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @return a ResponseEntity instance
    */
   @ExceptionHandler({InvalidPostcodeException.class, InvalidConsultingTypeException.class,
-      InvalidDioceseException.class, InvalidOfflineStatusException.class
+      InvalidDioceseException.class, InvalidOfflineStatusException.class,
+      InvalidDemographicsException.class
   })
   public ResponseEntity<Object> handleInternal(
       final CustomValidationHttpStatusException ex, final WebRequest request) {

@@ -22,9 +22,7 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
    * @return a {@link List} of {@link Agency} instances
    */
   @Query(
-      value = "SELECT a.id, a.diocese_id, a.name, a.description, a.postcode, a.city, a"
-          + ".is_team_agency, a.consulting_type, a.is_offline, a.url, a.is_external, "
-          + "a.delete_date, a.create_date, a.update_date, a.tenant_id FROM agency a "
+      value = "SELECT a.* FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
           + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
@@ -37,9 +35,7 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
       @Param(value = "tenantId") Long tenantId);
 
   @Query(
-      value = "SELECT a.id, a.diocese_id, a.name, a.description, a.postcode, a.city, a"
-          + ".is_team_agency, a.consulting_type, a.is_offline, a.url, a.is_external, "
-          + "a.delete_date, a.create_date, a.update_date, a.tenant_id, :tenantId FROM agency a "
+      value = "SELECT a.* FROM agency a "
           + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
           + "INNER JOIN agency_topic at ON a.id = at.agency_id "
           + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
