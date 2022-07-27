@@ -207,6 +207,8 @@ public class TestConstants {
 
   public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
   public static final String INVALID_POSTCODE_QUERY = "postcode=12";
+  public static final String VALID_AGE_QUERY = "age=30";
+  public static final String VALID_GENDER_QUERY = "gender=FEMALE";
   public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=xyz";
   public static final String INVALID_AGENCY_ID = "12xX";
 

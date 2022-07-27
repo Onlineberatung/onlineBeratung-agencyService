@@ -1,12 +1,13 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static java.util.Optional.ofNullable;
+
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
 import java.util.List;
-import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,8 @@ public class AgencyController implements AgenciesApi {
       @RequestParam(value = "gender", required = false) String gender
   ) {
 
-    var agencies = agencyService.getAgencies(postcode, consultingType, Optional.ofNullable(topicId));
+    var agencies = agencyService.getAgencies(postcode, consultingType,
+        ofNullable(topicId), ofNullable(age), ofNullable(gender));
 
     return !CollectionUtils.isEmpty(agencies)
         ? new ResponseEntity<>(agencies, HttpStatus.OK)

@@ -168,6 +168,8 @@ components:
         - $ref: '#/components/schemas/AgencyResponseDTO'
         - type: object
           properties:
+            demographics:
+              $ref: '#/components/schemas/DemographicsDTO'
             url:
               type: string
               example: http://www.domain.com/agency
@@ -175,6 +177,24 @@ components:
               type: boolean
               example: "false"
 
+    DemographicsDTO:
+      type: object
+      properties:
+        ageFrom:
+          type: integer
+          minimum: 0
+          maximum: 200
+          example: 25
+        ageTo:
+          type: integer
+          minimum: 0
+          maximum: 200
+          example: 55
+        genders:
+          type: array
+          items:
+            type: string
+          example: "[MALE,FEMALE,DIVERS]"
   securitySchemes:
     Bearer:
       type: apiKey

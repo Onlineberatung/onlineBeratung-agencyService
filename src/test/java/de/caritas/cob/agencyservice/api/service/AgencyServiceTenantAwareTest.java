@@ -3,9 +3,11 @@ package de.caritas.cob.agencyservice.api.service;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -30,6 +32,9 @@ public class AgencyServiceTenantAwareTest {
 
   @Mock
   ConsultingTypeManager consultingTypeManager;
+
+  @Mock
+  DemographicsConverter demographicsConverter;
 
   @Mock
   TenantService tenantService;
@@ -88,7 +93,7 @@ public class AgencyServiceTenantAwareTest {
         restrictedTenantDTO);
 
     // when
-    this.agencyService.getAgencies("12123", 1, Optional.of(2));
+    this.agencyService.getAgencies("12123", 1, Optional.of(2), Optional.empty(), Optional.empty());
 
     // then
     verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2, null,

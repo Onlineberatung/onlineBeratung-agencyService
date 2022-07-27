@@ -30,6 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
@@ -73,6 +74,9 @@ public class AgencyServiceTest {
 
   @Mock
   TenantService tenantService;
+
+  @Mock
+  DemographicsConverter demographicsConverter;
 
   @Mock
   private AgencyRepository agencyRepository;

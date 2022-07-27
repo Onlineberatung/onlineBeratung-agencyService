@@ -5,6 +5,7 @@ import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
@@ -51,14 +52,13 @@ public class AgencyAdminFullResponseDTOBuilder {
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
 
-    if (hasAnyNonNullDemographicsAttribute()) {
-      responseDTO.demographics(new DemographicsConverter().convertToDTO(agency));
-    }
+    responseDTO.demographics(getDemographics(this.agency));
     return responseDTO;
   }
 
-  private boolean hasAnyNonNullDemographicsAttribute() {
-    return this.agency.getAgeTo() != null || this.agency.getAgeFrom() != null || this.agency.getGenders() != null;
+  private DemographicsDTO getDemographics(Agency agency) {
+    return agency.hasAnyDemographicsAttributes() ? new DemographicsConverter().convertToDTO(agency)
+        : null;
   }
 
   private List<TopicDTO> getTopics() {

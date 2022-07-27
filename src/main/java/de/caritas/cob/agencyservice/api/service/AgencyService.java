@@ -4,12 +4,14 @@ package de.caritas.cob.agencyservice.api.service;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -38,9 +40,13 @@ public class AgencyService {
   private final @NonNull ConsultingTypeManager consultingTypeManager;
   private final @NonNull AgencyRepository agencyRepository;
   private final @NonNull TenantService tenantService;
+  private final @NonNull DemographicsConverter demographicsConverter;
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
+
+  @Value("${feature.demographics.enabled}")
+  private boolean demographicsFeatureEnabled;
 
   @Value("${multitenancy.enabled}")
   private boolean multitenancy;
@@ -77,6 +83,11 @@ public class AgencyService {
     }
   }
 
+
+  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId, Optional<Integer> topicId) {
+    return getAgencies(postCode, consultingTypeId, topicId, Optional.empty(), Optional.empty());
+  }
+
   /**
    * Returns a randomly sorted list of {@link AgencyResponseDTO} which match to the provided
    * postCode. If no agency is found, returns the atm hard coded white spot agency id.
@@ -85,7 +96,8 @@ public class AgencyService {
    * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId, Optional<Integer> topicId) {
+  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId, Optional<Integer> topicId,
+      Optional<Integer> age, Optional<String> gender) {
 
     var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
@@ -94,7 +106,7 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-    var agencies = findAgencies(postCode, consultingTypeId, topicId);
+    var agencies = findAgencies(postCode, consultingTypeId, topicId, age, gender);
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
@@ -108,15 +120,36 @@ public class AgencyService {
   }
 
   private List<Agency> findAgencies(String postCode, int consultingTypeId,
-      Optional<Integer> optionalTopicId) {
+      Optional<Integer> optionalTopicId, Optional<Integer> age,
+      Optional<String> gender) {
     if (isTopicFeatureEnabledAndActivatedInRegistration()) {
       assertTopicIdIsProvided(optionalTopicId);
-      return collectAgenciesByPostCodeAndConsultingTypeAndTopicId(
-          postCode, consultingTypeId, optionalTopicId.get());
+      return findAgenciesWithTopic(
+          postCode, consultingTypeId, optionalTopicId.get(), age, gender);
     } else {
-      return collectAgenciesByPostCodeAndConsultingType(
-          postCode, consultingTypeId);
+      return findAgencies(postCode, consultingTypeId, age, gender);
     }
+  }
+
+  private List<Agency> findAgencies(String postCode,
+      int consultingTypeId, Optional<Integer> age, Optional<String> gender) {
+    try {
+      if (demographicsFeatureEnabled) {
+        assertAgeAndGenderAreProvided(age, gender);
+        return findAgenciesWithDemographics(postCode, consultingTypeId, age.orElseThrow(), gender.orElseThrow());
+      }
+      return findAgencies(postCode, consultingTypeId);
+    } catch (DataAccessException ex) {
+      throw new InternalServerErrorException(LogService::logDatabaseError,
+          "Database error while getting postcodes");
+    }
+  }
+
+  private List<Agency> findAgencies(String postCode, int consultingTypeId) {
+    return agencyRepository
+        .findByPostCodeAndConsultingTypeId(postCode, postCode.length(), consultingTypeId, null,
+            null,
+            TenantContext.getCurrentTenant());
   }
 
   private void assertTopicIdIsProvided(Optional<Integer> topicId) {
@@ -167,28 +200,52 @@ public class AgencyService {
     }
   }
 
-  private List<Agency> collectAgenciesByPostCodeAndConsultingType(String postCode,
-      int consultingTypeId) {
+  private List<Agency> findAgenciesWithDemographics(String postCode, int consultingTypeId, Integer age,
+      String gender) {
+    return agencyRepository
+        .findByPostCodeAndConsultingTypeId(postCode, postCode.length(), consultingTypeId, age, gender,
+            TenantContext.getCurrentTenant());
+  }
+
+  private List<Agency> findAgenciesWithTopic(String postCode,
+      int consultingTypeId, int topicId, Optional<Integer> age,
+      Optional<String> gender) {
     try {
-      return agencyRepository
-          .findByPostCodeAndConsultingTypeId(postCode, postCode.length(), consultingTypeId, null, null,
-              TenantContext.getCurrentTenant());
+      if (demographicsFeatureEnabled) {
+        return findAgenciesWithTopicAndDemographics(postCode, consultingTypeId, topicId, age, gender);
+      } else {
+        return findAgenciesWithTopic(postCode, consultingTypeId, topicId);
+      }
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
           "Database error while getting postcodes");
     }
   }
 
-  private List<Agency> collectAgenciesByPostCodeAndConsultingTypeAndTopicId(String postCode,
-      int consultingTypeId, int topicId) {
-    try {
-      return agencyRepository
-          .findByPostCodeAndConsultingTypeIdAndTopicId(postCode, postCode.length(), consultingTypeId, topicId,
-              null, null,
-              TenantContext.getCurrentTenant());
-    } catch (DataAccessException ex) {
-      throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting postcodes");
+  private List<Agency> findAgenciesWithTopic(String postCode, int consultingTypeId, int topicId) {
+    return agencyRepository
+        .findByPostCodeAndConsultingTypeIdAndTopicId(postCode, postCode.length(),
+            consultingTypeId, topicId,
+            null, null,
+            TenantContext.getCurrentTenant());
+  }
+
+  private List<Agency> findAgenciesWithTopicAndDemographics(String postCode, int consultingTypeId, int topicId,
+      Optional<Integer> age, Optional<String> gender) {
+    assertAgeAndGenderAreProvided(age, gender);
+    return agencyRepository
+        .findByPostCodeAndConsultingTypeIdAndTopicId(postCode, postCode.length(),
+            consultingTypeId, topicId,
+            age.get(), gender.get(),
+            TenantContext.getCurrentTenant());
+  }
+
+  private void assertAgeAndGenderAreProvided(Optional<Integer> age, Optional<String> gender) {
+    if (!age.isPresent()) {
+      throw new BadRequestException("Age not provided in the search");
+    }
+    if (!gender.isPresent()) {
+      throw new BadRequestException("Age not provided in the search");
     }
   }
 
@@ -221,6 +278,8 @@ public class AgencyService {
         .consultingType(agency.getConsultingTypeId());
   }
 
+
+
   private FullAgencyResponseDTO convertToFullAgencyResponseDTO(Agency agency) {
     return new FullAgencyResponseDTO()
         .id(agency.getId())
@@ -232,8 +291,13 @@ public class AgencyService {
         .offline(agency.isOffline())
         .consultingType(agency.getConsultingTypeId())
         .url(agency.getUrl())
-        .external(agency.isExternal());
+        .external(agency.isExternal())
+        .demographics(getDemographics(agency));
+  }
 
+  private DemographicsDTO getDemographics(Agency agency) {
+    return agency.hasAnyDemographicsAttributes() ? demographicsConverter.convertToDTO(agency)
+        : null;
   }
 
   /**

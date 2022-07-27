@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -87,6 +89,19 @@ class AgencyRepositoryIT {
     var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "NOTMATCHING", 1L);
     // then
     assertThat(agencyList).isEmpty();
+  }
+
+
+  @ParameterizedTest
+  @ValueSource(strings = {"\";", "';", ";"})
+  void findByPostCodeAndConsultingTypeId_Should_searchForGenderBeProtectedAgainstSqlInjection_WhenGenderIsProvided(String prefix) {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, prefix + "DROP TABLE AGENCY;", 1L);
+    // then
+    var existingAgencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "DIVERS", 1L);
+
+    assertThat(agencyList).isEmpty();
+    assertThat(existingAgencyList).isNotEmpty();
   }
 
   @Test
