@@ -53,6 +53,7 @@ public class AgencyValidator {
         .dioceseId(agencyDto.getDioceseId())
         .postcode(agencyDto.getPostcode())
         .consultingType(agencyDto.getConsultingType())
+        .demographicsDTO(agencyDto.getDemographics())
         .build();
   }
 
@@ -62,6 +63,7 @@ public class AgencyValidator {
         .dioceseId(updateAgencyDTO.getDioceseId())
         .postcode(updateAgencyDTO.getPostcode())
         .offline(updateAgencyDTO.getOffline())
+        .demographicsDTO(updateAgencyDTO.getDemographics())
         .build();
   }
 }
