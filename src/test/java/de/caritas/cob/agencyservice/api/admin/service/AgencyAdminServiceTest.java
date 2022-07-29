@@ -25,6 +25,7 @@ import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +65,9 @@ class AgencyAdminServiceTest {
   DemographicsConverter demographicsConverter;
 
   @Mock
+  AppointmentService appointmentService;
+
+  @Mock
   private Logger logger;
 
   private EasyRandom easyRandom;
@@ -73,6 +77,7 @@ class AgencyAdminServiceTest {
     setInternalState(LogService.class, "LOGGER", logger);
     ReflectionTestUtils.setField(agencyAdminService, "agencyTopicEnrichmentService", agencyTopicEnrichmentService);
     ReflectionTestUtils.setField(agencyAdminService, "demographicsConverter", demographicsConverter);
+
     this.easyRandom = new EasyRandom();
   }
 

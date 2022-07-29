@@ -17,6 +17,7 @@ import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
+import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -37,6 +38,7 @@ public class AgencyAdminService {
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
   private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
+  private final @NonNull AppointmentService appointmentService;
 
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
@@ -88,6 +90,7 @@ public class AgencyAdminService {
   public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
     var savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
+    this.appointmentService.syncAgencyDataToAppointmentService(savedAgency);
     return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
   }
@@ -141,6 +144,7 @@ public class AgencyAdminService {
     var agency = agencyRepository.findById(agencyId).orElseThrow(NotFoundException::new);
     var updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
+    this.appointmentService.syncAgencyDataToAppointmentService(updatedAgency);
     return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }
@@ -207,5 +211,6 @@ public class AgencyAdminService {
     this.deleteAgencyValidator.validate(agency);
     agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
     this.agencyRepository.save(agency);
+    this.appointmentService.deleteAgency(agency);
   }
 }
