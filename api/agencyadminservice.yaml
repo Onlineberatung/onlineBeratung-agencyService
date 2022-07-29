@@ -780,13 +780,14 @@ components:
       properties:
         field:
           type: string
-          example: 'name|description|postcode|city|teamAgency'
+          example: 'name|description|postcode|city|teamAgency|offline'
           enum:
             - 'name'
             - 'description'
             - 'postCode'
             - 'city'
             - 'teamAgency'
+            - 'offline'
         order:
           type: string
           example: 'ASC|DESC'
