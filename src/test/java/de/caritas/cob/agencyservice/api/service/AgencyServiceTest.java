@@ -30,6 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
@@ -62,6 +63,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class AgencyServiceTest {
 
+  private static final Integer AGE = null;
+  private static final String GENDER = null;
+
   @InjectMocks
   private AgencyService agencyService;
 
@@ -70,6 +74,9 @@ public class AgencyServiceTest {
 
   @Mock
   TenantService tenantService;
+
+  @Mock
+  DemographicsConverter demographicsConverter;
 
   @Mock
   private AgencyRepository agencyRepository;
@@ -93,7 +100,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
-        CONSULTING_TYPE_SUCHT, TENANT_ID)).thenThrow(dbEx);
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, TENANT_ID)).thenThrow(dbEx);
 
     callGetAgencies();
   }
@@ -115,7 +122,7 @@ public class AgencyServiceTest {
     NumberFormatException nfEx = new NumberFormatException();
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
-        CONSULTING_TYPE_SUCHT, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
     when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenThrow(nfEx);
@@ -128,7 +135,7 @@ public class AgencyServiceTest {
       throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
-        CONSULTING_TYPE_SUCHT, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
@@ -143,7 +150,7 @@ public class AgencyServiceTest {
       throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
-        CONSULTING_TYPE_SUCHT, TENANT_ID)).thenReturn(AGENCY_LIST);
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, TENANT_ID)).thenReturn(AGENCY_LIST);
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
@@ -160,7 +167,7 @@ public class AgencyServiceTest {
     Optional<Agency> agency = Optional.of(AGENCY_SUCHT);
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
-        CONSULTING_TYPE_SUCHT, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
     when(agencyRepository.findByIdAndDeleteDateNull(Mockito.anyLong())).thenReturn(agency);
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
@@ -174,7 +181,7 @@ public class AgencyServiceTest {
       throws MissingConsultingTypeException {
 
     when(agencyRepository.findByPostCodeAndConsultingTypeId(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
-        CONSULTING_TYPE_SUCHT, TENANT_ID)).thenReturn(new ArrayList<>());
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, TENANT_ID)).thenReturn(new ArrayList<>());
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY);
 
@@ -313,7 +320,7 @@ public class AgencyServiceTest {
     this.agencyService.getAgencies("12123", 1, Optional.of(2));
 
     // then
-    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2,
+    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2, AGE, GENDER,
         TENANT_ID);
   }
 }
