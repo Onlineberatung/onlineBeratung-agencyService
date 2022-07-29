@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -49,7 +50,7 @@ public class AgencyServiceITBase {
     String postCode = "88662";
 
     List<FullAgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty());
+        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty(), Optional.empty(), Optional.empty());
 
     assertThat(resultAgencies, hasSize(1));
     FullAgencyResponseDTO resultAgency = resultAgencies.get(0);
