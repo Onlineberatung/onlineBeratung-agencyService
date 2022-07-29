@@ -125,6 +125,7 @@ public class Agency implements TenantAware {
 
   @Column(name = "is_offline", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")
+  @SortableField
   private boolean offline;
 
   @Size(max = 500)
