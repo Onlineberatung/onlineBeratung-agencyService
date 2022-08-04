@@ -1,5 +1,7 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static java.util.Optional.ofNullable;
+
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
@@ -31,13 +33,19 @@ public class AgencyController implements AgenciesApi {
    *
    * @param postcode       the postcode for regarding agencies
    * @param consultingType the type used to filter the agencies
+   * @param topicId        the (optional) main topicId to filter the agencies
    * @return the List of agencies with information
    */
   @Override
   public ResponseEntity<List<FullAgencyResponseDTO>> getAgencies(
-      @RequestParam String postcode, @RequestParam Integer consultingType) {
+      @RequestParam String postcode, @RequestParam Integer consultingType,
+      @RequestParam(value = "topicId", required = false) Integer topicId,
+      @RequestParam(value = "age", required = false) Integer age,
+      @RequestParam(value = "gender", required = false) String gender
+  ) {
 
-    var agencies = agencyService.getAgencies(postcode, consultingType);
+    var agencies = agencyService.getAgencies(postcode, consultingType,
+        ofNullable(topicId), ofNullable(age), ofNullable(gender));
 
     return !CollectionUtils.isEmpty(agencies)
         ? new ResponseEntity<>(agencies, HttpStatus.OK)

@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="patric-dosch-vi" id="agencyTopic">
+        <sqlFile path="db/changelog/changeset/0009_agency_topic/agencyTopic.sql" stripComments="true"/>
+        <rollback>
+            <sqlFile path="db/changelog/changeset/0009_agency_topic/agencyTopic-rollback.sql" stripComments="true"/>
+        </rollback>
+    </changeSet>
+    <changeSet author="patric-dosch-vi" id="agencyTopic-trigger">
+        <sqlFile endDelimiter="//" path="db/changelog/changeset/0009_agency_topic/agencyTopicTrigger.sql"
+                 stripComments="true"/>
+        <rollback>
+            <sqlFile path="db/changelog/changeset/0009_agency_topic/agencyTopicTrigger-rollback.sql"
+                     stripComments="true"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

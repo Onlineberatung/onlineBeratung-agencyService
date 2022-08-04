@@ -14,6 +14,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
+import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
@@ -89,10 +90,11 @@ public class AgencyAdminController implements AgencyadminApi {
    */
   @Override
   public ResponseEntity<AgencyAdminSearchResultDTO> searchAgencies(
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q) {
+      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage, @Valid String q,
+      @Valid Sort sort) {
 
     var agencyAdminSearchResultDTO =
-        this.agencyAdminSearchService.searchAgencies(q, page, perPage);
+        this.agencyAdminSearchService.searchAgencies(q, page, perPage, sort);
 
     return new ResponseEntity<>(agencyAdminSearchResultDTO, HttpStatus.OK);
   }
@@ -108,7 +110,7 @@ public class AgencyAdminController implements AgencyadminApi {
 
     agencyValidator.validate(agencyDTO);
     var agencyAdminFullResponseDTO = agencyAdminService
-        .saveAgency(agencyDTO);
+        .createAgency(agencyDTO);
 
     return new ResponseEntity<>(agencyAdminFullResponseDTO, HttpStatus.CREATED);
   }
@@ -176,7 +178,7 @@ public class AgencyAdminController implements AgencyadminApi {
   /**
    * Entry point to update a postcode range for the given postcode range Id.
    *
-   * @param agencyId  Postcode range Id (required)
+   * @param agencyId         Postcode range Id (required)
    * @param postcodeRangeDTO {@link PostcodeRangeDTO} (required)
    * @return an entity containing the updated postcode range
    */

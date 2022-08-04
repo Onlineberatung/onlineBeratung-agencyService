@@ -14,8 +14,13 @@ import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
+import de.caritas.cob.agencyservice.api.model.Sort;
+import de.caritas.cob.agencyservice.api.model.Sort.FieldEnum;
+import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -39,7 +44,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnOneResult_When_perPageIsSetToOne() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("", 0, 1)
+        .searchAgencies("", 0, 1, null)
         .getEmbedded();
 
     assertThat(agencies, hasSize(1));
@@ -48,7 +53,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnOneResult_When_perPageIsSetToOneAndPageIsSetToOne() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("", 1, 1)
+        .searchAgencies("", 1, 1, null)
         .getEmbedded();
 
     assertThat(agencies, hasSize(1));
@@ -57,7 +62,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnEmptyList_When_paginationParamsAreZero() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies(null, 0, 0)
+        .searchAgencies(null, 0, 0, null)
         .getEmbedded();
 
     assertThat(agencies, hasSize(0));
@@ -66,7 +71,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnEmptyList_When_paginationParamsAreNegative() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies(null, -100, -1000)
+        .searchAgencies(null, -100, -1000, null)
         .getEmbedded();
 
     assertThat(agencies, hasSize(0));
@@ -75,16 +80,42 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnAllEntities_When_keywordIsNull() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies(null, 0, 1133)
+        .searchAgencies(null, 0, 1133, null)
         .getEmbedded();
 
     assertThat(agencies, hasSize(1133));
   }
 
   @Test
+  public void searchAgencies_Should_returnEntitiesSorted_When_SortParameterGiven() {
+    Sort sort = new Sort();
+    sort.setField(FieldEnum.NAME);
+    sort.setOrder(OrderEnum.ASC);
+    List<String> agenciesSorted = this.agencyAdminFullResponseDTO
+        .searchAgencies(null, 1, 5, sort)
+        .getEmbedded().stream().map(el -> el.getEmbedded().getName()).collect(Collectors.toList());
+
+    agenciesSorted.forEach(el -> {
+      Assertions.assertEquals('A', el.charAt(0));
+    });
+
+    sort.setField(FieldEnum.NAME);
+    sort.setOrder(OrderEnum.DESC);
+    agenciesSorted = this.agencyAdminFullResponseDTO
+        .searchAgencies(null, 1, 2, sort)
+        .getEmbedded().stream().map(el -> el.getEmbedded().getName())
+        .collect(Collectors.toList());
+
+    agenciesSorted.forEach(el -> {
+      Assertions.assertEquals('Z', el.charAt(0));
+    });
+  }
+
+
+  @Test
   public void searchAgencies_Should_returnAllEntities_When_keywordIsEmpty() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("", 0, 1133)
+        .searchAgencies("", 0, 1133, null)
         .getEmbedded();
 
     assertThat(agencies, hasSize(1133));
@@ -93,29 +124,30 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
     List<AgencyAdminFullResponseDTO> firstPage = this.agencyAdminFullResponseDTO
-        .searchAgencies("", 1, 1000)
+        .searchAgencies("", 1, 1000, null)
         .getEmbedded();
     List<AgencyAdminFullResponseDTO> secondPage = this.agencyAdminFullResponseDTO
-        .searchAgencies("", 2, 1000)
+        .searchAgencies("", 2, 1000, null)
         .getEmbedded();
 
     assertThat(firstPage, hasSize(1000));
-    assertThat(secondPage, hasSize(134));
+    assertThat(secondPage, hasSize(138));
   }
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsDashIndexedValues() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("Oberschwaben", 0, 2)
+        .searchAgencies("Oberschwaben", 0, 2, null)
         .getEmbedded();
 
-    agencies.forEach(agency -> assertThat(agency.getEmbedded().getName(), containsString("Oberschwaben")));
+    agencies.forEach(
+        agency -> assertThat(agency.getEmbedded().getName(), containsString("Oberschwaben")));
   }
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlautReplacements() {
     agencyAdminFullResponseDTO
-        .searchAgencies("Uberlingen", 0, 4)
+        .searchAgencies("Uberlingen", 0, 4, null)
         .getEmbedded()
         .forEach(agency ->
             assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
@@ -125,7 +157,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlauts() {
     agencyAdminFullResponseDTO
-        .searchAgencies("Überlingen", 0, 4)
+        .searchAgencies("Überlingen", 0, 4, null)
         .getEmbedded()
         .forEach(
             agency -> assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
@@ -135,7 +167,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsValidPlz() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("88662", 0, 5)
+        .searchAgencies("88662", 0, 5, null)
         .getEmbedded();
 
     agencies.forEach(agency -> assertThat(agency.getEmbedded().getCity(), is("Überlingen")));
@@ -144,7 +176,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsContainedInDifferentFields() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("1", 0, 500)
+        .searchAgencies("1", 0, 500, null)
         .getEmbedded();
 
     agencies.forEach(agency -> {
@@ -159,7 +191,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnFirstMatchOnDioceseId_When_keywordIsValidDioceseId() {
     List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
-        .searchAgencies("1", 0, 5)
+        .searchAgencies("1", 0, 5, null)
         .getEmbedded();
 
     AgencyAdminFullResponseDTO firstResult = agencies.get(0);
@@ -169,7 +201,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void searchAgencies_Should_returnValidResult_When_keywordContainsOnlySpecialCharacters() {
     var agencies = agencyAdminFullResponseDTO
-        .searchAgencies("§$%=#'`><", 0, 5)
+        .searchAgencies("§$%=#'`><", 0, 5, null)
         .getEmbedded();
 
     assertThat(agencies, notNullValue());
@@ -180,7 +212,7 @@ public class AgencyAdminFullResponseDTOIT {
     var specialChars = "halle§$%=#'`><";
 
     var agencies = agencyAdminFullResponseDTO
-        .searchAgencies(specialChars, 0, 5)
+        .searchAgencies(specialChars, 0, 5, null)
         .getEmbedded();
 
     assertThat(agencies, notNullValue());
@@ -191,7 +223,7 @@ public class AgencyAdminFullResponseDTOIT {
     var specialChars = "halle+-&|!(){}[]^\"~*?:\\/";
 
     var agencies = agencyAdminFullResponseDTO
-        .searchAgencies(specialChars, 0, 5)
+        .searchAgencies(specialChars, 0, 5, null)
         .getEmbedded();
 
     assertThat(agencies, notNullValue());
@@ -202,7 +234,7 @@ public class AgencyAdminFullResponseDTOIT {
     String keyword = "Schwangerschaftsberatungsstelle";
 
     AgencyAdminFullResponseDTO firstSearchResult = this.agencyAdminFullResponseDTO
-        .searchAgencies(keyword, 0, 1).getEmbedded().iterator().next();
+        .searchAgencies(keyword, 0, 1, null).getEmbedded().iterator().next();
 
     assertThat(firstSearchResult.getEmbedded().getId(), is(846L));
     assertThat(firstSearchResult.getEmbedded().getCity(), is("Schwelm"));
@@ -211,7 +243,8 @@ public class AgencyAdminFullResponseDTOIT {
     assertThat(firstSearchResult.getEmbedded().getUpdateDate(), is("2019-08-23T06:52:05"));
     assertThat(firstSearchResult.getEmbedded().getDeleteDate(), is("null"));
     assertThat(firstSearchResult.getEmbedded().getDioceseId(), is(10L));
-    assertThat(firstSearchResult.getEmbedded().getName(), is("Schwangerschaftsberatungsstelle Schwelm"));
+    assertThat(firstSearchResult.getEmbedded().getName(),
+        is("Schwangerschaftsberatungsstelle Schwelm"));
     assertThat(firstSearchResult.getEmbedded().getOffline(), is(false));
     assertThat(firstSearchResult.getEmbedded().getPostcode(), is("58332"));
     assertThat(firstSearchResult.getEmbedded().getTeamAgency(), is(false));
@@ -223,7 +256,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_search() {
     AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminFullResponseDTO
-        .searchAgencies("a", 1, 20);
+        .searchAgencies("a", 1, 20, null);
 
     SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
     assertThat(searchResultLinks.getSelf(), notNullValue());
@@ -241,7 +274,7 @@ public class AgencyAdminFullResponseDTOIT {
   @Test
   public void buildAgencyAdminSearchResult_Should_returnExpectedLinksForAgencies() {
     AgencyAdminSearchResultDTO searchResult = this.agencyAdminFullResponseDTO
-        .searchAgencies("", 0, 2);
+        .searchAgencies("", 0, 2, null);
 
     for (AgencyAdminFullResponseDTO result : searchResult.getEmbedded()) {
       AgencyLinks agencyLinks = result.getLinks();

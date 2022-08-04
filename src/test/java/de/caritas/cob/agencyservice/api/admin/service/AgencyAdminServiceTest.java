@@ -15,14 +15,19 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.reflect.Whitebox.setInternalState;
 
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import de.caritas.cob.agencyservice.api.service.LogService;
+import java.util.List;
 import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +35,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class AgencyAdminServiceTest {
@@ -49,6 +56,18 @@ class AgencyAdminServiceTest {
   DeleteAgencyValidator deleteAgencyValidator;
 
   @Mock
+  AgencyTopicMergeService mergeService;
+
+  @Mock
+  AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
+  @Mock
+  DemographicsConverter demographicsConverter;
+
+  @Mock
+  AppointmentService appointmentService;
+
+  @Mock
   private Logger logger;
 
   private EasyRandom easyRandom;
@@ -56,6 +75,9 @@ class AgencyAdminServiceTest {
   @BeforeEach
   public void setup() {
     setInternalState(LogService.class, "LOGGER", logger);
+    ReflectionTestUtils.setField(agencyAdminService, "agencyTopicEnrichmentService", agencyTopicEnrichmentService);
+    ReflectionTestUtils.setField(agencyAdminService, "demographicsConverter", demographicsConverter);
+
     this.easyRandom = new EasyRandom();
   }
 
@@ -79,6 +101,43 @@ class AgencyAdminServiceTest {
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
     verify(this.agencyRepository).save(any());
+  }
+
+  @Test
+  void updateAgency_Should_SaveAgencyChanges_WhenAgencyIsFoundAndTopicFeatureEnabled() {
+    // given
+    ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", true);
+    var agency = this.easyRandom.nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    when(agencyRepository.save(any())).thenReturn(agency);
+    var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+
+    // when
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
+
+    // then
+    verify(this.agencyRepository).save(any());
+    verify(this.mergeService).getMergedTopics(Mockito.any(Agency.class), any(List.class));
+    verify(this.agencyTopicEnrichmentService).enrichAgencyWithTopics(agency);
+    ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", false);
+  }
+
+  @Test
+  void updateAgency_Should_SaveAgencyChanges_WhenAgencyIsFoundAndDemographicsFeatureIsEnabled() {
+    // given
+    ReflectionTestUtils.setField(agencyAdminService, "featureDemographicsEnabled", true);
+    var agency = this.easyRandom.nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    when(agencyRepository.save(any())).thenReturn(agency);
+    var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+
+    // when
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
+
+    // then
+    verify(this.agencyRepository).save(any());
+    verify(this.demographicsConverter).convertToEntity(Mockito.any(DemographicsDTO.class), Mockito.any(Agency.AgencyBuilder.class));
+    ReflectionTestUtils.setField(agencyAdminService, "featureDemographicsEnabled", false);
   }
 
   @Test

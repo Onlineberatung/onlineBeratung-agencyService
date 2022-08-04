@@ -85,6 +85,11 @@ paths:
           required: true
           schema:
             type: integer
+        - name: sort
+          in: query
+          description: The sort parameter containing field and order the response should be sorted
+          schema:
+            $ref: '#/components/schemas/Sort'
       responses:
         200:
           description: OK - successfull operation
@@ -667,6 +672,24 @@ components:
           format: int64
         absent:
           type: boolean
+
+    Sort:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'firstName|lastName|username|email'
+          enum:
+            - 'firstName'
+            - 'lastName'
+            - 'username'
+            - 'email'
+        order:
+          type: string
+          example: 'ASC|DESC'
+          enum:
+            - 'ASC'
+            - 'DESC'
 
     ConsultantAgencyAdminResultDTO:
       type: object

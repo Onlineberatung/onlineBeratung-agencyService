@@ -1,10 +1,16 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
+import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +35,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private AgencyAdminResponseDTO createAgency() {
-    return new AgencyAdminResponseDTO()
+    var responseDTO = new AgencyAdminResponseDTO()
         .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
@@ -41,15 +47,34 @@ public class AgencyAdminFullResponseDTOBuilder {
         .url(this.agency.getUrl())
         .external((this.agency.isExternal()))
         .offline(this.agency.isOffline())
+        .topics(getTopics())
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
+
+    responseDTO.demographics(getDemographics(this.agency));
+    return responseDTO;
+  }
+
+  private DemographicsDTO getDemographics(Agency agency) {
+    return agency.hasAnyDemographicsAttributes() ? new DemographicsConverter().convertToDTO(agency)
+        : null;
+  }
+
+  private List<TopicDTO> getTopics() {
+    var agencyTopics = agency.getAgencyTopics();
+    if (agencyTopics != null) {
+      return getTopics(agencyTopics);
+    } else {
+      return Lists.newArrayList();
+    }
+  }
+
+  private List<TopicDTO> getTopics(List<AgencyTopic> agencyTopics) {
+    return agencyTopics.stream().map(AgencyTopic::getTopicData).collect(Collectors.toList());
   }
 
   private AgencyLinks createAgencyLinks() {
-
     return AgencyLinksBuilder.getInstance(agency).buildAgencyLinks();
-
   }
-
 }

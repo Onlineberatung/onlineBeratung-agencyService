@@ -105,7 +105,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyAdminFullResponseDTO, times(1)).searchAgencies(any(), anyInt(), any());
+    verify(this.agencyAdminFullResponseDTO, times(1)).searchAgencies(any(), anyInt(), any(), any());
   }
 
   @Test
@@ -187,7 +187,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .andExpect(status().isCreated());
 
     verify(this.agencyValidator, times(1)).validate(Mockito.any(AgencyDTO.class));
-    verify(this.agencyAdminService, times(1)).saveAgency(Mockito.any());
+    verify(this.agencyAdminService, times(1)).createAgency(Mockito.any());
   }
 
   @Test
@@ -333,7 +333,7 @@ public class AgencyAdminControllerAuthorizationIT {
         .header(CSRF_HEADER, CSRF_VALUE))
         .andExpect(status().isOk());
 
-    verify(this.agencyAdminService, times(1)).changeAgencyType(eq(1L), eq(requestDTO));
+    verify(this.agencyAdminService, times(1)).changeAgencyType(1L, requestDTO);
   }
 
   @Test

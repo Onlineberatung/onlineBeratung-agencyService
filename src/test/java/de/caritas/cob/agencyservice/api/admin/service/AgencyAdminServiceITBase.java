@@ -7,34 +7,26 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class AgencyAdminServiceITBase {
 
-  @Autowired private AgencyAdminService agencyAdminService;
-  @Autowired private AgencyRepository agencyRepository;
+  @Autowired protected AgencyAdminService agencyAdminService;
+  @Autowired protected AgencyRepository agencyRepository;
 
   public void saveAgency_Should_PersistsAgency() {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.createAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
@@ -52,7 +44,7 @@ public class AgencyAdminServiceITBase {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.createAgency(agencyDTO);
 
     Optional<Agency> agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
@@ -64,7 +56,7 @@ public class AgencyAdminServiceITBase {
 
     AgencyDTO agencyDTO = createAgencyDTO();
 
-    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.saveAgency(agencyDTO);
+    AgencyAdminFullResponseDTO agencyAdminFullResponseDTO = agencyAdminService.createAgency(agencyDTO);
     assertThat(agencyAdminFullResponseDTO.getLinks().getDelete(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
@@ -91,7 +83,7 @@ public class AgencyAdminServiceITBase {
                 "/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
   }
 
-  private AgencyDTO createAgencyDTO() {
+  protected AgencyDTO createAgencyDTO() {
 
     AgencyDTO agencyDTO = new AgencyDTO();
     agencyDTO.setTeamAgency(true);
@@ -102,6 +94,11 @@ public class AgencyAdminServiceITBase {
     agencyDTO.setName("Agency name");
     agencyDTO.setUrl("https://www.domain.com");
     agencyDTO.setExternal(true);
+    DemographicsDTO demographics = new DemographicsDTO();
+    demographics.setAgeTo(15);
+    demographics.setAgeTo(100);
+    demographics.setGenders(Lists.newArrayList("MALE"));
+    agencyDTO.setDemographics(demographics);
     return agencyDTO;
   }
 
@@ -122,7 +119,7 @@ public class AgencyAdminServiceITBase {
     assertEquals(updateAgencyDTO.getOffline(),  agency.isOffline());
   }
 
-  private UpdateAgencyDTO createUpdateAgencyDtoFromExistingAgency() {
+  protected UpdateAgencyDTO createUpdateAgencyDtoFromExistingAgency() {
 
     Optional<Agency> agencyOptional = agencyRepository.findById(0L);
     Agency agency = agencyOptional.orElseThrow(RuntimeException::new);

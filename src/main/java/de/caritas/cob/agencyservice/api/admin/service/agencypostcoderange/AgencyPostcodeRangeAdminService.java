@@ -51,6 +51,7 @@ public class AgencyPostcodeRangeAdminService {
    *
    * @param agencyId the postcode range id
    */
+  @Transactional
   public void deleteAgencyPostcodeRange(Long agencyId) {
     markAgencyOffline(agencyId);
     this.agencyPostCodeRangeRepository.deleteAllByAgencyId(agencyId);

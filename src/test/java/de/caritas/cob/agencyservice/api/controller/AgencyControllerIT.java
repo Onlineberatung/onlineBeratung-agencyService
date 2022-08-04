@@ -9,6 +9,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.FULL_AGENCY_
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_QUERY;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
@@ -31,6 +32,7 @@ import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +51,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @RunWith(SpringRunner.class)
 @WebMvcTest(AgencyController.class)
 @AutoConfigureMockMvc(addFilters = false)
+
 public class AgencyControllerIT {
 
   static final String PATH_GET_AGENCIES_BY_CONSULTINGTYPE = "/agencies/consultingtype/1";
@@ -76,12 +79,12 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
         .thenReturn(null);
 
     mvc.perform(
         get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
-            + VALID_CONSULTING_TYPE_QUERY)
+            + VALID_CONSULTING_TYPE_QUERY + "&" + VALID_AGE_QUERY)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
   }
@@ -129,7 +132,7 @@ public class AgencyControllerIT {
     List<FullAgencyResponseDTO> agencies = new ArrayList<>();
     agencies.add(FULL_AGENCY_RESPONSE_DTO);
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
         .thenReturn(agencies);
 
     mvc.perform(
@@ -140,7 +143,7 @@ public class AgencyControllerIT {
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
     verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyString(),
-        Mockito.anyInt());
+        Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class));
   }
 
   @Test
@@ -181,7 +184,7 @@ public class AgencyControllerIT {
 
     InternalServerErrorException dbEx = new InternalServerErrorException(
         LogService::logDatabaseError, "message");
-    when(agencyService.getAgencies(any(), anyInt())).thenThrow(dbEx);
+    when(agencyService.getAgencies(any(), anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class))).thenThrow(dbEx);
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)
@@ -213,7 +216,7 @@ public class AgencyControllerIT {
     InternalServerErrorException nfEx = new InternalServerErrorException(
         LogService::logNumberFormatException, "message");
 
-    when(agencyService.getAgencies(any(), anyInt())).thenThrow(nfEx);
+    when(agencyService.getAgencies(any(), anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class))).thenThrow(nfEx);
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)

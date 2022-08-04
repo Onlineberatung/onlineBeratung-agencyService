@@ -12,6 +12,41 @@ import org.springframework.data.repository.query.Param;
  */
 public interface AgencyRepository extends CrudRepository<Agency, Long> {
 
+  String AND_WITH_BRACKET = "AND (";
+  String SELECT_WITH_TOPICS = "SELECT a.*, :tenantId FROM agency a "
+      + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
+      + "INNER JOIN agency_topic at ON a.id = at.agency_id "
+      + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
+      + "AND a.consulting_type = :type "
+      + "AND at.topic_id = :topicId "
+      + AND_WITH_BRACKET
+      + " (:age IS NULL) OR (a.age_from <= :age)"
+      + ") "
+      + AND_WITH_BRACKET
+      + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
+      + ") "
+      + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
+      + "AND a.delete_date IS NULL ";
+
+  String SELECT_WITHOUT_TOPICS = "SELECT a.*, :tenantId FROM agency a "
+      + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
+      + "WHERE "
+      + "(CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
+      + "AND a.consulting_type = :type "
+      + AND_WITH_BRACKET
+      + " (:age IS NULL) OR (a.age_from <= :age)"
+      + ") "
+      + AND_WITH_BRACKET
+      + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
+      + ") "
+      + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
+      + "AND a.delete_date IS NULL ";
+
+  String GROUP_BY_ORDER_BY = "GROUP BY a.id "
+      + "ORDER BY a.postcode DESC";
+
   /**
    * Returns a list of {@link Agency}s that are assigned to the given post code.
    *
@@ -20,17 +55,25 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
    * @return a {@link List} of {@link Agency} instances
    */
   @Query(
-      value = "SELECT a.id, a.diocese_id, a.name, a.description, a.postcode, a.city, a"
-          + ".is_team_agency, a.consulting_type, a.is_offline, a.url, a.is_external, "
-          + "a.delete_date, a.create_date, a.update_date, a.tenant_id, :tenantId FROM agency a "
-          + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
-          + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
-          + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
-          + "AND a.consulting_type = :type "
-          + "AND a.delete_date IS NULL " + "GROUP BY a.id ORDER BY a.postcode DESC",
+      value = SELECT_WITHOUT_TOPICS
+          + GROUP_BY_ORDER_BY,
       nativeQuery = true)
   List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "age") Integer age,
+      @Param(value = "gender") String gender,
+      Long tenantId);
+
+
+  @Query(
+      value = SELECT_WITH_TOPICS
+          + GROUP_BY_ORDER_BY,
+      nativeQuery = true)
+  List<Agency> findByPostCodeAndConsultingTypeIdAndTopicId(@Param(value = "postcode") String postCode,
+      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "topicId") int topicId,
+      @Param(value = "age") Integer age,
+      @Param(value = "gender") String gender,
       Long tenantId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);

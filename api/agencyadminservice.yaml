@@ -49,6 +49,11 @@ paths:
           schema:
             type: integer
             example: 20
+        - name: sort
+          in: query
+          description: The sort parameter containing field and order the response should be sorted
+          schema:
+            $ref: '#/components/schemas/Sort'
       responses:
         200:
           description: OK - successfull operation
@@ -436,7 +441,24 @@ components:
           $ref: '#/components/schemas/SearchResultLinks'
         total:
           type: integer
-
+    TopicDTO:
+      type: object
+      properties:
+        id:
+          type: long
+          example: 12132
+        name:
+          type: string
+          example: "Topic name"
+        description:
+          type: string
+          example: "Description"
+        internalIdentifier:
+          type: string
+          example: "identifier for data exports for example: alcohol"
+        status:
+          type: string
+          example: "Active"
     AgencyAdminResponseDTO:
       type: object
       properties:
@@ -487,6 +509,12 @@ components:
         external:
           type: boolean
           example: false
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicDTO'
+        demographics:
+          $ref: '#/components/schemas/DemographicsDTO'
         createDate:
           type: string
           example: "2019-08-23T08:52:05"
@@ -583,6 +611,12 @@ components:
         external:
           type: boolean
           example: false
+        topicIds:
+          type: array
+          items:
+            type: long
+        demographics:
+          $ref: '#/components/schemas/DemographicsDTO'
 
     AgencyAdminFullResponseDTO:
       type: object
@@ -634,6 +668,31 @@ components:
         external:
           type: boolean
           example: false
+        topicIds:
+          type: array
+          items:
+            type: long
+        demographics:
+          $ref: '#/components/schemas/DemographicsDTO'
+
+    DemographicsDTO:
+      type: object
+      properties:
+        ageFrom:
+          type: integer
+          minimum: 0
+          maximum: 200
+          example: 25
+        ageTo:
+          type: integer
+          minimum: 0
+          maximum: 200
+          example: 55
+        genders:
+          type: array
+          items:
+            type: string
+          example: "[MALE,FEMALE,DIVERS]"
 
     UpdateAgencyResponseDTO:
       type: object
@@ -715,6 +774,26 @@ components:
           properties:
             postcodeRanges:
               $ref: '#/components/schemas/HalLink'
+
+    Sort:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'name|description|postcode|city|teamAgency|offline'
+          enum:
+            - 'name'
+            - 'description'
+            - 'postCode'
+            - 'city'
+            - 'teamAgency'
+            - 'offline'
+        order:
+          type: string
+          example: 'ASC|DESC'
+          enum:
+            - 'ASC'
+            - 'DESC'
 
   securitySchemes:
     Bearer:

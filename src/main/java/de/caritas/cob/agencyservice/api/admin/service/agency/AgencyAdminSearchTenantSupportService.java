@@ -23,6 +23,7 @@ public class AgencyAdminSearchTenantSupportService extends AgencyAdminSearchServ
     super(entityManagerFactory);
   }
 
+  @Override
   protected Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
     return fullTextEntityManager.getSearchFactory()
         .buildQueryBuilder()
@@ -31,6 +32,7 @@ public class AgencyAdminSearchTenantSupportService extends AgencyAdminSearchServ
         .matching(TenantContext.getCurrentTenant()).createQuery();
   }
 
+  @Override
   protected Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
     var queryBuilder = entityManager.getSearchFactory()
         .buildQueryBuilder()
