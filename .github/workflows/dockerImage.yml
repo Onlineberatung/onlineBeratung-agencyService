@@ -59,3 +59,26 @@ jobs:
           registry: ${{ env.DOCKER_REGISTRY }}
           repository: ${{ env.DOCKER_IMAGE }}
           tag_with_ref: true
+  push_to_ghcr_registry:
+    needs: [ test ]
+    name: Push Docker image to GitHub Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download buildfiles artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: targetfiles
+      - name: Prepare Docker variables
+        run: |
+          echo "DOCKER_REGISTRY=$(echo "ghcr.io/${{ github.repository }}" | awk '{print tolower($0)}')" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE=$(echo "${{ github.repository }}" | awk -F / '{print tolower($2)}')" >> $GITHUB_ENV
+        shell: bash
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1.1.1
+        with:
+          username: ${{ secrets.GH_PACKAGE_RELEASE_USER }}
+          password: ${{ secrets.GH_PACKAGE_RELEASE_TOKEN }}
+          registry: ${{ env.DOCKER_REGISTRY }}
+          repository: ${{ env.DOCKER_IMAGE }}
+          tag_with_ref: true
