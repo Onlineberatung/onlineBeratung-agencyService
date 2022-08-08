@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -33,9 +35,21 @@ class AgencyRepositoryIT {
   }
 
   @Test
+  void findById_Should_loadAgencyWithDemographics() {
+    // given, when
+    var optionalAgency = agencyRepository.findById(1736L);
+    var agency = optionalAgency.orElseThrow(RuntimeException::new);
+    // then
+    assertThat(agency.getId()).isEqualTo(1736);
+    assertThat(agency.getAgeFrom()).isEqualTo((short) 15);
+    assertThat(agency.getAgeTo()).isEqualTo((short) 100);
+    assertThat(agency.getGenders()).isEqualTo(Gender.MALE.toString());
+  }
+
+  @Test
   void findByPostCodeAndConsultingTypeId_Should_findAgencyByPostcodeAndConsultingType() {
     // given, when
-    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("53113", 5, 0, 1L);
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("53113", 5, 0, null, null, 1L);
     // then
     assertThat(agencyList).hasSize(2);
   }
@@ -44,11 +58,67 @@ class AgencyRepositoryIT {
   @Test
   void findByPostCodeAndConsultingTypeId_Should_findAgencyByPostcodeAndConsultingTypeAndTopicId() {
     // given, when
-    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeIdAndTopicId("53113", 5, 0, 1, 1L);
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeIdAndTopicId("53113", 5, 0, 1, null, null, 1L);
     // then
     assertThat(agencyList).hasSize(1);
     assertThat(agencyList.get(0).getId()).isZero();
     assertThat(agencyList.get(0).getAgencyTopics()).extracting("topicId").containsExactly(0L, 1L);
+  }
+
+  @Test
+  void findByPostCodeAndConsultingTypeId_Should_findAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsMale() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "MALE", 1L);
+    // then
+    assertThat(agencyList).hasSize(2);
+    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1736L, 1738L);
+  }
+
+  @Test
+  void findByPostCodeAndConsultingTypeId_Should_findDifferentAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsDivers() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "DIVERS", 1L);
+    // then
+    assertThat(agencyList).hasSize(2);
+    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1737L, 1738L);
+  }
+
+  @Test
+  void findByPostCodeAndConsultingTypeId_Should_notFindAnyAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsNotMatchingAnyAgency() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "NOTMATCHING", 1L);
+    // then
+    assertThat(agencyList).isEmpty();
+  }
+
+
+  @ParameterizedTest
+  @ValueSource(strings = {"\";", "';", ";"})
+  void findByPostCodeAndConsultingTypeId_Should_searchForGenderBeProtectedAgainstSqlInjection_WhenGenderIsProvided(String prefix) {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, prefix + "DROP TABLE AGENCY;", 1L);
+    // then
+    var existingAgencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "DIVERS", 1L);
+
+    assertThat(agencyList).isEmpty();
+    assertThat(existingAgencyList).isNotEmpty();
+  }
+
+  @Test
+  void findByPostCodeAndConsultingTypeId_Should_findExactlyOneAgencyByPostcodeAndConsultingTypeAndAge_WhenAgeMatchesWithJustOneAgency() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 15, "MALE", 1L);
+    // then
+    assertThat(agencyList).hasSize(1);
+    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1736L);
+  }
+
+  @Test
+  void findByPostCodeAndConsultingTypeId_Should_notFindAnyAgencyByPostcodeAndConsultingTypeAndAge_WhenAgeDoesNotMatchWithAnyAgency() {
+    // given, when
+    var agencyList = agencyRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 5, "MALE", 1L);
+    // then
+    assertThat(agencyList).isEmpty();
   }
 
   @Test

@@ -15,4 +15,6 @@
   <include file="db/changelog/changeset/0007_tenant_id/0007_changeSet.xml"/>
   <include file="db/changelog/changeset/0008_tenant_id_remove/0008_changeSet.xml"/>
   <include file="db/changelog/changeset/0009_agency_topic/0009_changeSet.xml"/>
+  <include file="db/changelog/changeset/0010_agency_demographics/0010_changeSet.xml"/>
+  <include file="db/changelog/changeset/0011_agency_demographics_gender_column_change/0011_changeSet.xml"/>
 </databaseChangeLog>

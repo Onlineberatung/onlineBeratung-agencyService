@@ -5,6 +5,7 @@ import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
@@ -34,7 +35,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private AgencyAdminResponseDTO createAgency() {
-    return new AgencyAdminResponseDTO()
+    var responseDTO = new AgencyAdminResponseDTO()
         .id(this.agency.getId())
         .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
@@ -50,6 +51,14 @@ public class AgencyAdminFullResponseDTOBuilder {
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
+
+    responseDTO.demographics(getDemographics(this.agency));
+    return responseDTO;
+  }
+
+  private DemographicsDTO getDemographics(Agency agency) {
+    return agency.hasAnyDemographicsAttributes() ? new DemographicsConverter().convertToDTO(agency)
+        : null;
   }
 
   private List<TopicDTO> getTopics() {

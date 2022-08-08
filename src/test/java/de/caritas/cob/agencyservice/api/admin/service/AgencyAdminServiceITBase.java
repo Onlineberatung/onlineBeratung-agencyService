@@ -7,8 +7,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
+import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
@@ -92,6 +94,11 @@ public class AgencyAdminServiceITBase {
     agencyDTO.setName("Agency name");
     agencyDTO.setUrl("https://www.domain.com");
     agencyDTO.setExternal(true);
+    DemographicsDTO demographics = new DemographicsDTO();
+    demographics.setAgeTo(15);
+    demographics.setAgeTo(100);
+    demographics.setGenders(Lists.newArrayList("MALE"));
+    agencyDTO.setDemographics(demographics);
     return agencyDTO;
   }
 

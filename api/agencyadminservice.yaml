@@ -513,6 +513,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TopicDTO'
+        demographics:
+          $ref: '#/components/schemas/DemographicsDTO'
         createDate:
           type: string
           example: "2019-08-23T08:52:05"
@@ -613,6 +615,8 @@ components:
           type: array
           items:
             type: long
+        demographics:
+          $ref: '#/components/schemas/DemographicsDTO'
 
     AgencyAdminFullResponseDTO:
       type: object
@@ -668,6 +672,27 @@ components:
           type: array
           items:
             type: long
+        demographics:
+          $ref: '#/components/schemas/DemographicsDTO'
+
+    DemographicsDTO:
+      type: object
+      properties:
+        ageFrom:
+          type: integer
+          minimum: 0
+          maximum: 200
+          example: 25
+        ageTo:
+          type: integer
+          minimum: 0
+          maximum: 200
+          example: 55
+        genders:
+          type: array
+          items:
+            type: string
+          example: "[MALE,FEMALE,DIVERS]"
 
     UpdateAgencyResponseDTO:
       type: object
@@ -755,13 +780,14 @@ components:
       properties:
         field:
           type: string
-          example: 'name|description|postcode|city|teamAgency'
+          example: 'name|description|postcode|city|teamAgency|offline'
           enum:
             - 'name'
             - 'description'
             - 'postCode'
             - 'city'
             - 'teamAgency'
+            - 'offline'
         order:
           type: string
           example: 'ASC|DESC'
