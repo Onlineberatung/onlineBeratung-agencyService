@@ -49,7 +49,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Autowired
   private Environment environment;
 
-  @Autowired
+  @Autowired(required = false)
   @Nullable
   private HttpTenantFilter httpTenantFilter;
 

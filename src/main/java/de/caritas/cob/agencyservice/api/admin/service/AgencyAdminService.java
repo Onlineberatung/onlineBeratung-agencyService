@@ -16,6 +16,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agency.FederalState;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import java.time.LocalDateTime;
@@ -113,6 +114,7 @@ public class AgencyAdminService {
         .offline(true)
         .teamAgency(agencyDTO.getTeamAgency())
         .consultingTypeId(agencyDTO.getConsultingType())
+        .state(findFederalStateEnumValue(agencyDTO.getState()))
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
@@ -130,6 +132,11 @@ public class AgencyAdminService {
       agencyToCreate.setAgencyTopics(agencyTopics);
     }
     return agencyToCreate;
+  }
+
+  private FederalState findFederalStateEnumValue(String state) {
+    return (state != null) ? FederalState.findByShortcut(state)
+        .orElseThrow() : null;
   }
 
 
@@ -163,6 +170,7 @@ public class AgencyAdminService {
         .url(updateAgencyDTO.getUrl())
         .isExternal(updateAgencyDTO.getExternal())
         .consultingTypeId(agency.getConsultingTypeId())
+        .state(findFederalStateEnumValue(updateAgencyDTO.getState()))
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .deleteDate(agency.getDeleteDate());

@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.FederalState;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.testHelper.JsonConverter;
@@ -78,7 +79,8 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.topics").exists())
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
-        .andExpect(jsonPath("_embedded.deleteDate").exists());
+        .andExpect(jsonPath("_embedded.deleteDate").exists())
+        .andExpect(jsonPath("_embedded.state").value("BW"));
   }
 
   @Test
@@ -98,6 +100,7 @@ class AgencyAdminControllerIT {
         .teamAgency(true)
         .consultingType(0)
         .url("https://www.test.de")
+        .state(FederalState.NIEDERSACHSEN.getShortcut())
         .external(true);
     String payload = JsonConverter.convert(agencyDTO);
 
@@ -118,6 +121,7 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.external").value("true"))
         .andExpect(jsonPath("_embedded.offline").exists())
         .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.state").value(FederalState.NIEDERSACHSEN.getShortcut()))
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
         .andExpect(jsonPath("_embedded.deleteDate").exists());
@@ -141,6 +145,7 @@ class AgencyAdminControllerIT {
         .city("Test update city")
         .offline(true)
         .url("https://www.test-update.de")
+        .state(FederalState.SACHSEN.getShortcut())
         .external(false);
     String payload = JsonConverter.convert(agencyDTO);
 
@@ -161,6 +166,7 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.external").value("false"))
         .andExpect(jsonPath("_embedded.offline").exists())
         .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.state").value(FederalState.SACHSEN.getShortcut()))
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
         .andExpect(jsonPath("_embedded.deleteDate").exists());
