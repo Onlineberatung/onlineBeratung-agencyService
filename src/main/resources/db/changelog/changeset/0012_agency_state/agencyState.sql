@@ -1,1 +1,1 @@
-ALTER TABLE `agencyservice`.`agency` ADD COLUMN state VARCHAR("25");
+ALTER TABLE `agencyservice`.`agency` ADD COLUMN state VARCHAR(25);
