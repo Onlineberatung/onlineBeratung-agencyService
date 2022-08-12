@@ -114,7 +114,7 @@ public class AgencyAdminService {
         .offline(true)
         .teamAgency(agencyDTO.getTeamAgency())
         .consultingTypeId(agencyDTO.getConsultingType())
-        .state(findFederalStateEnumValue(agencyDTO.getState()))
+        .federalState(findFederalStateEnumShortcutString(agencyDTO.getState()))
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
@@ -134,9 +134,9 @@ public class AgencyAdminService {
     return agencyToCreate;
   }
 
-  private FederalState findFederalStateEnumValue(String state) {
-    return (state != null) ? FederalState.findByShortcut(state)
-        .orElseThrow() : null;
+  private String findFederalStateEnumShortcutString(String state) {
+    return (state != null) ? FederalState.findByShortcut(state).orElseThrow().getShortcut()
+        : null;
   }
 
 
@@ -170,7 +170,7 @@ public class AgencyAdminService {
         .url(updateAgencyDTO.getUrl())
         .isExternal(updateAgencyDTO.getExternal())
         .consultingTypeId(agency.getConsultingTypeId())
-        .state(findFederalStateEnumValue(updateAgencyDTO.getState()))
+        .federalState(findFederalStateEnumShortcutString(updateAgencyDTO.getState()))
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .deleteDate(agency.getDeleteDate());

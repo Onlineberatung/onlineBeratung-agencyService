@@ -13,6 +13,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
@@ -42,6 +43,8 @@ public class AgencyServiceITBase {
   private AgencyRepository agencyRepository;
   @MockBean
   private ConsultingTypeManager consultingTypeManager;
+  @MockBean
+  private AuthenticatedUser authenticatedUser;
 
   public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven()
       throws MissingConsultingTypeException {

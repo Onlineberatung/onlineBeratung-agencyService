@@ -1,5 +1,7 @@
 package de.caritas.cob.agencyservice.api.helper;
 
+import de.caritas.cob.agencyservice.api.repository.agency.FederalState;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +25,9 @@ public class AuthenticatedUser {
 
   @NonNull
   private String accessToken;
+
+  private Set<String> roles;
+
+  private Set<FederalState> states;
 
 }

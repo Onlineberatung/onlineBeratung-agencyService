@@ -29,10 +29,12 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
           + AND_A_TENANT_ID_FILTER
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
+  @Override
+  List<Agency> searchWithoutTopic(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "states") String states,
       @Param(value = "tenantId") Long tenantId);
 
   @Query(
@@ -40,11 +42,13 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
           + AND_A_TENANT_ID_FILTER
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingTypeIdAndTopicId(@Param(value = "postcode") String postCode,
+  @Override
+  List<Agency> searchWithTopic(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "states") String states,
       Long tenantId);
 
   @Query("select a from Agency as a where a.id = :agencyId ")

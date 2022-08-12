@@ -24,7 +24,7 @@ public class AgencyAdminSearchTenantSupportService extends AgencyAdminSearchServ
   }
 
   @Override
-  protected Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
+  protected Query buildQueryWithoutSearchByRequestKeyword(FullTextEntityManager fullTextEntityManager) {
     return fullTextEntityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)

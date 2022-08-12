@@ -27,6 +27,9 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
       + ") "
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
+      + "AND ("
+      + " (:states IS NULL) OR (a.state IN (:states)) "
+      + ") "
       + "AND a.delete_date IS NULL ";
 
   String SELECT_WITHOUT_TOPICS = "SELECT a.*, :tenantId FROM agency a "
@@ -42,6 +45,9 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
       + ") "
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
+      + "AND ( "
+      + " (:states IS NULL) OR (a.state IN (:states)) "
+      + ") "
       + "AND a.delete_date IS NULL ";
 
   String GROUP_BY_ORDER_BY = "GROUP BY a.id "
@@ -51,17 +57,18 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
    * Returns a list of {@link Agency}s that are assigned to the given post code.
    *
    * @param postCode the postcode
-   * @param length the length
+   * @param length   the length
    * @return a {@link List} of {@link Agency} instances
    */
   @Query(
       value = SELECT_WITHOUT_TOPICS
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
+  List<Agency> searchWithoutTopic(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "states") String states,
       Long tenantId);
 
 
@@ -69,11 +76,12 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       value = SELECT_WITH_TOPICS
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingTypeIdAndTopicId(@Param(value = "postcode") String postCode,
+  List<Agency> searchWithTopic(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "states") String states,
       Long tenantId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);

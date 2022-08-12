@@ -29,6 +29,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
@@ -36,6 +37,7 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.Field;
@@ -177,8 +179,19 @@ public class Agency implements TenantAware {
   @Field
   private Long tenantId;
 
-  @Convert(converter = FederalStateAttributeConverter.class)
-  private FederalState state;
+  @Column(name = "state")
+  @Field(analyze = Analyze.NO)
+  private String federalState;
+
+
+  @Transient
+  public FederalState getState() {
+    return new FederalStateAttributeConverter().convertToEntityAttribute(federalState);
+  }
+
+  public void setState(FederalState state) {
+    setFederalState(new FederalStateAttributeConverter().convertToDatabaseColumn(state));
+  }
 
   @Transient
   public boolean hasAnyDemographicsAttributes() {

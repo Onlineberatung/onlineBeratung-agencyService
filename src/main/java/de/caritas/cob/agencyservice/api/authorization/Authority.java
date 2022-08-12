@@ -1,22 +1,25 @@
 package de.caritas.cob.agencyservice.api.authorization;
 
 import java.util.stream.Stream;
+import lombok.Getter;
 
 /**
  * 
  * Definition of all authorities and of the role-authority-mapping.
  *
  */
+@Getter
 public enum Authority {
 
-  AGENCY_ADMIN("agency-admin", "AUTHORIZATION_AGENCY_ADMIN");
+  AGENCY_ADMIN("agency-admin", "AUTHORIZATION_AGENCY_ADMIN"),
+  STATE_ADMIN("state-admin", "AUTHORIZATION_AGENCY_STATE_ADMIN");
 
   private final String roleName;
-  private final String authorityName;
+  private final String authority;
 
   Authority(final String roleName, final String authorityName) {
     this.roleName = roleName;
-    this.authorityName = authorityName;
+    this.authority = authorityName;
   }
 
   /**
@@ -30,15 +33,6 @@ public enum Authority {
         .filter(authority -> authority.roleName.equals(roleName))
         .findFirst()
         .orElse(null);
-  }
-
-  /**
-   * Get all authorities for a specific role.
-   * 
-   * @return the authorities for current role
-   **/
-  public String getAuthority() {
-    return this.authorityName;
   }
 
 }

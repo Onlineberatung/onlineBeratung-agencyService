@@ -5,6 +5,8 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
+import de.caritas.cob.agencyservice.api.authorization.Authority;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.model.Sort;
@@ -22,6 +24,7 @@ import org.apache.lucene.search.SortField;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class AgencyAdminSearchService {
   protected static final String CITY_SEARCH_FIELD = "city";
   protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
+  private static final String FEDERAL_STATE = "federalState";
 
   private final @NonNull EntityManagerFactory entityManagerFactory;
 
@@ -45,9 +49,12 @@ public class AgencyAdminSearchService {
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
 
+  @Autowired
+  AuthenticatedUser authenticatedUser;
+
   /**
-   * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link
-   * AgencyAdminSearchResultDTO} containing hal links.
+   * Searches for agencies by a given keyword, limits the result by perPage and generates a
+   * {@link AgencyAdminSearchResultDTO} containing hal links.
    *
    * @param keyword the keyword to search for
    * @param page    the current requested page
@@ -60,7 +67,7 @@ public class AgencyAdminSearchService {
         .getFullTextEntityManager(entityManagerFactory.createEntityManager());
 
     Query query = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
-        ? buildUnfilteredQuery(fullTextEntityManager)
+        ? buildQueryWithoutSearchByRequestKeyword(fullTextEntityManager)
         : buildFullTextSearchQuery(keyword, fullTextEntityManager);
 
     FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
@@ -95,23 +102,88 @@ public class AgencyAdminSearchService {
         .total(fullTextQuery.getResultSize());
   }
 
-  protected Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
-    return fullTextEntityManager.getSearchFactory()
+  private boolean shouldApplyStateFiltering() {
+    return isAuthenticated() && hasStateAdminRole();
+  }
+
+  private boolean isAuthenticated() {
+    return authenticatedUser != null;
+  }
+
+  private boolean hasStateAdminRole() {
+    return
+        authenticatedUser.getRoles() != null
+            && authenticatedUser.getRoles().contains(Authority.STATE_ADMIN.getRoleName());
+  }
+
+  protected Query buildQueryWithoutSearchByRequestKeyword(
+      FullTextEntityManager fullTextEntityManager) {
+    QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)
-        .get()
+        .get();
+
+    if (shouldApplyStateFiltering()) {
+      return basicQueryWithStateFiltering(queryBuilder);
+    } else {
+      return basicUnfilteredQuery(queryBuilder);
+    }
+  }
+
+  private Query basicQueryWithStateFiltering(QueryBuilder queryBuilder) {
+    var mustJunction = queryBuilder
+        .bool()
+        .must(basicUnfilteredQuery(queryBuilder))
+        .must(queryBuilder
+            .keyword()
+            .onField(FEDERAL_STATE)
+            .matching(getFirstFederalStateFromTheToken())
+            .createQuery());
+    return mustJunction.createQuery();
+  }
+
+  // the current implementation supports search for single token in the list of lands
+  private String getFirstFederalStateFromTheToken() {
+    var federalState = authenticatedUser.getStates().stream().findFirst();
+    if (federalState.isPresent()) {
+      return federalState.get().getShortcut();
+    } else {
+      return "not matching string";
+    }
+  }
+
+  private Query basicUnfilteredQuery(QueryBuilder queryBuilder) {
+    return queryBuilder
         .all()
         .createQuery();
   }
 
   protected Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
-    return entityManager.getSearchFactory()
+
+    QueryBuilder queryBuilder = entityManager.getSearchFactory()
         .buildQueryBuilder()
         .forEntity(Agency.class)
         .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
         .overridesForField(POST_CODE_SEARCH_FIELD, SEARCH_ANALYZER)
         .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
-        .get()
+        .get();
+    if (shouldApplyStateFiltering()) {
+      return queryBuilder
+          .bool()
+          .must(getKeywordFullTextSearchQuery(keyword, queryBuilder))
+          .must(queryBuilder
+              .keyword()
+              .onField(FEDERAL_STATE)
+              .matching(getFirstFederalStateFromTheToken())
+              .createQuery())
+          .createQuery();
+    } else {
+      return getKeywordFullTextSearchQuery(keyword, queryBuilder);
+    }
+  }
+
+  private Query getKeywordFullTextSearchQuery(String keyword, QueryBuilder queryBuilder) {
+    return queryBuilder
         .keyword()
         .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
         .andField(NAME_SEARCH_FIELD)

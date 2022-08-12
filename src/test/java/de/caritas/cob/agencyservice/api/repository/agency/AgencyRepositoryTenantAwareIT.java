@@ -21,28 +21,86 @@ class AgencyRepositoryTenantAwareIT {
   private AgencyTenantAwareRepository agencyTenantAwareRepository;
 
   @Test
-  void findByPostCodeAndConsultingTypeId_Should_FindAgenciesByPostcodeAndConsultingType() {
+  void searchWithoutTopic_Should_FindAgenciesByPostcodeAndConsultingType() {
     // given, when
-    var agencies = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("45501", 5, 20,
-        null, null, 1L);
+    var agencies = agencyTenantAwareRepository.searchWithoutTopic("45501", 5, 20,
+        null, null, null, 1L);
     // then
     assertThat(agencies).hasSize(1);
   }
 
   @Test
-  void findByPostCodeAndConsultingTypeId_Should_NotFindAnyAgencyByPostcodeAndConsultingType_When_TenantIdDoesNotMatch() {
+  void searchWithoutTopic_Should_NotFindAnyAgencyByPostcodeAndConsultingType_When_TenantIdDoesNotMatch() {
     // given, when
-    var agencies = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("45501", 5, 20,
-        null, null, 2L);
+    var agencies = agencyTenantAwareRepository.searchWithoutTopic("45501", 5, 20,
+        null, null, null, 2L);
     // then
     assertThat(agencies).isEmpty();
   }
 
+
   @Test
-  void findByPostCodeAndConsultingTypeId_Should_FindAgenciesByPostcodeAndConsultingTypeAndTopicId() {
+  void searchWithoutTopic_Should_findOnlyOneAgencyByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsDiversAndTenantIdEqualToOne() {
     // given, when
-    var agencies = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeIdAndTopicId("45501",
-        5, 20, 1, null, null, 1L);
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        30, "DIVERS", null, 1L);
+    // then
+    assertThat(agencyList).hasSize(1);
+    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1737L);
+  }
+
+  @Test
+  void searchWithoutTopic_Should_findOnlyOneAgencyByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsDiversAndStateMatchingAndTenantIdEqualToOne() {
+    // given, when
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        30, "DIVERS", FederalState.BAYERN.getShortcut(), 1L);
+    // then
+    assertThat(agencyList).hasSize(1);
+    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1737L);
+  }
+
+  @Test
+  void searchWithoutTopic_Should_findNotFindAnyAgency_WhenStateIsNotMatching() {
+    // given, when
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        30, "DIVERS", FederalState.SACHSEN.getShortcut(), 1L);
+    // then
+    assertThat(agencyList).isEmpty();
+  }
+
+  @Test
+  void searchWithoutTopic_Should_notFindAnyAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsNotMatchingAnyAgency() {
+    // given, when
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        30, "NOTMATCHING", null, 1L);
+    // then
+    assertThat(agencyList).isEmpty();
+  }
+
+  @Test
+  void searchWithoutTopic_Should_findExactlyOneAgencyByPostcodeAndConsultingTypeAndAge_WhenAgeMatchesWithJustOneAgencyAndTenantEqualToOne() {
+    // given, when
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        50, "DIVERS", null, 2L);
+    // then
+    assertThat(agencyList).hasSize(1);
+    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1738L);
+  }
+
+  @Test
+  void searchWithoutTopic_Should_notFindAnyAgencyByPostcodeAndConsultingTypeAndAge_WhenAgeDoesNotMatchWithAnyAgency() {
+    // given, when
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        5, "MALE", null, 1L);
+    // then
+    assertThat(agencyList).isEmpty();
+  }
+
+  @Test
+  void searchWithTopic_Should_FindAgenciesByPostcodeAndConsultingTypeAndTopicId() {
+    // given, when
+    var agencies = agencyTenantAwareRepository.searchWithTopic("45501",
+        5, 20, 1, null, null, null, 1L);
     // then
     assertThat(agencies).hasSize(1);
     assertThat(agencies.get(0).getId()).isEqualTo(1735);
@@ -50,64 +108,52 @@ class AgencyRepositoryTenantAwareIT {
   }
 
   @Test
-  void findByPostCodeAndConsultingTypeId_Should_NotFindAnyAgencyByPostcodeAndConsultingTypeAndTopicId_When_TopicIdDoesNotMatch() {
+  void searchWithTopic_Should_FindAgenciesByPostcodeAndConsultingTypeAndTopicIdAndState() {
     // given, when
-    var agencies = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeIdAndTopicId("45501",
-        5, 20, 10, null, null, 1L);
+    var agencies = agencyTenantAwareRepository.searchWithTopic("45501",
+        5, 20, 1, null, null, FederalState.BADEN_WUERTTEMBERG.getShortcut(), 1L);
+    // then
+    assertThat(agencies).hasSize(1);
+    assertThat(agencies.get(0).getId()).isEqualTo(1735);
+    assertThat(agencies.get(0).getAgencyTopics()).extracting("topicId").contains(0L, 1L);
+  }
+
+  @Test
+  void searchWithTopic_Should_NotFindAnyAgencyIfStateDoesNotMatch() {
+    // given, when
+    var agencies = agencyTenantAwareRepository.searchWithTopic("45501",
+        5, 20, 1, null, null, FederalState.SACHSEN.getShortcut(), 1L);
     // then
     assertThat(agencies).isEmpty();
   }
 
   @Test
-  void findByPostCodeAndConsultingTypeId_Should_NotFindAnyAgencyByPostcodeAndConsultingTypeAndTopicId_When_TenantIdDoesNotMatch() {
+  void searchWithTopic_Should_NotFindAnyAgencyByPostcodeAndConsultingTypeAndTopicId_When_TopicIdDoesNotMatch() {
     // given, when
-    var agencies = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeIdAndTopicId("45501",
-        5, 20, 1, null, null, 0L);
+    var agencies = agencyTenantAwareRepository.searchWithTopic("45501",
+        5, 20, 10, null, null, null, 1L);
+    // then
+    assertThat(agencies).isEmpty();
+  }
+
+  @Test
+  void searchWithTopic_Should_NotFindAnyAgencyByPostcodeAndConsultingTypeAndTopicId_When_TenantIdDoesNotMatch() {
+    // given, when
+    var agencies = agencyTenantAwareRepository.searchWithTopic("45501",
+        5, 20, 1, null, null, null, 0L);
     // then
     assertThat(agencies).isEmpty();
   }
 
 
   @Test
-  void findByPostCodeAndConsultingTypeId_Should_findAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsMaleAndTenantIdEqualToTwo() {
+  void searchWithoutTopic_Should_findAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsMaleAndTenantIdEqualToTwo() {
     // given, when
-    var agencyList = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "MALE", 2L);
+    var agencyList = agencyTenantAwareRepository.searchWithoutTopic("99999", 5, 19,
+        30, "MALE", null, 2L);
     // then
     assertThat(agencyList).hasSize(1);
     assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1738L);
   }
 
-  @Test
-  void findByPostCodeAndConsultingTypeId_Should_findOnlyOneAgencyByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsDiversAndTenantIdEqualToOne() {
-    // given, when
-    var agencyList = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "DIVERS", 1L);
-    // then
-    assertThat(agencyList).hasSize(1);
-    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1737L);
-  }
-
-  @Test
-  void findByPostCodeAndConsultingTypeId_Should_notFindAnyAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsNotMatchingAnyAgency() {
-    // given, when
-    var agencyList = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 30, "NOTMATCHING", 1L);
-    // then
-    assertThat(agencyList).isEmpty();
-  }
-
-  @Test
-  void findByPostCodeAndConsultingTypeId_Should_findExactlyOneAgencyByPostcodeAndConsultingTypeAndAge_WhenAgeMatchesWithJustOneAgencyAndTenantEqualToOne() {
-    // given, when
-    var agencyList = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 50, "DIVERS", 2L);
-    // then
-    assertThat(agencyList).hasSize(1);
-    assertThat(agencyList).extracting(a -> a.getId()).containsExactly(1738L);
-  }
-
-  @Test
-  void findByPostCodeAndConsultingTypeId_Should_notFindAnyAgencyByPostcodeAndConsultingTypeAndAge_WhenAgeDoesNotMatchWithAnyAgency() {
-    // given, when
-    var agencyList = agencyTenantAwareRepository.findByPostCodeAndConsultingTypeId("99999", 5, 19, 5, "MALE", 1L);
-    // then
-    assertThat(agencyList).isEmpty();
-  }
 }
