@@ -25,6 +25,7 @@ import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agency.FederalState;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.util.List;
@@ -98,6 +99,7 @@ class AgencyAdminServiceTest {
     when(agencyRepository.save(any())).thenReturn(agency);
 
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setState(FederalState.SACHSEN.getShortcut());
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
     verify(this.agencyRepository).save(any());
@@ -111,6 +113,7 @@ class AgencyAdminServiceTest {
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setState(FederalState.SACHSEN.getShortcut());
 
     // when
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
@@ -130,6 +133,7 @@ class AgencyAdminServiceTest {
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setState(FederalState.SACHSEN.getShortcut());
 
     // when
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
