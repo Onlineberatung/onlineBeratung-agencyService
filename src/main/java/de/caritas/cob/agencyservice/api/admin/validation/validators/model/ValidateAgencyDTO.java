@@ -20,6 +20,5 @@ public class ValidateAgencyDTO {
   private Integer consultingType;
   private Boolean offline;
   private DemographicsDTO demographicsDTO;
-  private String state;
 
 }
