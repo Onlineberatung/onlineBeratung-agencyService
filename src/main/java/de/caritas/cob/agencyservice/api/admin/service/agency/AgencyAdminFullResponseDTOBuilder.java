@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Builder to build an {@link AgencyAdminFullResponseDTO()} from an {@link Agency} instance.
@@ -49,18 +48,12 @@ public class AgencyAdminFullResponseDTOBuilder {
         .external((this.agency.isExternal()))
         .offline(this.agency.isOffline())
         .topics(getTopics())
-        .state(getState())
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
 
     responseDTO.demographics(getDemographics(this.agency));
     return responseDTO;
-  }
-
-  private String getState() {
-    return this.agency.getState() != null ? this.agency.getState().getShortcut()
-        : StringUtils.EMPTY;
   }
 
   private DemographicsDTO getDemographics(Agency agency) {

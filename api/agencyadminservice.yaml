@@ -515,9 +515,6 @@ components:
             $ref: '#/components/schemas/TopicDTO'
         demographics:
           $ref: '#/components/schemas/DemographicsDTO'
-        state:
-          type: string
-          example: "BW"
         createDate:
           type: string
           example: "2019-08-23T08:52:05"
@@ -618,9 +615,6 @@ components:
           type: array
           items:
             type: long
-        state:
-          type: string
-          example: "BW"
         demographics:
           $ref: '#/components/schemas/DemographicsDTO'
 
@@ -680,9 +674,6 @@ components:
             type: long
         demographics:
           $ref: '#/components/schemas/DemographicsDTO'
-        state:
-          type: string
-          example: "BW"
 
     DemographicsDTO:
       type: object

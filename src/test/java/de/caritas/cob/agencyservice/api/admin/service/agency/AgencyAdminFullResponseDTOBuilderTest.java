@@ -48,7 +48,6 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(agency.getUrl(), result.getEmbedded().getUrl());
     assertEquals(agency.isExternal(), result.getEmbedded().getExternal());
     assertEquals(agency.getConsultingTypeId(), result.getEmbedded().getConsultingType());
-    assertEquals(agency.getState().getShortcut(), result.getEmbedded().getState());
     assertEquals(String.valueOf(agency.getCreateDate()), result.getEmbedded().getCreateDate());
     assertEquals(String.valueOf(agency.getUpdateDate()), result.getEmbedded().getUpdateDate());
     assertEquals(String.valueOf(agency.getDeleteDate()), result.getEmbedded().getDeleteDate());
