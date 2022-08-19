@@ -5,11 +5,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository for the Agency entity
  *
  */
+@Repository("agencyTenantUnawareRepository")
 public interface AgencyRepository extends CrudRepository<Agency, Long> {
 
   String AND_WITH_BRACKET = "AND (";
@@ -58,7 +60,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       value = SELECT_WITHOUT_TOPICS
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingTypeId(@Param(value = "postcode") String postCode,
+  List<Agency> searchWithoutTopic(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
@@ -69,7 +71,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       value = SELECT_WITH_TOPICS
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
-  List<Agency> findByPostCodeAndConsultingTypeIdAndTopicId(@Param(value = "postcode") String postCode,
+  List<Agency> searchWithTopic(@Param(value = "postcode") String postCode,
       @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
