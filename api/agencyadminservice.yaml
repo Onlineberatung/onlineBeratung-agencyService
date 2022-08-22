@@ -617,6 +617,11 @@ components:
             type: long
         demographics:
           $ref: '#/components/schemas/DemographicsDTO'
+        tenantId:
+          type: integer
+          format: int64
+          example: 12
+
 
     AgencyAdminFullResponseDTO:
       type: object
