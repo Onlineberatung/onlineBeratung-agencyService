@@ -161,6 +161,10 @@ components:
         consultingType:
           type: integer
           example: 0
+        tenantId:
+          type: integer
+          format: int64
+          example: 12
 
     FullAgencyResponseDTO:
       type: object

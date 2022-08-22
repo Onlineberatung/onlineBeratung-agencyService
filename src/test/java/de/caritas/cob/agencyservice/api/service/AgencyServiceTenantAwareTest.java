@@ -7,7 +7,6 @@ import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConvert
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
-import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -74,7 +73,7 @@ public class AgencyServiceTenantAwareTest {
     this.agencyService.getAgencies("12123", 1, Optional.empty());
 
     // then
-    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2, null,
+    verify(agencyRepository).searchWithTopic("12123", 5, 1, 2, null,
         null,
         TENANT_ID);
   }
@@ -96,7 +95,7 @@ public class AgencyServiceTenantAwareTest {
     this.agencyService.getAgencies("12123", 1, Optional.of(2), Optional.empty(), Optional.empty());
 
     // then
-    verify(agencyRepository).findByPostCodeAndConsultingTypeIdAndTopicId("12123", 5, 1, 2, null,
+    verify(agencyRepository).searchWithTopic("12123", 5, 1, 2, null,
         null,
         TENANT_ID);
   }
