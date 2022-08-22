@@ -141,7 +141,7 @@ public class AgencyService {
     AgencySearch agencySearch = AgencySearch.builder()
         .postCode(postCode)
         .consultingTypeId(consultingTypeId)
-        .optionalTopicId(optionalTopicId)
+        .topicId(optionalTopicId)
         .age(age)
         .gender(gender)
         .build();
@@ -224,7 +224,7 @@ public class AgencyService {
     try {
       return getAgencyRepositoryForSearch()
           .searchWithTopic(agencySearch.getPostCode(), agencySearch.getPostCode().length(),
-              agencySearch.getConsultingTypeId(), agencySearch.getOptionalTopicId().orElseThrow(),
+              agencySearch.getConsultingTypeId(), agencySearch.getTopicId().orElseThrow(),
               agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
               TenantContext.getCurrentTenant());
 
@@ -276,6 +276,7 @@ public class AgencyService {
         .description(agency.getDescription())
         .teamAgency(agency.isTeamAgency())
         .offline(agency.isOffline())
+        .tenantId(agency.getTenantId())
         .consultingType(agency.getConsultingTypeId());
   }
 

@@ -10,7 +10,7 @@ public class AgencySearch {
 
   private String postCode;
   private int consultingTypeId;
-  private Optional<Integer> optionalTopicId;
+  private Optional<Integer> topicId;
   private Optional<Integer> age;
   private Optional<String> gender;
 }
