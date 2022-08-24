@@ -121,7 +121,8 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-    var agencies = findAgencies(postCode, consultingTypeId, topicId, age, gender);
+    var agencies = findAgencies(postCode, getConsultingTypeIdForSearch(consultingTypeId), topicId,
+        age, gender);
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
@@ -134,7 +135,11 @@ public class AgencyService {
     return agencyResponseDTOs;
   }
 
-  private List<Agency> findAgencies(String postCode, int consultingTypeId,
+  private Optional<Integer> getConsultingTypeIdForSearch(int consultingTypeId) {
+    return multitenancyWithSingleDomain ? Optional.empty() : Optional.of(consultingTypeId);
+  }
+
+  private List<Agency> findAgencies(String postCode, Optional<Integer> consultingTypeId,
       Optional<Integer> optionalTopicId, Optional<Integer> age,
       Optional<String> gender) {
 
@@ -162,7 +167,7 @@ public class AgencyService {
     try {
       return getAgencyRepositoryForSearch()
           .searchWithoutTopic(agencySearch.getPostCode(),
-              agencySearch.getPostCode().length(), agencySearch.getConsultingTypeId(),
+              agencySearch.getPostCode().length(), agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getAge().orElse(null),
               agencySearch.getGender().orElse(null),
               TenantContext.getCurrentTenant());
@@ -224,7 +229,8 @@ public class AgencyService {
     try {
       return getAgencyRepositoryForSearch()
           .searchWithTopic(agencySearch.getPostCode(), agencySearch.getPostCode().length(),
-              agencySearch.getConsultingTypeId(), agencySearch.getTopicId().orElseThrow(),
+              agencySearch.getConsultingTypeId().orElse(null),
+              agencySearch.getTopicId().orElseThrow(),
               agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
               TenantContext.getCurrentTenant());
 
@@ -257,7 +263,7 @@ public class AgencyService {
     if (nonNull(whiteSpot) && nonNull(whiteSpot.getWhiteSpotAgencyId()) && isTrue(
         whiteSpot.getWhiteSpotAgencyAssigned())) {
       try {
-        agencyRepository.findByIdAndDeleteDateNull(
+        getAgencyRepositoryForSearch().findByIdAndDeleteDateNull(
                 Long.valueOf(whiteSpot.getWhiteSpotAgencyId()))
             .ifPresent(agency -> agencyResponseDTOs.add(convertToFullAgencyResponseDTO(agency)));
       } catch (NumberFormatException nfEx) {

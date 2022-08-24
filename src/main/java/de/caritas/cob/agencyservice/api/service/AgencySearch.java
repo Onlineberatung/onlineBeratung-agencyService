@@ -9,7 +9,7 @@ import lombok.Data;
 public class AgencySearch {
 
   private String postCode;
-  private int consultingTypeId;
+  private Optional<Integer> consultingTypeId;
   private Optional<Integer> topicId;
   private Optional<Integer> age;
   private Optional<String> gender;
