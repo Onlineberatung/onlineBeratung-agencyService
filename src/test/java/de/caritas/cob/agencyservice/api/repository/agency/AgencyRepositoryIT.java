@@ -66,6 +66,26 @@ class AgencyRepositoryIT {
   }
 
   @Test
+  void searchWithTopic_Should_findAgencyByPostcodeAndConsultingTypeAndTopicId_When_ConsultingTypeIsNotProvided() {
+    // given, when
+    var agencyList = agencyRepository.searchWithTopic("53113", 5, null, 1, null, null, 1L);
+    // then
+    assertThat(agencyList).hasSize(1);
+    assertThat(agencyList.get(0).getId()).isZero();
+    assertThat(agencyList.get(0).getAgencyTopics()).extracting("topicId").containsExactly(0L, 1L);
+  }
+
+  @Test
+  void searchWithTopic_Should_notFindAgencyByPostcodeAndConsultingTypeAndTopicId_When_ConsultingTypeDoesNotMatch() {
+    // given, when
+    var agencyList = agencyRepository.searchWithTopic("53113", 5, 1, 1, null, null, 1L);
+    // then
+    assertThat(agencyList).isEmpty();
+  }
+
+
+
+  @Test
   void searchWithoutTopic_Should_findAgenciesByPostcodeAndConsultingTypeAndAgeAndGender_WhenGenderIsMale() {
     // given, when
     var agencyList = agencyRepository.searchWithoutTopic("99999", 5, 19, 30, "MALE", 1L);
@@ -89,6 +109,14 @@ class AgencyRepositoryIT {
     var agencyList = agencyRepository.searchWithoutTopic("99999", 5, 19, 30, "NOTMATCHING", 1L);
     // then
     assertThat(agencyList).isEmpty();
+  }
+
+  @Test
+  void searchWithoutTopic_Should_ignoreConsultingTypeId_WhenConsultingTypeIdIsNotProvided() {
+    // given, when
+    var agencyList = agencyRepository.searchWithoutTopic("99999", 5, null, null, null, 1L);
+    // then
+    assertThat(agencyList).hasSize(6);
   }
 
 

@@ -30,7 +30,7 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
   List<Agency> searchWithoutTopic(@Param(value = "postcode") String postCode,
-      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "length") int length, @Param(value = "type") Integer consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
       @Param(value = "tenantId") Long tenantId);
@@ -41,7 +41,7 @@ public interface AgencyTenantAwareRepository extends AgencyRepository {
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
   List<Agency> searchWithTopic(@Param(value = "postcode") String postCode,
-      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "length") int length, @Param(value = "type") Integer consultingTypeId,
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,

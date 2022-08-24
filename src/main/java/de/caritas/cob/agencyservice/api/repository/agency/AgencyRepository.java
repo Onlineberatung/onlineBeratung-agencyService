@@ -20,7 +20,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + "INNER JOIN agency_topic at ON a.id = at.agency_id "
       + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
       + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
-      + "AND a.consulting_type = :type "
+      + "AND (:type is NULL OR a.consulting_type = :type) "
       + "AND at.topic_id = :topicId "
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (a.age_from <= :age)"
@@ -36,7 +36,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + "WHERE "
       + "(CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
       + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
-      + "AND a.consulting_type = :type "
+      + "AND (:type is NULL OR a.consulting_type = :type) "
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (a.age_from <= :age)"
       + ") "
@@ -61,7 +61,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
   List<Agency> searchWithoutTopic(@Param(value = "postcode") String postCode,
-      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "length") int length, @Param(value = "type") Integer consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
       Long tenantId);
@@ -72,7 +72,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
           + GROUP_BY_ORDER_BY,
       nativeQuery = true)
   List<Agency> searchWithTopic(@Param(value = "postcode") String postCode,
-      @Param(value = "length") int length, @Param(value = "type") int consultingTypeId,
+      @Param(value = "length") int length, @Param(value = "type") Integer consultingTypeId,
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
