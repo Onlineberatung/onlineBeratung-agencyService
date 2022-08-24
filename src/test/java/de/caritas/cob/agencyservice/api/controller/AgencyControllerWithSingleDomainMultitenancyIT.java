@@ -59,7 +59,7 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
   }
 
   @Test
-  void getAgencies_Should_ReturnOk_When_MatchingSearchParametersAreProvided() throws Exception {
+  void getAgencies_Should_ReturnOk_AndSkipConsultingTypeParamInAgencySearch_When_MatchingSearchParametersAreProvided() throws Exception {
     mvc.perform(
 
             get(PATH_GET_LIST_OF_AGENCIES + "?" + "postcode=99999" + "&"
@@ -67,7 +67,7 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
                 .accept(MediaType.APPLICATION_JSON))
 
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(3)));
+        .andExpect(jsonPath("$", hasSize(6)));
   }
 
 }
