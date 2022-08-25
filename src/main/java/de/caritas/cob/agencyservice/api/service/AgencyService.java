@@ -70,7 +70,7 @@ public class AgencyService {
    * @return a list containing regarding agencies
    */
   public List<AgencyResponseDTO> getAgencies(List<Long> agencyIds) {
-    return agencyRepository.findByIdIn(agencyIds).stream()
+    return getAgencyRepositoryForSearch().findByIdIn(agencyIds).stream()
         .map(this::convertToAgencyResponseDTO)
         .collect(Collectors.toList());
   }
