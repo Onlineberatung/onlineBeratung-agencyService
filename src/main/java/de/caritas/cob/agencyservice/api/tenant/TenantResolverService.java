@@ -39,7 +39,7 @@ public class TenantResolverService {
   private boolean multitenancyWithSingleDomain;
 
   private List<TenantResolver> nonAuthenticatedTenantResolvers() {
-    return newArrayList(customHeaderTenantResolver, multitenancyWithSingleDomainTenantResolver, subdomainTenantResolver);
+    return newArrayList(multitenancyWithSingleDomainTenantResolver, customHeaderTenantResolver, subdomainTenantResolver);
   }
 
   private List<TenantResolver> tenantIdCrossValidationResolvers() {
