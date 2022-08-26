@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.controller;
 
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -68,6 +69,18 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
 
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(6)));
+  }
+
+  @Test
+  void getAgencies_Should_ReturnOk_GetAgencyById_When_DifferentTenantAgencyIsRequested() throws Exception {
+    mvc.perform(
+
+            get(PATH_GET_AGENCIES_WITH_IDS + "1738")
+                .header("tenantId", 10)
+                .accept(MediaType.APPLICATION_JSON))
+
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)));
   }
 
 }
