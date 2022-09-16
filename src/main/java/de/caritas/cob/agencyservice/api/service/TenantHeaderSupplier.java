@@ -20,7 +20,7 @@ public class TenantHeaderSupplier {
   private boolean multitenancy;
 
   public void addTenantHeader(HttpHeaders headers) {
-    if (multitenancy) {
+    if (multitenancy && TenantContext.getCurrentTenant() != null) {
       headers.add("tenantId", TenantContext.getCurrentTenant().toString());
     }
   }
