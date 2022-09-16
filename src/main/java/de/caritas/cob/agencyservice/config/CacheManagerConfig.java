@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class CacheManagerConfig {
 
   public static final String CONSULTING_TYPE_CACHE = "consultingTypeCache";
+
+  public static final String APPLICATION_SETTINGS_CACHE = "applicationSettingsCache";
   public static final String TENANT_CACHE = "tenantCache";
   public static final String TOPICS_CACHE = "topicsCache";
 
@@ -52,6 +54,18 @@ public class CacheManagerConfig {
   @Value("${cache.topic.configuration.timeToLiveSeconds}")
   private long topicTimeToLiveSeconds;
 
+  @Value("${cache.applicationsettings.configuration.maxEntriesLocalHeap}")
+  private long applicationSettingsMaxEntriesLocalHeap;
+
+  @Value("${cache.applicationsettings.configuration.eternal}")
+  private boolean applicationSettingsEternal;
+
+  @Value("${cache.applicationsettings.configuration.timeToIdleSeconds}")
+  private long applicationSettingsTimeToIdleSeconds;
+
+  @Value("${cache.applicationsettings.configuration.timeToLiveSeconds}")
+  private long applicationSettingsTimeToLiveSeconds;
+
   @Bean
   public CacheManager cacheManager() {
     return new EhCacheCacheManager(ehCacheManager());
@@ -63,12 +77,23 @@ public class CacheManagerConfig {
     config.addCache(buildConsultingTypeCacheConfiguration());
     config.addCache(buildTenantCacheConfiguration());
     config.addCache(buildTopicCacheConfiguration());
+    config.addCache(buildApplicationSettingsCacheConfiguration());
     return net.sf.ehcache.CacheManager.newInstance(config);
   }
 
   private CacheConfiguration buildTopicCacheConfiguration() {
     var topicCacheConfiguration = new CacheConfiguration();
     topicCacheConfiguration.setName(TOPICS_CACHE);
+    topicCacheConfiguration.setMaxEntriesLocalHeap(topicMaxEntriesLocalHeap);
+    topicCacheConfiguration.setEternal(topicEternal);
+    topicCacheConfiguration.setTimeToIdleSeconds(topicTimeToIdleSeconds);
+    topicCacheConfiguration.setTimeToLiveSeconds(topicTimeToLiveSeconds);
+    return topicCacheConfiguration;
+  }
+
+  private CacheConfiguration buildApplicationSettingsCacheConfiguration() {
+    var topicCacheConfiguration = new CacheConfiguration();
+    topicCacheConfiguration.setName(APPLICATION_SETTINGS_CACHE);
     topicCacheConfiguration.setMaxEntriesLocalHeap(topicMaxEntriesLocalHeap);
     topicCacheConfiguration.setEternal(topicEternal);
     topicCacheConfiguration.setTimeToIdleSeconds(topicTimeToIdleSeconds);
