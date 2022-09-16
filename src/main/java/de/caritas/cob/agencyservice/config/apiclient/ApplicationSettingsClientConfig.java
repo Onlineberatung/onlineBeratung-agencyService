@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ApplicationSettingsClientConfig {
 
-  @Value("${applicationsettings.service.api.url}")
+  @Value("${consulting.type.service.api.url}")
   private String applicationsettingsServiceApiUrl;
 
   @Bean
