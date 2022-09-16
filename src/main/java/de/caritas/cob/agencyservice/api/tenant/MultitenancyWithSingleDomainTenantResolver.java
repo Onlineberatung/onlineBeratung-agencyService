@@ -28,7 +28,8 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
   @Qualifier("applicationsettingsControllerApiPrimary")
   private ApplicationsettingsControllerApi applicationsettingsControllerApi;
 
-  private final @NonNull TenantControllerApi tenantControllerApi;
+  @Autowired
+  private TenantControllerApi tenantControllerApi;
 
   @Override
   public Optional<Long> resolve(HttpServletRequest request) {

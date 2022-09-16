@@ -9,6 +9,7 @@ import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.mod
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import liquibase.pro.packaged.R;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +35,6 @@ class MultitenancyWithSingleDomainTenantResolverTest {
 
   @Mock
   ApplicationsettingsControllerApi applicationsettingsControllerApi;
-
-  @BeforeEach
-  public void setUp() {
-    ReflectionTestUtils.setField(resolver, "applicationsettingsControllerApi",
-        applicationsettingsControllerApi);
-  }
 
   @AfterEach
   public void tearDown() {
