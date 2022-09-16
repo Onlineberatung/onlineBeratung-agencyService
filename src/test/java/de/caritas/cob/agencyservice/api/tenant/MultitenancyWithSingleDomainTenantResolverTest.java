@@ -9,7 +9,9 @@ import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.mod
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import liquibase.pro.packaged.R;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,7 +57,8 @@ class MultitenancyWithSingleDomainTenantResolverTest {
   void resolve_Should_resolveToTenantIdZero_When_ApplicationSettingsNotFound() {
     // given
     setMultitenancyWithSingleDomain(true);
-    when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(new ApplicationSettingsDTO());
+    when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
+        new ApplicationSettingsDTO());
 
     // when
     Optional<Long> resolve = resolver.resolve(request);
@@ -69,8 +72,11 @@ class MultitenancyWithSingleDomainTenantResolverTest {
   void resolve_Should_resolveToTenantIdBasedOnMainTenantSubdomainValue_When_ApplicationSettingsFound() {
     // given
     setMultitenancyWithSingleDomain(true);
-    when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(new ApplicationSettingsDTO().mainTenantSubdomainForSingleDomainMultitenancy(new SettingDTO().value("app")));
-    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(new RestrictedTenantDTO().id(1L));
+    when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
+        new ApplicationSettingsDTO().mainTenantSubdomainForSingleDomainMultitenancy(
+            new SettingDTO().value("app")));
+    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(
+        new RestrictedTenantDTO().id(1L));
     // when
     Optional<Long> resolve = resolver.resolve(request);
 

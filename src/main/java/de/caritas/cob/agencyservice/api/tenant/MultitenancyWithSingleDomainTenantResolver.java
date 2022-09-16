@@ -10,6 +10,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.ApplicationsettingsControllerApi;
@@ -22,9 +24,12 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
   @Value("${feature.multitenancy.with.single.domain.enabled}")
   private boolean multitenancyWithSingleDomain;
 
-  private final @NonNull ApplicationsettingsControllerApi applicationsettingsControllerApi;
+  @Autowired
+  @Qualifier("applicationsettingsControllerApiPrimary")
+  private ApplicationsettingsControllerApi applicationsettingsControllerApi;
 
-  private final @NonNull TenantControllerApi tenantControllerApi;
+  @Autowired
+  private TenantControllerApi tenantControllerApi;
 
   @Override
   public Optional<Long> resolve(HttpServletRequest request) {

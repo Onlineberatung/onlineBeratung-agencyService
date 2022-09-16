@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.config.apiclient;
 
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.ApplicationsettingsControllerApi;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -11,19 +12,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class ApplicationSettingsClientConfig {
+public class ApplicationSettingsClientApiConfig {
 
   @Value("${consulting.type.service.api.url}")
   private String applicationsettingsServiceApiUrl;
 
-  @Bean
+  @Bean("applicationsettingsControllerApiPrimary")
   @Primary
-  @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-  public ApplicationsettingsControllerApi applicationsettingsControllerApi(ApiClient apiClient) {
+  public ApplicationsettingsControllerApi applicationsettingsControllerApi(@Qualifier("applicationsettingsControllerApiClientPrimary") ApiClient apiClient) {
     return new ApplicationsettingsControllerApi(apiClient);
   }
 
-  @Bean
+  @Bean("applicationsettingsControllerApiClientPrimary")
   @Primary
   @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
   public ApiClient adminAgencyApiClient(RestTemplate restTemplate) {
