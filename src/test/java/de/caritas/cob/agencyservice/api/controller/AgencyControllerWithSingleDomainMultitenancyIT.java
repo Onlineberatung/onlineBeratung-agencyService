@@ -13,6 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
+import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.ApplicationsettingsControllerApi;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 
 @SpringBootTest
 @TestPropertySource(properties = {"feature.multitenancy.with.single.domain.enabled=true",
@@ -49,6 +54,12 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
   @MockBean
   private ConsultingTypeManager consultingTypeManager;
 
+  @MockBean
+  private ApplicationsettingsControllerApi applicationsettingsControllerApi;
+
+  @MockBean
+  private TenantControllerApi tenantControllerApi;
+
   @Autowired
   private WebApplicationContext context;
 
@@ -57,6 +68,9 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(
             new de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO());
+    when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(new ApplicationSettingsDTO()
+        .mainTenantSubdomainForSingleDomainMultitenancy(new SettingDTO().value("app")));
+    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(new RestrictedTenantDTO().id(0L));
   }
 
   @Test
