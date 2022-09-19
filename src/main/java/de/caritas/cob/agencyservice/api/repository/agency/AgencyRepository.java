@@ -3,16 +3,13 @@ package de.caritas.cob.agencyservice.api.repository.agency;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 /**
  * Repository for the Agency entity
  *
  */
-@Repository("agencyTenantUnawareRepository")
-public interface AgencyRepository extends CrudRepository<Agency, Long> {
+public interface AgencyRepository {
 
   String AND_WITH_BRACKET = "AND (";
   String SELECT_WITH_TOPICS = "SELECT a.*, :tenantId FROM agency a "
@@ -84,4 +81,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
 
   List<Agency> findByConsultingTypeId(int consultingTypeId);
 
+  Optional<Agency> findById(Long agencyIds);
+
+  Agency save(Agency agency);
 }
