@@ -1,8 +1,11 @@
 package de.caritas.cob.agencyservice.api.tenant;
 
+import de.caritas.cob.agencyservice.api.repository.TenantUnaware;
+import java.lang.annotation.Annotation;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.hibernate.Filter;
@@ -16,15 +19,20 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("${multitenancy.enabled:true}")
 public class TenantAspect {
 
-  private final Long TECHNICAL_TENANT_ID = 0L;
+  private static final Long TECHNICAL_TENANT_ID = 0L;
 
   @PersistenceContext
   public EntityManager entityManager;
 
   @Before("execution(* de.caritas.cob.agencyservice.api.repository..*(..)))")
-  public void beforeQueryAspect() {
+  public void beforeQueryAspect(JoinPoint joinPoint) {
+    Annotation annotation = joinPoint.getSignature().getDeclaringType()
+        .getAnnotation(TenantUnaware.class);
+    if (annotation != null) {
+      return;
+    }
 
-    if (Long.valueOf(TECHNICAL_TENANT_ID).equals(TenantContext.getCurrentTenant())) {
+    if (TECHNICAL_TENANT_ID.equals(TenantContext.getCurrentTenant())) {
       return;
     }
 
