@@ -16,10 +16,10 @@ import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
 import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
+import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,8 +64,13 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
   @MockBean
   private TenantControllerApi tenantControllerApi;
 
+
+  @MockBean
+  private TenantServiceApiControllerFactory tenantServiceApiControllerFactory;
+
   @Autowired
   private WebApplicationContext context;
+
 
   @BeforeEach
   public void setUp() throws MissingConsultingTypeException {
@@ -76,6 +81,7 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(new ApplicationSettingsDTO()
         .mainTenantSubdomainForSingleDomainMultitenancy(new SettingDTO().value("app")));
     when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(new RestrictedTenantDTO().id(0L));
+    when(tenantServiceApiControllerFactory.createControllerApi()).thenReturn(tenantControllerApi);
   }
 
   @Test

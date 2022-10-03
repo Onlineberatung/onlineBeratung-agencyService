@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
 import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
+import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,10 @@ class MultitenancyWithSingleDomainTenantResolverTest {
 
   @Mock
   ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;
+
+  @Mock
+  TenantServiceApiControllerFactory tenantServiceApiControllerFactory;
+
 
   @AfterEach
   public void tearDown() {
@@ -78,6 +83,7 @@ class MultitenancyWithSingleDomainTenantResolverTest {
     // given
     setMultitenancyWithSingleDomain(true);
 
+    when(tenantServiceApiControllerFactory.createControllerApi()).thenReturn(tenantControllerApi);
     when(applicationSettingsApiControllerFactory.createControllerApi()).thenReturn(applicationsettingsControllerApi);
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
         new ApplicationSettingsDTO().mainTenantSubdomainForSingleDomainMultitenancy(

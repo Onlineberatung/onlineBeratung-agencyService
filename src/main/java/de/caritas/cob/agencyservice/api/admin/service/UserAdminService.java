@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.admin.service;
 
 import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
+import de.caritas.cob.agencyservice.config.apiclient.UserAdminServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
@@ -21,7 +22,7 @@ import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort;
 @RequiredArgsConstructor
 public class UserAdminService {
 
-  private final @NonNull AdminUserControllerApi adminUserControllerApi;
+  private final @NonNull UserAdminServiceApiControllerFactory userAdminServiceApiControllerFactory;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
   private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
@@ -34,8 +35,9 @@ public class UserAdminService {
    *                   tagged as team consultants
    */
   public void adaptRelatedConsultantsForChange(Long agencyId, String agencyType) {
-    addDefaultHeaders(this.adminUserControllerApi.getApiClient());
-    this.adminUserControllerApi
+    AdminUserControllerApi controllerApi = userAdminServiceApiControllerFactory.createControllerApi();
+    addDefaultHeaders(controllerApi.getApiClient());
+    controllerApi
         .changeAgencyType(agencyId,
             new AgencyTypeDTO()
                 .agencyType(AgencyTypeEnum.fromValue(agencyType)));
@@ -57,14 +59,15 @@ public class UserAdminService {
    */
   public List<ConsultantAdminResponseDTO> getConsultantsOfAgency(Long agencyId, int currentPage,
       int perPage) {
-    addDefaultHeaders(this.adminUserControllerApi.getApiClient());
+    var controllerApi = userAdminServiceApiControllerFactory.createControllerApi();
+    addDefaultHeaders(controllerApi.getApiClient());
     ConsultantFilter consultantFilter = new ConsultantFilter().agencyId(agencyId);
 
     Sort sortBy = new Sort();
     sortBy.setField(FieldEnum.LASTNAME);
     sortBy.setOrder(OrderEnum.ASC);
 
-    return this.adminUserControllerApi
+    return controllerApi
         .getConsultants(currentPage, perPage, consultantFilter, sortBy)
         .getEmbedded();
   }

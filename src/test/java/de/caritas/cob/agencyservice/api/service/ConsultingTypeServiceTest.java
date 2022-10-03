@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import de.caritas.cob.agencyservice.config.apiclient.ConsultingTypeServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.ConsultingTypeControllerApi;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ class ConsultingTypeServiceTest {
   @Spy
   TenantHeaderSupplier tenantHeaderSupplier;
 
+  @Mock
+  ConsultingTypeServiceApiControllerFactory consultingTypeServiceApiControllerFactory;
+
   @Spy
   ApiClient apiClient;
 
@@ -38,6 +42,7 @@ class ConsultingTypeServiceTest {
   void getExtendedConsultingTypeResponseDTO_Should_addTenantHeaderForMultiTenancy() {
     TenantContext.setCurrentTenant(1L);
     var headers = new HttpHeaders();
+    when(this.consultingTypeServiceApiControllerFactory.createControllerApi()).thenReturn(consultingTypeControllerApi);
     when(this.consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
     when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
     ReflectionTestUtils.setField(tenantHeaderSupplier, "multitenancy", true);
@@ -45,7 +50,7 @@ class ConsultingTypeServiceTest {
 
     HttpHeaders apiClientHeaders = (HttpHeaders) ReflectionTestUtils
         .getField(apiClient, "defaultHeaders");
-    assertEquals(apiClientHeaders.get("tenantId").get(0), "1");
+    assertEquals("1", apiClientHeaders.get("tenantId").get(0));
     TenantContext.clear();
   }
 
@@ -53,12 +58,13 @@ class ConsultingTypeServiceTest {
   void getExtendedConsultingTypeResponseDTO_Should_addSecurityHeader() {
     var headers = new HttpHeaders();
     headers.add("header1", "header1");
+    when(this.consultingTypeServiceApiControllerFactory.createControllerApi()).thenReturn(consultingTypeControllerApi);
     when(this.securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
     when(this.consultingTypeControllerApi.getApiClient()).thenReturn(apiClient);
     this.consultingTypeService.getExtendedConsultingTypeResponseDTO(0);
     HttpHeaders apiClientHeaders = (HttpHeaders) ReflectionTestUtils
         .getField(apiClient, "defaultHeaders");
-    assertEquals(apiClientHeaders.get("header1").get(0), "header1");
+    assertEquals("header1", apiClientHeaders.get("header1").get(0));
     TenantContext.clear();
   }
 
