@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
+import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,9 @@ class MultitenancyWithSingleDomainTenantResolverTest {
   @Mock
   ApplicationsettingsControllerApi applicationsettingsControllerApi;
 
+  @Mock
+  ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;
+
   @AfterEach
   public void tearDown() {
     setMultitenancyWithSingleDomain(false);
@@ -57,6 +61,7 @@ class MultitenancyWithSingleDomainTenantResolverTest {
   void resolve_Should_resolveToTenantIdZero_When_ApplicationSettingsNotFound() {
     // given
     setMultitenancyWithSingleDomain(true);
+    when(applicationSettingsApiControllerFactory.createControllerApi()).thenReturn(applicationsettingsControllerApi);
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
         new ApplicationSettingsDTO());
 
@@ -72,6 +77,8 @@ class MultitenancyWithSingleDomainTenantResolverTest {
   void resolve_Should_resolveToTenantIdBasedOnMainTenantSubdomainValue_When_ApplicationSettingsFound() {
     // given
     setMultitenancyWithSingleDomain(true);
+
+    when(applicationSettingsApiControllerFactory.createControllerApi()).thenReturn(applicationsettingsControllerApi);
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
         new ApplicationSettingsDTO().mainTenantSubdomainForSingleDomainMultitenancy(
             new SettingDTO().value("app")));

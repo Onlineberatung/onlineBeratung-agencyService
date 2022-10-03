@@ -15,9 +15,11 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeMan
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
+import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,6 +57,8 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
   private ConsultingTypeManager consultingTypeManager;
 
   @MockBean
+  private ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;
+  @MockBean
   private ApplicationsettingsControllerApi applicationsettingsControllerApi;
 
   @MockBean
@@ -65,6 +69,7 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
 
   @BeforeEach
   public void setUp() throws MissingConsultingTypeException {
+    when(applicationSettingsApiControllerFactory.createControllerApi()).thenReturn(applicationsettingsControllerApi);
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(
             new de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO());
