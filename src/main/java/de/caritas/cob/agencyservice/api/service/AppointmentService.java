@@ -5,6 +5,7 @@ import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSup
 import de.caritas.cob.agencyservice.appointmentservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.appointmentservice.generated.web.AgencyApi;
 import de.caritas.cob.agencyservice.appointmentservice.generated.web.model.AgencyMasterDataSyncRequestDTO;
+import de.caritas.cob.agencyservice.config.apiclient.AppointmentServiceAgencyApiControllerFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AppointmentService {
 
-  private final @NonNull AgencyApi appointmentAgencyApi;
+  private final @NonNull AppointmentServiceAgencyApiControllerFactory appointmentServiceAgencyApiControllerFactory;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
   private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
@@ -29,16 +30,18 @@ public class AppointmentService {
     AgencyMasterDataSyncRequestDTO request = new AgencyMasterDataSyncRequestDTO();
     request.setId(agency.getId());
     request.setName(agency.getName());
-    addDefaultHeaders(appointmentAgencyApi.getApiClient());
-    appointmentAgencyApi.agencyMasterDataSync(request);
+    AgencyApi controllerApi = appointmentServiceAgencyApiControllerFactory.createControllerApi();
+    addDefaultHeaders(controllerApi.getApiClient());
+    controllerApi.agencyMasterDataSync(request);
   }
 
   public void deleteAgency(Agency agency) {
     if (!appointmentFeatureEnabled) {
       return;
     }
-    addDefaultHeaders(appointmentAgencyApi.getApiClient());
-    appointmentAgencyApi.deleteAgency(agency.getId());
+    AgencyApi controllerApi = appointmentServiceAgencyApiControllerFactory.createControllerApi();
+    addDefaultHeaders(controllerApi.getApiClient());
+    controllerApi.deleteAgency(agency.getId());
   }
 
 

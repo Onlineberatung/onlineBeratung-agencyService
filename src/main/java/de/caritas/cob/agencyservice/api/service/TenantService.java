@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.config.CacheManagerConfig;
+import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import lombok.NonNull;
@@ -13,21 +14,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TenantService {
 
-  private final @NonNull TenantControllerApi tenantControllerApi;
+  private final @NonNull TenantServiceApiControllerFactory tenantServiceApiControllerFactory;
 
   @Value("${multitenancy.enabled}")
   private boolean multitenancy;
 
   @Cacheable(cacheNames = CacheManagerConfig.TENANT_CACHE, key = "#subdomain")
   public RestrictedTenantDTO getRestrictedTenantDataBySubdomain(String subdomain) {
-    return tenantControllerApi.getRestrictedTenantDataBySubdomainWithHttpInfo(subdomain).getBody();
+    TenantControllerApi controllerApi = tenantServiceApiControllerFactory.createControllerApi();
+    return controllerApi.getRestrictedTenantDataBySubdomainWithHttpInfo(subdomain).getBody();
   }
 
   public RestrictedTenantDTO getRestrictedTenantDataByTenantId(Long tenantId) {
-    return tenantControllerApi.getRestrictedTenantDataByTenantId(tenantId);
+    TenantControllerApi controllerApi = tenantServiceApiControllerFactory.createControllerApi();
+    return controllerApi.getRestrictedTenantDataByTenantId(tenantId);
   }
 
   public RestrictedTenantDTO getRestrictedTenantDataForSingleTenant() {
-    return tenantControllerApi.getRestrictedSingleTenantData();
+    TenantControllerApi controllerApi = tenantServiceApiControllerFactory.createControllerApi();
+    return controllerApi.getRestrictedSingleTenantData();
   }
 }

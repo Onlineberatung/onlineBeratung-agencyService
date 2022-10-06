@@ -4,6 +4,7 @@ import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSup
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.config.CacheManagerConfig;
 
+import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,15 +19,16 @@ import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.App
 @RequiredArgsConstructor
 public class ApplicationSettingsService {
 
-  private final @NonNull ApplicationsettingsControllerApi applicationsettingsControllerApi;
+  private final @NonNull ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
   private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
 
   @Cacheable(value = CacheManagerConfig.APPLICATION_SETTINGS_CACHE)
   public ApplicationSettingsDTO getApplicationSettings() {
-    addDefaultHeaders(this.applicationsettingsControllerApi.getApiClient());
-    return this.applicationsettingsControllerApi.getApplicationSettings();
+    ApplicationsettingsControllerApi controllerApi = applicationSettingsApiControllerFactory.createControllerApi();
+    addDefaultHeaders(controllerApi.getApiClient());
+    return controllerApi.getApplicationSettings();
   }
 
   private void addDefaultHeaders(ApiClient apiClient) {
