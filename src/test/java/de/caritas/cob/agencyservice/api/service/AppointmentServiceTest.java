@@ -12,6 +12,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
+import de.caritas.cob.agencyservice.config.apiclient.AppointmentServiceAgencyApiControllerFactory;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,9 +49,13 @@ class AppointmentServiceTest {
   @Mock
   Agency agency;
 
+  @Mock
+  AppointmentServiceAgencyApiControllerFactory appointmentServiceAgencyApiControllerFactory;
+
   @BeforeEach
   public void beforeEach() {
     when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(httpHeaders);
+    when(appointmentServiceAgencyApiControllerFactory.createControllerApi()).thenReturn(appointmentAgencyApi);
   }
 
 

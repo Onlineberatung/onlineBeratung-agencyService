@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import de.caritas.cob.agencyservice.config.apiclient.UserAdminServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
@@ -46,6 +47,9 @@ public class UserAdminServiceTest {
   private TenantHeaderSupplier tenantHeaderSupplier;
 
   @Mock
+  private UserAdminServiceApiControllerFactory userAdminServiceApiControllerFactory;
+
+  @Mock
   private ApiClient apiClient;
 
   private final HttpHeaders httpHeaders = new EasyRandom().nextObject(HttpHeaders.class);
@@ -55,6 +59,7 @@ public class UserAdminServiceTest {
     when(this.adminUserControllerApi.getApiClient()).thenReturn(this.apiClient);
     when(this.securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders())
         .thenReturn(this.httpHeaders);
+    when(userAdminServiceApiControllerFactory.createControllerApi()).thenReturn(adminUserControllerApi);
   }
 
   @Test
@@ -63,8 +68,8 @@ public class UserAdminServiceTest {
 
     this.userAdminService.adaptRelatedConsultantsForChange(agencyId, TEAM_AGENCY.getValue());
 
-    verify(this.adminUserControllerApi, times(1)).changeAgencyType(eq(agencyId),
-        eq(new AgencyTypeDTO().agencyType(TEAM_AGENCY)));
+    verify(this.adminUserControllerApi, times(1)).changeAgencyType(agencyId,
+        new AgencyTypeDTO().agencyType(TEAM_AGENCY));
     verify(this.apiClient, times(this.httpHeaders.size())).addDefaultHeader(any(), any());
   }
 

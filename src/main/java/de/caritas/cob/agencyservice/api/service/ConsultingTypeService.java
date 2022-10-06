@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.agencyservice.config.CacheManagerConfig;
+import de.caritas.cob.agencyservice.config.apiclient.ConsultingTypeServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.ConsultingTypeControllerApi;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ConsultingTypeService {
 
-  private final @NonNull ConsultingTypeControllerApi consultingTypeControllerApi;
+  private final @NonNull ConsultingTypeServiceApiControllerFactory consultingTypeServiceApiControllerFactory;
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
   private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
@@ -31,8 +32,9 @@ public class ConsultingTypeService {
   @Cacheable(value = CacheManagerConfig.CONSULTING_TYPE_CACHE, key = "#consultingTypeId")
   public ExtendedConsultingTypeResponseDTO getExtendedConsultingTypeResponseDTO(
       int consultingTypeId) {
-    addDefaultHeaders(this.consultingTypeControllerApi.getApiClient());
-    return this.consultingTypeControllerApi.getExtendedConsultingTypeById(consultingTypeId);
+    ConsultingTypeControllerApi controllerApi = consultingTypeServiceApiControllerFactory.createControllerApi();
+    addDefaultHeaders(controllerApi.getApiClient());
+    return controllerApi.getExtendedConsultingTypeById(consultingTypeId);
   }
 
   private void addDefaultHeaders(ApiClient apiClient) {
