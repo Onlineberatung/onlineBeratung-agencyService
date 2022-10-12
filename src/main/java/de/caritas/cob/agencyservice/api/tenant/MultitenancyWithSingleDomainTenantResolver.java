@@ -2,6 +2,8 @@ package de.caritas.cob.agencyservice.api.tenant;
 
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
+import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
+import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -25,11 +27,10 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
   private boolean multitenancyWithSingleDomain;
 
   @Autowired
-  @Qualifier("applicationsettingsControllerApiPrimary")
-  private ApplicationsettingsControllerApi applicationsettingsControllerApi;
+  private ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;
 
   @Autowired
-  private TenantControllerApi tenantControllerApi;
+  private TenantServiceApiControllerFactory tenantServiceApiControllerFactory;
 
   @Override
   public Optional<Long> resolve(HttpServletRequest request) {
@@ -52,13 +53,14 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
   }
 
   private Optional<Long> resolveFromTenantServiceBasedOnMainTenantSubdomain(String rootTenantSubdomain) {
+    var tenantControllerApi = tenantServiceApiControllerFactory.createControllerApi();
     RestrictedTenantDTO rootTenantData = tenantControllerApi.getRestrictedTenantDataBySubdomain(
         rootTenantSubdomain);
     return Optional.of(rootTenantData.getId());
   }
 
   private Optional<String> getMainTenantSubdomainFromApplicationSettings() {
-    ApplicationSettingsDTO applicationSettings = applicationsettingsControllerApi.getApplicationSettings();
+    ApplicationSettingsDTO applicationSettings = applicationSettingsApiControllerFactory.createControllerApi().getApplicationSettings();
     SettingDTO mainTenantSubdomainForSingleDomainMultitenancy = applicationSettings.getMainTenantSubdomainForSingleDomainMultitenancy();
     if (mainTenantSubdomainForSingleDomainMultitenancy == null) {
       return Optional.empty();

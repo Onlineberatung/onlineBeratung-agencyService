@@ -15,6 +15,8 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeMan
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
+import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
+import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,22 +57,31 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
   private ConsultingTypeManager consultingTypeManager;
 
   @MockBean
+  private ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;
+  @MockBean
   private ApplicationsettingsControllerApi applicationsettingsControllerApi;
 
   @MockBean
   private TenantControllerApi tenantControllerApi;
 
+
+  @MockBean
+  private TenantServiceApiControllerFactory tenantServiceApiControllerFactory;
+
   @Autowired
   private WebApplicationContext context;
 
+
   @BeforeEach
   public void setUp() throws MissingConsultingTypeException {
+    when(applicationSettingsApiControllerFactory.createControllerApi()).thenReturn(applicationsettingsControllerApi);
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(
             new de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO());
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(new ApplicationSettingsDTO()
         .mainTenantSubdomainForSingleDomainMultitenancy(new SettingDTO().value("app")));
     when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(new RestrictedTenantDTO().id(0L));
+    when(tenantServiceApiControllerFactory.createControllerApi()).thenReturn(tenantControllerApi);
   }
 
   @Test
