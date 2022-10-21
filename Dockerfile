@@ -1,4 +1,4 @@
-git
+FROM adoptopenjdk/openjdk11
 VOLUME ["/tmp","/log"]
 EXPOSE 8080
 ARG JAR_FILE
