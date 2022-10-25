@@ -62,25 +62,25 @@ public class AgencyAdminServiceITBase {
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getPostcodeRanges(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getPostcodeRanges().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
   }
 
   protected AgencyDTO createAgencyDTO() {
@@ -146,25 +146,25 @@ public class AgencyAdminServiceITBase {
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getUpdate(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getUpdate().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getPostcodeRanges(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getPostcodeRanges().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/${openapi.willBeReplaced.base-path}/agencyadmin/postcoderanges/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
   }
 
   public void getAgency_Should_returnExpectedAgency_When_agencyWithIdExists() {
