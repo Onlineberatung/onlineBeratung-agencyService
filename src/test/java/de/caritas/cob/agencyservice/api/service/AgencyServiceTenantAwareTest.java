@@ -11,6 +11,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.RegistrationDTO;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.BasicConsultingTypeResponseDTORegistration;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class AgencyServiceTenantAwareTest {
     // given
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", true);
     ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(
-        new RegistrationDTO().minPostcodeSize(5));
+        new BasicConsultingTypeResponseDTORegistration().minPostcodeSize(5));
     when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(dto);
     RestrictedTenantDTO restrictedTenantDTO = new RestrictedTenantDTO().settings(
         new Settings().topicsInRegistrationEnabled(true));
@@ -84,7 +85,7 @@ public class AgencyServiceTenantAwareTest {
     // given
     ReflectionTestUtils.setField(agencyService, "topicsFeatureEnabled", true);
     ExtendedConsultingTypeResponseDTO dto = new ExtendedConsultingTypeResponseDTO().registration(
-        new RegistrationDTO().minPostcodeSize(5));
+        new BasicConsultingTypeResponseDTORegistration().minPostcodeSize(5));
     when(consultingTypeManager.getConsultingTypeSettings(1)).thenReturn(dto);
     RestrictedTenantDTO restrictedTenantDTO = new RestrictedTenantDTO().settings(
         new Settings().topicsInRegistrationEnabled(true));

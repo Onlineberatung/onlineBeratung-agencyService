@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
-import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
+import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTOMainTenantSubdomainForSingleDomainMultitenancy;
 import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
 import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
@@ -87,7 +87,7 @@ class MultitenancyWithSingleDomainTenantResolverTest {
     when(applicationSettingsApiControllerFactory.createControllerApi()).thenReturn(applicationsettingsControllerApi);
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
         new ApplicationSettingsDTO().mainTenantSubdomainForSingleDomainMultitenancy(
-            new SettingDTO().value("app")));
+            new ApplicationSettingsDTOMainTenantSubdomainForSingleDomainMultitenancy().value("app")));
     when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(
         new RestrictedTenantDTO().id(1L));
     // when

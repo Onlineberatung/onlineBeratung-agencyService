@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.5.RELEASE</version>
+    <version>2.7.5</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -27,6 +27,18 @@
     <keycloak.version>17.0.0</keycloak.version>
     <!-- force at least version 2.16 due to https://logging.apache.org/log4j/2.x/security.html -->
     <log4j.version>2.17.1</log4j.version>
+    <openapi.generator.maven.version>6.2.0</openapi.generator.maven.version>
+    <hibernate-search-orm.version>5.11.10.Final</hibernate-search-orm.version>
+    <jackson-databind-nullable.version>0.2.3</jackson-databind-nullable.version>
+    <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
+    <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+    <commons-lang3.version>3.11</commons-lang3.version>
+    <liquibase-maven-plugin.version>4.1.1</liquibase-maven-plugin.version>
+    <h2.version>1.4.200</h2.version>
+    <powermock-module-junit4.version>2.0.2</powermock-module-junit4.version>
+    <ehcache.version>2.10.6</ehcache.version>
+    <easy-random-core.version>5.0.0</easy-random-core.version>
+    <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>
   </properties>
 
   <dependencies>
@@ -52,45 +64,44 @@
       <artifactId>spring-boot-starter-hateoas</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.1.6.Final</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
     <!-- Search dependencies -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-orm</artifactId>
-      <version>5.11.5.Final</version>
+      <version>${hibernate-search-orm.version}</version>
     </dependency>
 
     <!-- OpenApi/Swagger dependencies -->
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>
-      <version>5.1.1</version>
+      <version>${openapi.generator.maven.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>jackson-databind-nullable</artifactId>
-      <version>0.2.1</version>
+      <version>${jackson-databind-nullable.version}</version>
     </dependency>
     <!-- SpringFox: generate YAML file from POJOs and generate documentation -->
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
-      <version>2.9.2</version>
+      <version>${springfox-swagger2.version}</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-bean-validators</artifactId>
-      <version>2.9.2</version>
+      <version>${springfox-swagger2.version}</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger-ui</artifactId>
-      <version>2.9.2</version>
+      <version>${springfox-swagger2.version}</version>
     </dependency>
 
     <!-- Keycloak dependencies -->
@@ -112,7 +123,7 @@
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
-      <version>2.1.1</version>
+      <version>${javax.ws.rs-api.version}</version>
     </dependency>
 
     <!-- Lombok dependencies -->
@@ -126,14 +137,14 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.11</version>
+      <version>${commons-lang3.version}</version>
     </dependency>
 
     <!-- Liquibase -->
     <dependency>
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-maven-plugin</artifactId>
-      <version>4.1.1</version>
+      <version>${liquibase-maven-plugin.version}</version>
     </dependency>
 
     <!-- Test scope dependencies -->
@@ -141,6 +152,7 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
+      <version>${h2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -159,18 +171,18 @@
       <artifactId>powermock-module-junit4</artifactId>
       <groupId>org.powermock</groupId>
       <scope>test</scope>
-      <version>2.0.2</version>
+      <version>${powermock-module-junit4.version}</version>
     </dependency>
     <dependency>
       <artifactId>powermock-api-mockito2</artifactId>
       <groupId>org.powermock</groupId>
       <scope>test</scope>
-      <version>2.0.2</version>
+      <version>${powermock-module-junit4.version}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>2.10.6</version>
+      <version>${ehcache.version}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
@@ -199,13 +211,13 @@
     <dependency>
       <groupId>org.jeasy</groupId>
       <artifactId>easy-random-core</artifactId>
-      <version>4.3.0</version>
+      <version>${easy-random-core.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>2.3.5.RELEASE</version>
+      <version>${spring-boot-autoconfigure.version}</version>
     </dependency>
   </dependencies>
 
@@ -227,7 +239,7 @@
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>5.1.1</version>
+        <version>${openapi.generator.maven.version}</version>
         <executions>
           <execution>
             <id>agency-service</id>
@@ -442,7 +454,7 @@
       <plugin>
         <groupId>org.liquibase</groupId>
         <artifactId>liquibase-maven-plugin</artifactId>
-        <version>4.1.1</version>
+        <version>${liquibase-maven-plugin.version}</version>
         <configuration>
           <propertyFile>src/main/resources/liquibase.properties</propertyFile>
         </configuration>
