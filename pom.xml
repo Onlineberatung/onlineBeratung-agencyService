@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.5.RELEASE</version>
+    <version>2.7.5</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -27,6 +27,27 @@
     <keycloak.version>17.0.0</keycloak.version>
     <!-- force at least version 2.16 due to https://logging.apache.org/log4j/2.x/security.html -->
     <log4j.version>2.17.1</log4j.version>
+    <swagger.version>3.0.0</swagger.version>
+    <h2.version>2.1.214</h2.version>
+    <spring.security>5.7.3</spring.security>
+    <owasp.java.html.sanitizer>20211018.1</owasp.java.html.sanitizer>
+    <hibernate.validator.version>8.0.0.Final</hibernate.validator.version>
+    <liquibase.maven.plugin.version>4.17.0</liquibase.maven.plugin.version>
+    <openapi.generator.maven.version>6.2.0</openapi.generator.maven.version>
+    <jackson.databind.nullable.version>0.2.3</jackson.databind.nullable.version>
+    <springfox.boot.starter.version>3.0.0</springfox.boot.starter.version>
+    <spring.swagger.ui.version>2.10.0</spring.swagger.ui.version>
+    <keycloak-spring-boot-starter.version>19.0.3</keycloak-spring-boot-starter.version>
+    <keycloak-spring-security-adapter.version>15.0.2</keycloak-spring-security-adapter.version>
+    <keycloak-admin-client.version>16.0.0</keycloak-admin-client.version>
+    <lombok.version>1.18.24</lombok.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <awaitility.version>4.2.0</awaitility.version>
+    <awaitility-proxy.version>3.1.6</awaitility-proxy.version>
+    <easy-random-core.version>5.0.0</easy-random-core.version>
+    <assertj-core.version>3.23.1</assertj-core.version>
+    <spring-security-oauth2-test-webmvc-addons.version>3.0.1</spring-security-oauth2-test-webmvc-addons.version>
   </properties>
 
   <dependencies>
@@ -52,45 +73,44 @@
       <artifactId>spring-boot-starter-hateoas</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.1.6.Final</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
     <!-- Search dependencies -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-orm</artifactId>
-      <version>5.11.5.Final</version>
+      <version>5.11.10.Final</version>
     </dependency>
 
     <!-- OpenApi/Swagger dependencies -->
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>
-      <version>5.1.1</version>
+      <version>${openapi.generator.maven.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>jackson-databind-nullable</artifactId>
-      <version>0.2.1</version>
+      <version>0.2.3</version>
     </dependency>
     <!-- SpringFox: generate YAML file from POJOs and generate documentation -->
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
-      <version>2.9.2</version>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-bean-validators</artifactId>
-      <version>2.9.2</version>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger-ui</artifactId>
-      <version>2.9.2</version>
+      <version>3.0.0</version>
     </dependency>
 
     <!-- Keycloak dependencies -->
@@ -141,6 +161,7 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
+      <version>1.4.200</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -199,13 +220,13 @@
     <dependency>
       <groupId>org.jeasy</groupId>
       <artifactId>easy-random-core</artifactId>
-      <version>4.3.0</version>
+      <version>5.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>2.3.5.RELEASE</version>
+      <version>2.7.5</version>
     </dependency>
   </dependencies>
 
@@ -227,7 +248,7 @@
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>5.1.1</version>
+        <version>${openapi.generator.maven.version}</version>
         <executions>
           <execution>
             <id>agency-service</id>
