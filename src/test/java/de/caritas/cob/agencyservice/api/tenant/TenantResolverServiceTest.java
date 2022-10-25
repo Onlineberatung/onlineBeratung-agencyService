@@ -1,32 +1,21 @@
 package de.caritas.cob.agencyservice.api.tenant;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-
-import com.google.common.collect.Maps;
-import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
-import de.caritas.cob.agencyservice.api.service.TenantService;
-import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
-import java.util.HashMap;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
-import liquibase.pro.packaged.L;
-import org.assertj.core.util.Sets;
-import org.checkerframework.checker.nullness.Opt;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.AccessToken.Access;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.context.request.ServletRequestAttributes;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TenantResolverServiceTest {

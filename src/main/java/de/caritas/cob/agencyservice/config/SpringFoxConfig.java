@@ -34,7 +34,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *
  */
 @Configuration
-@EnableSwagger2
 @Import(BeanValidatorPluginsConfiguration.class)
 public class SpringFoxConfig {
 
@@ -76,7 +75,7 @@ public class SpringFoxConfig {
         SecurityReference.builder().reference("token").scopes(new AuthorizationScope[0]).build());
   }
 
-  private List<? extends SecurityScheme> securitySchemes() {
+  private List<SecurityScheme> securitySchemes() {
     return singletonList(new ApiKey("Bearer", "Authorization", "header"));
   }
 
