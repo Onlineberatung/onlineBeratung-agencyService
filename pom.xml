@@ -39,6 +39,7 @@
     <ehcache.version>2.10.6</ehcache.version>
     <easy-random-core.version>5.0.0</easy-random-core.version>
     <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>
+    <liquibase-core.version>4.9.1</liquibase-core.version>
   </properties>
 
   <dependencies>
@@ -145,6 +146,11 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-maven-plugin</artifactId>
       <version>${liquibase-maven-plugin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>${liquibase-core.version}</version>
     </dependency>
 
     <!-- Test scope dependencies -->
