@@ -4,8 +4,8 @@ import static java.util.Objects.nonNull;
 
 import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.BasicConsultingTypeResponseDTORegistration;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.RegistrationDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.WhiteSpotDTO;
 
 public class ExtendedConsultingTypeResponseDTOHelper {
@@ -24,9 +24,9 @@ public class ExtendedConsultingTypeResponseDTOHelper {
       whiteSpotDTO.setWhiteSpotAgencyAssigned(whiteSpot.isWhiteSpotAgencyAssigned());
     }
 
-    RegistrationDTO registrationDTO = null;
+    BasicConsultingTypeResponseDTORegistration registrationDTO = null;
     if (nonNull(registration)) {
-      registrationDTO = new RegistrationDTO();
+      registrationDTO = new BasicConsultingTypeResponseDTORegistration();
       registrationDTO.setMinPostcodeSize(registration.getMinPostcodeSize());
     }
     extendedConsultingTypeResponseDTO.setLockedAgencies(isLockedAgencies);

@@ -6,8 +6,6 @@ import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthority
 import de.caritas.cob.agencyservice.filter.HttpTenantFilter;
 import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
 import javax.annotation.Nullable;
-import org.keycloak.adapters.KeycloakConfigResolver;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
@@ -88,15 +86,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .antMatchers("/agencies").permitAll()
         .antMatchers("/agencyadmin", "/agencyadmin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
-  }
-
-  /**
-   * Use the KeycloakSpringBootConfigResolver to be able to save the Keycloak settings in the spring
-   * application properties.
-   */
-  @Bean
-  public KeycloakConfigResolver keyCloakConfigResolver() {
-    return new KeycloakSpringBootConfigResolver();
   }
 
   /**
