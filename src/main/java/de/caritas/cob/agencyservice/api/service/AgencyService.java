@@ -299,7 +299,8 @@ public class AgencyService {
         .consultingType(agency.getConsultingTypeId())
         .url(agency.getUrl())
         .external(agency.isExternal())
-        .demographics(getDemographics(agency));
+        .demographics(getDemographics(agency))
+        .tenantId(agency.getTenantId());
   }
 
   private DemographicsDTO getDemographics(Agency agency) {
