@@ -30,7 +30,6 @@
     <openapi.generator.maven.version>6.2.0</openapi.generator.maven.version>
     <hibernate-search-orm.version>5.11.10.Final</hibernate-search-orm.version>
     <jackson-databind-nullable.version>0.2.3</jackson-databind-nullable.version>
-    <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <commons-lang3.version>3.11</commons-lang3.version>
     <liquibase-maven-plugin.version>4.1.1</liquibase-maven-plugin.version>
@@ -40,6 +39,8 @@
     <easy-random-core.version>5.0.0</easy-random-core.version>
     <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>
     <liquibase-core.version>4.9.1</liquibase-core.version>
+    <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+    <spring-security-core.version>5.7.5</spring-security-core.version>
   </properties>
 
   <dependencies>
@@ -69,6 +70,11 @@
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>${spring-security-core.version}</version>
+    </dependency>
     <!-- Search dependencies -->
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -91,18 +97,8 @@
     <!-- SpringFox: generate YAML file from POJOs and generate documentation -->
     <dependency>
       <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>${springfox-swagger2.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-bean-validators</artifactId>
-      <version>${springfox-swagger2.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <version>${springfox-swagger2.version}</version>
+      <artifactId>springfox-boot-starter</artifactId>
+      <version>${springfox-boot-starter.version}</version>
     </dependency>
 
     <!-- Keycloak dependencies -->
