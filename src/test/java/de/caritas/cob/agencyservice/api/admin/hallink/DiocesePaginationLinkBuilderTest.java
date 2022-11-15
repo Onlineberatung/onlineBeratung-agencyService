@@ -26,15 +26,15 @@ class DiocesePaginationLinkBuilderTest {
     assertThat(paginationLinks.getSelf(), notNullValue());
     assertThat(paginationLinks.getSelf().getMethod(), is(MethodEnum.GET));
     assertThat(paginationLinks.getSelf().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=2&perPage=20"));
+        is("/agencyadmin/dioceses?page=2&perPage=20"));
     assertThat(paginationLinks.getPrevious(), notNullValue());
     assertThat(paginationLinks.getPrevious().getMethod(), is(MethodEnum.GET));
     assertThat(paginationLinks.getPrevious().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=1&perPage=20"));
+        is("/agencyadmin/dioceses?page=1&perPage=20"));
     assertThat(paginationLinks.getNext(), notNullValue());
     assertThat(paginationLinks.getNext().getMethod(), is(MethodEnum.GET));
     assertThat(paginationLinks.getNext().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=3&perPage=20"));
+        is("/agencyadmin/dioceses?page=3&perPage=20"));
   }
 
   @Test
@@ -47,7 +47,7 @@ class DiocesePaginationLinkBuilderTest {
 
     assertThat(paginationLinks.getPrevious(), notNullValue());
     assertThat(paginationLinks.getPrevious().getHref(),
-        endsWith("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=1&perPage=20"));
+        endsWith("/agencyadmin/dioceses?page=1&perPage=20"));
   }
 
   @Test
@@ -71,7 +71,7 @@ class DiocesePaginationLinkBuilderTest {
 
     assertThat(paginationLinks.getNext(), notNullValue());
     assertThat(paginationLinks.getNext().getHref(),
-        endsWith("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=3&perPage=20"));
+        endsWith("/agencyadmin/dioceses?page=3&perPage=20"));
   }
 
   @Test
@@ -94,7 +94,7 @@ class DiocesePaginationLinkBuilderTest {
 
     assertThat(paginationLinks, notNullValue());
     assertThat(paginationLinks.getSelf().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=1&perPage=20"));
+        is("/agencyadmin/dioceses?page=1&perPage=20"));
   }
 
   @Test
@@ -104,6 +104,6 @@ class DiocesePaginationLinkBuilderTest {
 
     assertThat(paginationLinks, notNullValue());
     assertThat(paginationLinks.getSelf().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=1&perPage=20"));
+        is("/agencyadmin/dioceses?page=1&perPage=20"));
   }
 }
