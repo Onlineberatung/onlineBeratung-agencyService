@@ -22,17 +22,17 @@ class RootDTOBuilderTest {
     assertThat(rootLinks, notNullValue());
     assertThat(rootLinks.getAgencies(), notNullValue());
     assertThat(rootLinks.getAgencies().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/agencies?page=1&perPage=20{&q}"));
+        is("/agencyadmin/agencies?page=1&perPage=20{&q}"));
     assertThat(rootLinks.getAgencies().getMethod(), is(MethodEnum.GET));
-    assertThat(rootLinks.getSelf().getHref(), is("/${openapi.willBeReplaced.base-path}/agencyadmin"));
+    assertThat(rootLinks.getSelf().getHref(), is("/agencyadmin"));
     assertThat(rootLinks.getSelf().getMethod(), is(MethodEnum.GET));
     assertThat(rootLinks.getAgencypostcodes(), notNullValue());
     assertThat(rootLinks.getAgencypostcodes().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/postcoderanges/{agencyId}"));
+        is("/agencyadmin/postcoderanges/{agencyId}"));
     assertThat(rootLinks.getAgencypostcodes().getMethod(), is(MethodEnum.GET));
     assertThat(rootLinks.getDioceses(), notNullValue());
     assertThat(rootLinks.getDioceses().getHref(),
-        is("/${openapi.willBeReplaced.base-path}/agencyadmin/dioceses?page=1&perPage=20"));
+        is("/agencyadmin/dioceses?page=1&perPage=20"));
     assertThat(rootLinks.getAgencypostcodes().getMethod(), is(MethodEnum.GET));
   }
 
