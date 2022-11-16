@@ -160,6 +160,12 @@
       <version>${commons-lang3.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.jknack</groupId>
+      <artifactId>handlebars</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+
     <!-- Liquibase -->
     <dependency>
       <groupId>org.liquibase</groupId>
