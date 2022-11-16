@@ -17,7 +17,7 @@ public class UserAdminServiceApiControllerFactory {
   private RestTemplate restTemplate;
 
   public AdminUserControllerApi createControllerApi() {
-    var apiClient = new ApiClient(restTemplate).setBasePath(this.userAdminServiceApiUrl);
+    var apiClient = new UserAdminApiClient(restTemplate).setBasePath(this.userAdminServiceApiUrl);
     return new AdminUserControllerApi(apiClient);
   }
 }
