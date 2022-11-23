@@ -105,6 +105,5 @@ jobs:
           image-ref: '${{ env.DOCKER_REGISTRY }}/${{ REPO_NAME_WITHOUT_PREFIX }}:${{ env.DOCKER_IMAGE_TAG }}'
           format: 'table'
           exit-code: '1'
-          ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL'
