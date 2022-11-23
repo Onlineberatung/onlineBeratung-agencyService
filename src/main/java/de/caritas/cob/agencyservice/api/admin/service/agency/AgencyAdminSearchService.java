@@ -4,16 +4,24 @@ import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_A
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
+import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.EntityManagerFactory;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
@@ -22,6 +30,9 @@ import org.apache.lucene.search.SortField;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.BooleanJunction;
+import org.hibernate.search.query.dsl.MustJunction;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,10 +48,15 @@ public class AgencyAdminSearchService {
   protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
 
-  private final @NonNull EntityManagerFactory entityManagerFactory;
+  protected final @NonNull EntityManagerFactory entityManagerFactory;
+
+  protected final @NonNull  AuthenticatedUser authenticatedUser;
+
+  protected final @NonNull UserAdminService userAdminService;
 
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
+
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
@@ -60,10 +76,11 @@ public class AgencyAdminSearchService {
         .getFullTextEntityManager(entityManagerFactory.createEntityManager());
 
     Query query = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
-        ? buildUnfilteredQuery(fullTextEntityManager)
-        : buildFullTextSearchQuery(keyword, fullTextEntityManager);
+        ? buildSearchQuery(fullTextEntityManager)
+        : buildKeywordSearchQuery(keyword, fullTextEntityManager);
 
     FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
+
     fullTextQuery.setMaxResults(Math.max(perPage, 0));
     fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
     fullTextQuery.setSort(buildSort(sort));
@@ -95,30 +112,72 @@ public class AgencyAdminSearchService {
         .total(fullTextQuery.getResultSize());
   }
 
-  protected Query buildUnfilteredQuery(FullTextEntityManager fullTextEntityManager) {
-    return fullTextEntityManager.getSearchFactory()
-        .buildQueryBuilder()
-        .forEntity(Agency.class)
-        .get()
-        .all()
-        .createQuery();
+  @NonNull
+  private List<AgencyAdminFullResponseDTO> getFilteredResultListByAgenciesAllowedForTheUser(List<AgencyAdminFullResponseDTO> resultList) {
+    var adminAgencies = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
+    List<AgencyAdminFullResponseDTO> filteredResultList = resultList.stream().filter(agency -> adminAgencies.contains(agency.getEmbedded().getId())).collect(Collectors.toList());
+    return filteredResultList;
   }
 
-  protected Query buildFullTextSearchQuery(String keyword, FullTextEntityManager entityManager) {
-    return entityManager.getSearchFactory()
-        .buildQueryBuilder()
-        .forEntity(Agency.class)
-        .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
-        .overridesForField(POST_CODE_SEARCH_FIELD, SEARCH_ANALYZER)
-        .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
-        .get()
-        .keyword()
-        .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
-        .andField(NAME_SEARCH_FIELD)
-        .andField(POST_CODE_SEARCH_FIELD)
-        .andField(CITY_SEARCH_FIELD)
-        .matching(QueryParserBase.escape(keyword))
-        .createQuery();
+  protected Query buildSearchQuery(FullTextEntityManager fullTextEntityManager) {
+    QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
+            .buildQueryBuilder()
+            .forEntity(Agency.class)
+            .get();
+
+    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
+      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
+
+      return buildSearchQueryForAgencyAdmin(queryBuilder, adminAgencyIds);
+
+    }
+
+    return queryBuilder
+              .all()
+              .createQuery();
+  }
+
+  protected Query buildSearchQueryForAgencyAdmin(QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
+    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
+    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
+    return bool.createQuery();
+  }
+
+  protected Query buildSearchQueryForAgencyAdmin(MustJunction mustJunction, QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
+    adminAgencyIds.stream().forEach(id -> mustJunction.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
+    return mustJunction.createQuery();
+  }
+
+  protected Query buildKeywordSearchQuery(String keyword, FullTextEntityManager entityManager) {
+    QueryBuilder queryBuilder = entityManager.getSearchFactory()
+            .buildQueryBuilder()
+            .forEntity(Agency.class)
+            .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
+            .overridesForField(POST_CODE_SEARCH_FIELD, SEARCH_ANALYZER)
+            .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
+            .get();
+
+    MustJunction must = queryBuilder
+            .bool()
+            .must(
+                    queryBuilder.keyword()
+                            .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
+                            .andField(NAME_SEARCH_FIELD)
+                            .andField(POST_CODE_SEARCH_FIELD)
+                            .andField(CITY_SEARCH_FIELD)
+                            .matching(QueryParserBase.escape(keyword))
+                            .createQuery()
+            );
+
+    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
+      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
+      if (!adminAgencyIds.isEmpty()) {
+        return buildSearchQueryForAgencyAdmin(must, queryBuilder, adminAgencyIds);
+      }
+    }
+
+    return must
+            .createQuery();
   }
 
   private boolean hasOnlySpecialCharacters(String str) {

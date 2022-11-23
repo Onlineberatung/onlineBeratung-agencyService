@@ -9,7 +9,8 @@ import java.util.stream.Stream;
  */
 public enum Authority {
 
-  AGENCY_ADMIN("agency-admin", "AUTHORIZATION_AGENCY_ADMIN");
+  AGENCY_ADMIN("agency-admin", "AUTHORIZATION_AGENCY_ADMIN"),
+  RESTRICTED_AGENCY_ADMIN("restricted-agency-admin", "AUTHORIZATION_RESTRICTED_AGENCY_ADMIN");
 
   private final String roleName;
   private final String authorityName;
@@ -32,13 +33,12 @@ public enum Authority {
         .orElse(null);
   }
 
-  /**
-   * Get all authorities for a specific role.
-   * 
-   * @return the authorities for current role
-   **/
   public String getAuthority() {
     return this.authorityName;
+  }
+
+  public String getRoleName() {
+    return this.roleName;
   }
 
 }

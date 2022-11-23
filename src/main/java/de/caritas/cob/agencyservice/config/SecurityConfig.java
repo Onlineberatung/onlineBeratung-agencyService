@@ -1,6 +1,7 @@
 package de.caritas.cob.agencyservice.config;
 
 import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
+import static de.caritas.cob.agencyservice.api.authorization.Authority.RESTRICTED_AGENCY_ADMIN;
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.filter.HttpTenantFilter;
@@ -84,7 +85,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .antMatchers("/agencies/**").permitAll()
         .antMatchers(WHITE_LIST).permitAll()
         .antMatchers("/agencies").permitAll()
-        .antMatchers("/agencyadmin", "/agencyadmin/**").hasAuthority(AGENCY_ADMIN.getAuthority())
+        .antMatchers("/agencyadmin", "/agencyadmin/**").hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
   }
 
