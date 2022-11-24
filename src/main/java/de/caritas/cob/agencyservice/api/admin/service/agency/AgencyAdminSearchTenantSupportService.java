@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -25,7 +26,6 @@ import java.util.Collection;
 @ConditionalOnExpression("${multitenancy.enabled:true}")
 public class AgencyAdminSearchTenantSupportService extends AgencyAdminSearchService {
 
-
   public AgencyAdminSearchTenantSupportService(@NonNull EntityManagerFactory entityManagerFactory, @NonNull AuthenticatedUser authenticatedUser, @NonNull UserAdminService userAdminService) {
     super(entityManagerFactory, authenticatedUser, userAdminService);
   }
@@ -44,12 +44,13 @@ public class AgencyAdminSearchTenantSupportService extends AgencyAdminSearchServ
       var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
       if (!adminAgencyIds.isEmpty()) {
         return buildSearchQueryForAgencyAdmin(must, queryBuilder, adminAgencyIds);
+      } else {
+        return buildSearchQueryForAgencyAdmin(queryBuilder, Lists.newArrayList(NON_EXISTING_AGENCY_ID));
+
       }
     }
     return must.createQuery();
   }
-
-
 
   @Override
   protected Query buildKeywordSearchQuery(String keyword, FullTextEntityManager entityManager) {

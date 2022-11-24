@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.service.agency;
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isMixedCase;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
@@ -47,6 +48,7 @@ public class AgencyAdminSearchService {
   protected static final String CITY_SEARCH_FIELD = "city";
   protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
+  protected static Long NON_EXISTING_AGENCY_ID = -1L;
 
   protected final @NonNull EntityManagerFactory entityManagerFactory;
 
@@ -127,9 +129,11 @@ public class AgencyAdminSearchService {
 
     if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
       var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-
-      return buildSearchQueryForAgencyAdmin(queryBuilder, adminAgencyIds);
-
+      if (!adminAgencyIds.isEmpty()) {
+        return buildSearchQueryForAgencyAdmin(queryBuilder, adminAgencyIds);
+      } else {
+        return buildSearchQueryForAgencyAdmin(queryBuilder, Lists.newArrayList(NON_EXISTING_AGENCY_ID));
+      }
     }
 
     return queryBuilder
@@ -144,7 +148,9 @@ public class AgencyAdminSearchService {
   }
 
   protected Query buildSearchQueryForAgencyAdmin(MustJunction mustJunction, QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
-    adminAgencyIds.stream().forEach(id -> mustJunction.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
+    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
+    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
+    mustJunction.must(bool.createQuery());
     return mustJunction.createQuery();
   }
 
@@ -157,7 +163,7 @@ public class AgencyAdminSearchService {
             .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
             .get();
 
-    MustJunction must = queryBuilder
+    MustJunction keywordMust = queryBuilder
             .bool()
             .must(
                     queryBuilder.keyword()
@@ -172,11 +178,11 @@ public class AgencyAdminSearchService {
     if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
       var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
       if (!adminAgencyIds.isEmpty()) {
-        return buildSearchQueryForAgencyAdmin(must, queryBuilder, adminAgencyIds);
+        return buildSearchQueryForAgencyAdmin(keywordMust, queryBuilder, adminAgencyIds);
       }
     }
 
-    return must
+    return keywordMust
             .createQuery();
   }
 
