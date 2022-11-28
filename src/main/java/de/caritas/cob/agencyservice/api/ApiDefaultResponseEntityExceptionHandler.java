@@ -1,8 +1,10 @@
 package de.caritas.cob.agencyservice.api;
 
+import de.caritas.cob.agencyservice.api.exception.httpresponses.AgencyAccessDeniedException;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,9 +27,21 @@ public class ApiDefaultResponseEntityExceptionHandler {
    */
   @ExceptionHandler({RuntimeException.class})
   public ResponseEntity<Object> handleInternal(final RuntimeException ex,
-      final WebRequest request) {
+                                               final WebRequest request) {
     LogService.logInternalServerError(ex);
 
     return new ResponseEntity<>(EMPTY_HEADERS, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(value = {AccessDeniedException.class})
+  protected ResponseEntity<Object> handle(AccessDeniedException ex, WebRequest request) {
+    LogService.logWarning(ex);
+    return new ResponseEntity<>(EMPTY_HEADERS, HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(value = {AgencyAccessDeniedException.class})
+  protected ResponseEntity<Object> handle(AgencyAccessDeniedException ex, WebRequest request) {
+    LogService.logWarning(ex);
+    return new ResponseEntity<>(EMPTY_HEADERS, HttpStatus.FORBIDDEN);
   }
 }

@@ -1,6 +1,5 @@
 package de.caritas.cob.agencyservice.api.controller;
 
-
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
@@ -11,6 +10,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.google.common.collect.Lists;
+import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
@@ -49,6 +51,12 @@ class AgencyAdminControllerIT {
   @Autowired
   private WebApplicationContext context;
 
+  @MockBean
+  private AuthenticatedUser authenticatedUser;
+
+  @MockBean
+  private UserAdminService userAdminService;
+
   @BeforeEach
   public void setup() {
     TenantContext.clear();
@@ -82,7 +90,7 @@ class AgencyAdminControllerIT {
   }
 
   @Test
-  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  @WithMockUser(authorities = "AUTHORIZATION_AGENCY_ADMIN")
   void createAgency_Should_returnStatusCreated_When_calledWithValidCreateParamsAndValidAuthority()
       throws Exception {
     // given
@@ -122,6 +130,37 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.updateDate").exists())
         .andExpect(jsonPath("_embedded.deleteDate").exists());
   }
+
+  @Test
+  @WithMockUser(authorities = "AUTHORIZATION_RESTRICTED_AGENCY_ADMIN")
+  void createAgency_Should_returnAcessDenied_When_tryingToCreateAgencyAsRestrictedAgencyAdmin()
+      throws Exception {
+
+    // given
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
+        .thenReturn(new ExtendedConsultingTypeResponseDTO());
+
+    when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
+
+    AgencyDTO agencyDTO = new AgencyDTO()
+        .dioceseId(0L)
+        .name("Test name")
+        .description("Test description")
+        .postcode("12345")
+        .city("Test city")
+        .teamAgency(true)
+        .consultingType(0)
+        .url("https://www.test.de")
+        .external(true);
+    String payload = JsonConverter.convert(agencyDTO);
+
+    // when, then
+    mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(payload))
+        .andExpect(status().isForbidden());
+  }
+
 
   @Test
   @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
@@ -164,6 +203,80 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
         .andExpect(jsonPath("_embedded.deleteDate").exists());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_RESTRICTED_AGENCY_ADMIN"})
+  void updateAgency_Should_returnStatusOk_When_calledWithRestrictedAgencyAdminThatHasPermissionForGivenAgency()
+      throws Exception {
+    // given
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
+        false);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
+        .thenReturn(extendedConsultingTypeResponseDTO);
+    when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(Lists.newArrayList(1L));
+
+    UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
+        .dioceseId(1L)
+        .name("Test update name")
+        .description("Test update description")
+        .postcode("54321")
+        .city("Test update city")
+        .offline(true)
+        .url("https://www.test-update.de")
+        .external(false);
+    String payload = JsonConverter.convert(agencyDTO);
+
+    // when, then
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(payload))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("_embedded.id").value(1))
+        .andExpect(jsonPath("_embedded.name").value("Test update name"))
+        .andExpect(jsonPath("_embedded.dioceseId").value(1))
+        .andExpect(jsonPath("_embedded.city").value("Test update city"))
+        .andExpect(jsonPath("_embedded.consultingType").value(0))
+        .andExpect(jsonPath("_embedded.description").value("Test update description"))
+        .andExpect(jsonPath("_embedded.postcode").value("54321"))
+        .andExpect(jsonPath("_embedded.teamAgency").value("false"))
+        .andExpect(jsonPath("_embedded.url").value("https://www.test-update.de"))
+        .andExpect(jsonPath("_embedded.external").value("false"))
+        .andExpect(jsonPath("_embedded.offline").exists())
+        .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.createDate").exists())
+        .andExpect(jsonPath("_embedded.updateDate").exists())
+        .andExpect(jsonPath("_embedded.deleteDate").exists());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_RESTRICTED_AGENCY_ADMIN"})
+  void updateAgency_Should_returnAccessDenied_When_calledWithRestrictedAgencyAdminDoesntHavePermissionForGivenAgency()
+      throws Exception {
+    // given
+    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
+        false);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
+        .thenReturn(extendedConsultingTypeResponseDTO);
+    when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
+    when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(Lists.newArrayList(2L, 3L));
+
+    UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
+        .dioceseId(1L)
+        .name("Test update name")
+        .description("Test update description")
+        .postcode("54321")
+        .city("Test update city")
+        .offline(true)
+        .url("https://www.test-update.de")
+        .external(false);
+    String payload = JsonConverter.convert(agencyDTO);
+
+    // when, then
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(payload))
+        .andExpect(status().isForbidden());
   }
 
   @Test
