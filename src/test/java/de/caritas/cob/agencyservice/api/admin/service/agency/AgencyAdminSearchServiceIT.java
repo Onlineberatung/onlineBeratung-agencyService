@@ -61,7 +61,7 @@ class AgencyAdminSearchServiceIT {
     when(authenticatedUser.getUserId()).thenReturn("userId");
     when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
     when(userAdminServiceApiControllerFactory.createControllerApi()).thenReturn(adminUserControllerApi);
-    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(getAdminAgencies(2L, 3L));
+    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(Lists.newArrayList(2L, 3L));
 
     // when
     var agencySearchResult = agencyAdminSearchService.searchAgencies("", 1, 10, new Sort());
@@ -78,7 +78,7 @@ class AgencyAdminSearchServiceIT {
     when(authenticatedUser.getUserId()).thenReturn("userId");
     when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
     when(userAdminServiceApiControllerFactory.createControllerApi()).thenReturn(adminUserControllerApi);
-    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(new AdminAgencyResponseDTO());
+    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(Lists.newArrayList());
 
     // when
     var agencySearchResult = agencyAdminSearchService.searchAgencies("", 1, 10, new Sort());

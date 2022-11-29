@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.Sort;
@@ -71,7 +72,7 @@ class AgencyAdminSearchTenantSupportServiceTest {
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
     when(authenticatedUser.getUserId()).thenReturn("userId");
     when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
-    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(getAdminAgencies(1735L));
+    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(Lists.newArrayList(1735L));
 
     // when
     var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 10, new Sort());
@@ -88,7 +89,7 @@ class AgencyAdminSearchTenantSupportServiceTest {
     when(authenticatedUser.getUserId()).thenReturn("userId");
     when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
     when(userAdminServiceApiControllerFactory.createControllerApi()).thenReturn(adminUserControllerApi);
-    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(new de.caritas.cob.agencyservice.useradminservice.generated.web.model.AdminAgencyResponseDTO());
+    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(Lists.newArrayList());
 
     // when
     var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 10, new Sort());

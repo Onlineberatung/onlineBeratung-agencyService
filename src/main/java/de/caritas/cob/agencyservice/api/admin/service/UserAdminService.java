@@ -62,16 +62,12 @@ public class UserAdminService {
     return controllerApi.getAgencyAdmin(userId);
   }
 
-  public AdminAgencyResponseDTO getAdminUserAgencies(String userId) {
+  public List<Long> getAdminUserAgencyIds(String userId) {
     var controllerApi = userAdminServiceApiControllerFactory.createControllerApi();
     addDefaultHeaders(controllerApi.getApiClient());
     return controllerApi.getAdminAgencies(userId);
   }
 
-  public Collection<Long> getAdminUserAgencyIds(String userId) {
-    var adminAgencies = getAdminUserAgencies(userId).getEmbedded();
-    return adminAgencies.stream().map(agency -> agency.getEmbedded().getId()).collect(Collectors.toList());
-  }
 
 
   /**

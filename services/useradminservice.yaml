@@ -646,37 +646,132 @@ paths:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
       security:
         - Bearer: [ ]
-  /useradmin/agencyadmins/{userId}/agencies:
-      get:
-        tags:
-          - admin-user-controller
-        summary: 'Returns the list of agencies for a given admin Id. [Authorization: Role:
-          restricted-agency-admin]'
-        operationId: getAdminAgencies
-        parameters:
-          - name: userId
-            in: path
-            description: user Id
-            required: true
+  /useradmin/agencyadmins/{adminId}/agencies:
+    get:
+      tags:
+        - admin-user-controller
+      summary: 'Returns the list of agencies for a given admin Id. [Authorization: Role:
+        restricted-agency-admin]'
+      operationId: getAdminAgencies
+      parameters:
+        - name: adminId
+          in: path
+          description: admin Id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK - successful operation
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        404:
+          description: NOT FOUND - consultant with given id does not exist
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    post:
+      tags:
+        - admin-user-controller
+      summary: 'Create an admin-agency relation [Authorization: Role: user-admin]'
+      operationId: createAdminAgencyRelation
+      parameters:
+        - name: adminId
+          in: path
+          description: admin Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          'application/json':
             schema:
-              type: string
-        responses:
-          200:
-            description: OK - successfull operation
-            content:
-              'application/hal+json':
-                schema:
-                  $ref: '#/components/schemas/AdminAgencyResponseDTO'
+              $ref: '#/components/schemas/CreateAdminAgencyRelationDTO'
+        required: true
+      responses:
+        201:
+          description: CREATED - admin-agency relation was created successfully
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
+    put:
+      tags:
+        - admin-user-controller
+      summary: 'Set admin-agency relations [Authorization: Role: user-admin]'
+      operationId: setAdminAgenciesRelation
+      description: Existing relations are deleted, passed relations added.
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateAdminAgencyRelationDTO'
+        required: true
+      responses:
+        200:
+          description: OK - admin-agency relations have been set
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 
-          401:
-            description: UNAUTHORIZED - no/invalid role/authorization
-          404:
-            description: NOT FOUND - consultant with given id does not exist
-          500:
-            description: INTERNAL SERVER ERROR - server encountered unexpected condition
-        security:
-          - Bearer: [ ]
 
+  /useradmin/agencyadmins/{adminId}/agencies/{agencyId}:
+    delete:
+      tags:
+        - admin-user-controller
+      summary: 'Delete a admin-agency relation [Authorization: Role: user-admin]'
+      operationId: deleteAdminAgencyRelation
+      parameters:
+        - name: adminId
+          in: path
+          description: Admin Id
+          required: true
+          schema:
+            type: string
+        - name: agencyId
+          in: path
+          description: Agency Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK - admin-agency relation was deleted successfully
+        400:
+          description: BAD REQUEST - invalid/incomplete request
+        401:
+          description: UNAUTHORIZED - no/invalid role/authorization
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 components:
   schemas:
     RootDTO:
@@ -1080,6 +1175,8 @@ components:
           $ref: '#/components/schemas/HalLink'
         delete:
           $ref: '#/components/schemas/HalLink'
+        agencies:
+          $ref: '#/components/schemas/HalLink'
 
     SessionFilter:
       type: object
@@ -1117,6 +1214,9 @@ components:
           type: string
         email:
           type: string
+        agencyId:
+          type: integer
+          format: int64
 
     Sort:
       type: object
@@ -1151,21 +1251,6 @@ components:
           minLength: 1
           maxLength: 255
 
-    AdminAgencyResponseDTO:
-      type: object
-      required:
-        - _embedded
-        - _links
-      properties:
-        _embedded:
-          type: array
-          items:
-            $ref: './../api/agencyadminservice.yaml#/components/schemas/AgencyAdminFullResponseDTO'
-        _links:
-          $ref: '#/components/schemas/AdminAgencyLinks'
-        total:
-          type: integer
-
     ConsultantAgencyResponseDTO:
       type: object
       required:
@@ -1177,18 +1262,42 @@ components:
           items:
             $ref: './../api/agencyadminservice.yaml#/components/schemas/AgencyAdminFullResponseDTO'
         _links:
-          $ref: '#/components/schemas/ConsultantAgencyLinks'
+          $ref: '#/components/schemas/AgencyLinks'
         total:
           type: integer
 
-    AdminAgencyLinks:
+    CreateAdminAgencyRelationDTO:
+      type: object
+      required:
+        - agencyId
+      properties:
+        agencyId:
+          type: integer
+          format: int64
+          example: 15
+
+    AdminAgencyResponseDTO:
+      type: object
+      required:
+        - _embedded
+        - _links
+      properties:
+        _embedded:
+          type: array
+          items:
+            $ref: './../api/agencyadminservice.yaml#/components/schemas/AgencyAdminFullResponseDTO'
+        _links:
+          $ref: '#/components/schemas/AgencyLinks'
+        total:
+          type: integer
+
+    AgencyLinks:
       type: object
       required:
         - self
       properties:
         self:
           $ref: '#/components/schemas/HalLink'
-
 
     ConsultantAgencyLinks:
       type: object
