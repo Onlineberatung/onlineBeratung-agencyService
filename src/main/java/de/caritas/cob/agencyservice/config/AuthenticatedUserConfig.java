@@ -58,15 +58,18 @@ public class AuthenticatedUserConfig {
   @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
   public AuthenticatedUser getAuthenticatedUser() {
 
+    KeycloakAuthenticationToken authenticationToken = (KeycloakAuthenticationToken) getRequest().getUserPrincipal();
     KeycloakSecurityContext keycloakSecContext =
-        ((KeycloakAuthenticationToken) getRequest().getUserPrincipal()).getAccount()
+        authenticationToken.getAccount()
             .getKeycloakSecurityContext();
     Map<String, Object> claimMap = keycloakSecContext.getToken().getOtherClaims();
+    var securityContext = authenticationToken.getAccount().getKeycloakSecurityContext();
 
     AuthenticatedUser authenticatedUser = new AuthenticatedUser();
     authenticatedUser.setAccessToken(getUserAccessToken(keycloakSecContext));
     authenticatedUser.setUserId(getUserAttribute(claimMap, CLAIM_NAME_USER_ID));
     authenticatedUser.setUsername(getUserAttribute(claimMap, CLAIM_NAME_USERNAME));
+    authenticatedUser.setRoles(securityContext.getToken().getRealmAccess().getRoles());
 
     return authenticatedUser;
   }
