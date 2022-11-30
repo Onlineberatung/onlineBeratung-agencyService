@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.service;
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_DEFAULT_AGENCY;
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
+import static java.util.Objects.nonNull;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
@@ -162,10 +163,15 @@ public class AgencyAdminService {
         .teamAgency(agency.isTeamAgency())
         .url(updateAgencyDTO.getUrl())
         .isExternal(updateAgencyDTO.getExternal())
-        .consultingTypeId(agency.getConsultingTypeId())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .deleteDate(agency.getDeleteDate());
+
+    if (nonNull(updateAgencyDTO.getConsultingType())) {
+      agencyBuilder.consultingTypeId(updateAgencyDTO.getConsultingType());
+    } else {
+      agencyBuilder.consultingTypeId(agency.getConsultingTypeId());
+    }
 
     if (featureDemographicsEnabled && updateAgencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(updateAgencyDTO.getDemographics(), agencyBuilder);
