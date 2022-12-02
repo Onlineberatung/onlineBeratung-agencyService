@@ -16,11 +16,13 @@ import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.testHelper.JsonConverter;
 import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,9 @@ class AgencyAdminControllerIT {
 
   @MockBean
   private UserAdminService userAdminService;
+
+  @Autowired
+  private AgencyRepository agencyRepository;
 
   @BeforeEach
   public void setup() {
@@ -178,6 +183,7 @@ class AgencyAdminControllerIT {
         .description("Test update description")
         .postcode("54321")
         .city("Test update city")
+        .consultingType(18)
         .offline(true)
         .url("https://www.test-update.de")
         .external(false);
@@ -192,7 +198,7 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
         .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.city").value("Test update city"))
-        .andExpect(jsonPath("_embedded.consultingType").value(0))
+        .andExpect(jsonPath("_embedded.consultingType").value(18))
         .andExpect(jsonPath("_embedded.description").value("Test update description"))
         .andExpect(jsonPath("_embedded.postcode").value("54321"))
         .andExpect(jsonPath("_embedded.teamAgency").value("false"))
@@ -203,6 +209,9 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
         .andExpect(jsonPath("_embedded.deleteDate").exists());
+
+    var savedAgency = agencyRepository.findById(1L).orElseThrow();
+    Assertions.assertEquals(agencyDTO.getConsultingType(), savedAgency.getConsultingTypeId());
   }
 
   @Test
