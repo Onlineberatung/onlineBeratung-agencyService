@@ -7,6 +7,7 @@ import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.Agency
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,6 +34,8 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -70,6 +73,8 @@ class AgencyAdminServiceTest {
   @Mock
   private Logger logger;
 
+  @Captor private ArgumentCaptor<Agency> agencyArgumentCaptor;
+
   private EasyRandom easyRandom;
 
   @BeforeEach
@@ -92,15 +97,32 @@ class AgencyAdminServiceTest {
   }
 
   @Test
-  void updateAgency_Should_SaveAgencyChanges_WhenAgencyIsFound() {
+  void updateAgency_Should_SaveAgencyMandatoryChanges_WhenAgencyIsFound() {
     var agency = this.easyRandom.nextObject(Agency.class);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
 
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
+    updateAgencyDTO.setConsultingType(null);
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
-    verify(this.agencyRepository).save(any());
+    verify(agencyRepository).save(agencyArgumentCaptor.capture());
+    var passedConsultingTypeId = agencyArgumentCaptor.getValue().getConsultingTypeId();
+    assertEquals(agency.getConsultingTypeId(), passedConsultingTypeId);
+  }
+
+  @Test
+  void updateAgency_Should_SaveOptionalAgencyChanges_WhenAgencyIsFound() {
+    var agency = easyRandom.nextObject(Agency.class);
+    when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
+    when(agencyRepository.save(any())).thenReturn(agency);
+
+    var updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
+    agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
+
+    verify(agencyRepository).save(agencyArgumentCaptor.capture());
+    var passedConsultingTypeId = agencyArgumentCaptor.getValue().getConsultingTypeId();
+    assertEquals(updateAgencyDTO.getConsultingType(), passedConsultingTypeId);
   }
 
   @Test

@@ -20,10 +20,13 @@ import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminAp
 import io.swagger.annotations.Api;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.Authorization;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -106,6 +109,7 @@ public class AgencyAdminController implements AgencyadminApi {
    * @return {@link AgencyAdminSearchService}
    */
   @Override
+  @PreAuthorize("hasAuthority('AUTHORIZATION_AGENCY_ADMIN')")
   public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
 
     agencyValidator.validate(agencyDTO);

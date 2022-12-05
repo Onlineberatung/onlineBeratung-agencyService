@@ -120,7 +120,7 @@ public class Agency implements TenantAware {
   private boolean teamAgency;
 
   @PositiveOrZero
-  @Column(name = "consulting_type", updatable = false, nullable = false)
+  @Column(name = "consulting_type", nullable = false)
   @NonNull
   private Integer consultingTypeId;
 

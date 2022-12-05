@@ -654,6 +654,11 @@ components:
           type: string
           example: "Beschreibung Beratungsstelle..."
           maxLength: 10000
+        consultingType:
+          type: integer
+          minimum: 0
+          maximum: 127
+          example: 1
         postcode:
           type: string
           minLength: 5

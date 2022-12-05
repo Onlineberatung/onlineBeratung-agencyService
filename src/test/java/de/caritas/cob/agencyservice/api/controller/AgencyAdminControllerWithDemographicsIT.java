@@ -1,10 +1,12 @@
 package de.caritas.cob.agencyservice.api.controller;
 
 
+import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -12,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
@@ -53,6 +56,9 @@ class AgencyAdminControllerWithDemographicsIT {
 
   @Autowired
   private WebApplicationContext context;
+
+  @MockBean
+  AuthenticatedUser authenticatedUser;
 
   @BeforeEach
   public void setup() {
