@@ -1,6 +1,8 @@
 package de.caritas.cob.agencyservice.api.controller;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -22,7 +24,6 @@ import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.Ex
 import de.caritas.cob.agencyservice.testHelper.JsonConverter;
 import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,7 +212,41 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.deleteDate").exists());
 
     var savedAgency = agencyRepository.findById(1L).orElseThrow();
-    Assertions.assertEquals(agencyDTO.getConsultingType(), savedAgency.getConsultingTypeId());
+    assertEquals(agencyDTO.getConsultingType(), savedAgency.getConsultingTypeId());
+    assertEquals(agencyDTO.getDescription(), savedAgency.getDescription());
+  }
+
+  @Test
+  @WithMockUser(authorities = "AUTHORIZATION_AGENCY_ADMIN")
+  void updateAgency_Should_returnStatusOk_When_calledWithEmptyDescription() throws Exception {
+    var response = new ExtendedConsultingTypeResponseDTO().lockedAgencies(false);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
+
+    var agencyDTO = new UpdateAgencyDTO()
+        .dioceseId(1L)
+        .name("Test update name")
+        .description(null)
+        .offline(true)
+        .external(false);
+
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(JsonConverter.convert(agencyDTO)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("_embedded.id").value(1))
+        .andExpect(jsonPath("_embedded.name").value("Test update name"))
+        .andExpect(jsonPath("_embedded.dioceseId").value(1))
+        .andExpect(jsonPath("_embedded.description").isEmpty())
+        .andExpect(jsonPath("_embedded.teamAgency").value("false"))
+        .andExpect(jsonPath("_embedded.external").value("false"))
+        .andExpect(jsonPath("_embedded.offline").exists())
+        .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.createDate").exists())
+        .andExpect(jsonPath("_embedded.updateDate").exists())
+        .andExpect(jsonPath("_embedded.deleteDate").exists());
+
+    var savedAgency = agencyRepository.findById(1L).orElseThrow();
+    assertNull(savedAgency.getDescription());
   }
 
   @Test

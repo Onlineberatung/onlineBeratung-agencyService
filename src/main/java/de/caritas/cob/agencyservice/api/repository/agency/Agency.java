@@ -93,8 +93,7 @@ public class Agency implements TenantAware {
   @SortableField
   private String name;
 
-  @NonNull
-  @Column(name = "description", nullable = false)
+  @Column(name = "description")
   @Field
   @SortableField
   private String description;
