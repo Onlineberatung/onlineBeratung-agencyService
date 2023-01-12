@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,9 @@ public class AgencyPostcodeRangeAdminService {
   private final @NonNull AgencyService agencyService;
   private final @NonNull AgencyAdminService agencyAdminService;
   private final PostcodeRangeValidator postcodeRangeValidator = new PostcodeRangeValidator();
+  @Value("${multitenancy.enabled}")
+  private boolean multitenancy;
+
 
   /**
    * Returns all post code ranges by given agency id.
@@ -53,7 +57,9 @@ public class AgencyPostcodeRangeAdminService {
    */
   @Transactional
   public void deleteAgencyPostcodeRange(Long agencyId) {
-    markAgencyOffline(agencyId);
+    if (!multitenancy) {
+      markAgencyOffline(agencyId);
+    }
     this.agencyPostCodeRangeRepository.deleteAllByAgencyId(agencyId);
   }
 
