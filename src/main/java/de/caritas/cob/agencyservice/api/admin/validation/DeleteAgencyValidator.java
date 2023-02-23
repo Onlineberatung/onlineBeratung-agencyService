@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DeleteAgencyValidator {
-
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull ConsultingTypeManager consultingTypeManager;
   private static final int FIRST_PAGE = 1;
@@ -58,6 +57,7 @@ public class DeleteAgencyValidator {
   private void checkIfAgencyHasAssignedConsultants(Agency agency) {
     List<ConsultantAdminResponseDTO> consultantList =
         this.userAdminService.getConsultantsOfAgency(agency.getId(), FIRST_PAGE, PER_PAGE);
+
     if (!consultantList.isEmpty()) {
       throw new ConflictException(AGENCY_CONTAINS_CONSULTANTS);
     }
