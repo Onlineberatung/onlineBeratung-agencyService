@@ -46,6 +46,7 @@ public class AgencyAdminFullResponseDTOBuilder {
         .teamAgency(this.agency.isTeamAgency())
         .url(this.agency.getUrl())
         .external((this.agency.isExternal()))
+        .hasVideoCalls(agency.getHasVideoCalls())
         .offline(this.agency.isOffline())
         .topics(getTopics())
         .createDate(String.valueOf(this.agency.getCreateDate()))

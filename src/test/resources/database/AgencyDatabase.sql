@@ -46,6 +46,9 @@ CREATE SEQUENCE SEQUENCE_AGENCY
     START WITH 100000
     INCREMENT BY 1;
 
+alter table agency
+    add has_video_calls bit default true not null after is_external;
+
 create table AGENCY_POSTCODE_RANGE
 (
     ID            bigint     not null,

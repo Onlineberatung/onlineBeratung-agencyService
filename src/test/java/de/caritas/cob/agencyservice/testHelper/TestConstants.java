@@ -1,17 +1,16 @@
 package de.caritas.cob.agencyservice.testHelper;
 
-import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
-import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
 import java.util.Map;
-import liquibase.pro.packaged.A;
 
 public class TestConstants {
 
@@ -171,13 +170,13 @@ public class TestConstants {
   public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, false, null, null, null,
-      null, null, null, null, null, null);
+      null, null, null, null, null, null, true);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
-          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null, null, null, null);
+          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null, null, null, null, true);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null, null, null, null);
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null, null, null, null, true);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
