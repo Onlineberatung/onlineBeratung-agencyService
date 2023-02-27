@@ -1,6 +1,5 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_KREUZBUND;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_SUCHT;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -13,7 +12,6 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
@@ -23,6 +21,7 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeMan
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRangeRepository;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +34,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AgencyOfflineStatusValidatorTest {
 
   static boolean IS_OFFLINE = true;
@@ -53,8 +52,6 @@ class AgencyOfflineStatusValidatorTest {
   static List<ConsultantAdminResponseDTO> NO_CONSULTANT = emptyList();
   static List<ConsultantAdminResponseDTO> ONE_CONSULTANT = singletonList(
       new ConsultantAdminResponseDTO());
-  static boolean IS_LOCKED_AGENCY = true;
-  static boolean IS_NOT_LOCKED_AGENCY = false;
 
   @Mock
   AgencyRepository agencyRepository;
@@ -75,13 +72,9 @@ class AgencyOfflineStatusValidatorTest {
   static Stream<Arguments> validate_Should_ThrowInvalidOfflineStatusException_Arguments() {
     return Stream.of(
         Arguments.of(IS_NOT_OFFLINE, NO_POSTCODE_RANGES, IS_NOT_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            IS_NOT_LOCKED_AGENCY, AGENCY_SUCHT),
+            AGENCY_SUCHT),
         Arguments.of(IS_NOT_OFFLINE, WITH_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            IS_NOT_LOCKED_AGENCY, AGENCY_SUCHT),
-        Arguments.of(IS_OFFLINE, WITH_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            IS_LOCKED_AGENCY, AGENCY_SUCHT),
-        Arguments.of(IS_OFFLINE, WITH_POSTCODE_RANGES, IS_WHITE_SPOT_AGENCY, NO_CONSULTANT,
-            IS_LOCKED_AGENCY, AGENCY_KREUZBUND)
+            AGENCY_SUCHT)
     );
   }
 
@@ -108,7 +101,7 @@ class AgencyOfflineStatusValidatorTest {
   @MethodSource("validate_Should_ThrowInvalidOfflineStatusException_Arguments")
   void validate_Should_ThrowInvalidOfflineStatusException(boolean isOffline,
       long numberOfAgencyPostcodeRanges, boolean isWhiteSpotAgency,
-      List<ConsultantAdminResponseDTO> assignedConsultants, boolean isLockedAgencies, Agency agency)
+      List<ConsultantAdminResponseDTO> assignedConsultants, Agency agency)
       throws MissingConsultingTypeException {
 
     this.validateAgencyDto.setOffline(isOffline);
@@ -117,7 +110,6 @@ class AgencyOfflineStatusValidatorTest {
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId().intValue() : validateAgencyDto.getId().intValue() + 1);
     consultingTypeSettings.setId(agency.getConsultingTypeId());
-    consultingTypeSettings.setLockedAgencies(isLockedAgencies);
 
     lenient().when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
         .thenReturn(numberOfAgencyPostcodeRanges);
@@ -145,7 +137,6 @@ class AgencyOfflineStatusValidatorTest {
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyAssigned(isWhiteSpotAgency);
     consultingTypeSettings.getWhiteSpot().setWhiteSpotAgencyId(isWhiteSpotAgency ? validateAgencyDto.getId().intValue() : validateAgencyDto.getId().intValue() + 1);
     consultingTypeSettings.setId(AGENCY_SUCHT.getConsultingTypeId());
-    consultingTypeSettings.setLockedAgencies(!isOffline);
     lenient().when(agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()))
         .thenReturn(numberOfAgencyPostcodeRanges);
     when(agencyRepository.findById(validateAgencyDto.getId()))

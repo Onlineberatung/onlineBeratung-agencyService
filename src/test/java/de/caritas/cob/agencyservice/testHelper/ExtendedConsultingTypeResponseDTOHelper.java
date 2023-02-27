@@ -11,7 +11,7 @@ import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.Wh
 public class ExtendedConsultingTypeResponseDTOHelper {
 
   public static ExtendedConsultingTypeResponseDTO createExtendedConsultingTypeResponseDTO(int id,
-      WhiteSpot whiteSpot, Registration registration, Boolean isLockedAgencies) {
+      WhiteSpot whiteSpot, Registration registration) {
 
     var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
 
@@ -29,7 +29,6 @@ public class ExtendedConsultingTypeResponseDTOHelper {
       registrationDTO = new BasicConsultingTypeResponseDTORegistration();
       registrationDTO.setMinPostcodeSize(registration.getMinPostcodeSize());
     }
-    extendedConsultingTypeResponseDTO.setLockedAgencies(isLockedAgencies);
     extendedConsultingTypeResponseDTO.setRegistration(registrationDTO);
     extendedConsultingTypeResponseDTO.whiteSpot(whiteSpotDTO);
     extendedConsultingTypeResponseDTO.setId(id);
