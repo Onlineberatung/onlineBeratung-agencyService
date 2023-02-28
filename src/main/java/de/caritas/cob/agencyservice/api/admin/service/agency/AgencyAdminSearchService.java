@@ -3,7 +3,6 @@ package de.caritas.cob.agencyservice.api.admin.service.agency;
 import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isMixedCase;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
@@ -48,7 +47,7 @@ public class AgencyAdminSearchService {
   protected static final String CITY_SEARCH_FIELD = "city";
   protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
-  protected static Long NON_EXISTING_AGENCY_ID = -1L;
+  protected static final Long NON_EXISTING_AGENCY_ID = -1L;
 
   protected final @NonNull EntityManagerFactory entityManagerFactory;
 
@@ -117,8 +116,7 @@ public class AgencyAdminSearchService {
   @NonNull
   private List<AgencyAdminFullResponseDTO> getFilteredResultListByAgenciesAllowedForTheUser(List<AgencyAdminFullResponseDTO> resultList) {
     var adminAgencies = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-    List<AgencyAdminFullResponseDTO> filteredResultList = resultList.stream().filter(agency -> adminAgencies.contains(agency.getEmbedded().getId())).collect(Collectors.toList());
-    return filteredResultList;
+    return resultList.stream().filter(agency -> adminAgencies.contains(agency.getEmbedded().getId())).collect(Collectors.toList());
   }
 
   protected Query buildSearchQuery(FullTextEntityManager fullTextEntityManager) {
@@ -194,10 +192,19 @@ public class AgencyAdminSearchService {
     var luceneSort = new org.apache.lucene.search.Sort();
     if (nonNull(sort) && nonNull(sort.getField())) {
       var reverse = OrderEnum.DESC.equals(sort.getOrder());
-      luceneSort.setSort(SortField.FIELD_SCORE,
-          new SortField(sort.getField().getValue(), SortField.Type.STRING, reverse));
+      var sortFieldName = getSortColumnName(sort);
+      luceneSort.setSort(
+          new SortField(sortFieldName, SortField.Type.INT, reverse));
     }
-
     return luceneSort;
+  }
+
+  /**
+   * We observed that lucene sort in version 5.5.5 does not sort correctly strings with numeric values only.
+   * Although higher version of lucene exists, version 5.5.5 is used by the latest available hibernate search version 5.11.12.Final
+   * Therefore a conversion to integer column was required to force proper sort order.
+   **/
+  private String getSortColumnName(Sort sort) {
+    return Sort.FieldEnum.POSTCODE.getValue().equals(sort.getField().getValue()) ? "postCodeInteger" : sort.getField().getValue();
   }
 }
