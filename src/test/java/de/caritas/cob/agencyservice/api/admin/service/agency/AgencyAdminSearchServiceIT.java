@@ -23,6 +23,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
@@ -69,6 +73,44 @@ class AgencyAdminSearchServiceIT {
     // then
     assertThat(agencySearchResult.getEmbedded()).hasSize(2);
     assertThat(agencySearchResult.getEmbedded()).extracting("embedded.id").containsOnly(2L, 3L);
+  }
+
+  @Test
+  void searchAgency_Should_FindOnlyAgenciesManagedByTheAdmin_WhenUserIsAgencyAdmin_AndSortByPostcodeAscending() {
+    // given
+    when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(false);
+    when(authenticatedUser.getUserId()).thenReturn("userId");
+    when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
+    when(userAdminServiceApiControllerFactory.createControllerApi()).thenReturn(adminUserControllerApi);
+    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(Lists.newArrayList(2L, 3L));
+
+    // when
+    var agencySearchResult = agencyAdminSearchService.searchAgencies("", 1, 20, new Sort().field(Sort.FieldEnum.POSTCODE).order(Sort.OrderEnum.ASC));
+
+    // then
+    assertThat(agencySearchResult.getEmbedded()).hasSize(20);
+
+    List<String> collect = agencySearchResult.getEmbedded().stream().filter(result -> result.getEmbedded().getPostcode() != null).map(p -> p.getEmbedded().getPostcode()).collect(Collectors.toList());
+    assertThat(collect).isSorted();
+  }
+
+  @Test
+  void searchAgency_Should_FindOnlyAgenciesManagedByTheAdmin_WhenUserIsAgencyAdmin_AndSortByPostcodeDescending() {
+    // given
+    when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(false);
+    when(authenticatedUser.getUserId()).thenReturn("userId");
+    when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
+    when(userAdminServiceApiControllerFactory.createControllerApi()).thenReturn(adminUserControllerApi);
+    when(adminUserControllerApi.getAdminAgencies("userId")).thenReturn(Lists.newArrayList(2L, 3L));
+
+    // when
+    var agencySearchResult = agencyAdminSearchService.searchAgencies("", 1, 20, new Sort().field(Sort.FieldEnum.POSTCODE).order(Sort.OrderEnum.DESC));
+
+    // then
+    assertThat(agencySearchResult.getEmbedded()).hasSize(20);
+
+    List<String> collect = agencySearchResult.getEmbedded().stream().filter(result -> result.getEmbedded().getPostcode() != null).map(p -> p.getEmbedded().getPostcode()).collect(Collectors.toList());
+    assertThat(collect).isSortedAccordingTo(Comparator.reverseOrder());
   }
 
   @Test
