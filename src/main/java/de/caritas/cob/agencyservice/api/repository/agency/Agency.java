@@ -105,6 +105,13 @@ public class Agency implements TenantAware {
   @SortableField
   private String postCode;
 
+  @Transient
+  @SortableField
+  @Field
+  private Integer getPostCodeInteger() {
+    return Integer.valueOf(postCode);
+  }
+
   @Size(max = 100)
   @Column(name = "city")
   @Field
