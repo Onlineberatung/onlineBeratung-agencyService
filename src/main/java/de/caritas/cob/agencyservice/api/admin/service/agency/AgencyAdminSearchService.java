@@ -192,9 +192,7 @@ public class AgencyAdminSearchService {
     var luceneSort = new org.apache.lucene.search.Sort();
     if (nonNull(sort) && nonNull(sort.getField())) {
       var reverse = OrderEnum.DESC.equals(sort.getOrder());
-      var sortFieldName = getSortColumnName(sort);
-      luceneSort.setSort(
-          new SortField(sortFieldName, SortField.Type.INT, reverse));
+      luceneSort.setSort(getSortField(sort, reverse));
     }
     return luceneSort;
   }
@@ -202,9 +200,13 @@ public class AgencyAdminSearchService {
   /**
    * We observed that lucene sort in version 5.5.5 does not sort correctly strings with numeric values only.
    * Although higher version of lucene exists, version 5.5.5 is used by the latest available hibernate search version 5.11.12.Final
-   * Therefore a conversion to integer column was required to force proper sort order.
+   * Therefore a conversion to integer column was required to force proper sort order. y
    **/
-  private String getSortColumnName(Sort sort) {
-    return Sort.FieldEnum.POSTCODE.getValue().equals(sort.getField().getValue()) ? "postCodeInteger" : sort.getField().getValue();
+  private SortField getSortField(Sort sort, boolean reverse) {
+    if (Sort.FieldEnum.POSTCODE.getValue().equals(sort.getField().getValue())) {
+      return new SortField("postCodeInteger", SortField.Type.INT, reverse);
+    } else {
+      return new SortField(sort.getField().getValue(), SortField.Type.STRING, reverse);
+    }
   }
 }
