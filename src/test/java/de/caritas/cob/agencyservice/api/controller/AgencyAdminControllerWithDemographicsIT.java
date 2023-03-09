@@ -1,12 +1,10 @@
 package de.caritas.cob.agencyservice.api.controller;
 
 
-import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -118,8 +116,7 @@ class AgencyAdminControllerWithDemographicsIT {
   void updateAgency_Should_returnStatusOk_When_calledWithValidCreateParamsAndValidAuthority()
       throws Exception {
     // given
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
-        false);
+    var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
 
@@ -151,8 +148,7 @@ class AgencyAdminControllerWithDemographicsIT {
   void updateAgency_Should_returnStatusBadRequest_When_calledWithMissingDemographicsDataAndDemographicsFeatureIsOn()
       throws Exception {
     // given
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
-        false);
+    var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
 
