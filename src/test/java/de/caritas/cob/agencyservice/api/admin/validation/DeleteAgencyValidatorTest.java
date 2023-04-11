@@ -1,21 +1,17 @@
 package de.caritas.cob.agencyservice.api.admin.validation;
 
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_KREUZBUND;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_KREUZBUND;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_LOCKED_AGENCIES;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.LockedConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -40,41 +36,15 @@ public class DeleteAgencyValidatorTest {
 
   private final EasyRandom easyRandom = new EasyRandom();
 
-  @Test(expected = LockedConsultingTypeException.class)
-  public void validate_Should_throwLockedConsultingTypeException_When_agencyTypeIsKreuzbund()
-      throws MissingConsultingTypeException {
-    Agency agency = this.easyRandom.nextObject(Agency.class);
-    ExtendedConsultingTypeResponseDTO consultingTypeSettings = this.easyRandom.nextObject(ExtendedConsultingTypeResponseDTO.class);
-    consultingTypeSettings.setLockedAgencies(true);
-
-    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
-
-    agency.setConsultingTypeId(CONSULTING_TYPE_SUCHT);
-    this.deleteAgencyValidator.validate(agency);
-  }
-
-  @Test(expected = LockedConsultingTypeException.class)
-  public void validate_Should_throwLockedConsultingTypeException_When_agencyTypeIsSupportGroup()
-      throws MissingConsultingTypeException {
-    when(consultingTypeManager.getConsultingTypeSettings(CONSULTING_TYPE_KREUZBUND)).thenReturn(CONSULTING_TYPE_SETTINGS_LOCKED_AGENCIES);
-    Agency agency = this.easyRandom.nextObject(Agency.class);
-    agency.setConsultingTypeId(CONSULTING_TYPE_KREUZBUND);
-
-    this.deleteAgencyValidator.validate(agency);
-  }
-
   @Test(expected = ConflictException.class)
-  public void validate_Should_throwConflictException_When_agencyStillHasAConsultantAssigned()
-      throws MissingConsultingTypeException {
+  public void validate_Should_throwConflictException_When_agencyStillHasAConsultantAssigned() {
     when(this.userAdminService.getConsultantsOfAgency(any(), anyInt(), anyInt()))
         .thenReturn(
             this.easyRandom
                 .objects(ConsultantAdminResponseDTO.class, 1)
                 .collect(Collectors.toList()));
 
-    ExtendedConsultingTypeResponseDTO consultingTypeSettings = this.easyRandom.nextObject(ExtendedConsultingTypeResponseDTO.class);
-    consultingTypeSettings.setLockedAgencies(false);
-    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
+    easyRandom.nextObject(ExtendedConsultingTypeResponseDTO.class);
 
     Agency agency = this.easyRandom.nextObject(Agency.class);
     agency.setConsultingTypeId(CONSULTING_TYPE_SUCHT);
@@ -88,7 +58,6 @@ public class DeleteAgencyValidatorTest {
         .thenReturn(Collections.emptyList());
 
     ExtendedConsultingTypeResponseDTO consultingTypeSettings = this.easyRandom.nextObject(ExtendedConsultingTypeResponseDTO.class);
-    consultingTypeSettings.setLockedAgencies(false);
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
     Agency agency = this.easyRandom.nextObject(Agency.class);
