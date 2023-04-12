@@ -173,8 +173,7 @@ class AgencyAdminControllerIT {
   void updateAgency_Should_returnStatusOk_When_calledWithValidCreateParamsAndValidAuthority()
       throws Exception {
     // given
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
-        false);
+    var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
 
@@ -219,7 +218,7 @@ class AgencyAdminControllerIT {
   @Test
   @WithMockUser(authorities = "AUTHORIZATION_AGENCY_ADMIN")
   void updateAgency_Should_returnStatusOk_When_calledWithEmptyDescription() throws Exception {
-    var response = new ExtendedConsultingTypeResponseDTO().lockedAgencies(false);
+    var response = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
 
     var agencyDTO = new UpdateAgencyDTO()
@@ -254,8 +253,7 @@ class AgencyAdminControllerIT {
   void updateAgency_Should_returnStatusOk_When_calledWithRestrictedAgencyAdminThatHasPermissionForGivenAgency()
       throws Exception {
     // given
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
-        false);
+    var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
     when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(Lists.newArrayList(1L));
@@ -298,8 +296,7 @@ class AgencyAdminControllerIT {
   void updateAgency_Should_returnAccessDenied_When_calledWithRestrictedAgencyAdminDoesntHavePermissionForGivenAgency()
       throws Exception {
     // given
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
-        false);
+    var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);

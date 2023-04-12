@@ -150,8 +150,7 @@ class AgencyAdminControllerWithTopicsIT {
   void updateAgency_Should_returnStatusOk_When_calledWithValidCreateParamsAndValidAuthority()
       throws Exception {
     // given
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO().lockedAgencies(
-        false);
+    var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
 
