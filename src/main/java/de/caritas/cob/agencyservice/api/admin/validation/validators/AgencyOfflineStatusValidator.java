@@ -1,16 +1,13 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators;
 
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_CONTAINS_NO_CONSULTANTS;
-import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_LOCKED;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
@@ -52,11 +49,6 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
         throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
       }
 
-    } else {
-
-      if (isLocked(validateAgencyDto)) {
-        throw new InvalidOfflineStatusException(AGENCY_IS_LOCKED);
-      }
     }
   }
 
@@ -92,19 +84,6 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
 
   private boolean hasPostCodeRanges(ValidateAgencyDTO validateAgencyDto) {
     return agencyPostCodeRangeRepository.countAllByAgencyId(validateAgencyDto.getId()) > 0;
-  }
-
-  private boolean isLocked(ValidateAgencyDTO validateAgencyDTO) {
-    var agency = this.agencyRepository.findById(validateAgencyDTO.getId())
-        .orElseThrow(NotFoundException::new);
-    ExtendedConsultingTypeResponseDTO extendedConsultingTypeResponseDTO;
-    try {
-      extendedConsultingTypeResponseDTO = consultingTypeManager
-          .getConsultingTypeSettings(agency.getConsultingTypeId());
-    } catch (MissingConsultingTypeException e) {
-      throw new InvalidConsultingTypeException();
-    }
-    return isTrue(extendedConsultingTypeResponseDTO.getLockedAgencies());
   }
 
   private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {
