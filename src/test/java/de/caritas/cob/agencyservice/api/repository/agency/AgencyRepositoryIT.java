@@ -1,8 +1,14 @@
 package de.caritas.cob.agencyservice.api.repository.agency;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,14 +16,16 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@TestPropertySource(properties = {"spring.profiles.active=testing"})
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@ActiveProfiles("testing")
+@AutoConfigureTestDatabase
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 class AgencyRepositoryIT {
+
+  private static final EasyRandom easyRandom = new EasyRandom();
 
   @Autowired private AgencyRepository agencyRepository;
 
@@ -197,5 +205,27 @@ class AgencyRepositoryIT {
     assertThat(optionalAgencyUpdated).isPresent();
     var agencyUpdated = optionalAgencyUpdated.get();
     assertThat(agencyUpdated.getAgencyTopics()).isEmpty();
+  }
+
+  @Test
+  void saveShouldUseDefaultValuesIfNotSet() {
+    var agencyIds = givenAgencyIds();
+    assertTrue(agencyIds.size() > 0);
+
+    var agencies = agencyRepository.findByIdIn(agencyIds);
+
+    assertEquals(agencyIds.size(), agencies.size());
+    agencies.forEach(agency -> {
+      assertNotNull(agency.getId());
+      assertNotNull(agency.getHasVideoCalls());
+    });
+  }
+
+  private List<Long> givenAgencyIds() {
+    return easyRandom
+        .longs(10, 0, 100)
+        .distinct()
+        .boxed()
+        .collect(Collectors.toList());
   }
 }

@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.service;
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_DEFAULT_AGENCY;
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
@@ -104,6 +105,7 @@ public class AgencyAdminService {
    * @return an {@link Agency} instance
    */
   private Agency fromAgencyDTO(AgencyDTO agencyDTO) {
+    var hasVideoCalls = agencyDTO.getHasVideoCalls();
 
     var agencyBuilder = Agency.builder()
         .dioceseId(agencyDTO.getDioceseId())
@@ -116,6 +118,7 @@ public class AgencyAdminService {
         .consultingTypeId(agencyDTO.getConsultingType())
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
+        .hasVideoCalls(isNull(hasVideoCalls) ? new AgencyDTO().getHasVideoCalls() : hasVideoCalls)
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
 
@@ -151,6 +154,7 @@ public class AgencyAdminService {
   }
 
   private Agency mergeAgencies(Agency agency, UpdateAgencyDTO updateAgencyDTO) {
+    var hasVideoCalls = updateAgencyDTO.getHasVideoCalls();
 
     var agencyBuilder = Agency.builder()
         .id(agency.getId())
@@ -163,6 +167,7 @@ public class AgencyAdminService {
         .teamAgency(agency.isTeamAgency())
         .url(updateAgencyDTO.getUrl())
         .isExternal(updateAgencyDTO.getExternal())
+        .hasVideoCalls(isNull(hasVideoCalls) ? new UpdateAgencyDTO().getHasVideoCalls() : hasVideoCalls)
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .deleteDate(agency.getDeleteDate());
