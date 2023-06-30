@@ -21,6 +21,7 @@ import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConvert
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
@@ -99,6 +100,7 @@ class AgencyAdminServiceTest {
   @Test
   void updateAgency_Should_SaveAgencyMandatoryChanges_WhenAgencyIsFound() {
     var agency = this.easyRandom.nextObject(Agency.class);
+    agency.setCounsellingRelations(null);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
 
@@ -114,6 +116,8 @@ class AgencyAdminServiceTest {
   @Test
   void updateAgency_Should_SaveOptionalAgencyChanges_WhenAgencyIsFound() {
     var agency = easyRandom.nextObject(Agency.class);
+    agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING.getValue());
+
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
 
@@ -130,6 +134,7 @@ class AgencyAdminServiceTest {
     // given
     ReflectionTestUtils.setField(agencyAdminService, "featureTopicsEnabled", true);
     var agency = this.easyRandom.nextObject(Agency.class);
+    agency.setCounsellingRelations(null);
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
@@ -149,6 +154,7 @@ class AgencyAdminServiceTest {
     // given
     ReflectionTestUtils.setField(agencyAdminService, "featureDemographicsEnabled", true);
     var agency = this.easyRandom.nextObject(Agency.class);
+    agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING.getValue());
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);

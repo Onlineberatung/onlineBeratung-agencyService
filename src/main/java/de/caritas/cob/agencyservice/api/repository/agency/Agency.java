@@ -180,6 +180,9 @@ public class Agency implements TenantAware {
   @Field
   private Long tenantId;
 
+  @Column(name = "counsellingRelations")
+  private String counsellingRelations;
+
   @Transient
   public boolean hasAnyDemographicsAttributes() {
     return getAgeTo() != null || getAgeFrom() != null || getGenders() != null;
