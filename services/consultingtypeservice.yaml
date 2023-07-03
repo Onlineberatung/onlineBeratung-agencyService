@@ -185,9 +185,6 @@ components:
         isAnonymousConversationAllowed:
           type: boolean
           example: false
-        isSetEmailAllowed:
-          type: boolean
-          example: true
         showAskerProfile:
           type: boolean
           example: true
@@ -204,9 +201,6 @@ components:
             languageFormal:
               type: boolean
               example: true
-            lockedAgencies:
-              type: boolean
-              example: false
             excludeNonMainConsultantsFromTeamSessions:
               type: boolean
               example: true
@@ -222,15 +216,9 @@ components:
             sendFurtherStepsMessage:
               type: boolean
               example: true
-            sendSaveSessionDataMessage:
-              type: boolean
-              example: false
             sessionDataInitializing:
               allOf:
                 - $ref: '#/components/schemas/SessionDataInitializingDTO'
-            monitoring:
-              allOf:
-                - $ref: '#/components/schemas/MonitoringDTO'
             initializeFeedbackChat:
               type: boolean
               example: true
@@ -382,16 +370,6 @@ components:
         state:
           type: boolean
           example: true
-
-    MonitoringDTO:
-      type: object
-      properties:
-        initializeMonitoring:
-          type: boolean
-          example: true
-        monitoringTemplateFile:
-          type: string
-          example: file.json
 
     RolesDTO:
       type: object
