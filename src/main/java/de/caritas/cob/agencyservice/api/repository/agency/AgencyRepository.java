@@ -26,7 +26,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
       + ") "
-      + "AND ((:counselling_relation IS NULL) OR (a.counselling_relations LIKE CONCAT('%,',:counselling_relation,'%') OR a.counseling_relations LIKE CONCAT(:counselling_relations,'%'))) "
+      + "AND ((:counselling_relation IS NULL) OR (a.counselling_relations LIKE CONCAT('%,',:counselling_relation,'%') OR a.counselling_relations LIKE CONCAT(:counselling_relation,'%'))) "
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
       + "AND a.delete_date IS NULL ";
 
@@ -42,7 +42,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
       + ") "
-      + "AND ((:counselling_relation IS NULL) OR (a.counselling_relations LIKE CONCAT('%,',:counselling_relation,'%') OR a.counseling_relations LIKE CONCAT(:counselling_relations,'%'))) "
+      + "AND ((:counselling_relation IS NULL) OR (a.counselling_relations LIKE CONCAT('%,',:counselling_relation,'%') OR a.counselling_relations LIKE CONCAT(:counselling_relation,'%'))) "
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
       + "AND a.delete_date IS NULL ";
 
