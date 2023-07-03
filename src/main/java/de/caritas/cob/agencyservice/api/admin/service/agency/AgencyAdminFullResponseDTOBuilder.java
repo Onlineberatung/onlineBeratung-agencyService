@@ -58,12 +58,12 @@ public class AgencyAdminFullResponseDTOBuilder {
     return responseDTO;
   }
 
-  private List<AgencyAdminResponseDTO.CounsellingRelationsEnum> splitToList(String counselingRelationsAsCommaSeparatedString) {
-    if (counselingRelationsAsCommaSeparatedString == null) {
+  private List<AgencyAdminResponseDTO.CounsellingRelationsEnum> splitToList(String counsellingRelationsAsCommaSeparatedString) {
+    if (counsellingRelationsAsCommaSeparatedString == null) {
       return Lists.newArrayList();
     } else {
       return Splitter.on(",").trimResults()
-          .splitToList(counselingRelationsAsCommaSeparatedString).stream().map(AgencyAdminResponseDTO.CounsellingRelationsEnum::valueOf).collect(Collectors.toList());
+          .splitToList(counsellingRelationsAsCommaSeparatedString).stream().map(AgencyAdminResponseDTO.CounsellingRelationsEnum::valueOf).collect(Collectors.toList());
     }
   }
 

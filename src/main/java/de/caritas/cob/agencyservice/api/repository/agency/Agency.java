@@ -180,7 +180,8 @@ public class Agency implements TenantAware {
   @Field
   private Long tenantId;
 
-  @Column(name = "counsellingRelations")
+  @Column(name = "counselling_relations")
+  @Field
   private String counsellingRelations;
 
   @Transient
