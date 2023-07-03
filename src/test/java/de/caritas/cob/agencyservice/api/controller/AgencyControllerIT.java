@@ -79,7 +79,7 @@ public class AgencyControllerIT {
   @Test
   public void getAgencies_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
         .thenReturn(null);
 
     mvc.perform(
@@ -132,7 +132,7 @@ public class AgencyControllerIT {
     List<FullAgencyResponseDTO> agencies = new ArrayList<>();
     agencies.add(FULL_AGENCY_RESPONSE_DTO);
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
         .thenReturn(agencies);
 
     mvc.perform(
@@ -143,7 +143,7 @@ public class AgencyControllerIT {
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
     verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyString(),
-        Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class));
+        Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class));
   }
 
   @Test
@@ -184,7 +184,7 @@ public class AgencyControllerIT {
 
     InternalServerErrorException dbEx = new InternalServerErrorException(
         LogService::logDatabaseError, "message");
-    when(agencyService.getAgencies(any(), anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class))).thenThrow(dbEx);
+    when(agencyService.getAgencies(any(), anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class))).thenThrow(dbEx);
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)
@@ -216,7 +216,7 @@ public class AgencyControllerIT {
     InternalServerErrorException nfEx = new InternalServerErrorException(
         LogService::logNumberFormatException, "message");
 
-    when(agencyService.getAgencies(any(), anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class))).thenThrow(nfEx);
+    when(agencyService.getAgencies(any(), anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class))).thenThrow(nfEx);
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_POSTCODE_QUERY + "&"
         + VALID_CONSULTING_TYPE_QUERY)

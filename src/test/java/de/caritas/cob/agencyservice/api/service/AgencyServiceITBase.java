@@ -40,7 +40,7 @@ public class AgencyServiceITBase {
     String postCode = "88662";
 
     List<FullAgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty(), Optional.empty(), Optional.empty());
+        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
     assertThat(resultAgencies, hasSize(1));
     FullAgencyResponseDTO resultAgency = resultAgencies.get(0);
