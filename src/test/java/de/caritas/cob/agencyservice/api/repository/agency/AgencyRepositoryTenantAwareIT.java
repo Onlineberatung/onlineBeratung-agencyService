@@ -29,7 +29,24 @@ class AgencyRepositoryTenantAwareIT {
     assertThat(agencies).hasSize(1);
   }
 
+  @Test
+  void searchWithoutTopic_Should_FindAgenciesByPostcodeAndConsultingTypeAndCounsellingRelation() {
+    // given, when
+    var agencies = agencyTenantAwareRepository.searchWithoutTopic("45501", 5, 20,
+        null, null, "RELATIVE_COUNSELLING", 1L);
+    // then
+    assertThat(agencies).hasSize(1);
+    assertThat(agencies.get(0).getId()).isEqualTo(1735);
+  }
 
+  @Test
+  void searchWithoutTopic_Should_NotFindAgenciesByPostcodeAndConsultingTypeAndCounsellingRelation_When_CounsellingRelationDoesNotMatch() {
+    // given, when
+    var agencies = agencyTenantAwareRepository.searchWithoutTopic("45501", 5, 20,
+        null, null, "SELF_COUNSELLING", 1L);
+    // then
+    assertThat(agencies).isEmpty();
+  }
 
   @Test
   void searchWithoutTopic_Should_NotFindAnyAgencyByPostcodeAndConsultingType_When_TenantIdDoesNotMatch() {
