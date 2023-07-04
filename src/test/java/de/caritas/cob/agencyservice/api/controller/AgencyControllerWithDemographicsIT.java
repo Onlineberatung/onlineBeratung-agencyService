@@ -16,6 +16,7 @@ import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -33,6 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 @TestPropertySource(properties = "feature.demographics.enabled=true")
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("testing")
+@Transactional
 class AgencyControllerWithDemographicsIT {
 
   private MockMvc mvc;
@@ -87,17 +91,22 @@ class AgencyControllerWithDemographicsIT {
 
   @Test
   void getAgencies_Should_ReturnOk_When_MatchingSearchParametersAreProvided() throws Exception {
-    mvc.perform(
-            get(PATH_GET_LIST_OF_AGENCIES + "?" + "postcode=99999" + "&"
-                + "consultingType=19" + "&" + VALID_AGE_QUERY + "&" + VALID_GENDER_QUERY)
-                .accept(MediaType.APPLICATION_JSON))
+    ResultActions perform = mvc.perform(
+        get(PATH_GET_LIST_OF_AGENCIES + "?" + "postcode=99999" + "&"
+            + "consultingType=19" + "&" + VALID_AGE_QUERY + "&" + VALID_GENDER_QUERY)
+            .accept(MediaType.APPLICATION_JSON));
+    perform
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].id").value(1737))
+        .andExpect(jsonPath("$[0].topicIds").isArray())
         .andExpect(jsonPath("$[0].demographics.ageFrom").value(30))
         .andExpect(jsonPath("$[0].demographics.ageTo").value(60))
         .andExpect(jsonPath("$[0].demographics.genders[0]").value("FEMALE"))
         .andExpect(jsonPath("$[0].demographics.genders[1]").value("DIVERS"));
+    MvcResult mvcResult = perform.andReturn();
+    String contentAsString = mvcResult.getResponse().getContentAsString();
   }
+
 
 }

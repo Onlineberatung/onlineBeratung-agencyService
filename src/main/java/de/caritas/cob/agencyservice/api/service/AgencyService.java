@@ -15,6 +15,7 @@ import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
@@ -283,7 +284,8 @@ public class AgencyService {
         .teamAgency(agency.isTeamAgency())
         .offline(agency.isOffline())
         .tenantId(agency.getTenantId())
-        .consultingType(agency.getConsultingTypeId());
+        .consultingType(agency.getConsultingTypeId())
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(Collectors.toList()));
   }
 
 
@@ -300,7 +302,8 @@ public class AgencyService {
         .url(agency.getUrl())
         .external(agency.isExternal())
         .demographics(getDemographics(agency))
-        .tenantId(agency.getTenantId());
+        .tenantId(agency.getTenantId())
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(Collectors.toList()));
   }
 
   private DemographicsDTO getDemographics(Agency agency) {

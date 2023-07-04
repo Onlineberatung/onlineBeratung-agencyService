@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.assertj.core.util.Lists;
 
 public class TestConstants {
 
@@ -177,7 +178,8 @@ public class TestConstants {
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
-          .consultingType(CONSULTING_TYPE_SUCHT);
+          .consultingType(CONSULTING_TYPE_SUCHT)
+          .topicIds(Lists.newArrayList(1L, 2L));
   public static final List<AgencyResponseDTO> AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(
       AGENCY_RESPONSE_DTO);
   public static final FullAgencyResponseDTO FULL_AGENCY_RESPONSE_DTO =
