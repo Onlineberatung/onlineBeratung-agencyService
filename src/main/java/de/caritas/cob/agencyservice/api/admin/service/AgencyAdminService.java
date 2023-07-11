@@ -22,7 +22,10 @@ import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +93,24 @@ public class AgencyAdminService {
    * @return an {@link AgencyAdminFullResponseDTO} instance
    */
   public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
+    setDefaultCounsellingRelationsIfEmpty(agencyDTO);
     var savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(savedAgency);
     return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
+  }
+
+  private void setDefaultCounsellingRelationsIfEmpty(AgencyDTO agencyDTO) {
+    if (agencyDTO.getCounsellingRelations() == null || agencyDTO.getCounsellingRelations().isEmpty()) {
+      agencyDTO.setCounsellingRelations(getAllPossibleCounsellingRelations());
+    }
+  }
+
+  private List<AgencyDTO.CounsellingRelationsEnum> getAllPossibleCounsellingRelations() {
+    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values())
+        .collect(Collectors.toList());
+
   }
 
   /**
@@ -117,6 +133,7 @@ public class AgencyAdminService {
         .consultingTypeId(agencyDTO.getConsultingType())
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
+        .counsellingRelations(Joiner.on(",").join(agencyDTO.getCounsellingRelations()))
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
 
@@ -183,6 +200,7 @@ public class AgencyAdminService {
         .isExternal(updateAgencyDTO.getExternal())
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
+        .counsellingRelations(agency.getCounsellingRelations())
         .deleteDate(agency.getDeleteDate());
 
     if (nonNull(updateAgencyDTO.getConsultingType())) {
