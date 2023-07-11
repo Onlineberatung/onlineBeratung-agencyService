@@ -526,7 +526,7 @@ components:
           type: array
           items:
             type: string
-            enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, FAMILY_COUNSELLING ]
+            enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, PARENTAL_COUNSELLING ]
 
 
     PostcodeRangeDTO:
@@ -629,7 +629,7 @@ components:
           type: array
           items:
             type: string
-            enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, FAMILY_COUNSELLING]
+            enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, PARENTAL_COUNSELLING]
 
     AgencyAdminFullResponseDTO:
       type: object
@@ -696,7 +696,7 @@ components:
           type: array
           items:
             type: string
-            enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, FAMILY_COUNSELLING ]
+            enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, PARENTAL_COUNSELLING ]
 
     DemographicsDTO:
       type: object

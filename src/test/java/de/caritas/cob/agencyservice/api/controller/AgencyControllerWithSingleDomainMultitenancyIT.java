@@ -46,7 +46,7 @@ import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantController
 @Transactional
 class AgencyControllerWithSingleDomainMultitenancyIT {
 
-  private static final String VALID_COUNSELLING_RELATION_QUERY = "counsellingRelation=FAMILY_COUNSELLING";
+  private static final String VALID_COUNSELLING_RELATION_QUERY = "counsellingRelation=PARENTAL_COUNSELLING";
   private MockMvc mvc;
 
   @BeforeEach

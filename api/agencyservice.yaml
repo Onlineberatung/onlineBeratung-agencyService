@@ -59,7 +59,7 @@ paths:
           description: Counselling relation from the registration form
           schema:
             type: string
-            example: "FAMILY_COUNSELLING"
+            example: "PARENTAL_COUNSELLING"
       responses:
         200:
           description: OK - successfull operation

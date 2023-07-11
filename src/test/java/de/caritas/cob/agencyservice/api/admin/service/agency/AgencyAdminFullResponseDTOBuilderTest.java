@@ -26,7 +26,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     EasyRandom easyRandom = new EasyRandom();
     this.agency = easyRandom.nextObject(Agency.class);
     this.agencyAdminFullResponseDTOBuilder = new AgencyAdminFullResponseDTOBuilder(agency);
-    this.agency.setCounsellingRelations(AgencyDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING.getValue() + "," + AgencyDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING.getValue());
+    this.agency.setCounsellingRelations(AgencyDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING.getValue() + "," + AgencyDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING.getValue());
   }
 
   @Test
@@ -49,7 +49,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(agency.getUrl(), result.getEmbedded().getUrl());
     assertEquals(agency.isExternal(), result.getEmbedded().getExternal());
     assertEquals(agency.getConsultingTypeId(), result.getEmbedded().getConsultingType());
-    assertThat(result.getEmbedded().getCounsellingRelations()).containsOnly(AgencyAdminResponseDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING, AgencyAdminResponseDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING);
+    assertThat(result.getEmbedded().getCounsellingRelations()).containsOnly(AgencyAdminResponseDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING, AgencyAdminResponseDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING);
     assertEquals(String.valueOf(agency.getCreateDate()), result.getEmbedded().getCreateDate());
     assertEquals(String.valueOf(agency.getUpdateDate()), result.getEmbedded().getUpdateDate());
     assertEquals(String.valueOf(agency.getDeleteDate()), result.getEmbedded().getDeleteDate());

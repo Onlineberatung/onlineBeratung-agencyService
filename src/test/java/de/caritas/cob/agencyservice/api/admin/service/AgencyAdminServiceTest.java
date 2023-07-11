@@ -110,7 +110,7 @@ class AgencyAdminServiceTest {
     when(agencyRepository.save(any())).thenReturn(agency);
     agencyAdminService.createAgency(agencyDTO);
     verify(agencyRepository).save(agencyArgumentCaptor.capture());
-    assertThat(agencyArgumentCaptor.getValue().getCounsellingRelations(), is("RELATIVE_COUNSELLING,SELF_COUNSELLING,FAMILY_COUNSELLING"));
+    assertThat(agencyArgumentCaptor.getValue().getCounsellingRelations(), is("RELATIVE_COUNSELLING,SELF_COUNSELLING,PARENTAL_COUNSELLING"));
   }
 
   @Test
@@ -132,20 +132,20 @@ class AgencyAdminServiceTest {
   @Test
   void updateAgency_Should_SaveOptionalAgencyChanges_WhenAgencyIsFound() {
     var agency = easyRandom.nextObject(Agency.class);
-    agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING.getValue());
+    agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING.getValue());
 
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
 
     var updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    updateAgencyDTO.setCounsellingRelations(Lists.newArrayList(UpdateAgencyDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING));
+    updateAgencyDTO.setCounsellingRelations(Lists.newArrayList(UpdateAgencyDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING));
 
     agencyAdminService.updateAgency(AGENCY_ID, updateAgencyDTO);
 
     verify(agencyRepository).save(agencyArgumentCaptor.capture());
     var passedConsultingTypeId = agencyArgumentCaptor.getValue().getConsultingTypeId();
     assertEquals(updateAgencyDTO.getConsultingType(), passedConsultingTypeId);
-    assertEquals( "FAMILY_COUNSELLING", agencyArgumentCaptor.getValue().getCounsellingRelations());
+    assertEquals("PARENTAL_COUNSELLING", agencyArgumentCaptor.getValue().getCounsellingRelations());
   }
 
   @Test
@@ -173,7 +173,7 @@ class AgencyAdminServiceTest {
     // given
     ReflectionTestUtils.setField(agencyAdminService, "featureDemographicsEnabled", true);
     var agency = this.easyRandom.nextObject(Agency.class);
-    agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.FAMILY_COUNSELLING.getValue());
+    agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING.getValue());
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));
     when(agencyRepository.save(any())).thenReturn(agency);
     var updateAgencyDTO = this.easyRandom.nextObject(UpdateAgencyDTO.class);
