@@ -26,6 +26,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
       + ") "
+      + "AND ((:counselling_relation IS NULL) OR (a.counselling_relations LIKE CONCAT('%,',:counselling_relation,'%') OR a.counselling_relations LIKE CONCAT(:counselling_relation,'%'))) "
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
       + "AND a.delete_date IS NULL ";
 
@@ -41,6 +42,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (COALESCE(a.age_to, :age) >= :age)"
       + ") "
+      + "AND ((:counselling_relation IS NULL) OR (a.counselling_relations LIKE CONCAT('%,',:counselling_relation,'%') OR a.counselling_relations LIKE CONCAT(:counselling_relation,'%'))) "
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
       + "AND a.delete_date IS NULL ";
 
@@ -62,6 +64,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       @Param(value = "length") int length, @Param(value = "type") Integer consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "counselling_relation") String counsellingRelation,
       Long tenantId);
 
 
@@ -74,6 +77,7 @@ public interface AgencyRepository extends CrudRepository<Agency, Long> {
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "counselling_relation") String counsellingRelation,
       Long tenantId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);

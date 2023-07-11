@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.AgencyLinksBuilder;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
@@ -48,12 +49,22 @@ public class AgencyAdminFullResponseDTOBuilder {
         .external((this.agency.isExternal()))
         .offline(this.agency.isOffline())
         .topics(getTopics())
+        .counsellingRelations(splitToList(agency.getCounsellingRelations()))
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()));
 
     responseDTO.demographics(getDemographics(this.agency));
     return responseDTO;
+  }
+
+  private List<AgencyAdminResponseDTO.CounsellingRelationsEnum> splitToList(String counsellingRelationsAsCommaSeparatedString) {
+    if (counsellingRelationsAsCommaSeparatedString == null) {
+      return Lists.newArrayList();
+    } else {
+      return Splitter.on(",").trimResults()
+          .splitToList(counsellingRelationsAsCommaSeparatedString).stream().map(AgencyAdminResponseDTO.CounsellingRelationsEnum::valueOf).collect(Collectors.toList());
+    }
   }
 
   private DemographicsDTO getDemographics(Agency agency) {

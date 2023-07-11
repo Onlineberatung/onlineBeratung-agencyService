@@ -34,6 +34,7 @@ public interface AgencyTenantAwareRepository extends CrudRepository<Agency, Long
       @Param(value = "length") int length, @Param(value = "type") Integer consultingTypeId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "counselling_relation") String counsellingRelation,
       @Param(value = "tenantId") Long tenantId);
 
   @Query(
@@ -46,6 +47,7 @@ public interface AgencyTenantAwareRepository extends CrudRepository<Agency, Long
       @Param(value = "topicId") int topicId,
       @Param(value = "age") Integer age,
       @Param(value = "gender") String gender,
+      @Param(value = "counselling_relation") String counsellingRelation,
       Long tenantId);
 
   @Query("select a from Agency as a where a.id = :agencyId ")
