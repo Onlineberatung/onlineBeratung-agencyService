@@ -33,7 +33,7 @@
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <commons-lang3.version>3.11</commons-lang3.version>
     <liquibase-maven-plugin.version>4.1.1</liquibase-maven-plugin.version>
-    <h2.version>1.4.200</h2.version>
+    <h2.version>2.2.220</h2.version>
     <powermock-module-junit4.version>2.0.2</powermock-module-junit4.version>
     <ehcache.version>2.10.6</ehcache.version>
     <easy-random-core.version>5.0.0</easy-random-core.version>
