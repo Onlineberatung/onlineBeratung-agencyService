@@ -53,6 +53,13 @@ paths:
           schema:
             type: string
             example: "FEMALE"
+        - name: counsellingRelation
+          in: query
+          required: false
+          description: Counselling relation from the registration form
+          schema:
+            type: string
+            example: "PARENTAL_COUNSELLING"
       responses:
         200:
           description: OK - successfull operation

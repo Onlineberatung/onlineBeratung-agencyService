@@ -2,6 +2,8 @@ package de.caritas.cob.agencyservice.api.controller;
 
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGE_QUERY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_GENDER_QUERY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -42,6 +46,7 @@ import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantController
 @Transactional
 class AgencyControllerWithSingleDomainMultitenancyIT {
 
+  private static final String VALID_COUNSELLING_RELATION_QUERY = "counsellingRelation=PARENTAL_COUNSELLING";
   private MockMvc mvc;
 
   @BeforeEach
@@ -94,6 +99,26 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
 
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(6)));
+  }
+
+  @Test
+  void getAgencies_Should_ReturnOk_When_MatchingSearchParametersAreProvided() throws Exception {
+    ResultActions resultActions = mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES + "?" + "postcode=53001" + "&"
+                + "consultingType=20" + "&" + VALID_COUNSELLING_RELATION_QUERY)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].id").value(0));
+  }
+
+  @Test
+  void getAgencies_Should_ReturnNoContent_When_NonMatchingSearchParametersAreProvided() throws Exception {
+    ResultActions resultActions = mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES + "?" + "postcode=53001" + "&"
+                + "consultingType=20" + "&" + "counsellingRelation=RELATIVE_COUNSELLING")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
   }
 
   @Test

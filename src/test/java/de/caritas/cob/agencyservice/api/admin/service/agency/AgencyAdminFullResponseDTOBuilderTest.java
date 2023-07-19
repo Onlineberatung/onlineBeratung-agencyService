@@ -1,13 +1,13 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
 import de.caritas.cob.agencyservice.api.model.HalLink.MethodEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
@@ -26,6 +26,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     EasyRandom easyRandom = new EasyRandom();
     this.agency = easyRandom.nextObject(Agency.class);
     this.agencyAdminFullResponseDTOBuilder = new AgencyAdminFullResponseDTOBuilder(agency);
+    this.agency.setCounsellingRelations(AgencyDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING.getValue() + "," + AgencyDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING.getValue());
   }
 
   @Test
@@ -48,6 +49,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(agency.getUrl(), result.getEmbedded().getUrl());
     assertEquals(agency.isExternal(), result.getEmbedded().getExternal());
     assertEquals(agency.getConsultingTypeId(), result.getEmbedded().getConsultingType());
+    assertThat(result.getEmbedded().getCounsellingRelations()).containsOnly(AgencyAdminResponseDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING, AgencyAdminResponseDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING);
     assertEquals(String.valueOf(agency.getCreateDate()), result.getEmbedded().getCreateDate());
     assertEquals(String.valueOf(agency.getUpdateDate()), result.getEmbedded().getUpdateDate());
     assertEquals(String.valueOf(agency.getDeleteDate()), result.getEmbedded().getDeleteDate());
@@ -93,23 +95,19 @@ class AgencyAdminFullResponseDTOBuilderTest {
     AgencyAdminFullResponseDTO result = agencyAdminFullResponseDTOBuilder.fromAgency();
     AgencyLinks agencyLinks = result.getLinks();
 
-    assertThat(result, notNullValue());
-    assertThat(agencyLinks.getSelf(), notNullValue());
-    assertThat(agencyLinks.getSelf().getMethod(), is(MethodEnum.GET));
-    assertThat(agencyLinks.getSelf().getHref(),
-        is(String.format("/agencyadmin/agencies/%s", agency.getId())));
-    assertThat(agencyLinks.getDelete(), notNullValue());
-    assertThat(agencyLinks.getDelete().getMethod(), is(MethodEnum.DELETE));
-    assertThat(agencyLinks.getDelete().getHref(),
-        is(String.format("/agencyadmin/agencies/%s", agency.getId())));
-    assertThat(agencyLinks.getUpdate(), notNullValue());
-    assertThat(agencyLinks.getUpdate().getMethod(), is(MethodEnum.PUT));
-    assertThat(agencyLinks.getUpdate().getHref(),
-        is(String.format("/agencyadmin/agencies/%s", agency.getId())));
-    assertThat(agencyLinks.getPostcodeRanges(), notNullValue());
-    assertThat(agencyLinks.getPostcodeRanges().getMethod(), is(MethodEnum.GET));
-    assertThat(agencyLinks.getPostcodeRanges().getHref(),
-        is(String.format("/agencyadmin/postcoderanges/%s", this.agency.getId())));
+    assertThat(result).isNotNull();
+    assertThat(agencyLinks.getSelf()).isNotNull();
+    assertThat(agencyLinks.getSelf().getMethod()).isEqualTo(MethodEnum.GET);
+    assertThat(agencyLinks.getSelf().getHref()).isEqualTo(String.format("/agencyadmin/agencies/%s", agency.getId()));
+    assertThat(agencyLinks.getDelete()).isNotNull();
+    assertThat(agencyLinks.getDelete().getMethod()).isEqualTo(MethodEnum.DELETE);
+    assertThat(agencyLinks.getDelete().getHref()).isEqualTo(String.format("/agencyadmin/agencies/%s", agency.getId()));
+    assertThat(agencyLinks.getUpdate()).isNotNull();
+    assertThat(agencyLinks.getUpdate().getMethod()).isEqualTo(MethodEnum.PUT);
+    assertThat(agencyLinks.getUpdate().getHref()).isEqualTo(String.format("/agencyadmin/agencies/%s", agency.getId()));
+    assertThat(agencyLinks.getPostcodeRanges()).isNotNull();
+    assertThat(agencyLinks.getPostcodeRanges().getMethod()).isEqualTo(MethodEnum.GET);
+    assertThat(agencyLinks.getPostcodeRanges().getHref()).isEqualTo(String.format("/agencyadmin/postcoderanges/%s", this.agency.getId()));
   }
 
 }
