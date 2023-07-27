@@ -18,8 +18,8 @@ import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.generated.api.admin.controller.AgencyadminApi;
 import io.swagger.annotations.Api;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.annotations.Authorization;
 import lombok.NonNull;

@@ -87,7 +87,7 @@ public class AgencyAdminSearchService {
     fullTextQuery.setSort(buildSort(sort));
 
     @SuppressWarnings("unchecked")
-    Stream<Agency> resultStream = fullTextQuery.getResultStream();
+    Stream<Agency> resultStream = fullTextQuery.getResultList().stream();
 
     if (topicsFeatureEnabled) {
       resultStream = resultStream.map(agencyTopicEnrichmentService::enrichAgencyWithTopics);

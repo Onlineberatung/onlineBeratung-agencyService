@@ -2,28 +2,24 @@ package de.caritas.cob.agencyservice.api.tenant;
 
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTOMainTenantSubdomainForSingleDomainMultitenancy;
-import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.SettingDTO;
 import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiControllerFactory;
 import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import liquibase.pro.packaged.O;
-import lombok.NonNull;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.ApplicationsettingsControllerApi;
-import de.caritas.cob.agencyservice.tenantservice.generated.web.TenantControllerApi;
+
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class MultitenancyWithSingleDomainTenantResolver implements TenantResolver {
+
   @Value("${feature.multitenancy.with.single.domain.enabled}")
   private boolean multitenancyWithSingleDomain;
 
@@ -48,12 +44,14 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
     if (mainTenantSubdomain.isPresent() && StringUtils.isNotBlank(mainTenantSubdomain.get())) {
       return resolveFromTenantServiceBasedOnMainTenantSubdomain(mainTenantSubdomain.get());
     } else {
-      log.warn("Main tenant subdomain not available in application settings. Resolving tenant to 0.");
+      log.warn(
+          "Main tenant subdomain not available in application settings. Resolving tenant to 0.");
       return Optional.of(0L);
     }
   }
 
-  private Optional<Long> resolveFromTenantServiceBasedOnMainTenantSubdomain(String rootTenantSubdomain) {
+  private Optional<Long> resolveFromTenantServiceBasedOnMainTenantSubdomain(
+      String rootTenantSubdomain) {
     var tenantControllerApi = tenantServiceApiControllerFactory.createControllerApi();
     RestrictedTenantDTO rootTenantData = tenantControllerApi.getRestrictedTenantDataBySubdomain(
         rootTenantSubdomain);
@@ -61,7 +59,8 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
   }
 
   private Optional<String> getMainTenantSubdomainFromApplicationSettings() {
-    ApplicationSettingsDTO applicationSettings = applicationSettingsApiControllerFactory.createControllerApi().getApplicationSettings();
+    ApplicationSettingsDTO applicationSettings = applicationSettingsApiControllerFactory.createControllerApi()
+        .getApplicationSettings();
     ApplicationSettingsDTOMainTenantSubdomainForSingleDomainMultitenancy mainTenantSubdomainForSingleDomainMultitenancy = applicationSettings.getMainTenantSubdomainForSingleDomainMultitenancy();
     if (mainTenantSubdomainForSingleDomainMultitenancy == null) {
       return Optional.empty();

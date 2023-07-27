@@ -24,7 +24,7 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeMan
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.WhiteSpotDTO;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTOAllOfWhiteSpot;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
@@ -140,7 +140,7 @@ public class AgencyValidatorIT {
     UpdateAgencyDTO updateAgencyDTO = getValidUpdateAgencyDTO();
     updateAgencyDTO.setOffline(false);
     var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
-    extendedConsultingTypeResponseDTO.setWhiteSpot(easyRandom.nextObject(WhiteSpotDTO.class));
+    extendedConsultingTypeResponseDTO.setWhiteSpot(easyRandom.nextObject(ExtendedConsultingTypeResponseDTOAllOfWhiteSpot.class));
     when(consultingTypeManager.getConsultingTypeSettings(19)).thenReturn(extendedConsultingTypeResponseDTO);
     agencyValidator.validate(1734L, updateAgencyDTO);
   }

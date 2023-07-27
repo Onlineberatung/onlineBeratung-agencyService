@@ -5,7 +5,7 @@ import static java.util.Objects.isNull;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
 import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.context.annotation.Bean;

@@ -19,8 +19,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-
 @Service
 @Primary
 @ConditionalOnExpression("${multitenancy.enabled:true}")

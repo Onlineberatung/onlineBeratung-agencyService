@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.Lists;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
