@@ -15,24 +15,15 @@ import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.EntityManagerFactory;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.lucene.queryparser.classic.QueryParserBase;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.BooleanJunction;
-import org.hibernate.search.query.dsl.MustJunction;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -73,44 +64,46 @@ public class AgencyAdminSearchService {
    */
   public AgencyAdminSearchResultDTO searchAgencies(final String keyword, final Integer page,
       final Integer perPage, Sort sort) {
-    FullTextEntityManager fullTextEntityManager = Search
-        .getFullTextEntityManager(entityManagerFactory.createEntityManager());
-
-    Query query = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
-        ? buildSearchQuery(fullTextEntityManager)
-        : buildKeywordSearchQuery(keyword, fullTextEntityManager);
-
-    FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
-
-    fullTextQuery.setMaxResults(Math.max(perPage, 0));
-    fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
-    fullTextQuery.setSort(buildSort(sort));
-
-    @SuppressWarnings("unchecked")
-    Stream<Agency> resultStream = fullTextQuery.getResultList().stream();
-
-    if (topicsFeatureEnabled) {
-      resultStream = resultStream.map(agencyTopicEnrichmentService::enrichAgencyWithTopics);
-    }
-
-    var resultList = resultStream
-        .map(AgencyAdminFullResponseDTOBuilder::new)
-        .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
-        .collect(Collectors.toList());
-
-    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
-        .withPage(page)
-        .withPerPage(perPage)
-        .withTotalResults(fullTextQuery.getResultSize())
-        .withKeyword(keyword)
-        .buildSearchResultLinks();
-
-    fullTextEntityManager.close();
-
-    return new AgencyAdminSearchResultDTO()
-        .embedded(resultList)
-        .links(searchResultLinks)
-        .total(fullTextQuery.getResultSize());
+    // TODO implement search
+    return new AgencyAdminSearchResultDTO();
+//    FullTextEntityManager fullTextEntityManager = Search
+//        .getFullTextEntityManager(entityManagerFactory.createEntityManager());
+//
+//    Query query = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
+//        ? buildSearchQuery(fullTextEntityManager)
+//        : buildKeywordSearchQuery(keyword, fullTextEntityManager);
+//
+//    FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
+//
+//    fullTextQuery.setMaxResults(Math.max(perPage, 0));
+//    fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
+//    fullTextQuery.setSort(buildSort(sort));
+//
+//    @SuppressWarnings("unchecked")
+//    Stream<Agency> resultStream = fullTextQuery.getResultList().stream();
+//
+//    if (topicsFeatureEnabled) {
+//      resultStream = resultStream.map(agencyTopicEnrichmentService::enrichAgencyWithTopics);
+//    }
+//
+//    var resultList = resultStream
+//        .map(AgencyAdminFullResponseDTOBuilder::new)
+//        .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
+//        .collect(Collectors.toList());
+//
+//    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+//        .withPage(page)
+//        .withPerPage(perPage)
+//        .withTotalResults(fullTextQuery.getResultSize())
+//        .withKeyword(keyword)
+//        .buildSearchResultLinks();
+//
+//    fullTextEntityManager.close();
+//
+//    return new AgencyAdminSearchResultDTO()
+//        .embedded(resultList)
+//        .links(searchResultLinks)
+//        .total(fullTextQuery.getResultSize());
   }
 
   @NonNull
@@ -119,94 +112,94 @@ public class AgencyAdminSearchService {
     return resultList.stream().filter(agency -> adminAgencies.contains(agency.getEmbedded().getId())).collect(Collectors.toList());
   }
 
-  protected Query buildSearchQuery(FullTextEntityManager fullTextEntityManager) {
-    QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
-            .buildQueryBuilder()
-            .forEntity(Agency.class)
-            .get();
-
-    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
-      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-      if (!adminAgencyIds.isEmpty()) {
-        return buildSearchQueryForAgencyAdmin(queryBuilder, adminAgencyIds);
-      } else {
-        return buildSearchQueryForAgencyAdmin(queryBuilder, Lists.newArrayList(NON_EXISTING_AGENCY_ID));
-      }
-    }
-
-    return queryBuilder
-              .all()
-              .createQuery();
-  }
-
-  protected Query buildSearchQueryForAgencyAdmin(QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
-    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
-    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
-    return bool.createQuery();
-  }
-
-  protected Query buildSearchQueryForAgencyAdmin(MustJunction mustJunction, QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
-    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
-    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
-    mustJunction.must(bool.createQuery());
-    return mustJunction.createQuery();
-  }
-
-  protected Query buildKeywordSearchQuery(String keyword, FullTextEntityManager entityManager) {
-    QueryBuilder queryBuilder = entityManager.getSearchFactory()
-            .buildQueryBuilder()
-            .forEntity(Agency.class)
-            .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
-            .overridesForField(POST_CODE_SEARCH_FIELD, SEARCH_ANALYZER)
-            .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
-            .get();
-
-    MustJunction keywordMust = queryBuilder
-            .bool()
-            .must(
-                    queryBuilder.keyword()
-                            .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
-                            .andField(NAME_SEARCH_FIELD)
-                            .andField(POST_CODE_SEARCH_FIELD)
-                            .andField(CITY_SEARCH_FIELD)
-                            .matching(QueryParserBase.escape(keyword))
-                            .createQuery()
-            );
-
-    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
-      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-      if (!adminAgencyIds.isEmpty()) {
-        return buildSearchQueryForAgencyAdmin(keywordMust, queryBuilder, adminAgencyIds);
-      }
-    }
-
-    return keywordMust
-            .createQuery();
-  }
+//  protected Query buildSearchQuery(FullTextEntityManager fullTextEntityManager) {
+//    QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
+//            .buildQueryBuilder()
+//            .forEntity(Agency.class)
+//            .get();
+//
+//    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
+//      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
+//      if (!adminAgencyIds.isEmpty()) {
+//        return buildSearchQueryForAgencyAdmin(queryBuilder, adminAgencyIds);
+//      } else {
+//        return buildSearchQueryForAgencyAdmin(queryBuilder, Lists.newArrayList(NON_EXISTING_AGENCY_ID));
+//      }
+//    }
+//
+//    return queryBuilder
+//              .all()
+//              .createQuery();
+//  }
+//
+//  protected Query buildSearchQueryForAgencyAdmin(QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
+//    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
+//    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
+//    return bool.createQuery();
+//  }
+//
+//  protected Query buildSearchQueryForAgencyAdmin(MustJunction mustJunction, QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
+//    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
+//    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
+//    mustJunction.must(bool.createQuery());
+//    return mustJunction.createQuery();
+//  }
+//
+//  protected Query buildKeywordSearchQuery(String keyword, FullTextEntityManager entityManager) {
+//    QueryBuilder queryBuilder = entityManager.getSearchFactory()
+//            .buildQueryBuilder()
+//            .forEntity(Agency.class)
+//            .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
+//            .overridesForField(POST_CODE_SEARCH_FIELD, SEARCH_ANALYZER)
+//            .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
+//            .get();
+//
+//    MustJunction keywordMust = queryBuilder
+//            .bool()
+//            .must(
+//                    queryBuilder.keyword()
+//                            .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
+//                            .andField(NAME_SEARCH_FIELD)
+//                            .andField(POST_CODE_SEARCH_FIELD)
+//                            .andField(CITY_SEARCH_FIELD)
+//                            .matching(QueryParserBase.escape(keyword))
+//                            .createQuery()
+//            );
+//
+//    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
+//      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
+//      if (!adminAgencyIds.isEmpty()) {
+//        return buildSearchQueryForAgencyAdmin(keywordMust, queryBuilder, adminAgencyIds);
+//      }
+//    }
+//
+//    return keywordMust
+//            .createQuery();
+//  }
 
   private boolean hasOnlySpecialCharacters(String str) {
     return ONLY_SPECIAL_CHARS.matcher(str).matches();
   }
 
-  private org.apache.lucene.search.Sort buildSort(Sort sort) {
-    var luceneSort = new org.apache.lucene.search.Sort();
-    if (nonNull(sort) && nonNull(sort.getField())) {
-      var reverse = OrderEnum.DESC.equals(sort.getOrder());
-      luceneSort.setSort(getSortField(sort, reverse));
-    }
-    return luceneSort;
-  }
+//  private org.apache.lucene.search.Sort buildSort(Sort sort) {
+//    var luceneSort = new org.apache.lucene.search.Sort();
+//    if (nonNull(sort) && nonNull(sort.getField())) {
+//      var reverse = OrderEnum.DESC.equals(sort.getOrder());
+//      luceneSort.setSort(getSortField(sort, reverse));
+//    }
+//    return luceneSort;
+//  }
 
   /**
    * We observed that lucene sort in version 5.5.5 does not sort correctly strings with numeric values only.
    * Although higher version of lucene exists, version 5.5.5 is used by the latest available hibernate search version 5.11.12.Final
    * Therefore a conversion to integer column was required to force proper sort order. y
    **/
-  private SortField getSortField(Sort sort, boolean reverse) {
-    if (Sort.FieldEnum.POSTCODE.getValue().equals(sort.getField().getValue())) {
-      return new SortField("postCodeInteger", SortField.Type.INT, reverse);
-    } else {
-      return new SortField(sort.getField().getValue(), SortField.Type.STRING, reverse);
-    }
-  }
+//  private SortField getSortField(Sort sort, boolean reverse) {
+//    if (Sort.FieldEnum.POSTCODE.getValue().equals(sort.getField().getValue())) {
+//      return new SortField("postCodeInteger", SortField.Type.INT, reverse);
+//    } else {
+//      return new SortField(sort.getField().getValue(), SortField.Type.STRING, reverse);
+//    }
+//  }
 }

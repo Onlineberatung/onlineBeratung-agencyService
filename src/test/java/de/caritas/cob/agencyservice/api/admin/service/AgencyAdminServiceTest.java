@@ -13,8 +13,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.reflect.Whitebox.setInternalState;
+import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
@@ -82,7 +81,6 @@ class AgencyAdminServiceTest {
 
   @BeforeEach
   public void setup() {
-    setInternalState(LogService.class, "LOGGER", logger);
     ReflectionTestUtils.setField(agencyAdminService, "agencyTopicEnrichmentService", agencyTopicEnrichmentService);
     ReflectionTestUtils.setField(agencyAdminService, "demographicsConverter", demographicsConverter);
 

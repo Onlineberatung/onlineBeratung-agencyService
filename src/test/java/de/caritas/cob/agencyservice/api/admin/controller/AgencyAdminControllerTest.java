@@ -45,6 +45,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnu
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,6 +82,9 @@ public class AgencyAdminControllerTest {
   private DioceseAdminService dioceseAdminService;
   @MockBean
   private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
+
+  @MockBean
+  private JwtAuthConverter jwtAuthConverter;
 
   @Test
   public void searchAgencies_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()

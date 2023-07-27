@@ -26,20 +26,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
-import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Normalizer;
-import org.hibernate.search.annotations.SortableField;
 import org.hibernate.type.NumericBooleanConverter;
 
 @Entity
@@ -49,7 +40,6 @@ import org.hibernate.type.NumericBooleanConverter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Indexed
 @Builder
 @FilterDef(
     name = "tenantFilter",
@@ -79,44 +69,32 @@ public class Agency implements TenantAware {
   private Long id;
 
   @Column(name = "diocese_id", nullable = false)
-  @Field(analyze = Analyze.NO)
   //@FieldBridge(impl = LongBridge.class)
   private Long dioceseId;
 
   @NonNull
   @Size(max = 100)
   @Column(name = "name", nullable = false)
-  @Field(normalizer = @Normalizer(definition = "keyword"))
-  @SortableField
   private String name;
 
   @Column(name = "description")
-  @Field(analyze = Analyze.NO)
-  @SortableField
   private String description;
 
   @Size(max = 5)
   @Column(name = "postcode")
-  @Field(normalizer = @Normalizer(definition = "keyword"))
-  @SortableField
   private String postCode;
 
   @Transient
-  @SortableField
-  @Field(analyze = Analyze.NO)
   private Integer getPostCodeInteger() {
     return Integer.valueOf(postCode);
   }
 
   @Size(max = 100)
   @Column(name = "city")
-  @Field(normalizer = @Normalizer(definition = "keyword"))
-  @SortableField
   private String city;
 
   @Column(name = "is_team_agency", nullable = false)
   @Convert(converter = NumericBooleanConverter.class)
-  @SortableField
   private boolean teamAgency;
 
   @PositiveOrZero
@@ -126,13 +104,11 @@ public class Agency implements TenantAware {
 
   @Column(name = "is_offline", nullable = false)
   @Convert(converter = NumericBooleanConverter.class)
-  @SortableField
-  @Field(analyze = Analyze.NO)
+
   private boolean offline;
 
   @Size(max = 500)
   @Column(name = "url")
-  @Field
   private String url;
 
   @Column(name = "is_external", nullable = false)
@@ -171,11 +147,9 @@ public class Agency implements TenantAware {
   private List<AgencyTopic> agencyTopics;
 
   @Column(name = "tenant_id")
-  @Field
   private Long tenantId;
 
   @Column(name = "counselling_relations")
-  @Field
   private String counsellingRelations;
 
   @Transient

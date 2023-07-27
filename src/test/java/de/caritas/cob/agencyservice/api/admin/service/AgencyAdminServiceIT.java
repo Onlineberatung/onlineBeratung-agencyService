@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @Transactional
+@TestPropertySource(properties = "multitenancy.enabled=false")
 public class AgencyAdminServiceIT extends AgencyAdminServiceITBase {
 
   @Test

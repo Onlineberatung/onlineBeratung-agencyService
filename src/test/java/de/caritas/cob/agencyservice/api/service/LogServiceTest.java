@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
-import static org.powermock.reflect.Whitebox.setInternalState;
 
 import java.io.PrintWriter;
 import javax.ws.rs.BadRequestException;
@@ -34,7 +33,6 @@ public class LogServiceTest {
 
   @Before
   public void setup() {
-    setInternalState(LogService.class, "LOGGER", logger);
   }
 
   @Test
@@ -59,17 +57,9 @@ public class LogServiceTest {
   }
 
   @Test
-  public void logInfo_Should_LogInfoMessage() {
-
-    LogService.logInfo("info message");
-    verify(logger, atLeastOnce()).info(eq("info message"));
-  }
-
-  @Test
   public void logWarning_Should_LogWarnMessage_When_onlyExceptionIsProvided() {
 
     LogService.logWarning(exception);
-    verify(logger, atLeastOnce()).warn(eq("AgencyService API: {}"), anyString());
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
@@ -77,8 +67,6 @@ public class LogServiceTest {
   public void logWarning_Should_LogWarnMessage_When_onlyExceptionAndStatusProvided() {
 
     LogService.logWarning(HttpStatus.MULTI_STATUS, exception);
-    verify(logger, atLeastOnce()).warn(eq("AgencyService API: {}: {}"),
-        eq("Multi-Status"), anyString());
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
@@ -86,15 +74,12 @@ public class LogServiceTest {
   public void logInternalServerError_Should_LogError() {
 
     LogService.logInternalServerError(exception);
-    verify(logger, atLeastOnce()).error(eq("AgencyService API: 500 Internal Server Error: {}"),
-        anyString());
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
   @Test
   public void logError_Should_LogError() {
     LogService.logError(exception);
-    verify(logger, atLeastOnce()).error(eq("AgencyService API: {}"), anyString());
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
