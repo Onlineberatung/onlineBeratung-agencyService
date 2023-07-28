@@ -1,8 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
-import static de.caritas.cob.agencyservice.api.repository.agency.Agency.SEARCH_ANALYZER;
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static io.micrometer.common.util.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
@@ -15,20 +14,29 @@ import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import java.util.Collection;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AgencyAdminSearchService {
 
@@ -49,6 +57,8 @@ public class AgencyAdminSearchService {
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
 
+  private AgencyRepository agencyRepository;
+
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
@@ -64,46 +74,118 @@ public class AgencyAdminSearchService {
    */
   public AgencyAdminSearchResultDTO searchAgencies(final String keyword, final Integer page,
       final Integer perPage, Sort sort) {
-    // TODO implement search
-    return new AgencyAdminSearchResultDTO();
-//    FullTextEntityManager fullTextEntityManager = Search
-//        .getFullTextEntityManager(entityManagerFactory.createEntityManager());
-//
-//    Query query = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
-//        ? buildSearchQuery(fullTextEntityManager)
-//        : buildKeywordSearchQuery(keyword, fullTextEntityManager);
-//
-//    FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Agency.class);
-//
-//    fullTextQuery.setMaxResults(Math.max(perPage, 0));
-//    fullTextQuery.setFirstResult(Math.max((page - 1) * perPage, 0));
-//    fullTextQuery.setSort(buildSort(sort));
-//
-//    @SuppressWarnings("unchecked")
-//    Stream<Agency> resultStream = fullTextQuery.getResultList().stream();
-//
-//    if (topicsFeatureEnabled) {
-//      resultStream = resultStream.map(agencyTopicEnrichmentService::enrichAgencyWithTopics);
-//    }
-//
-//    var resultList = resultStream
-//        .map(AgencyAdminFullResponseDTOBuilder::new)
-//        .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
-//        .collect(Collectors.toList());
-//
-//    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
-//        .withPage(page)
-//        .withPerPage(perPage)
-//        .withTotalResults(fullTextQuery.getResultSize())
-//        .withKeyword(keyword)
-//        .buildSearchResultLinks();
-//
-//    fullTextEntityManager.close();
-//
-//    return new AgencyAdminSearchResultDTO()
-//        .embedded(resultList)
-//        .links(searchResultLinks)
-//        .total(fullTextQuery.getResultSize());
+
+    SearchResult<Agency> queryResult = new SearchResult<>(Lists.newArrayList(), 0L);
+
+    var agencyAdminSearch = AgencyAdminSearch.builder()
+        .keyword(keyword)
+        .pageNumber(page)
+        .pageSize(perPage)
+        .sortField(sort != null ? sort.getField().getValue() : null)
+        .ascending(sort != null ? sort.getOrder().equals(OrderEnum.ASC) : true)
+        .build();
+
+    try ( EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+      queryResult = isBlank(keyword)  || hasOnlySpecialCharacters(keyword) ? searchAgenciesWithoutFilter(entityManager, agencyAdminSearch) : searchAgenciesByKeyword(entityManager, agencyAdminSearch);
+    }
+    catch (Exception ex) {
+      log.error("Count not create entity manager", ex);
+    }
+
+    var resultStream = queryResult.getResult().stream();
+    if (topicsFeatureEnabled) {
+      resultStream = resultStream.map(agencyTopicEnrichmentService::enrichAgencyWithTopics);
+    }
+
+    var resultList = resultStream
+        .map(AgencyAdminFullResponseDTOBuilder::new)
+        .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
+        .collect(Collectors.toList());
+
+    SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
+        .withPage(page)
+        .withPerPage(perPage)
+        .withTotalResults(queryResult.getTotalSize().intValue())
+        .withKeyword(keyword)
+        .buildSearchResultLinks();
+
+
+    return new AgencyAdminSearchResultDTO()
+        .embedded(resultList)
+        .links(searchResultLinks)
+        .total(queryResult.getTotalSize().intValue());
+  }
+
+  public SearchResult<Agency> searchAgenciesByKeyword(EntityManager entityManager, AgencyAdminSearch agencyAdminSearch) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+    CriteriaQuery<Agency> criteriaQuery = criteriaBuilder.createQuery(Agency.class);
+    Root<Agency> root = criteriaQuery.from(Agency.class);
+    root.alias("agency");
+    root.fetch("agencyTopics", jakarta.persistence.criteria.JoinType.LEFT);
+
+    Predicate predicate = appendKeywordPredicate(agencyAdminSearch.getKeyword(), criteriaBuilder, root);
+    criteriaQuery.where(predicate);
+
+    return applySortingAndPagination(entityManager, agencyAdminSearch,
+        criteriaBuilder, criteriaQuery, root, predicate);
+  }
+
+  public SearchResult<Agency> searchAgenciesWithoutFilter(EntityManager entityManager, AgencyAdminSearch agencyAdminSearch) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Agency> criteriaQuery = criteriaBuilder.createQuery(Agency.class);
+    Root<Agency> root = criteriaQuery.from(Agency.class);
+    root.alias("agency");
+    root.fetch("agencyTopics", jakarta.persistence.criteria.JoinType.LEFT);
+
+    Predicate alwaysTruePredicate = criteriaBuilder.conjunction();
+    criteriaQuery.where(alwaysTruePredicate);
+
+    return applySortingAndPagination(entityManager, agencyAdminSearch,
+        criteriaBuilder, criteriaQuery, root, alwaysTruePredicate);
+  }
+
+
+  private SearchResult<Agency> applySortingAndPagination(EntityManager entityManager,
+      AgencyAdminSearch agencyAdminSearch,
+      CriteriaBuilder criteriaBuilder, CriteriaQuery<Agency> criteriaQuery, Root<Agency> root,
+      Predicate predicate) {
+    // Sorting
+    if (agencyAdminSearch.getSortField() != null && !agencyAdminSearch.getSortField().isEmpty()) {
+      Order order = agencyAdminSearch.isAscending() ? criteriaBuilder.asc(criteriaBuilder.lower(root.get(agencyAdminSearch.getSortField()))) : criteriaBuilder.desc(
+          criteriaBuilder.lower(root.get(agencyAdminSearch.getSortField())));
+      criteriaQuery.orderBy(order);
+    }
+
+    // Pagination
+    int firstResult = agencyAdminSearch.getPageNumber() == 0 ? 0 : (agencyAdminSearch.getPageNumber() - 1) * agencyAdminSearch.getPageSize();
+    List<Agency> agencies = entityManager.createQuery(criteriaQuery)
+        .setFirstResult(firstResult)
+        .setMaxResults(agencyAdminSearch.getPageSize())
+        .getResultList();
+
+    CriteriaBuilder criteriaBuilder2 = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> countQuery = criteriaBuilder2.createQuery(Long.class);
+    countQuery.where(predicate);
+    countQuery.select(criteriaBuilder2.count(countQuery.from(Agency.class)));
+    long totalResultSize = entityManager.createQuery(countQuery).getSingleResult();
+
+    return new SearchResult<>(agencies, totalResultSize);
+  }
+
+  private Predicate appendKeywordPredicate(String keyword, CriteriaBuilder criteriaBuilder,
+      Root<Agency> root) {
+    return criteriaBuilder.or(
+        criteriaBuilder.equal(root.get(DIOCESE_ID_SEARCH_FIELD),
+            isNumeric(keyword) ? Integer.parseInt(keyword.toLowerCase()) : -1),
+        criteriaBuilder.like(criteriaBuilder.lower(root.get(NAME_SEARCH_FIELD)),
+            "%" + keyword.toLowerCase() + "%"),
+        criteriaBuilder.like(
+            criteriaBuilder.lower(root.get(POST_CODE_SEARCH_FIELD)),
+            "%" + keyword.toLowerCase() + "%"),
+        criteriaBuilder.like(criteriaBuilder.lower(root.get(CITY_SEARCH_FIELD)),
+            "%" + keyword.toLowerCase() + "%")
+    );
   }
 
   @NonNull

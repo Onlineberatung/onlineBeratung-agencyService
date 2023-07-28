@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
@@ -260,6 +261,7 @@ public class AgencyAdminControllerTest {
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
+    updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
         easyRandom.nextObject(AgencyAdminFullResponseDTO.class);
@@ -290,6 +292,8 @@ public class AgencyAdminControllerTest {
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
+    updateAgencyDTO.setName("name");
+    updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
     doThrow(new InvalidOfflineStatusException())
         .when(agencyValidator)
@@ -310,6 +314,7 @@ public class AgencyAdminControllerTest {
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
+    updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
     doThrow(new InvalidDioceseException()).when(agencyValidator).validate(1L, updateAgencyDTO);
     this.mvc
@@ -328,6 +333,7 @@ public class AgencyAdminControllerTest {
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
     updateAgencyDTO.setDioceseId(1L);
+    updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
     doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(1L, updateAgencyDTO);
     this.mvc

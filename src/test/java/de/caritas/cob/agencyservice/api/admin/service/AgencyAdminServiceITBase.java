@@ -63,7 +63,7 @@ public class AgencyAdminServiceITBase {
         agencyAdminFullResponseDTO.getLinks().getDelete().getHref(),
         endsWith(
             String.format(
-                "/agencyadmin/agencies/100003", agencyAdminFullResponseDTO.getEmbedded().getId())));
+                "/agencyadmin/agencies/%s", agencyAdminFullResponseDTO.getEmbedded().getId())));
     assertThat(agencyAdminFullResponseDTO.getLinks().getSelf(), notNullValue());
     assertThat(
         agencyAdminFullResponseDTO.getLinks().getSelf().getHref(),

@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import io.swagger.annotations.Authorization;
+import javax.ws.rs.BadRequestException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -111,6 +112,7 @@ public class AgencyAdminController implements AgencyadminApi {
   @Override
   @PreAuthorize("hasAuthority('AUTHORIZATION_AGENCY_ADMIN')")
   public ResponseEntity<AgencyAdminFullResponseDTO> createAgency(@Valid AgencyDTO agencyDTO) {
+
 
     agencyValidator.validate(agencyDTO);
     var agencyAdminFullResponseDTO = agencyAdminService

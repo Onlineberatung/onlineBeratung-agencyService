@@ -73,6 +73,8 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private List<TopicDTO> getTopics() {
+    // workaround to force loading of topics
+
     var agencyTopics = agency.getAgencyTopics();
     if (agencyTopics != null) {
       return getTopics(agencyTopics);
