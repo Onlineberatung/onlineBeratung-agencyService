@@ -15,15 +15,15 @@ import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
-import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,11 +46,9 @@ public class AgencyAdminSearchService {
   protected static final String CITY_SEARCH_FIELD = "city";
   protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
-  protected static final Long NON_EXISTING_AGENCY_ID = -1L;
-
   protected final @NonNull EntityManagerFactory entityManagerFactory;
 
-  protected final @NonNull  AuthenticatedUser authenticatedUser;
+  protected final @NonNull AuthenticatedUser authenticatedUser;
 
   protected final @NonNull UserAdminService userAdminService;
 
@@ -59,13 +57,12 @@ public class AgencyAdminSearchService {
 
   private AgencyRepository agencyRepository;
 
-
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
 
   /**
-   * Searches for agencies by a given keyword, limits the result by perPage and generates a {@link
-   * AgencyAdminSearchResultDTO} containing hal links.
+   * Searches for agencies by a given keyword, limits the result by perPage and generates a
+   * {@link AgencyAdminSearchResultDTO} containing hal links.
    *
    * @param keyword the keyword to search for
    * @param page    the current requested page
@@ -81,14 +78,16 @@ public class AgencyAdminSearchService {
         .keyword(keyword)
         .pageNumber(page)
         .pageSize(perPage)
-        .sortField(sort != null ? sort.getField().getValue() : null)
-        .ascending(sort != null ? sort.getOrder().equals(OrderEnum.ASC) : true)
+        .sortField(sort != null && sort.getField() != null ? sort.getField().getValue() : null)
+        .ascending(
+            sort != null && sort.getOrder() != null ? sort.getOrder().equals(OrderEnum.ASC) : true)
         .build();
 
-    try ( EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-      queryResult = isBlank(keyword)  || hasOnlySpecialCharacters(keyword) ? searchAgenciesWithoutFilter(entityManager, agencyAdminSearch) : searchAgenciesByKeyword(entityManager, agencyAdminSearch);
-    }
-    catch (Exception ex) {
+    try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+      queryResult = isBlank(keyword) || hasOnlySpecialCharacters(keyword)
+          ? searchAgenciesWithoutKeywordFilter(entityManager, agencyAdminSearch)
+          : searchAgenciesByKeyword(entityManager, agencyAdminSearch);
+    } catch (Exception ex) {
       log.error("Count not create entity manager", ex);
     }
 
@@ -100,7 +99,7 @@ public class AgencyAdminSearchService {
     var resultList = resultStream
         .map(AgencyAdminFullResponseDTOBuilder::new)
         .map(AgencyAdminFullResponseDTOBuilder::fromAgency)
-        .collect(Collectors.toList());
+        .toList();
 
     SearchResultLinks searchResultLinks = SearchResultLinkBuilder.getInstance()
         .withPage(page)
@@ -109,14 +108,14 @@ public class AgencyAdminSearchService {
         .withKeyword(keyword)
         .buildSearchResultLinks();
 
-
     return new AgencyAdminSearchResultDTO()
         .embedded(resultList)
         .links(searchResultLinks)
         .total(queryResult.getTotalSize().intValue());
   }
 
-  public SearchResult<Agency> searchAgenciesByKeyword(EntityManager entityManager, AgencyAdminSearch agencyAdminSearch) {
+  public SearchResult<Agency> searchAgenciesByKeyword(EntityManager entityManager,
+      AgencyAdminSearch agencyAdminSearch) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
     CriteriaQuery<Agency> criteriaQuery = criteriaBuilder.createQuery(Agency.class);
@@ -124,56 +123,107 @@ public class AgencyAdminSearchService {
     root.alias("agency");
     root.fetch("agencyTopics", jakarta.persistence.criteria.JoinType.LEFT);
 
-    Predicate predicate = appendKeywordPredicate(agencyAdminSearch.getKeyword(), criteriaBuilder, root);
-    criteriaQuery.where(predicate);
+    Predicate[] searchAgenciesWithKeywordFilterPredicate = createSearchAgenciesWithKeywordFilterPredicate(
+        agencyAdminSearch, criteriaBuilder, root);
 
-    return applySortingAndPagination(entityManager, agencyAdminSearch,
-        criteriaBuilder, criteriaQuery, root, predicate);
+    criteriaQuery.where(searchAgenciesWithKeywordFilterPredicate);
+
+    var agencies = applySortingAndPagination(entityManager, agencyAdminSearch,
+        criteriaBuilder, criteriaQuery, root);
+
+    CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+    Root<Agency> countRoot = countQuery.from(Agency.class);
+    countQuery.select(criteriaBuilder.count(countRoot)).where(
+        agencyAdminFilterPredicate(criteriaBuilder, countRoot));
+    Long totalResultSize = entityManager.createQuery(countQuery).getSingleResult();
+    return new SearchResult<>(agencies, totalResultSize);
   }
 
-  public SearchResult<Agency> searchAgenciesWithoutFilter(EntityManager entityManager, AgencyAdminSearch agencyAdminSearch) {
+  protected Predicate[] createSearchAgenciesWithKeywordFilterPredicate(
+      AgencyAdminSearch agencyAdminSearch, CriteriaBuilder criteriaBuilder,
+      Root<Agency> root) {
+    return new Predicate[]{
+        keywordSearchPredicate(agencyAdminSearch.getKeyword(), criteriaBuilder, root),
+        agencyAdminFilterPredicate(criteriaBuilder, root)};
+  }
+
+  public SearchResult<Agency> searchAgenciesWithoutKeywordFilter(EntityManager entityManager,
+      AgencyAdminSearch agencyAdminSearch) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Agency> criteriaQuery = criteriaBuilder.createQuery(Agency.class);
     Root<Agency> root = criteriaQuery.from(Agency.class);
     root.alias("agency");
     root.fetch("agencyTopics", jakarta.persistence.criteria.JoinType.LEFT);
 
-    Predicate alwaysTruePredicate = criteriaBuilder.conjunction();
-    criteriaQuery.where(alwaysTruePredicate);
+    criteriaQuery.where(agenciesWithoutKeywordFilterPredicates(criteriaBuilder, root));
 
-    return applySortingAndPagination(entityManager, agencyAdminSearch,
-        criteriaBuilder, criteriaQuery, root, alwaysTruePredicate);
+    var agencies = applySortingAndPagination(entityManager, agencyAdminSearch,
+        criteriaBuilder, criteriaQuery, root);
+
+    CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+    Root<Agency> countRoot = countQuery.from(Agency.class);
+    countQuery.select(criteriaBuilder.count(countRoot)).where(
+        agenciesWithoutKeywordFilterPredicates(criteriaBuilder, countRoot));
+    Long totalResultSize = entityManager.createQuery(countQuery).getSingleResult();
+    return new SearchResult<>(agencies, totalResultSize);
+  }
+
+  protected Predicate[] agenciesWithoutKeywordFilterPredicates(CriteriaBuilder criteriaBuilder,
+      Root<Agency> root) {
+    return new Predicate[]{agencyAdminFilterPredicate(criteriaBuilder, root)};
+  }
+
+  Predicate agencyAdminFilterPredicate(CriteriaBuilder criteriaBuilder, Root<Agency> root) {
+    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
+      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
+      if (!adminAgencyIds.isEmpty()) {
+        return createPredicateForAgencyAdmin(criteriaBuilder, root, adminAgencyIds);
+      } else {
+        return alwaysFalsePredicate(criteriaBuilder);
+      }
+    } else {
+      return alwaysTruePredicate(criteriaBuilder);
+    }
+  }
+
+  private Predicate alwaysFalsePredicate(CriteriaBuilder criteriaBuilder) {
+    return criteriaBuilder.equal(criteriaBuilder.literal(1), criteriaBuilder.literal(2));
+  }
+
+  private Predicate alwaysTruePredicate(CriteriaBuilder criteriaBuilder) {
+    return criteriaBuilder.conjunction();
   }
 
 
-  private SearchResult<Agency> applySortingAndPagination(EntityManager entityManager,
+  protected Predicate createPredicateForAgencyAdmin(CriteriaBuilder criteriaBuilder,
+      Root<Agency> root, Collection<Long> adminAgencyIds) {
+    return criteriaBuilder.and(root.get("id").in(adminAgencyIds));
+  }
+
+  private List<Agency> applySortingAndPagination(EntityManager entityManager,
       AgencyAdminSearch agencyAdminSearch,
-      CriteriaBuilder criteriaBuilder, CriteriaQuery<Agency> criteriaQuery, Root<Agency> root,
-      Predicate predicate) {
+      CriteriaBuilder criteriaBuilder, CriteriaQuery<Agency> criteriaQuery, Root<Agency> root) {
     // Sorting
     if (agencyAdminSearch.getSortField() != null && !agencyAdminSearch.getSortField().isEmpty()) {
-      Order order = agencyAdminSearch.isAscending() ? criteriaBuilder.asc(criteriaBuilder.lower(root.get(agencyAdminSearch.getSortField()))) : criteriaBuilder.desc(
-          criteriaBuilder.lower(root.get(agencyAdminSearch.getSortField())));
+      Expression<String> toLower = criteriaBuilder.lower(
+          root.get(agencyAdminSearch.getSortField()));
+      Order order =
+          agencyAdminSearch.isAscending() ? criteriaBuilder.asc(toLower) : criteriaBuilder.desc(
+              toLower);
       criteriaQuery.orderBy(order);
     }
 
     // Pagination
-    int firstResult = agencyAdminSearch.getPageNumber() == 0 ? 0 : (agencyAdminSearch.getPageNumber() - 1) * agencyAdminSearch.getPageSize();
-    List<Agency> agencies = entityManager.createQuery(criteriaQuery)
-        .setFirstResult(firstResult)
-        .setMaxResults(agencyAdminSearch.getPageSize())
-        .getResultList();
-
-    CriteriaBuilder criteriaBuilder2 = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Long> countQuery = criteriaBuilder2.createQuery(Long.class);
-    countQuery.where(predicate);
-    countQuery.select(criteriaBuilder2.count(countQuery.from(Agency.class)));
-    long totalResultSize = entityManager.createQuery(countQuery).getSingleResult();
-
-    return new SearchResult<>(agencies, totalResultSize);
+    int firstResult = agencyAdminSearch.getPageNumber() == 0 ? 0
+        : (agencyAdminSearch.getPageNumber() - 1) * agencyAdminSearch.getPageSize();
+    return agencyAdminSearch.getPageSize() == 0 ? Lists.newArrayList()
+        : entityManager.createQuery(criteriaQuery)
+            .setFirstResult(firstResult)
+            .setMaxResults(agencyAdminSearch.getPageSize())
+            .getResultList();
   }
 
-  private Predicate appendKeywordPredicate(String keyword, CriteriaBuilder criteriaBuilder,
+  protected Predicate keywordSearchPredicate(String keyword, CriteriaBuilder criteriaBuilder,
       Root<Agency> root) {
     return criteriaBuilder.or(
         criteriaBuilder.equal(root.get(DIOCESE_ID_SEARCH_FIELD),
@@ -188,100 +238,8 @@ public class AgencyAdminSearchService {
     );
   }
 
-  @NonNull
-  private List<AgencyAdminFullResponseDTO> getFilteredResultListByAgenciesAllowedForTheUser(List<AgencyAdminFullResponseDTO> resultList) {
-    var adminAgencies = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-    return resultList.stream().filter(agency -> adminAgencies.contains(agency.getEmbedded().getId())).collect(Collectors.toList());
-  }
-
-//  protected Query buildSearchQuery(FullTextEntityManager fullTextEntityManager) {
-//    QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
-//            .buildQueryBuilder()
-//            .forEntity(Agency.class)
-//            .get();
-//
-//    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
-//      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-//      if (!adminAgencyIds.isEmpty()) {
-//        return buildSearchQueryForAgencyAdmin(queryBuilder, adminAgencyIds);
-//      } else {
-//        return buildSearchQueryForAgencyAdmin(queryBuilder, Lists.newArrayList(NON_EXISTING_AGENCY_ID));
-//      }
-//    }
-//
-//    return queryBuilder
-//              .all()
-//              .createQuery();
-//  }
-//
-//  protected Query buildSearchQueryForAgencyAdmin(QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
-//    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
-//    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
-//    return bool.createQuery();
-//  }
-//
-//  protected Query buildSearchQueryForAgencyAdmin(MustJunction mustJunction, QueryBuilder queryBuilder, Collection<Long> adminAgencyIds) {
-//    BooleanJunction<BooleanJunction> bool = queryBuilder.bool();
-//    adminAgencyIds.stream().forEach(id -> bool.should(queryBuilder.keyword().onField("id").matching(id).createQuery()));
-//    mustJunction.must(bool.createQuery());
-//    return mustJunction.createQuery();
-//  }
-//
-//  protected Query buildKeywordSearchQuery(String keyword, FullTextEntityManager entityManager) {
-//    QueryBuilder queryBuilder = entityManager.getSearchFactory()
-//            .buildQueryBuilder()
-//            .forEntity(Agency.class)
-//            .overridesForField(NAME_SEARCH_FIELD, SEARCH_ANALYZER)
-//            .overridesForField(POST_CODE_SEARCH_FIELD, SEARCH_ANALYZER)
-//            .overridesForField(CITY_SEARCH_FIELD, SEARCH_ANALYZER)
-//            .get();
-//
-//    MustJunction keywordMust = queryBuilder
-//            .bool()
-//            .must(
-//                    queryBuilder.keyword()
-//                            .onField(DIOCESE_ID_SEARCH_FIELD).boostedTo(100)
-//                            .andField(NAME_SEARCH_FIELD)
-//                            .andField(POST_CODE_SEARCH_FIELD)
-//                            .andField(CITY_SEARCH_FIELD)
-//                            .matching(QueryParserBase.escape(keyword))
-//                            .createQuery()
-//            );
-//
-//    if (authenticatedUser.hasRestrictedAgencyPriviliges()) {
-//      var adminAgencyIds = userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId());
-//      if (!adminAgencyIds.isEmpty()) {
-//        return buildSearchQueryForAgencyAdmin(keywordMust, queryBuilder, adminAgencyIds);
-//      }
-//    }
-//
-//    return keywordMust
-//            .createQuery();
-//  }
-
   private boolean hasOnlySpecialCharacters(String str) {
     return ONLY_SPECIAL_CHARS.matcher(str).matches();
   }
 
-//  private org.apache.lucene.search.Sort buildSort(Sort sort) {
-//    var luceneSort = new org.apache.lucene.search.Sort();
-//    if (nonNull(sort) && nonNull(sort.getField())) {
-//      var reverse = OrderEnum.DESC.equals(sort.getOrder());
-//      luceneSort.setSort(getSortField(sort, reverse));
-//    }
-//    return luceneSort;
-//  }
-
-  /**
-   * We observed that lucene sort in version 5.5.5 does not sort correctly strings with numeric values only.
-   * Although higher version of lucene exists, version 5.5.5 is used by the latest available hibernate search version 5.11.12.Final
-   * Therefore a conversion to integer column was required to force proper sort order. y
-   **/
-//  private SortField getSortField(Sort sort, boolean reverse) {
-//    if (Sort.FieldEnum.POSTCODE.getValue().equals(sort.getField().getValue())) {
-//      return new SortField("postCodeInteger", SortField.Type.INT, reverse);
-//    } else {
-//      return new SortField(sort.getField().getValue(), SortField.Type.STRING, reverse);
-//    }
-//  }
 }

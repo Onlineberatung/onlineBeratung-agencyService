@@ -1,7 +1,5 @@
 package de.caritas.cob.agencyservice.config;
 
-import static java.util.Objects.isNull;
-
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
 import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
@@ -10,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -42,14 +38,14 @@ public class AuthenticatedUserConfig {
 
     JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) getRequest().getUserPrincipal();
 
-      Map<String, Object> claimMap = authenticationToken.getToken().getClaims();
-      AuthenticatedUser authenticatedUser = new AuthenticatedUser();
-      authenticatedUser.setAccessToken(authenticationToken.getToken().getTokenValue());
-      authenticatedUser.setUserId(getUserAttribute(claimMap, CLAIM_NAME_USER_ID));
-      authenticatedUser.setUsername(getUserAttribute(claimMap, CLAIM_NAME_USERNAME));
-      authenticatedUser.setRoles(extractRealmRoles(authenticationToken.getToken()).stream().collect(
-          Collectors.toSet()));
-      return authenticatedUser;
+    Map<String, Object> claimMap = authenticationToken.getToken().getClaims();
+    AuthenticatedUser authenticatedUser = new AuthenticatedUser();
+    authenticatedUser.setAccessToken(authenticationToken.getToken().getTokenValue());
+    authenticatedUser.setUserId(getUserAttribute(claimMap, CLAIM_NAME_USER_ID));
+    authenticatedUser.setUsername(getUserAttribute(claimMap, CLAIM_NAME_USERNAME));
+    authenticatedUser.setRoles(extractRealmRoles(authenticationToken.getToken()).stream().collect(
+        Collectors.toSet()));
+    return authenticatedUser;
 
   }
 

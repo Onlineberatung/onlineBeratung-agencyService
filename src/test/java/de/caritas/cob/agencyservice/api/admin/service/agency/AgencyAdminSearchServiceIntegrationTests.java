@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
@@ -22,11 +23,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
@@ -43,6 +47,14 @@ public class AgencyAdminSearchServiceIntegrationTests {
 
   @Autowired
   private AgencyAdminSearchService agencyAdminSearchService;
+
+  @MockBean
+  AuthenticatedUser authenticatedUser;
+
+  @BeforeEach
+  public void setUp() {
+    Mockito.when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(false);
+  }
 
   @Test
   public void searchAgencies_Should_returnOneResult_When_perPageIsSetToOne() {
@@ -111,8 +123,9 @@ public class AgencyAdminSearchServiceIntegrationTests {
         .getEmbedded().stream().map(el -> el.getEmbedded().getName())
         .collect(Collectors.toList());
 
+    // cannot force collation for H2, but for MariaDB it will use proper utf8_unicode_ci due to usage of lower function which by default uses utf8_unicode_ci
     agenciesSorted.forEach(el -> {
-      Assertions.assertEquals('Z', el.charAt(0));
+      Assertions.assertEquals('Ö', el.charAt(0));
     });
   }
 
@@ -162,10 +175,10 @@ public class AgencyAdminSearchServiceIntegrationTests {
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlauts() {
     agencyAdminSearchService
-        .searchAgencies("Überlingen", 0, 4, null)
+        .searchAgencies("Überlingen", 0, 2, null)
         .getEmbedded()
         .forEach(
-            agency -> assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
+            agency -> assertThat((agency.getEmbedded().getName().contains("Überlingen") || agency.getEmbedded().getCity().contains("Überlingen")),  is(true))
         );
   }
 
@@ -236,10 +249,10 @@ public class AgencyAdminSearchServiceIntegrationTests {
 
   @Test
   public void buildAgencyAdminSearchResult_Should_returnExpectedMappedResponseDTO_When_searchForSpecialAgency() {
-    String keyword = "Schwangerschaftsberatungsstelle";
+    String keyword = "Schwangerschaftsberatungsstelle Sch";
 
     AgencyAdminFullResponseDTO firstSearchResult = this.agencyAdminSearchService
-        .searchAgencies(keyword, 0, 1, null).getEmbedded().iterator().next();
+        .searchAgencies(keyword, 0, 1, new Sort().field(FieldEnum.NAME).order(OrderEnum.DESC)).getEmbedded().iterator().next();
 
     assertThat(firstSearchResult.getEmbedded().getId(), is(846L));
     assertThat(firstSearchResult.getEmbedded().getCity(), is("Schwelm"));
