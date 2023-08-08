@@ -14,4 +14,5 @@
 	<include file="db/changelog/changeset/0009_agency_topic/0009_changeSet.xml"/>
 	<include file="db/changelog/changeset/0010_agency_demographics/0010_changeSet.xml"/>
 	<include file="db/changelog/changeset/0011_agency_demographics_gender_column_change/0011_changeSet.xml"/>
+	<include file="db/changelog/changeset/0012_agency_counseling_relations/0012_changeSet.xml"/>
 </databaseChangeLog>
