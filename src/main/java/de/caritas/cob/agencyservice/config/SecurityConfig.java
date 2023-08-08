@@ -11,7 +11,6 @@ import de.caritas.cob.agencyservice.filter.StatelessCsrfFilter;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticatedActionsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -80,7 +79,8 @@ public class SecurityConfig {
     }
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
+        //.sessionAuthenticationStrategy(sessionAuthenticationStrategy())
+        .and().authorizeRequests()
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()

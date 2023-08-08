@@ -28,7 +28,6 @@
     <!-- force at least version 2.16 due to https://logging.apache.org/log4j/2.x/security.html -->
     <log4j.version>2.17.1</log4j.version>
     <openapi.generator.maven.version>6.6.0</openapi.generator.maven.version>
-<!--    <hibernate-search-orm.version>5.11.12.Final</hibernate-search-orm.version>-->
     <jackson-databind-nullable.version>0.2.3</jackson-databind-nullable.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <commons-lang3.version>3.11</commons-lang3.version>
@@ -37,10 +36,10 @@
     <powermock-module-junit4.version>2.0.9</powermock-module-junit4.version>
     <ehcache.version>2.10.6</ehcache.version>
     <easy-random-core.version>5.0.0</easy-random-core.version>
-<!--    <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>-->
+    <spring-boot-autoconfigure.version>3.0.6</spring-boot-autoconfigure.version>
     <liquibase-core.version>4.9.1</liquibase-core.version>
     <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-    <spring-security.version>6.0.4</spring-security.version>
+    <spring-security.version>6.0.5</spring-security.version>
     <springfox.version>2.9.2</springfox.version>
     <springfox-swagger-ui.version>2.10.0</springfox-swagger-ui.version>
     <spring-security-oauth2-test-webmvc-addons.version>3.0.1</spring-security-oauth2-test-webmvc-addons.version>
@@ -104,66 +103,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-
-    <!-- Search dependencies -->
-<!--    <dependency>-->
-<!--      <groupId>org.hibernate.search</groupId>-->
-<!--      <artifactId>hibernate-search-engine</artifactId>-->
-<!--      <version>6.2.0.Final</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.hibernate</groupId>-->
-<!--      <artifactId>hibernate-search-orm</artifactId>-->
-<!--      <version>${hibernate-search-orm.version}</version>-->
-<!--      <exclusions>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.hibernate</groupId>-->
-<!--          <artifactId>hibernate-core</artifactId>-->
-<!--        </exclusion>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.hibernate</groupId>-->
-<!--          <artifactId>hibernate-search</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.hibernate.search</groupId>-->
-<!--      <artifactId>hibernate-search-v5migrationhelper-orm</artifactId>-->
-<!--      <version>6.2.0.Final</version>-->
-<!--      <exclusions>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.hibernate</groupId>-->
-<!--          <artifactId>hibernate-core</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
-<!--    </dependency>-->
-<!--    &lt;!&ndash; needed for hibernate search &ndash;&gt;-->
-<!--    <dependency>-->
-<!--      <groupId>javax.persistence</groupId>-->
-<!--      <artifactId>javax.persistence-api</artifactId>-->
-<!--      <version>2.2</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.hibernate</groupId>-->
-<!--      <artifactId>hibernate-entitymanager</artifactId>-->
-<!--      <version>5.6.15.Final</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>javax.transaction</groupId>-->
-<!--      <artifactId>jta</artifactId>-->
-<!--      <version>1.1</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.hibernate.search</groupId>-->
-<!--      <artifactId>hibernate-search-mapper-orm-jakarta</artifactId>-->
-<!--      <version>6.2.0.Final</version>-->
-<!--      <exclusions>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.hibernate.common</groupId>-->
-<!--          <artifactId>hibernate-commons-annotations</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
-<!--    </dependency>-->
 
     <!-- OpenApi/Swagger dependencies -->
     <dependency>
@@ -345,18 +284,6 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <artifactId>powermock-module-junit4</artifactId>-->
-<!--      <groupId>org.powermock</groupId>-->
-<!--      <scope>test</scope>-->
-<!--      <version>${powermock-module-junit4.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <artifactId>powermock-api-mockito2</artifactId>-->
-<!--      <groupId>org.powermock</groupId>-->
-<!--      <scope>test</scope>-->
-<!--      <version>${powermock-module-junit4.version}</version>-->
-<!--    </dependency>-->
     <dependency>
       <!-- required only for WebMvc "fluent" API -->
       <groupId>com.c4-soft.springaddons</groupId>
