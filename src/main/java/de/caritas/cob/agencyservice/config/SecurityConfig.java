@@ -28,7 +28,7 @@ import org.springframework.security.web.csrf.CsrfFilter;
 @KeycloakConfiguration
 @EnableGlobalMethodSecurity(
     prePostEnabled = true)
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
