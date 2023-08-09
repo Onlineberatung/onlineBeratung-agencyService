@@ -82,8 +82,7 @@ public class SecurityConfig {
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()
-        .requestMatchers("/agencyadmin", "/agencyadmin/**").hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
-        .anyRequest().denyAll();
+        .requestMatchers("/agencyadmin", "/agencyadmin/**").hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority());
 
     httpSecurity.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthConverter());
     return httpSecurity.build();
