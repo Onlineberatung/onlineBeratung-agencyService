@@ -83,7 +83,8 @@ public class SecurityConfig implements WebMvcConfigurer {
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()
-        .requestMatchers("/agencyadmin","/agencyadmin/", "/agencyadmin/**").hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
+        .requestMatchers("/agencyadmin", "/agencyadmin/", "/agencyadmin/**")
+        .hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();
 
 
