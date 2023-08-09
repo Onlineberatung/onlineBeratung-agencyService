@@ -28,7 +28,9 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerEr
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
+import de.caritas.cob.agencyservice.config.security.AuthorisationService;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
+import de.caritas.cob.agencyservice.config.security.JwtAuthConverterProperties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,6 +67,12 @@ class AgencyControllerIT {
 
   @MockBean
   private JwtAuthConverter jwtAuthConverter;
+
+  @MockBean
+  private AuthorisationService authorisationService;
+
+  @MockBean
+  private JwtAuthConverterProperties jwtAuthConverterProperties;
 
   @Mock
   private Logger logger;
