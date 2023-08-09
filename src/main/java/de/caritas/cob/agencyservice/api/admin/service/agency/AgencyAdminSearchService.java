@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
-import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.model.Sort;
@@ -26,7 +25,6 @@ import jakarta.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -134,7 +132,8 @@ public class AgencyAdminSearchService {
     CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
     Root<Agency> countRoot = countQuery.from(Agency.class);
     countQuery.select(criteriaBuilder.count(countRoot)).where(
-        agencyAdminFilterPredicate(criteriaBuilder, countRoot));
+        createSearchAgenciesWithKeywordFilterPredicate(
+            agencyAdminSearch, criteriaBuilder, countRoot));
     Long totalResultSize = entityManager.createQuery(countQuery).getSingleResult();
     return new SearchResult<>(agencies, totalResultSize);
   }
