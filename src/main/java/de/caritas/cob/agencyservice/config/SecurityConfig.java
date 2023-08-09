@@ -21,6 +21,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Provides the Keycloak/Spring Security configuration.
@@ -28,14 +30,13 @@ import org.springframework.security.web.csrf.CsrfFilter;
 @KeycloakConfiguration
 @EnableGlobalMethodSecurity(
     prePostEnabled = true)
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
   public static final String[] WHITE_LIST =
       new String[]{"/agencies/docs", "/agencies/docs/**", "/v2/api-docs", "/configuration/ui",
           "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/actuator/health", "/actuator/health/**"};
-
 
   @Autowired
   AuthorisationService authorisationService;
@@ -82,15 +83,28 @@ public class SecurityConfig {
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()
-        .requestMatchers("/agencyadmin", "/agencyadmin/**").hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority());
+        .requestMatchers("/agencyadmin","/agencyadmin/", "/agencyadmin/**").hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
+        .anyRequest().denyAll();
+
 
     httpSecurity.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthConverter());
     return httpSecurity.build();
+  }
+
+  /**
+   * Configure trailing slash match for all endpoints (needed as Spring Boot 3.0.0 changed default behaviour for trailing slash match)
+   * https://www.baeldung.com/spring-boot-3-migration (section 3.1)
+   */
+  @Override
+  public void configurePathMatch(PathMatchConfigurer configurer) {
+    configurer.setUseTrailingSlashMatch(true);
   }
 
   @Bean
   public JwtAuthConverter jwtAuthConverter() {
     return new JwtAuthConverter(jwtAuthConverterProperties, authorisationService);
   }
+
+
 
 }
