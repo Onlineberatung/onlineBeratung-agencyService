@@ -1,19 +1,15 @@
 package de.caritas.cob.agencyservice.api.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 import java.io.PrintWriter;
 import javax.ws.rs.BadRequestException;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,13 +23,6 @@ public class LogServiceTest {
 
   @Mock
   NumberFormatException numberFormatException;
-
-  @Mock
-  private Logger logger;
-
-  @Before
-  public void setup() {
-  }
 
   @Test
   public void logDatabaseError_Should_LogExceptionStackTrace() {

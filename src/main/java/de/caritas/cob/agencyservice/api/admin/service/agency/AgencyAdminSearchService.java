@@ -86,7 +86,7 @@ public class AgencyAdminSearchService {
           ? searchAgenciesWithoutKeywordFilter(entityManager, agencyAdminSearch)
           : searchAgenciesByKeyword(entityManager, agencyAdminSearch);
     } catch (Exception ex) {
-      log.error("Count not create entity manager", ex);
+      log.error("Could not create entity manager", ex);
     }
 
     var resultStream = queryResult.getResult().stream();
