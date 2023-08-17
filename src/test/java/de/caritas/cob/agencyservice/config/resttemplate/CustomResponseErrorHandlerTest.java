@@ -30,7 +30,7 @@ public class CustomResponseErrorHandlerTest {
       this.customResponseErrorHandler.handleError(uri, httpMethod, clientHttpResponse);
       fail("Exception was not thrown");
     } catch (ResponseStatusException e) {
-      assertThat(e.getStatus(), is(HttpStatus.I_AM_A_TEAPOT));
+      assertThat(e.getStatusCode(), is(HttpStatus.I_AM_A_TEAPOT));
       assertThat(e.getMessage(), is("418 I_AM_A_TEAPOT \"GET /access/endpoint\""));
     }
 

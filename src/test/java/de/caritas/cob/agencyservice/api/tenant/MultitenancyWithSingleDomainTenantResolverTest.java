@@ -10,10 +10,8 @@ import de.caritas.cob.agencyservice.config.apiclient.ApplicationSettingsApiContr
 import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import liquibase.pro.packaged.R;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

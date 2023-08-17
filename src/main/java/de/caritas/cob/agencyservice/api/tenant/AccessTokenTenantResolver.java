@@ -4,7 +4,7 @@ import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
 import java.util.Map;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

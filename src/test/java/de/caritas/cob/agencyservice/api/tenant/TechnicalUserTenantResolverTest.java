@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Test;

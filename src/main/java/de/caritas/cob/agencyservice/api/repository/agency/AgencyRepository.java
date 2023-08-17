@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.repository.agency;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +11,7 @@ import org.springframework.data.repository.query.Param;
  * Repository for the Agency entity
  *
  */
-public interface AgencyRepository extends CrudRepository<Agency, Long> {
+public interface AgencyRepository extends JpaRepository<Agency, Long> {
 
   String AND_WITH_BRACKET = "AND (";
   String SELECT_WITH_TOPICS = "SELECT a.*, :tenantId FROM agency a "

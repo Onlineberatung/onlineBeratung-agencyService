@@ -6,7 +6,7 @@ import static java.util.Optional.of;
 import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.filter.SubdomainExtractor;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
