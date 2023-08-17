@@ -13,4 +13,6 @@ public class AgencySearch {
   private Optional<Integer> topicId;
   private Optional<Integer> age;
   private Optional<String> gender;
+
+  private Optional<String> counsellingRelation;
 }

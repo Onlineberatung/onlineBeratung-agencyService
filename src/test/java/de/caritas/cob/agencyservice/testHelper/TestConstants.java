@@ -167,13 +167,13 @@ public class TestConstants {
   public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, false, null, null, null,
-      null, null, null, null, null, null);
+      null, null, null, null, null, null, null);
   public static final Agency AGENCY_ONLINE_U25 =
       new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
-          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null, null, null, null);
+          false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null, null, null, null, null);
   public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
       AGENCY_DESCRIPTION,
-      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null, null, null, null);
+      POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
       new AgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
