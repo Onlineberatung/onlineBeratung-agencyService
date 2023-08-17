@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
@@ -18,32 +19,46 @@ import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.FieldEnum;
 import de.caritas.cob.agencyservice.api.model.Sort.OrderEnum;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AgencyServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class AgencyAdminFullResponseDTOIT {
+@Transactional
+public class AgencyAdminSearchServiceIntegrationTests {
 
   @Autowired
-  private AgencyAdminSearchService agencyAdminFullResponseDTO;
+  private AgencyAdminSearchService agencyAdminSearchService;
+
+  @MockBean
+  AuthenticatedUser authenticatedUser;
+
+  @BeforeEach
+  public void setUp() {
+    Mockito.when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(false);
+  }
 
   @Test
   public void searchAgencies_Should_returnOneResult_When_perPageIsSetToOne() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("", 0, 1, null)
         .getEmbedded();
 
@@ -52,7 +67,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnOneResult_When_perPageIsSetToOneAndPageIsSetToOne() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("", 1, 1, null)
         .getEmbedded();
 
@@ -61,7 +76,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnEmptyList_When_paginationParamsAreZero() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies(null, 0, 0, null)
         .getEmbedded();
 
@@ -70,7 +85,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnEmptyList_When_paginationParamsAreNegative() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies(null, -100, -1000, null)
         .getEmbedded();
 
@@ -79,7 +94,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnAllEntities_When_keywordIsNull() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies(null, 0, 1133, null)
         .getEmbedded();
 
@@ -91,30 +106,33 @@ public class AgencyAdminFullResponseDTOIT {
     Sort sort = new Sort();
     sort.setField(FieldEnum.NAME);
     sort.setOrder(OrderEnum.ASC);
-    List<String> agenciesSorted = this.agencyAdminFullResponseDTO
+    List<String> agenciesSorted = this.agencyAdminSearchService
         .searchAgencies(null, 1, 5, sort)
         .getEmbedded().stream().map(el -> el.getEmbedded().getName()).collect(Collectors.toList());
 
-    agenciesSorted.forEach(el -> {
-      Assertions.assertEquals('A', el.charAt(0));
-    });
+    Set<Character> collect = agenciesSorted.stream().map(e -> e.charAt(0))
+        .collect(Collectors.toSet());
+
+    Assertions.assertEquals(collect, Set.of('#', ' '));
+
 
     sort.setField(FieldEnum.NAME);
     sort.setOrder(OrderEnum.DESC);
-    agenciesSorted = this.agencyAdminFullResponseDTO
+    agenciesSorted = this.agencyAdminSearchService
         .searchAgencies(null, 1, 2, sort)
         .getEmbedded().stream().map(el -> el.getEmbedded().getName())
         .collect(Collectors.toList());
 
+    // cannot force collation for H2, but for MariaDB it will use proper utf8_unicode_ci due to usage of lower function which by default uses utf8_unicode_ci
     agenciesSorted.forEach(el -> {
-      Assertions.assertEquals('Z', el.charAt(0));
+      Assertions.assertEquals('Ö', el.charAt(0));
     });
   }
 
 
   @Test
   public void searchAgencies_Should_returnAllEntities_When_keywordIsEmpty() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("", 0, 1133, null)
         .getEmbedded();
 
@@ -123,10 +141,10 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnPaginatedEntities_When_paginationParamsAreSplitted() {
-    List<AgencyAdminFullResponseDTO> firstPage = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> firstPage = this.agencyAdminSearchService
         .searchAgencies("", 1, 1000, null)
         .getEmbedded();
-    List<AgencyAdminFullResponseDTO> secondPage = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> secondPage = this.agencyAdminSearchService
         .searchAgencies("", 2, 1000, null)
         .getEmbedded();
 
@@ -136,7 +154,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsDashIndexedValues() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("Oberschwaben", 0, 2, null)
         .getEmbedded();
 
@@ -146,7 +164,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlautReplacements() {
-    agencyAdminFullResponseDTO
+    agencyAdminSearchService
         .searchAgencies("Uberlingen", 0, 4, null)
         .getEmbedded()
         .forEach(agency ->
@@ -156,17 +174,17 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_nameContainsUmlauts() {
-    agencyAdminFullResponseDTO
-        .searchAgencies("Überlingen", 0, 4, null)
+    agencyAdminSearchService
+        .searchAgencies("Überlingen", 0, 2, null)
         .getEmbedded()
         .forEach(
-            agency -> assertThat(agency.getEmbedded().getName(), containsString("Überlingen"))
+            agency -> assertThat((agency.getEmbedded().getName().contains("Überlingen") || agency.getEmbedded().getCity().contains("Überlingen")),  is(true))
         );
   }
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsValidPlz() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("88662", 0, 5, null)
         .getEmbedded();
 
@@ -175,7 +193,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnMatchingAgencies_When_keywordIsContainedInDifferentFields() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("1", 0, 500, null)
         .getEmbedded();
 
@@ -190,7 +208,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnFirstMatchOnDioceseId_When_keywordIsValidDioceseId() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminFullResponseDTO
+    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
         .searchAgencies("1", 0, 5, null)
         .getEmbedded();
 
@@ -200,7 +218,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void searchAgencies_Should_returnValidResult_When_keywordContainsOnlySpecialCharacters() {
-    var agencies = agencyAdminFullResponseDTO
+    var agencies = agencyAdminSearchService
         .searchAgencies("§$%=#'`><", 0, 5, null)
         .getEmbedded();
 
@@ -211,7 +229,7 @@ public class AgencyAdminFullResponseDTOIT {
   public void searchAgencies_Should_returnValidResult_When_keywordHasSpecialCharacters() {
     var specialChars = "halle§$%=#'`><";
 
-    var agencies = agencyAdminFullResponseDTO
+    var agencies = agencyAdminSearchService
         .searchAgencies(specialChars, 0, 5, null)
         .getEmbedded();
 
@@ -222,7 +240,7 @@ public class AgencyAdminFullResponseDTOIT {
   public void searchAgencies_Should_returnValidResult_When_keywordHasLuceneQuerySyntax() {
     var specialChars = "halle+-&|!(){}[]^\"~*?:\\/";
 
-    var agencies = agencyAdminFullResponseDTO
+    var agencies = agencyAdminSearchService
         .searchAgencies(specialChars, 0, 5, null)
         .getEmbedded();
 
@@ -231,10 +249,10 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void buildAgencyAdminSearchResult_Should_returnExpectedMappedResponseDTO_When_searchForSpecialAgency() {
-    String keyword = "Schwangerschaftsberatungsstelle";
+    String keyword = "Schwangerschaftsberatungsstelle Sch";
 
-    AgencyAdminFullResponseDTO firstSearchResult = this.agencyAdminFullResponseDTO
-        .searchAgencies(keyword, 0, 1, null).getEmbedded().iterator().next();
+    AgencyAdminFullResponseDTO firstSearchResult = this.agencyAdminSearchService
+        .searchAgencies(keyword, 0, 1, new Sort().field(FieldEnum.NAME).order(OrderEnum.DESC)).getEmbedded().iterator().next();
 
     assertThat(firstSearchResult.getEmbedded().getId(), is(846L));
     assertThat(firstSearchResult.getEmbedded().getCity(), is("Schwelm"));
@@ -255,7 +273,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void buildAgencyAdminSearchResult_Should_haveExpectedLinks_When_search() {
-    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminFullResponseDTO
+    AgencyAdminSearchResultDTO agencyAdminSearchResultDTO = this.agencyAdminSearchService
         .searchAgencies("a", 1, 20, null);
 
     SearchResultLinks searchResultLinks = agencyAdminSearchResultDTO.getLinks();
@@ -273,7 +291,7 @@ public class AgencyAdminFullResponseDTOIT {
 
   @Test
   public void buildAgencyAdminSearchResult_Should_returnExpectedLinksForAgencies() {
-    AgencyAdminSearchResultDTO searchResult = this.agencyAdminFullResponseDTO
+    AgencyAdminSearchResultDTO searchResult = this.agencyAdminSearchService
         .searchAgencies("", 0, 2, null);
 
     for (AgencyAdminFullResponseDTO result : searchResult.getEmbedded()) {

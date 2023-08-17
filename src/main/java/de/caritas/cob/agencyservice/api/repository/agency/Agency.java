@@ -5,19 +5,20 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import jakarta.persistence.Convert;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,24 +26,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
-import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
-import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
-import org.hibernate.search.bridge.builtin.LongBridge;
+
+
+import org.hibernate.type.NumericBooleanConverter;
 
 @Entity
 @Table(name = "agency")
@@ -51,28 +40,27 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 @NoArgsConstructor
 @Getter
 @Setter
-@Indexed
 @Builder
 @FilterDef(
     name = "tenantFilter",
-    parameters = {@ParamDef(name = "tenantId", type = "long")})
+    parameters = {@ParamDef(name = "tenantId", type = Long.class)})
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-@AnalyzerDef(
-    name = Agency.SEARCH_ANALYZER,
-    tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
-    filters = {
-      @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-      @TokenFilterDef(factory = LowerCaseFilterFactory.class),
-      @TokenFilterDef(
-          factory = EdgeNGramFilterFactory.class,
-          params = {
-            @Parameter(name = "minGramSize", value = "1"),
-            @Parameter(name = "maxGramSize", value = "35")
-          })
-    })
+//@AnalyzerDef(
+//    name = Agency.SEARCH_ANALYZER,
+//    tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
+//    filters = {
+//      @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+//      @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+//      @TokenFilterDef(
+//          factory = EdgeNGramFilterFactory.class,
+//          params = {
+//            @Parameter(name = "minGramSize", value = "1"),
+//            @Parameter(name = "maxGramSize", value = "35")
+//          })
+//    })
 public class Agency implements TenantAware {
 
-  public static final String SEARCH_ANALYZER = "searchAnalyzer";
+  public static final String SEARCH_ANALYZER = "keyword";
 
   @Id
   @SequenceGenerator(name = "id_seq", allocationSize = 1, sequenceName = "sequence_agency")
@@ -81,48 +69,32 @@ public class Agency implements TenantAware {
   private Long id;
 
   @Column(name = "diocese_id", nullable = false)
-  @Field
-  @FieldBridge(impl = LongBridge.class)
+  //@FieldBridge(impl = LongBridge.class)
   private Long dioceseId;
 
   @NonNull
   @Size(max = 100)
   @Column(name = "name", nullable = false)
-  @Field
-  @Analyzer(definition = SEARCH_ANALYZER)
-  @SortableField
   private String name;
 
   @Column(name = "description")
-  @Field
-  @SortableField
   private String description;
 
   @Size(max = 5)
   @Column(name = "postcode")
-  @Field
-  @Analyzer(definition = SEARCH_ANALYZER)
-  @SortableField
   private String postCode;
 
   @Transient
-  @SortableField
-  @Field
   private Integer getPostCodeInteger() {
     return Integer.valueOf(postCode);
   }
 
   @Size(max = 100)
   @Column(name = "city")
-  @Field
-  @Analyzer(definition = SEARCH_ANALYZER)
-  @SortableField
   private String city;
 
   @Column(name = "is_team_agency", nullable = false)
-  @Type(type = "org.hibernate.type.NumericBooleanType")
-  @SortableField
-  @Field
+  @Convert(converter = NumericBooleanConverter.class)
   private boolean teamAgency;
 
   @PositiveOrZero
@@ -131,18 +103,16 @@ public class Agency implements TenantAware {
   private Integer consultingTypeId;
 
   @Column(name = "is_offline", nullable = false)
-  @Type(type = "org.hibernate.type.NumericBooleanType")
-  @SortableField
-  @Field
+  @Convert(converter = NumericBooleanConverter.class)
+
   private boolean offline;
 
   @Size(max = 500)
   @Column(name = "url")
-  @Field
   private String url;
 
   @Column(name = "is_external", nullable = false)
-  @Type(type = "org.hibernate.type.NumericBooleanType")
+  @Convert(converter = NumericBooleanConverter.class)
   private boolean isExternal;
 
   @PositiveOrZero
@@ -177,11 +147,9 @@ public class Agency implements TenantAware {
   private List<AgencyTopic> agencyTopics;
 
   @Column(name = "tenant_id")
-  @Field
   private Long tenantId;
 
   @Column(name = "counselling_relations")
-  @Field
   private String counsellingRelations;
 
   @Transient

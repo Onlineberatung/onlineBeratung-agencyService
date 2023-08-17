@@ -2,8 +2,8 @@ package de.caritas.cob.agencyservice.api.tenant;
 
 import de.caritas.cob.agencyservice.api.repository.TenantUnaware;
 import java.lang.annotation.Annotation;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;

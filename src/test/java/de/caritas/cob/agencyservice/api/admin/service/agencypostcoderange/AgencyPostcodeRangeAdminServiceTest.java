@@ -9,8 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.reflect.Whitebox.setInternalState;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
@@ -63,7 +62,6 @@ class AgencyPostcodeRangeAdminServiceTest {
     this.easyRandom = new EasyRandom();
     this.postcodeRangeDTO = this.easyRandom.nextObject(PostcodeRangeDTO.class);
     setField(agencyPostcodeRangeAdminService, "postcodeRangeValidator", postcodeRangeValidator);
-    setInternalState(LogService.class, "LOGGER", logger);
   }
 
   @Test
