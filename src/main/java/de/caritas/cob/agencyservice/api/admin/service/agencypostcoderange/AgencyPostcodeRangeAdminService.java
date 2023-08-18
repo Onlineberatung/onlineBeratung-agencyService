@@ -127,7 +127,7 @@ public class AgencyPostcodeRangeAdminService {
     postCodeRange.setAgency(agency);
     postCodeRange.setCreateDate(LocalDateTime.now(ZoneOffset.UTC));
     postCodeRange.setUpdateDate(LocalDateTime.now(ZoneOffset.UTC));
-
+    postCodeRange.setTenantId(agency.getTenantId());
     return postCodeRange;
   }
 
