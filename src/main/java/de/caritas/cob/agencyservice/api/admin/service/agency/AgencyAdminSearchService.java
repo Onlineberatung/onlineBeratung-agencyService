@@ -20,6 +20,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.Collection;
@@ -204,12 +205,9 @@ public class AgencyAdminSearchService {
       CriteriaBuilder criteriaBuilder, CriteriaQuery<Agency> criteriaQuery, Root<Agency> root) {
     // Sorting
     if (agencyAdminSearch.getSortField() != null && !agencyAdminSearch.getSortField().isEmpty()) {
-      Expression<String> toLower = criteriaBuilder.lower(
-          root.get(agencyAdminSearch.getSortField()));
-      Order order =
-          agencyAdminSearch.isAscending() ? criteriaBuilder.asc(toLower) : criteriaBuilder.desc(
-              toLower);
-      criteriaQuery.orderBy(order);
+      Path<String> expression = root.get(agencyAdminSearch.getSortField());
+      Class<?> javaType = expression.getJavaType();
+      addOrderBy(agencyAdminSearch, criteriaBuilder, criteriaQuery, expression, javaType);
     }
 
     // Pagination
@@ -220,6 +218,24 @@ public class AgencyAdminSearchService {
             .setFirstResult(firstResult)
             .setMaxResults(agencyAdminSearch.getPageSize())
             .getResultList();
+  }
+
+  private void addOrderBy(AgencyAdminSearch agencyAdminSearch,
+      CriteriaBuilder criteriaBuilder, CriteriaQuery<Agency> criteriaQuery, Path<String> expression,
+      Class<?> javaType) {
+    if (String.class.equals(javaType)) {
+      Expression<String> toLower = criteriaBuilder.lower(
+          expression);
+      Order order =
+          agencyAdminSearch.isAscending() ? criteriaBuilder.asc(toLower) : criteriaBuilder.desc(
+              toLower);
+      criteriaQuery.orderBy(order);
+    } else {
+      Order order =
+          agencyAdminSearch.isAscending() ? criteriaBuilder.asc(expression) : criteriaBuilder.desc(
+              expression);
+      criteriaQuery.orderBy(order);
+    }
   }
 
   protected Predicate keywordSearchPredicate(String keyword, CriteriaBuilder criteriaBuilder,
