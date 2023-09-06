@@ -4,6 +4,7 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import com.google.common.base.Joiner;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
@@ -12,6 +13,7 @@ import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConvert
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
@@ -45,6 +49,11 @@ public class AgencyAdminService {
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
   private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
   private final @NonNull AppointmentService appointmentService;
+
+  private final @NonNull AuthenticatedUser authenticatedUser;
+  @Value("${multitenancy.enabled}")
+  private boolean multitenancy;
+
 
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
@@ -96,12 +105,32 @@ public class AgencyAdminService {
   public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
     setDefaultCounsellingRelationsIfEmpty(agencyDTO);
     Agency agency = fromAgencyDTO(agencyDTO);
-    agency.setTenantId(TenantContext.getCurrentTenant());
+    setTenantIdOnCreate(agencyDTO, agency);
     var savedAgency = agencyRepository.save(agency);
     enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(savedAgency);
     return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
+  }
+
+  private void setTenantIdOnCreate(AgencyDTO agencyDTO, Agency agency) {
+    if (authenticatedUser.isTenantSuperAdmin()) {
+      notNull(agencyDTO.getTenantId());
+      agency.setTenantId(agencyDTO.getTenantId());
+    } else {
+      checkIfTenantIdMatch(agencyDTO);
+      agency.setTenantId(TenantContext.getCurrentTenant());
+    }
+  }
+
+  private void checkIfTenantIdMatch(AgencyDTO agencyDTO) {
+    if (agencyDTO.getTenantId() != null && !agencyDTO.getTenantId()
+        .equals(TenantContext.getCurrentTenant())) {
+      log.warn("TenantId of agencyDTO {} does not match current tenant {}",
+          agencyDTO.getTenantId(), TenantContext.getCurrentTenant());
+      log.warn("Setting tenantId of agency {} to current tenant {}",
+          agencyDTO.getName(), TenantContext.getCurrentTenant());
+    }
   }
 
   private void setDefaultCounsellingRelationsIfEmpty(AgencyDTO agencyDTO) {
@@ -111,8 +140,7 @@ public class AgencyAdminService {
   }
 
   private List<AgencyDTO.CounsellingRelationsEnum> getAllPossibleCounsellingRelations() {
-    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values())
-        .collect(Collectors.toList());
+    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values()).toList();
 
   }
 
@@ -139,6 +167,7 @@ public class AgencyAdminService {
         .counsellingRelations(Joiner.on(",").join(agencyDTO.getCounsellingRelations()))
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
+
 
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
