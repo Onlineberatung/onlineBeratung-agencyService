@@ -4,7 +4,6 @@ import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatu
 import static de.caritas.cob.agencyservice.api.exception.httpresponses.HttpStatusExceptionReason.AGENCY_IS_ALREADY_TEAM_AGENCY;
 import static de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnum.TEAM_AGENCY;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.Validate.notNull;
 
 import com.google.common.base.Joiner;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
@@ -27,8 +26,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,32 +102,12 @@ public class AgencyAdminService {
   public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
     setDefaultCounsellingRelationsIfEmpty(agencyDTO);
     Agency agency = fromAgencyDTO(agencyDTO);
-    setTenantIdOnCreate(agencyDTO, agency);
+    agency.setTenantId(TenantContext.getCurrentTenant());
     var savedAgency = agencyRepository.save(agency);
     enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(savedAgency);
     return new AgencyAdminFullResponseDTOBuilder(savedAgency)
         .fromAgency();
-  }
-
-  private void setTenantIdOnCreate(AgencyDTO agencyDTO, Agency agency) {
-    if (authenticatedUser.isTenantSuperAdmin()) {
-      notNull(agencyDTO.getTenantId());
-      agency.setTenantId(agencyDTO.getTenantId());
-    } else {
-      checkIfTenantIdMatch(agencyDTO);
-      agency.setTenantId(TenantContext.getCurrentTenant());
-    }
-  }
-
-  private void checkIfTenantIdMatch(AgencyDTO agencyDTO) {
-    if (agencyDTO.getTenantId() != null && !agencyDTO.getTenantId()
-        .equals(TenantContext.getCurrentTenant())) {
-      log.warn("TenantId of agencyDTO {} does not match current tenant {}",
-          agencyDTO.getTenantId(), TenantContext.getCurrentTenant());
-      log.warn("Setting tenantId of agency {} to current tenant {}",
-          agencyDTO.getName(), TenantContext.getCurrentTenant());
-    }
   }
 
   private void setDefaultCounsellingRelationsIfEmpty(AgencyDTO agencyDTO) {
