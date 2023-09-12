@@ -28,7 +28,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @ExtendWith(MockitoExtension.class)
-class AccessTokenTenantResolverTest {
+class AccessTokenTenantResolve8Test {
 
   @InjectMocks
   AccessTokenTenantResolver accessTokenTenantResolver;
