@@ -57,6 +57,7 @@ class TechnicalUserTenantResolverTest {
   public void tearDown() {
     SecurityContextHolder.clearContext();
   }
+
   @Test
   void resolve_should_ResolveTechnicalTenantId_ForTechnicalUserRole() {
     // given
