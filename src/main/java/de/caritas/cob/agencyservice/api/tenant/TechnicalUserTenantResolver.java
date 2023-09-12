@@ -8,7 +8,7 @@ import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,16 +23,16 @@ public class TechnicalUserTenantResolver implements TenantResolver {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null) {
-      JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication.getPrincipal();
-      return getRealmRoles(jwtAuthenticationToken).contains("technical");
+      Jwt jwt = (Jwt) authentication.getPrincipal();
+      return getRealmRoles(jwt).contains("technical");
     }
     return false;
   }
 
-  private Collection<String> getRealmRoles(JwtAuthenticationToken jwtAuthenticationToken) {
+  private Collection<String> getRealmRoles(Jwt jwt) {
 
-    if (jwtAuthenticationToken != null && jwtAuthenticationToken.getToken() != null) {
-      var claims = jwtAuthenticationToken.getToken().getClaims();
+    if (jwt != null) {
+      var claims = jwt.getClaims();
       if (claims.containsKey("realm_access")) {
         Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
         if (realmAccess.containsKey("roles")) {

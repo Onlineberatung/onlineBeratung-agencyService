@@ -6,13 +6,10 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 
@@ -46,8 +43,8 @@ public class AccessTokenTenantResolver implements TenantResolver {
   private Map<String, Object> getClaimMap() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null) {
-      var jwt = (JwtAuthenticationToken) authentication.getPrincipal();
-      return jwt.getToken().getClaims();
+      var jwt = (Jwt) authentication.getPrincipal();
+      return jwt.getClaims();
     } else {
       return Map.of();
     }

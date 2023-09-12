@@ -62,7 +62,7 @@ class TechnicalUserTenantResolverTest {
   void resolve_should_ResolveTechnicalTenantId_ForTechnicalUserRole() {
     // given
     givenUserIsAuthenticated();
-    when(mockAuthentication.getPrincipal()).thenReturn(new JwtAuthenticationToken(buildJwtWithRealmRole("technical")));
+    when(mockAuthentication.getPrincipal()).thenReturn(buildJwtWithRealmRole("technical"));
     var resolved = technicalUserTenantResolver.resolve(authenticatedRequest);
     // then
     assertThat(resolved).contains(TECHNICAL_CONTEXT);
@@ -72,7 +72,7 @@ class TechnicalUserTenantResolverTest {
   void resolve_should_NotResolveTenantId_When_NonTechnicalUserRole() {
     // given
     givenUserIsAuthenticated();
-    when(mockAuthentication.getPrincipal()).thenReturn(new JwtAuthenticationToken(buildJwtWithRealmRole("another-role")));
+    when(mockAuthentication.getPrincipal()).thenReturn(buildJwtWithRealmRole("another-role"));
     var resolved = technicalUserTenantResolver.resolve(authenticatedRequest);
     // then
     assertThat(resolved).isEmpty();
