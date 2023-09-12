@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 
@@ -41,11 +42,10 @@ public class AccessTokenTenantResolver implements TenantResolver {
   }
 
   private Map<String, Object> getClaimMap(HttpServletRequest request) {
-    KeycloakSecurityContext keycloakSecContext =
-        ((KeycloakAuthenticationToken) request.getUserPrincipal()).getAccount()
-            .getKeycloakSecurityContext();
-    return keycloakSecContext.getToken().getOtherClaims();
+    var jwt = ((JwtAuthenticationToken) request.getUserPrincipal()).getToken();
+    return jwt.getClaims();
   }
+
 
   @Override
   public boolean canResolve(HttpServletRequest request) {
