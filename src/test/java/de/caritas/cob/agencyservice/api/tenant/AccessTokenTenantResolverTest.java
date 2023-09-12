@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.util.Sets;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -20,21 +21,42 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @ExtendWith(MockitoExtension.class)
 class AccessTokenTenantResolverTest {
-  @Mock
-  HttpServletRequest authenticatedRequest;
 
   @InjectMocks
   AccessTokenTenantResolver accessTokenTenantResolver;
 
+  @Mock
+  SecurityContext mockSecurityContext;
+
+  @Mock
+  Authentication mockAuthentication;
+
+  @Mock
+  HttpServletRequest authenticatedRequest;
+
+  @AfterEach
+  public void tearDown() {
+    SecurityContextHolder.clearContext();
+  }
+
+  private void givenUserIsAuthenticated() {
+    SecurityContextHolder.setContext(mockSecurityContext);
+    when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+    when(mockAuthentication.getPrincipal()).thenReturn(new JwtAuthenticationToken(buildJwt()));
+  }
+
   @Test
   void resolve_Should_ResolveTenantId_When_TenantIdInAccessTokenClaim() {
     // given
-    when(authenticatedRequest.getUserPrincipal()).thenReturn(new JwtAuthenticationToken(buildJwt()));
+    givenUserIsAuthenticated();
 
     // when
     Optional<Long> resolvedTenantId = accessTokenTenantResolver.resolve(authenticatedRequest);
