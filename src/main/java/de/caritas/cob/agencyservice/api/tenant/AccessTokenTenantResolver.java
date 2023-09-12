@@ -33,11 +33,15 @@ public class AccessTokenTenantResolver implements TenantResolver {
 
   private Optional<Long> getUserTenantIdAttribute(Map<String, Object> claimMap) {
     if (claimMap.containsKey(TENANT_ID)) {
-      Integer tenantId = (Integer) claimMap.get(TENANT_ID);
-      return Optional.of(Long.valueOf(tenantId));
-    } else {
-      return Optional.empty();
+      Object tenantIdObject = claimMap.get(TENANT_ID);
+      if (tenantIdObject instanceof Long tenantId) {
+        return Optional.of(tenantId);
+      }
+      if (tenantIdObject instanceof Integer tenantId) {
+        return Optional.of(Long.valueOf(tenantId));
+      }
     }
+    return Optional.empty();
   }
 
   private Map<String, Object> getClaimMap() {
