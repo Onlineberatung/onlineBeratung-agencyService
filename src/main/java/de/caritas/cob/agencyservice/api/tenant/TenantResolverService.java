@@ -118,6 +118,6 @@ public class TenantResolverService {
        but BearerTokenAuthenticationFilter has already set the principal in the SecurityContext */
     SecurityContext context = SecurityContextHolder.getContext();
     return context.getAuthentication() != null
-        && context.getAuthentication().getPrincipal() != null;
+        && context.getAuthentication().isAuthenticated();
   }
 }
