@@ -21,26 +21,6 @@ public class AuthorisationService {
   private final RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper =
       new RoleAuthorizationAuthorityMapper();
 
-  public boolean hasAuthority(String authorityName) {
-    return getAuthentication().getAuthorities().stream()
-        .anyMatch(role -> authorityName.equals(role.getAuthority()));
-  }
-
-  public boolean hasRole(String roleName) {
-    var roles = extractRealmRoles(getPrincipal());
-    return roles != null && roles.contains(roleName);
-  }
-
-  public Optional<Long> findTenantIdInAccessToken() {
-    Jwt principal = getPrincipal();
-    Long tenantId = (Long) principal.getClaims().get("tenantId");
-
-    if (tenantId == null) {
-      throw new AccessDeniedException("tenantId attribute not found in the access token");
-    }
-    return Optional.of(tenantId);
-  }
-
   public Object getUsername() {
     return getPrincipal().getClaims().get("username");
   }

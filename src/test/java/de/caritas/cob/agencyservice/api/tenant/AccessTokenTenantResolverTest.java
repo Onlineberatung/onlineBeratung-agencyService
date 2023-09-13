@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Maps;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.util.Sets;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -18,32 +21,56 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @ExtendWith(MockitoExtension.class)
 class AccessTokenTenantResolverTest {
-  @Mock
-  HttpServletRequest authenticatedRequest;
-
-  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-  KeycloakAuthenticationToken token;
 
   @InjectMocks
   AccessTokenTenantResolver accessTokenTenantResolver;
 
+  @Mock
+  SecurityContext mockSecurityContext;
+
+  @Mock
+  Authentication mockAuthentication;
+
+  @Mock
+  HttpServletRequest authenticatedRequest;
+
+  @AfterEach
+  public void tearDown() {
+    SecurityContextHolder.clearContext();
+  }
+
+  private void givenUserIsAuthenticated() {
+    SecurityContextHolder.setContext(mockSecurityContext);
+    when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+    when(mockAuthentication.getPrincipal()).thenReturn(buildJwt());
+  }
+
   @Test
   void resolve_Should_ResolveTenantId_When_TenantIdInAccessTokenClaim() {
     // given
-    when(authenticatedRequest.getUserPrincipal()).thenReturn(token);
-
-    HashMap<String, Object> claimMap = givenClaimMapContainingTenantId(1);
-    when(token.getAccount().getKeycloakSecurityContext().getToken().getOtherClaims())
-        .thenReturn(claimMap);
+    givenUserIsAuthenticated();
 
     // when
     Optional<Long> resolvedTenantId = accessTokenTenantResolver.resolve(authenticatedRequest);
 
     // then
     assertThat(resolvedTenantId).isEqualTo(Optional.of(1L));
+  }
+
+  private Jwt buildJwt() {
+    Map<String, Object> headers = new HashMap<>();
+    headers.put("alg", "HS256"); // Signature algorithm
+    headers.put("typ", "JWT"); // Token type
+    return new Jwt(
+        "token", Instant.now(), Instant.now(), headers, givenClaimMapContainingTenantId(1));
   }
 
   private HashMap<String, Object> givenClaimMapContainingTenantId(Integer tenantId) {
