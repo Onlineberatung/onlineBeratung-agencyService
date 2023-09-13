@@ -21,7 +21,6 @@ import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConvert
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
@@ -75,9 +74,6 @@ class AgencyAdminServiceTest {
 
   @Mock
   private Logger logger;
-
-  @Mock
-  AuthenticatedUser authenticatedUser;
 
   @Captor private ArgumentCaptor<Agency> agencyArgumentCaptor;
 

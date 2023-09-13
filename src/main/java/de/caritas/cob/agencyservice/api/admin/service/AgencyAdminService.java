@@ -12,7 +12,6 @@ import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConvert
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
@@ -28,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +36,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
@@ -46,11 +43,6 @@ public class AgencyAdminService {
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
   private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
   private final @NonNull AppointmentService appointmentService;
-
-  private final @NonNull AuthenticatedUser authenticatedUser;
-  @Value("${multitenancy.enabled}")
-  private boolean multitenancy;
-
 
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
@@ -117,7 +109,8 @@ public class AgencyAdminService {
   }
 
   private List<AgencyDTO.CounsellingRelationsEnum> getAllPossibleCounsellingRelations() {
-    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values()).toList();
+    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values())
+        .collect(Collectors.toList());
 
   }
 
@@ -144,7 +137,6 @@ public class AgencyAdminService {
         .counsellingRelations(Joiner.on(",").join(agencyDTO.getCounsellingRelations()))
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
-
 
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
