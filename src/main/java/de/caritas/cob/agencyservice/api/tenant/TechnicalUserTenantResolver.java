@@ -1,9 +1,14 @@
 package de.caritas.cob.agencyservice.api.tenant;
 
+import com.google.common.collect.Lists;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,18 +16,33 @@ public class TechnicalUserTenantResolver implements TenantResolver {
 
   @Override
   public Optional<Long> resolve(HttpServletRequest request) {
-    return isTechnicalUserRole(request) ? Optional.of(0L) : Optional.empty();
+    return isTechnicalUserRole() ? Optional.of(0L) : Optional.empty();
   }
 
-  private boolean isTechnicalUserRole(HttpServletRequest request) {
-    AccessToken token = ((KeycloakAuthenticationToken) request.getUserPrincipal()).getAccount()
-        .getKeycloakSecurityContext().getToken();
-    return hasRoles(token) && token.getRealmAccess().getRoles().contains("technical");
+  private boolean isTechnicalUserRole() {
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null) {
+      Jwt jwt = (Jwt) authentication.getPrincipal();
+      return getRealmRoles(jwt).contains("technical");
+    }
+    return false;
   }
 
-  private boolean hasRoles(AccessToken accessToken) {
-    return accessToken.getRealmAccess() != null && accessToken.getRealmAccess().getRoles() != null;
+  private Collection<String> getRealmRoles(Jwt jwt) {
+
+    if (jwt != null) {
+      var claims = jwt.getClaims();
+      if (claims.containsKey("realm_access")) {
+        Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
+        if (realmAccess.containsKey("roles")) {
+          return (List<String>) realmAccess.get("roles");
+        }
+      }
+    }
+    return Lists.newArrayList();
   }
+
 
   @Override
   public boolean canResolve(HttpServletRequest request) {
