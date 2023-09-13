@@ -43,6 +43,11 @@ public class AuthenticatedUser {
   }
 
   @JsonIgnore
+  public boolean isTenantSuperAdmin() {
+    return nonNull(roles) && roles.contains(Authority.TENANT_ADMIN.getRoleName());
+  }
+
+  @JsonIgnore
   public boolean hasRestrictedAgencyPriviliges() {
     return isRestrictedAgencyAdmin() && !isAgencySuperAdmin();
   }
