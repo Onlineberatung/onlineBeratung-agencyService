@@ -18,6 +18,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyTenantUnawareRepository;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
@@ -40,6 +41,9 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
+
+  private final @NonNull AgencyTenantUnawareRepository agencyTenantUnawareRepository;
+
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
   private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
@@ -110,8 +114,7 @@ public class AgencyAdminService {
   }
 
   private List<AgencyDTO.CounsellingRelationsEnum> getAllPossibleCounsellingRelations() {
-    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values())
-        .collect(Collectors.toList());
+    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values()).toList();
 
   }
 
@@ -263,5 +266,9 @@ public class AgencyAdminService {
     agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
     this.agencyRepository.save(agency);
     this.appointmentService.deleteAgency(agency);
+  }
+
+  public List<Agency> getAgenciesByTenantId(Long tenantId) {
+    return this.agencyTenantUnawareRepository.findByTenantId(tenantId);
   }
 }

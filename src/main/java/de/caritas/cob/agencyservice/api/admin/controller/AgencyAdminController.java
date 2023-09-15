@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.admin.controller;
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostcodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
@@ -21,8 +22,7 @@ import io.swagger.annotations.Api;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import io.swagger.annotations.Authorization;
-import javax.ws.rs.BadRequestException;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -222,4 +222,17 @@ public class AgencyAdminController implements AgencyadminApi {
     this.agencyAdminService.changeAgencyType(agencyId, agencyTypeRequestDTO);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<List<AgencyAdminFullResponseDTO>> getAgenciesByTenantId(
+      Long tenantId) {
+
+    var agencies = this.agencyAdminService.getAgenciesByTenantId(tenantId);
+    var agenciesResponse = agencies.stream()
+        .map(agency -> new AgencyAdminFullResponseDTOBuilder(agency)
+            .fromAgency()).toList();
+
+    return new ResponseEntity<>(agenciesResponse, HttpStatus.OK);
+  }
+
 }

@@ -46,6 +46,8 @@ class AgencyAdminControllerIT {
 
   static final String PATH_GET_AGENCY_BY_ID = "/agencyadmin/agencies/1";
 
+  static final String PATH_GET_AGENCY_BY_TENANT_ID = "/agencyadmin/agencies/tenant/1";
+
   private MockMvc mockMvc;
 
   @MockBean
@@ -386,4 +388,15 @@ class AgencyAdminControllerIT {
             .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
+
+  @Test
+  @WithMockUser(authorities = {"NOT_AUTHORIZED"})
+  void getAgencyByTenantId_Should_returnIsForbidden_When_calledAsUnauthorizedUser()
+      throws Exception {
+    mockMvc.perform(get(PATH_GET_AGENCY_BY_TENANT_ID)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+  // TODO add more tests to cover PATH_GET_AGENCY_BY_TENANT_ID
 }
