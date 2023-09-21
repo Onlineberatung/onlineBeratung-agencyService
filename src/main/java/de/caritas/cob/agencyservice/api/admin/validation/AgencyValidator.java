@@ -50,7 +50,6 @@ public class AgencyValidator {
 
   private ValidateAgencyDTO fromAgencyDto(AgencyDTO agencyDto) {
     return ValidateAgencyDTO.builder()
-        .dioceseId(agencyDto.getDioceseId())
         .postcode(agencyDto.getPostcode())
         .consultingType(agencyDto.getConsultingType())
         .demographicsDTO(agencyDto.getDemographics())
@@ -60,7 +59,6 @@ public class AgencyValidator {
   private ValidateAgencyDTO fromUpdateAgencyDto(Long agencyId, UpdateAgencyDTO updateAgencyDTO) {
     return ValidateAgencyDTO.builder()
         .id(agencyId)
-        .dioceseId(updateAgencyDTO.getDioceseId())
         .postcode(updateAgencyDTO.getPostcode())
         .offline(updateAgencyDTO.getOffline())
         .demographicsDTO(updateAgencyDTO.getDemographics())

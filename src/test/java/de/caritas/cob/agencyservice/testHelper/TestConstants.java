@@ -153,7 +153,6 @@ public class TestConstants {
   public static final String AGENCY_DESCRIPTION = "Test description";
   public static final Agency AGENCY_SUCHT = Agency.builder()
       .id(AGENCY_ID)
-      .dioceseId(10L)
       .name(AGENCY_NAME)
       .description(AGENCY_DESCRIPTION)
       .postCode(POSTCODE)
@@ -164,14 +163,14 @@ public class TestConstants {
       .isExternal(false)
       .build();
 
-  public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
+  public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, AGENCY_NAME,
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, false, null, null, null,
       null, null, null, null, null, null, null);
   public static final Agency AGENCY_ONLINE_U25 =
-      new Agency(AGENCY_ID, 10L, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
+      new Agency(AGENCY_ID, AGENCY_NAME, AGENCY_DESCRIPTION, POSTCODE, "Test city",
           false, CONSULTING_TYPE_U25, false, null, false, null, null, null, null, null, null, null, null, null, null);
-  public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, 10L, AGENCY_NAME,
+  public static final Agency AGENCY_OFFLINE = new Agency(AGENCY_ID, AGENCY_NAME,
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_SUCHT, true, null, false, null, null, null, null, null, null, null, null, null, null);
   public static final AgencyResponseDTO AGENCY_RESPONSE_DTO =
@@ -208,18 +207,10 @@ public class TestConstants {
   public static final String INVALID_CONSULTING_TYPE_QUERY = "consultingType=xyz";
   public static final String INVALID_AGENCY_ID = "12xX";
 
-  public static final Long INVALID_DIOCESE_ID = -1L;
-
-  public static final Integer PAGE_1 = 1;
-  public static final Integer PAGE_2 = 2;
-  public static final Integer PAGE_3 = 3;
-  public static final Integer PER_PAGE_1 = 1;
-
   public static final String VALID_AGENCY_DTO = "{\n"
       + "  \"city\": \"City\",\n"
       + "  \"consultingType\": " + CONSULTING_TYPE_AIDS + ",\n"
       + "  \"description\": \"Description\",\n"
-      + "  \"dioceseId\": 1,\n"
       + "  \"name\": \"Agency\",\n"
       + "  \"postcode\": \"76000\",\n"
       + "  \"teamAgency\": false,\n"
@@ -230,7 +221,6 @@ public class TestConstants {
   public static final String VALID_AGENCY_UPDATE_DTO = "{\n"
       + "  \"city\": \"City\",\n"
       + "  \"description\": \"Description\",\n"
-      + "  \"dioceseId\": 1,\n"
       + "  \"name\": \"Agency\",\n"
       + "  \"postcode\": \"76000\",\n"
       + "  \"offline\": true,\n"
