@@ -185,6 +185,7 @@ public class AgencyAdminService {
     var updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(updatedAgency);
+    agencyRepository.flush();
     return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }
