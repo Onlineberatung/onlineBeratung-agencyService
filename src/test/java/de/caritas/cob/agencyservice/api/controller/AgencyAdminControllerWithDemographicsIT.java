@@ -88,7 +88,6 @@ class AgencyAdminControllerWithDemographicsIT {
         .thenReturn(new ExtendedConsultingTypeResponseDTO());
 
     AgencyDTO agencyDTO = new AgencyDTO()
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .teamAgency(true)
@@ -121,7 +120,6 @@ class AgencyAdminControllerWithDemographicsIT {
         .thenReturn(extendedConsultingTypeResponseDTO);
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(0L)
         .name("Test update name")
         .description("Test update description")
         .external(true)
@@ -153,7 +151,6 @@ class AgencyAdminControllerWithDemographicsIT {
         .thenReturn(extendedConsultingTypeResponseDTO);
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(0L)
         .name("Test update name")
         .description("Test update description")
         .external(true)

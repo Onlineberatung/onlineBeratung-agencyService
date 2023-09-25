@@ -9,7 +9,6 @@ public class PathConstants {
   public static final String UPDATE_DELETE_AGENCY_PATH = ROOT_PATH + "/agencies/1";
   public static final String CHANGE_AGENCY_TYPE_PATH = ROOT_PATH + "/agencies/1/changetype";
   public static final String CREATE_AGENCY_PATH = ROOT_PATH + "/agencies";
-  public static final String GET_DIOCESES_PATH = ROOT_PATH + "/dioceses";
   public static final String AGENCY_SEARCH_PATH = ROOT_PATH + "/agencies";
   public static final String PAGE_PARAM = "page";
   public static final String PER_PAGE_PARAM = "perPage";

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 public enum Authority {
 
   AGENCY_ADMIN("agency-admin", "AUTHORIZATION_AGENCY_ADMIN"),
+  TENANT_ADMIN("tenant-admin", "AUTHORIZATION_TENANT_ADMIN"),
   RESTRICTED_AGENCY_ADMIN("restricted-agency-admin", "AUTHORIZATION_RESTRICTED_AGENCY_ADMIN");
 
   private final String roleName;
