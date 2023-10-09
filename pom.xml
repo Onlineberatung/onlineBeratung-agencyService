@@ -16,33 +16,37 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.5</version>
+    <version>3.0.6</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <keycloak.version>17.0.0</keycloak.version>
     <!-- force at least version 2.16 due to https://logging.apache.org/log4j/2.x/security.html -->
     <log4j.version>2.17.1</log4j.version>
-    <openapi.generator.maven.version>6.2.1</openapi.generator.maven.version>
-    <hibernate-search-orm.version>5.11.10.Final</hibernate-search-orm.version>
+    <openapi.generator.maven.version>6.6.0</openapi.generator.maven.version>
     <jackson-databind-nullable.version>0.2.3</jackson-databind-nullable.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <commons-lang3.version>3.11</commons-lang3.version>
     <liquibase-maven-plugin.version>4.1.1</liquibase-maven-plugin.version>
     <h2.version>1.4.200</h2.version>
-    <powermock-module-junit4.version>2.0.2</powermock-module-junit4.version>
+    <powermock-module-junit4.version>2.0.9</powermock-module-junit4.version>
     <ehcache.version>2.10.6</ehcache.version>
     <easy-random-core.version>5.0.0</easy-random-core.version>
-    <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>
+    <spring-boot-autoconfigure.version>3.0.6</spring-boot-autoconfigure.version>
     <liquibase-core.version>4.9.1</liquibase-core.version>
     <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-    <spring-security-core.version>5.7.5</spring-security-core.version>
+    <spring-security.version>6.0.5</spring-security.version>
     <springfox.version>2.9.2</springfox.version>
     <springfox-swagger-ui.version>2.10.0</springfox-swagger-ui.version>
+    <spring-security-oauth2-test-webmvc-addons.version>3.0.1</spring-security-oauth2-test-webmvc-addons.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <hibernate.search.version>6.1.1.Final</hibernate.search.version>
+    <springfox.boot.starter.version>3.0.0</springfox.boot.starter.version>
   </properties>
 
   <dependencies>
@@ -71,27 +75,33 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring-security.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
-      <version>${spring-security-core.version}</version>
+      <version>${spring-security.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
-      <version>${spring-security-core.version}</version>
+      <version>${spring-security.version}</version>
     </dependency>
     <!-- Spring actuator  -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <!-- Search dependencies -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search-orm</artifactId>
-      <version>${hibernate-search-orm.version}</version>
     </dependency>
 
     <!-- OpenApi/Swagger dependencies -->
@@ -113,19 +123,19 @@
     </dependency>
     <!-- SpringFox: generate YAML file from POJOs and generate documentation -->
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>${springfox.version}</version>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.2.15</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
-      <artifactId>springfox-bean-validators</artifactId>
-      <version>${springfox.version}</version>
+      <artifactId>springfox-boot-starter</artifactId>
+      <version>${springfox.boot.starter.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <version>${springfox-swagger-ui.version}</version>
+      <groupId>io.swagger.parser.v3</groupId>
+      <artifactId>swagger-parser</artifactId>
+      <version>2.1.15</version>
     </dependency>
 
     <dependency>
@@ -189,44 +199,12 @@
       <artifactId>liquibase-maven-plugin</artifactId>
       <version>${liquibase-maven-plugin.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
-      <version>${liquibase-core.version}</version>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
     </dependency>
 
-    <!-- Test scope dependencies -->
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>test</scope>
-      <version>${h2.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-test</artifactId>
-      <scope>test</scope>
-      <exclusions>
-      </exclusions>
-
-    </dependency>
-    <dependency>
-      <artifactId>powermock-module-junit4</artifactId>
-      <groupId>org.powermock</groupId>
-      <scope>test</scope>
-      <version>${powermock-module-junit4.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <groupId>org.powermock</groupId>
-      <scope>test</scope>
-      <version>${powermock-module-junit4.version}</version>
-    </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
@@ -261,6 +239,7 @@
       <version>${log4j.version}</version>
     </dependency>
 
+
     <!-- EasyRandom -->
     <dependency>
       <groupId>org.jeasy</groupId>
@@ -269,14 +248,48 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${spring-boot-autoconfigure.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.2.15</version>
+    </dependency>
+
+
+
+    <!-- Test scope dependencies -->
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+      <version>${h2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- required only for WebMvc "fluent" API -->
+      <groupId>com.c4-soft.springaddons</groupId>
+      <artifactId>spring-security-oauth2-test-webmvc-addons</artifactId>
+      <version>${spring-security-oauth2-test-webmvc-addons.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -309,6 +322,7 @@
               <configOptions>
                 <interfaceOnly>true</interfaceOnly>
                 <sourceFolder>/</sourceFolder>
+                <useSpringBoot3>true</useSpringBoot3>
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
@@ -328,6 +342,7 @@
               <configOptions>
                 <interfaceOnly>true</interfaceOnly>
                 <sourceFolder>/</sourceFolder>
+                <useSpringBoot3>true</useSpringBoot3>
               </configOptions>
               <inputSpec>${project.basedir}/api/agencyadminservice.yaml</inputSpec>
               <generatorName>spring</generatorName>
@@ -369,6 +384,7 @@
                 <sourceFolder>/</sourceFolder>
                 <library>resttemplate</library>
                 <dateLibrary>java8</dateLibrary>
+                <useSpringBoot3>true</useSpringBoot3>
               </configOptions>
               <inputSpec>${project.basedir}/services/useradminservice.yaml</inputSpec>
               <generatorName>java</generatorName>
@@ -393,6 +409,7 @@
                 <sourceFolder>/</sourceFolder>
                 <library>resttemplate</library>
                 <dateLibrary>java8</dateLibrary>
+                <useSpringBoot3>true</useSpringBoot3>
               </configOptions>
               <inputSpec>${project.basedir}/services/consultingtypeservice.yaml</inputSpec>
               <generatorName>java</generatorName>
@@ -418,6 +435,7 @@
                 <sourceFolder>/</sourceFolder>
                 <library>resttemplate</library>
                 <dateLibrary>java8</dateLibrary>
+                <useSpringBoot3>true</useSpringBoot3>
               </configOptions>
               <inputSpec>${project.basedir}/services/applicationsettingsservice.yml</inputSpec>
               <generatorName>java</generatorName>
@@ -443,6 +461,7 @@
                 <sourceFolder>/</sourceFolder>
                 <library>resttemplate</library>
                 <dateLibrary>java8</dateLibrary>
+                <useSpringBoot3>true</useSpringBoot3>
               </configOptions>
               <inputSpec>${project.basedir}/services/tenantservice.yaml</inputSpec>
               <generatorName>java</generatorName>
@@ -522,14 +541,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <id>validate</id>
             <phase>validate</phase>
             <configuration>
               <configLocation>google_checks_light.xml</configLocation>
-              <encoding>UTF-8</encoding>
               <failsOnError>true</failsOnError>
               <consoleOutput>true</consoleOutput>
               <failOnViolation>true</failOnViolation>
@@ -545,10 +563,20 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>17</source>
+          <target>17</target>
+          <compilerArgs>--enable-preview</compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin
         </artifactId> <!-- surefire plugin version managed by Spring Boot -->
         <configuration>
           <skipTests>true</skipTests>
+          <argLine>--enable-preview</argLine>
         </configuration>
         <executions>
           <execution>

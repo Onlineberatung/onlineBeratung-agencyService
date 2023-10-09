@@ -6,7 +6,7 @@ import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Regi
 import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.BasicConsultingTypeResponseDTORegistration;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
-import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.WhiteSpotDTO;
+import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTOAllOfWhiteSpot;
 
 public class ExtendedConsultingTypeResponseDTOHelper {
 
@@ -15,9 +15,9 @@ public class ExtendedConsultingTypeResponseDTOHelper {
 
     var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
 
-    WhiteSpotDTO whiteSpotDTO = null;
+    ExtendedConsultingTypeResponseDTOAllOfWhiteSpot whiteSpotDTO = null;
     if (nonNull(whiteSpot)) {
-      whiteSpotDTO = new WhiteSpotDTO();
+      whiteSpotDTO = new ExtendedConsultingTypeResponseDTOAllOfWhiteSpot();
       if (nonNull(whiteSpot.getWhiteSpotAgencyId())) {
         whiteSpotDTO.setWhiteSpotAgencyId(whiteSpot.getWhiteSpotAgencyId().intValue());
       }

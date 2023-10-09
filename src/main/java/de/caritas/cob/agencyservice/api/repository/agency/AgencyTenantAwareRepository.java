@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +14,7 @@ import org.springframework.data.repository.query.Param;
  */
 @Primary
 @ConditionalOnExpression("${multitenancy.enabled:true}")
-public interface AgencyTenantAwareRepository extends CrudRepository<Agency, Long>, AgencyRepository {
+public interface AgencyTenantAwareRepository extends JpaRepository<Agency, Long>, AgencyRepository {
 
 
   String AND_A_TENANT_ID_FILTER = "AND a.tenant_id = :tenantId ";

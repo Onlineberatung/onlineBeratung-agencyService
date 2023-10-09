@@ -94,7 +94,7 @@ class AgencyOfflineStatusValidatorTest {
     EasyRandom easyRandom = new EasyRandom();
     this.validateAgencyDto = easyRandom.nextObject(ValidateAgencyDTO.class);
     this.consultingTypeSettings = easyRandom.nextObject(ExtendedConsultingTypeResponseDTO.class);
-    this.consultingTypeSettings.setWhiteSpot(easyRandom.nextObject(de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.WhiteSpotDTO.class));
+    this.consultingTypeSettings.setWhiteSpot(easyRandom.nextObject(de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTOAllOfWhiteSpot.class));
   }
 
   @ParameterizedTest

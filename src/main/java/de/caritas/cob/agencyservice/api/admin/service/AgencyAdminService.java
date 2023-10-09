@@ -20,12 +20,12 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
+import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +94,9 @@ public class AgencyAdminService {
    */
   public AgencyAdminFullResponseDTO createAgency(AgencyDTO agencyDTO) {
     setDefaultCounsellingRelationsIfEmpty(agencyDTO);
-    var savedAgency = agencyRepository.save(fromAgencyDTO(agencyDTO));
+    Agency agency = fromAgencyDTO(agencyDTO);
+    agency.setTenantId(TenantContext.getCurrentTenant());
+    var savedAgency = agencyRepository.save(agency);
     enrichWithAgencyTopicsIfTopicFeatureEnabled(savedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(savedAgency);
     return new AgencyAdminFullResponseDTOBuilder(savedAgency)
@@ -225,6 +227,8 @@ public class AgencyAdminService {
       // and we have to consider this and pass it for merging.
       agencyToUpdate.setAgencyTopics(agency.getAgencyTopics());
     }
+
+    agencyToUpdate.setTenantId(agency.getTenantId());
     return agencyToUpdate;
   }
 

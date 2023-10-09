@@ -14,7 +14,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeE
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.service.LogService;
 import java.net.UnknownHostException;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.NoArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -71,48 +71,6 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     LogService.logWarning(ex);
 
     return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-  }
-
-  /**
-   * Incoming request body could not be deserialized.
-   *
-   * @param ex      the thrown exception
-   * @param headers http headers
-   * @param status  http status
-   * @param request web request
-   * @return response entity
-   */
-  @NonNull
-  @Override
-  protected ResponseEntity<Object> handleHttpMessageNotReadable(
-      final @NonNull HttpMessageNotReadableException ex,
-      final @NonNull HttpHeaders headers,
-      final @NonNull HttpStatus status,
-      final @NonNull WebRequest request) {
-    LogService.logWarning(status, ex);
-
-    return handleExceptionInternal(ex, null, headers, status, request);
-  }
-
-  /**
-   * Valid on object fails validation.
-   *
-   * @param ex      the thrown exception
-   * @param headers http headers
-   * @param status  http status
-   * @param request web request
-   * @return response entity
-   */
-  @NonNull
-  @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      final @NonNull MethodArgumentNotValidException ex,
-      final @NonNull HttpHeaders headers,
-      final @NonNull HttpStatus status,
-      final @NonNull WebRequest request) {
-    LogService.logWarning(status, ex);
-
-    return handleExceptionInternal(ex, null, headers, status, request);
   }
 
   /**

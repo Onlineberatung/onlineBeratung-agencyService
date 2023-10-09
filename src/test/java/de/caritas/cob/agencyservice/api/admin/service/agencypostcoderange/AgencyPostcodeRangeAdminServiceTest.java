@@ -4,17 +4,18 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.reflect.Whitebox.setInternalState;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
+import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
@@ -63,7 +64,6 @@ class AgencyPostcodeRangeAdminServiceTest {
     this.easyRandom = new EasyRandom();
     this.postcodeRangeDTO = this.easyRandom.nextObject(PostcodeRangeDTO.class);
     setField(agencyPostcodeRangeAdminService, "postcodeRangeValidator", postcodeRangeValidator);
-    setInternalState(LogService.class, "LOGGER", logger);
   }
 
   @Test
@@ -87,7 +87,12 @@ class AgencyPostcodeRangeAdminServiceTest {
     when(agencyPostcodeRangeRepository.save(any())).thenReturn(easyRandom.nextObject(
         AgencyPostcodeRange.class));
 
-    agencyPostcodeRangeAdminService.createPostcodeRanges(AGENCY_ID, postcodeRangeDTO);
+    agencyPostcodeRangeAdminService.createPostcodeRanges(
+        AGENCY_ID, postcodeRangeDTO);
+
+    ArgumentCaptor<AgencyPostcodeRange> captor = ArgumentCaptor.forClass(AgencyPostcodeRange.class);
+    verify(agencyPostcodeRangeRepository).save(captor.capture());
+    assertThat(captor.getValue().getTenantId(), notNullValue());
 
     verify(postcodeRangeValidator, times(1)).validatePostcodeRanges(any());
   }
