@@ -5,7 +5,6 @@ import static de.caritas.cob.agencyservice.testHelper.PathConstants.AGENCY_SEARC
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CHANGE_AGENCY_TYPE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_PATH;
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PER_PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.ROOT_PATH;
@@ -28,15 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
-import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostcodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
@@ -80,8 +76,6 @@ public class AgencyAdminControllerTest {
   @MockBean
   private LinkDiscoverers linkDiscoverers;
   @MockBean
-  private DioceseAdminService dioceseAdminService;
-  @MockBean
   private RoleAuthorizationAuthorityMapper roleAuthorizationAuthorityMapper;
 
   @MockBean
@@ -119,26 +113,10 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void getDioceses_Should_returnOk_When_requiredPaginationParamsAreGiven() throws Exception {
-    this.mvc
-        .perform(get(GET_DIOCESES_PATH).param(PAGE_PARAM, "0").param(PER_PAGE_PARAM, "1"))
-        .andExpect(status().isOk());
-
-    Mockito.verify(this.dioceseAdminService, Mockito.times(1)).findAllDioceses(0, 1);
-  }
-
-  @Test
-  public void getDioceses_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
-      throws Exception {
-    this.mvc.perform(get(GET_DIOCESES_PATH)).andExpect(status().isBadRequest());
-  }
-
-  @Test
   public void createAgency_Should_returnCreated_When_AgencyDtoIsGiven() throws Exception {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(agencyDTO.getDemographics());
@@ -173,7 +151,6 @@ public class AgencyAdminControllerTest {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(agencyDTO.getDemographics());
@@ -188,30 +165,10 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void createAgency_Should_ReturnBadRequest_WhenAgencyDiocese_IsInvalid() throws Exception {
-
-    EasyRandom easyRandom = new EasyRandom();
-    AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setDioceseId(1L);
-    agencyDTO.setPostcode(VALID_POSTCODE);
-    agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
-    setValidDemographics(agencyDTO.getDemographics());
-    doThrow(new InvalidDioceseException()).when(agencyValidator).validate(agencyDTO);
-    this.mvc
-        .perform(
-            post(CREATE_AGENCY_PATH)
-                .content(new ObjectMapper().writeValueAsString(agencyDTO))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest())
-        .andExpect(header().string("X-Reason", "INVALID_DIOCESE"));
-  }
-
-  @Test
   public void createAgency_Should_ReturnBadRequest_WhenAgencyPostcode_IsInvalid() throws Exception {
 
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    agencyDTO.setDioceseId(1L);
     agencyDTO.setPostcode(VALID_POSTCODE);
     agencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(agencyDTO.getDemographics());
@@ -260,7 +217,6 @@ public class AgencyAdminControllerTest {
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
-    updateAgencyDTO.setDioceseId(1L);
     updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
     AgencyAdminFullResponseDTO agencyAdminFullResponseDTO =
@@ -291,7 +247,6 @@ public class AgencyAdminControllerTest {
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
-    updateAgencyDTO.setDioceseId(1L);
     updateAgencyDTO.setName("name");
     updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
@@ -308,31 +263,11 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
-  public void updateAgency_Should_ReturnBadRequest_WhenAgencyDiocese_IsInvalid() throws Exception {
-
-    EasyRandom easyRandom = new EasyRandom();
-    UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    updateAgencyDTO.setPostcode(VALID_POSTCODE);
-    updateAgencyDTO.setDioceseId(1L);
-    updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
-    setValidDemographics(updateAgencyDTO.getDemographics());
-    doThrow(new InvalidDioceseException()).when(agencyValidator).validate(1L, updateAgencyDTO);
-    this.mvc
-        .perform(
-            put(UPDATE_DELETE_AGENCY_PATH)
-                .content(new ObjectMapper().writeValueAsString(updateAgencyDTO))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest())
-        .andExpect(header().string("X-Reason", "INVALID_DIOCESE"));
-  }
-
-  @Test
   public void updateAgency_Should_ReturnBadRequest_WhenAgencyPostcode_IsInvalid() throws Exception {
 
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
-    updateAgencyDTO.setDioceseId(1L);
     updateAgencyDTO.setConsultingType(CONSULTING_TYPE_PREGNANCY);
     setValidDemographics(updateAgencyDTO.getDemographics());
     doThrow(new InvalidPostcodeException()).when(agencyValidator).validate(1L, updateAgencyDTO);

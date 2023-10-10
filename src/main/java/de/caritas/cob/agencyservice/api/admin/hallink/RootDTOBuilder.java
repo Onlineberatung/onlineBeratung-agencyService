@@ -28,7 +28,6 @@ public class RootDTOBuilder implements HalLinkBuilder {
             .self(buildSelfLink())
             .agencies(buildSearchLink())
             .agency(buildAgencyLink())
-            .dioceses(buildDiocesesLink())
             .agencypostcodes(buildAgencyPostCodeRangesLink()));
   }
 
@@ -52,10 +51,4 @@ public class RootDTOBuilder implements HalLinkBuilder {
     return buildHalLink(
         methodOn(AgencyadminApi.class).getAgencyPostcodeRanges(null), MethodEnum.GET);
   }
-
-  private HalLink buildDiocesesLink() {
-    return buildHalLink(methodOn(AgencyadminApi.class).getDioceses(DEFAULT_PAGE,
-        DEFAULT_PER_PAGE), MethodEnum.GET);
-  }
-
 }

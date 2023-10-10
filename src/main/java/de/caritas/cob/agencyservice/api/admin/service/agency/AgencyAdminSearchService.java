@@ -43,7 +43,6 @@ public class AgencyAdminSearchService {
   protected static final String NAME_SEARCH_FIELD = "name";
   protected static final String POST_CODE_SEARCH_FIELD = "postCode";
   protected static final String CITY_SEARCH_FIELD = "city";
-  protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
   protected final @NonNull EntityManagerFactory entityManagerFactory;
 
@@ -241,8 +240,6 @@ public class AgencyAdminSearchService {
   protected Predicate keywordSearchPredicate(String keyword, CriteriaBuilder criteriaBuilder,
       Root<Agency> root) {
     return criteriaBuilder.or(
-        criteriaBuilder.equal(root.get(DIOCESE_ID_SEARCH_FIELD),
-            isNumeric(keyword) ? Integer.parseInt(keyword.toLowerCase()) : -1),
         criteriaBuilder.like(criteriaBuilder.lower(root.get(NAME_SEARCH_FIELD)),
             "%" + keyword.toLowerCase() + "%"),
         criteriaBuilder.like(

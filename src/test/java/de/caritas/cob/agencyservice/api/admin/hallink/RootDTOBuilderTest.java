@@ -30,9 +30,6 @@ class RootDTOBuilderTest {
     assertThat(rootLinks.getAgencypostcodes().getHref(),
         is("/agencyadmin/postcoderanges/{agencyId}"));
     assertThat(rootLinks.getAgencypostcodes().getMethod(), is(MethodEnum.GET));
-    assertThat(rootLinks.getDioceses(), notNullValue());
-    assertThat(rootLinks.getDioceses().getHref(),
-        is("/agencyadmin/dioceses?page=1&perPage=20"));
     assertThat(rootLinks.getAgencypostcodes().getMethod(), is(MethodEnum.GET));
   }
 

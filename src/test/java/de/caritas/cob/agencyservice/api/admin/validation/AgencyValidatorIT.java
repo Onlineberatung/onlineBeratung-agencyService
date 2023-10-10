@@ -3,7 +3,6 @@ package de.caritas.cob.agencyservice.api.admin.validation;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SETTINGS_SUCHT;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_TYPE_SUCHT;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_VALUE;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_DIOCESE_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 import static java.util.Collections.singletonList;
@@ -17,7 +16,6 @@ import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
@@ -90,20 +88,6 @@ public class AgencyValidatorIT {
     agencyValidator.validate(agencyDTO);
   }
 
-  @Test(expected = InvalidDioceseException.class)
-  public void validate_Should_ThrowInvalidDioceseException_WhenCreateAndAgencyDioceseIdIsInvalid() {
-    AgencyDTO agencyDTO = getValidAgencyDTO();
-    agencyDTO.setDioceseId(INVALID_DIOCESE_ID);
-    agencyValidator.validate(agencyDTO);
-  }
-
-  @Test
-  public void validate_Should_NotThrowInvalidDioceseException_WhenCreateAndAgencyDioceseIdIsValid() {
-    AgencyDTO agencyDTO = getValidAgencyDTO();
-    agencyDTO.setDioceseId(0L);
-    agencyValidator.validate(agencyDTO);
-  }
-
   @Test(expected = InvalidPostcodeException.class)
   public void validate_Should_ThrowInvalidPostcodeException_WhenUpdateAndAgencyPostcodeIsInvalid()
       throws MissingConsultingTypeException {
@@ -119,22 +103,6 @@ public class AgencyValidatorIT {
     when(consultingTypeManager.getConsultingTypeSettings(0)).thenReturn(CONSULTING_TYPE_SETTINGS_SUCHT);
     UpdateAgencyDTO updateAgencyDTO = getValidUpdateAgencyDTO();
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
-    agencyValidator.validate(1L, updateAgencyDTO);
-  }
-
-  @Test(expected = InvalidDioceseException.class)
-  public void validate_Should_ThrowInvalidDioceseException_WhenUpdateAndAgencyDioceseIdIsInvalid() {
-    UpdateAgencyDTO updateAgencyDTO = getValidUpdateAgencyDTO();
-    updateAgencyDTO.setDioceseId(INVALID_DIOCESE_ID);
-    agencyValidator.validate(1L, updateAgencyDTO);
-  }
-
-  @Test
-  public void validate_Should_NotThrowInvalidDioceseException_WhenUpdateAndAgencyDioceseIdIsValid()
-      throws MissingConsultingTypeException {
-    when(consultingTypeManager.getConsultingTypeSettings(0)).thenReturn(CONSULTING_TYPE_SETTINGS_SUCHT);
-    UpdateAgencyDTO updateAgencyDTO = getValidUpdateAgencyDTO();
-    updateAgencyDTO.setDioceseId(0L);
     agencyValidator.validate(1L, updateAgencyDTO);
   }
 
@@ -169,19 +137,15 @@ public class AgencyValidatorIT {
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setConsultingType(CONSULTING_TYPE_SUCHT);
     agencyDTO.setPostcode(VALID_POSTCODE);
-    agencyDTO.setDioceseId(0L);
     return agencyDTO;
 
   }
 
   private UpdateAgencyDTO getValidUpdateAgencyDTO() {
-
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO updateAgencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
     updateAgencyDTO.setPostcode(VALID_POSTCODE);
-    updateAgencyDTO.setDioceseId(0L);
     return updateAgencyDTO;
-
   }
 
 

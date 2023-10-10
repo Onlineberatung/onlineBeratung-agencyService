@@ -83,7 +83,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").exists())
-        .andExpect(jsonPath("_embedded.dioceseId").exists())
         .andExpect(jsonPath("_embedded.city").exists())
         .andExpect(jsonPath("_embedded.consultingType").exists())
         .andExpect(jsonPath("_embedded.description").exists())
@@ -107,7 +106,6 @@ class AgencyAdminControllerIT {
         .thenReturn(new ExtendedConsultingTypeResponseDTO());
 
     AgencyDTO agencyDTO = new AgencyDTO()
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .postcode("12345")
@@ -125,7 +123,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("_embedded.id").exists())
         .andExpect(jsonPath("_embedded.name").value("Test name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(0))
         .andExpect(jsonPath("_embedded.city").value("Test city"))
         .andExpect(jsonPath("_embedded.consultingType").value(0))
         .andExpect(jsonPath("_embedded.description").value("Test description"))
@@ -152,7 +149,6 @@ class AgencyAdminControllerIT {
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
 
     AgencyDTO agencyDTO = new AgencyDTO()
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .postcode("12345")
@@ -181,7 +177,6 @@ class AgencyAdminControllerIT {
         .thenReturn(extendedConsultingTypeResponseDTO);
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .postcode("54321")
@@ -199,7 +194,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.city").value("Test update city"))
         .andExpect(jsonPath("_embedded.consultingType").value(18))
         .andExpect(jsonPath("_embedded.description").value("Test update description"))
@@ -225,7 +219,6 @@ class AgencyAdminControllerIT {
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
 
     var agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description(null)
         .offline(true)
@@ -237,7 +230,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.description").isEmpty())
         .andExpect(jsonPath("_embedded.teamAgency").value("false"))
         .andExpect(jsonPath("_embedded.external").value("false"))
@@ -263,7 +255,6 @@ class AgencyAdminControllerIT {
         Lists.newArrayList(1L));
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .postcode("54321")
@@ -280,7 +271,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.city").value("Test update city"))
         .andExpect(jsonPath("_embedded.consultingType").value(0))
         .andExpect(jsonPath("_embedded.description").value("Test update description"))
@@ -308,7 +298,6 @@ class AgencyAdminControllerIT {
         Lists.newArrayList(2L, 3L));
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .postcode("54321")
@@ -427,7 +416,6 @@ class AgencyAdminControllerIT {
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0]._embedded.id").value(1735))
-        .andExpect(jsonPath("$[0]._embedded.dioceseId").value("10"))
         .andExpect(jsonPath("$[0]._embedded.name").value("With tenant id"));
   }
 

@@ -38,7 +38,6 @@ public class AgencyAdminFullResponseDTOBuilder {
   private AgencyAdminResponseDTO createAgency() {
     var responseDTO = new AgencyAdminResponseDTO()
         .id(this.agency.getId())
-        .dioceseId(this.agency.getDioceseId())
         .name(this.agency.getName())
         .city(this.agency.getCity())
         .consultingType(this.agency.getConsultingTypeId())

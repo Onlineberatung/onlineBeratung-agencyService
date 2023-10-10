@@ -128,7 +128,6 @@ public class AgencyAdminService {
   private Agency fromAgencyDTO(AgencyDTO agencyDTO) {
 
     var agencyBuilder = Agency.builder()
-        .dioceseId(agencyDTO.getDioceseId())
         .name(agencyDTO.getName())
         .description(agencyDTO.getDescription())
         .postCode(agencyDTO.getPostcode())
@@ -186,6 +185,7 @@ public class AgencyAdminService {
     var updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(updatedAgency);
+    agencyRepository.flush();
     return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }
@@ -194,7 +194,6 @@ public class AgencyAdminService {
 
     var agencyBuilder = Agency.builder()
         .id(agency.getId())
-        .dioceseId(updateAgencyDTO.getDioceseId())
         .name(updateAgencyDTO.getName())
         .description(updateAgencyDTO.getDescription())
         .postCode(updateAgencyDTO.getPostcode())

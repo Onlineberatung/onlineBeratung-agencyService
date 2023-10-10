@@ -2,7 +2,6 @@ package de.caritas.cob.agencyservice.api.admin.controller;
 
 import de.caritas.cob.agencyservice.api.admin.hallink.RootDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
-import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostcodeRangeAdminService;
@@ -12,7 +11,6 @@ import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyPostcodeRangeResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
-import de.caritas.cob.agencyservice.api.model.DioceseAdminResultDTO;
 import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.RootDTO;
 import de.caritas.cob.agencyservice.api.model.Sort;
@@ -41,7 +39,6 @@ public class AgencyAdminController implements AgencyadminApi {
 
   private final @NonNull AgencyAdminSearchService agencyAdminSearchService;
   private final @NonNull AgencyPostcodeRangeAdminService agencyPostcodeRangeAdminService;
-  private final @NonNull DioceseAdminService dioceseAdminService;
   private final @NonNull AgencyAdminService agencyAdminService;
   private final @NonNull AgencyValidator agencyValidator;
 
@@ -65,23 +62,6 @@ public class AgencyAdminController implements AgencyadminApi {
   @Override
   public ResponseEntity<AgencyAdminFullResponseDTO> getAgency(@PathVariable Long agencyId) {
     return ResponseEntity.ok(this.agencyAdminService.findAgency(agencyId));
-  }
-
-  /**
-   * Entry point to return all dioceses.
-   *
-   * @param page    Number of page where to start in the query (1 = first page) (required)
-   * @param perPage Number of items which are being returned per page (required)
-   * @return {@link DioceseAdminResultDTO}
-   */
-  @Override
-  public ResponseEntity<DioceseAdminResultDTO> getDioceses(
-      @NotNull @Valid Integer page, @NotNull @Valid Integer perPage) {
-
-    var dioceseAdminResultDTO =
-        dioceseAdminService.findAllDioceses(page, perPage);
-
-    return new ResponseEntity<>(dioceseAdminResultDTO, HttpStatus.OK);
   }
 
   /**

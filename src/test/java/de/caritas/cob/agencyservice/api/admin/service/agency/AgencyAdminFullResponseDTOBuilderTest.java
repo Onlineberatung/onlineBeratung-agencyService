@@ -42,7 +42,6 @@ class AgencyAdminFullResponseDTOBuilderTest {
     assertEquals(agency.getName(), result.getEmbedded().getName());
     assertEquals(agency.getDescription(), result.getEmbedded().getDescription());
     assertEquals(agency.isTeamAgency(), result.getEmbedded().getTeamAgency());
-    assertEquals(agency.getDioceseId(), result.getEmbedded().getDioceseId());
     assertEquals(agency.getPostCode(), result.getEmbedded().getPostcode());
     assertEquals(agency.getCity(), result.getEmbedded().getCity());
     assertEquals(agency.isOffline(), result.getEmbedded().getOffline());

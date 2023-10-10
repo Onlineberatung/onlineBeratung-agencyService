@@ -113,7 +113,6 @@ class AgencyAdminControllerWithTopicsIT {
 
     AgencyDTO agencyDTO = new AgencyDTO()
         .topicIds(List.of(1L, 2L))
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .postcode("12345")
@@ -162,7 +161,6 @@ class AgencyAdminControllerWithTopicsIT {
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
         .topicIds(List.of(2L, 3L))
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .offline(true)
