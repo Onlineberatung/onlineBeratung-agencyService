@@ -2,10 +2,10 @@
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
-    <changeSet author="tkuzynow" id="dropDiocese">
-        <sqlFile path="db/changelog/changeset/0013_drop_diocese/dropDiocese.sql" stripComments="true"/>
+    <changeSet author="tkuzynow" id="changeConsultingTypeColumnType">
+        <sqlFile path="db/changelog/changeset/0015_change_consultingtype_column_type/changeConsultingtypeColumnType.sql" stripComments="true"/>
         <rollback>
-            <sqlFile path="db/changelog/changeset/0013_drop_diocese/dropDiocese-rollback.sql" stripComments="true"/>
+            <sqlFile path="db/changelog/changeset/0015_change_consultingtype_column_type/changeConsultingtypeColumnType-rollback.sql" stripComments="true"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

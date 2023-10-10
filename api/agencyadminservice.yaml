@@ -557,7 +557,6 @@ components:
         consultingType:
           type: integer
           minimum: 0
-          maximum: 127
           example: 1
         url:
           type: string

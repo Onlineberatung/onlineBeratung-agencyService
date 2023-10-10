@@ -16,7 +16,7 @@ create table AGENCY
     POSTCODE        varchar(5)    null     default null,
     CITY            varchar(100)  null     default null,
     IS_TEAM_AGENCY  tinyint       not null default 0,
-    CONSULTING_TYPE tinyint       null     default 0,
+    CONSULTING_TYPE int       null     default 0,
     IS_OFFLINE      tinyint       not null default 0,
     URL             varchar(500)  null     default null,
     IS_EXTERNAL     tinyint       not null default 0,
