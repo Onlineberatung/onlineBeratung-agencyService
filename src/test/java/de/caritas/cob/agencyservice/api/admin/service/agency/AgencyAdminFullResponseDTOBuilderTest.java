@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class AgencyAdminFullResponseDTOBuilderTest {
 
+  private static final Long TENANT_ID = 1L;
   AgencyAdminFullResponseDTOBuilder agencyAdminFullResponseDTOBuilder;
   Agency agency;
 
@@ -25,6 +26,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
   public void init() {
     EasyRandom easyRandom = new EasyRandom();
     this.agency = easyRandom.nextObject(Agency.class);
+    this.agency.setTenantId(TENANT_ID);
     this.agencyAdminFullResponseDTOBuilder = new AgencyAdminFullResponseDTOBuilder(agency);
     this.agency.setCounsellingRelations(AgencyDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING.getValue() + "," + AgencyDTO.CounsellingRelationsEnum.RELATIVE_COUNSELLING.getValue());
   }
@@ -95,6 +97,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     AgencyLinks agencyLinks = result.getLinks();
 
     assertThat(result).isNotNull();
+    assertEquals(TENANT_ID, result.getEmbedded().getTenantId());
     assertThat(agencyLinks.getSelf()).isNotNull();
     assertThat(agencyLinks.getSelf().getMethod()).isEqualTo(MethodEnum.GET);
     assertThat(agencyLinks.getSelf().getHref()).isEqualTo(String.format("/agencyadmin/agencies/%s", agency.getId()));

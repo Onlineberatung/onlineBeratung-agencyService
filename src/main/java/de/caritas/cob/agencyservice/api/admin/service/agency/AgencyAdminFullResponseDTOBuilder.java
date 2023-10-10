@@ -11,7 +11,6 @@ import de.caritas.cob.agencyservice.api.model.TopicDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +37,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   private AgencyAdminResponseDTO createAgency() {
     var responseDTO = new AgencyAdminResponseDTO()
         .id(this.agency.getId())
+        .tenantId(agency.getTenantId())
         .name(this.agency.getName())
         .city(this.agency.getCity())
         .consultingType(this.agency.getConsultingTypeId())
@@ -62,7 +62,7 @@ public class AgencyAdminFullResponseDTOBuilder {
       return Lists.newArrayList();
     } else {
       return Splitter.on(",").trimResults()
-          .splitToList(counsellingRelationsAsCommaSeparatedString).stream().map(AgencyAdminResponseDTO.CounsellingRelationsEnum::valueOf).collect(Collectors.toList());
+          .splitToList(counsellingRelationsAsCommaSeparatedString).stream().map(AgencyAdminResponseDTO.CounsellingRelationsEnum::valueOf).toList();
     }
   }
 
@@ -83,7 +83,7 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private List<TopicDTO> getTopics(List<AgencyTopic> agencyTopics) {
-    return agencyTopics.stream().map(AgencyTopic::getTopicData).collect(Collectors.toList());
+    return agencyTopics.stream().map(AgencyTopic::getTopicData).toList();
   }
 
   private AgencyLinks createAgencyLinks() {
