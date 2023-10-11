@@ -18,4 +18,9 @@
 	<include file="db/changelog/changeset/0010_agency_demographics/0010_changeSet.xml"/>
 	<include file="db/changelog/changeset/0011_agency_demographics_gender_column_change/0011_changeSet.xml"/>
 	<include file="db/changelog/changeset/0012_agency_counseling_relations/0012_changeSet.xml"/>
+	<include file="db/changelog/changeset/0013_make_diocese_nullable/0013_changeSet.xml"/>
+	<!-- uncomment it once confirmed diocese has been migrated correctly to tenant by migration tool
+	<include file="db/changelog/changeset/0014_drop_diocese/0014_changeSet.xml"/>
+	-->
+	<include file="db/changelog/changeset/0015_change_consultingtype_column_type/0015_changeSet.xml"/>
 </databaseChangeLog>

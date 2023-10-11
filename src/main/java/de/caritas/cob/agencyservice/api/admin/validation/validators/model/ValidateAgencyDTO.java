@@ -15,7 +15,6 @@ import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
 public class ValidateAgencyDTO {
 
   private Long id;
-  private Long dioceseId;
   private String postcode;
   private Integer consultingType;
   private Boolean offline;

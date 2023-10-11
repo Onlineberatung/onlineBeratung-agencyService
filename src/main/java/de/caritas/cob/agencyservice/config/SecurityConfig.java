@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.config;
 
 import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 import static de.caritas.cob.agencyservice.api.authorization.Authority.RESTRICTED_AGENCY_ADMIN;
+import static de.caritas.cob.agencyservice.api.authorization.Authority.TENANT_ADMIN;
 
 import de.caritas.cob.agencyservice.config.security.AuthorisationService;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
@@ -79,11 +80,13 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        //.sessionAuthenticationStrategy(sessionAuthenticationStrategy())
         .and().authorizeRequests()
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()
+        .requestMatchers("/agencyadmin/agencies/tenant/*")
+        .access("hasAuthority('" + AGENCY_ADMIN.getAuthority()
+            + "') and hasAuthority('" + TENANT_ADMIN.getAuthority() + "')")
         .requestMatchers("/agencyadmin", "/agencyadmin/", "/agencyadmin/**")
         .hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
         .anyRequest().denyAll();

@@ -8,7 +8,6 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.CustomValidation
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDemographicsException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidDioceseException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
@@ -23,9 +22,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.lang.NonNull;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
@@ -129,8 +125,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    * @param request WebRequest
    * @return a ResponseEntity instance
    */
-  @ExceptionHandler({InvalidPostcodeException.class, InvalidConsultingTypeException.class,
-      InvalidDioceseException.class, InvalidOfflineStatusException.class,
+  @ExceptionHandler({InvalidPostcodeException.class, InvalidConsultingTypeException.class, InvalidOfflineStatusException.class,
       InvalidDemographicsException.class
   })
   public ResponseEntity<Object> handleInternal(
