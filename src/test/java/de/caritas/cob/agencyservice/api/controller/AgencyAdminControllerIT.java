@@ -33,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -131,6 +132,51 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.url").value("https://www.test.de"))
         .andExpect(jsonPath("_embedded.external").value("true"))
         .andExpect(jsonPath("_embedded.offline").exists())
+        .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.createDate").exists())
+        .andExpect(jsonPath("_embedded.updateDate").exists())
+        .andExpect(jsonPath("_embedded.deleteDate").exists());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN", "AUTHORIZATION_TENANT_ADMIN"})
+  void createAgency_Should_returnStatusCreated_And_SetTenantIdFromRequest_When_calledWithValidCreateParamsAndTenantSuperAdminAuthority()
+      throws Exception {
+    // given
+    when(authenticatedUser.isTenantSuperAdmin()).thenReturn(true);
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
+        .thenReturn(new ExtendedConsultingTypeResponseDTO());
+
+    AgencyDTO agencyDTO = new AgencyDTO()
+        .dioceseId(0L)
+        .name("Test name")
+        .description("Test description")
+        .postcode("12345")
+        .city("Test city")
+        .teamAgency(true)
+        .consultingType(0)
+        .url("https://www.test.de")
+        .external(true)
+        .tenantId(100L);
+    String payload = JsonConverter.convert(agencyDTO);
+
+    // when, then
+    mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(payload))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("_embedded.id").exists())
+        .andExpect(jsonPath("_embedded.name").value("Test name"))
+        .andExpect(jsonPath("_embedded.dioceseId").value(0))
+        .andExpect(jsonPath("_embedded.city").value("Test city"))
+        .andExpect(jsonPath("_embedded.consultingType").value(0))
+        .andExpect(jsonPath("_embedded.description").value("Test description"))
+        .andExpect(jsonPath("_embedded.postcode").value("12345"))
+        .andExpect(jsonPath("_embedded.teamAgency").value("true"))
+        .andExpect(jsonPath("_embedded.url").value("https://www.test.de"))
+        .andExpect(jsonPath("_embedded.external").value("true"))
+        .andExpect(jsonPath("_embedded.offline").exists())
+        .andExpect(jsonPath("_embedded.tenantId").value("100"))
         .andExpect(jsonPath("_embedded.topics").exists())
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
