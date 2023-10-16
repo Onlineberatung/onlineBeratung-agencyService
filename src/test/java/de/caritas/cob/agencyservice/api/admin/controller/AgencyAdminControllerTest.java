@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.caritas.cob.agencyservice.AgencyServiceApplication;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostcodeRangeAdminService;
@@ -35,6 +36,7 @@ import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthority
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineStatusException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeException;
+import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
@@ -42,23 +44,35 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO.AgencyTypeEnu
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.PostcodeRangeDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.service.TenantHeaderSupplier;
+import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
+import de.caritas.cob.agencyservice.config.apiclient.UserAdminServiceApiControllerFactory;
+import de.caritas.cob.agencyservice.config.security.AuthorisationService;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
+import de.caritas.cob.agencyservice.config.security.JwtAuthConverterProperties;
 import org.jeasy.random.EasyRandom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.client.LinkDiscoverers;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AgencyAdminController.class)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK,
+    classes = AgencyServiceApplication.class)
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(
+    locations = "classpath:application-testing.properties")
 public class AgencyAdminControllerTest {
 
   public static final int AGE_FROM = 25;
@@ -80,6 +94,29 @@ public class AgencyAdminControllerTest {
 
   @MockBean
   private JwtAuthConverter jwtAuthConverter;
+
+  @MockBean
+  private AuthorisationService authorisationService;
+
+  @MockBean
+  private JwtAuthConverterProperties jwtAuthConverterProperties;
+
+  @MockBean
+  private UserAdminServiceApiControllerFactory adminServiceApiControllerFactory;
+
+  @MockBean
+  private SecurityHeaderSupplier securityHeaderSupplier;
+
+  @MockBean
+  private TenantHeaderSupplier tenantHeaderSupplier;
+
+  @MockBean
+  private ConsultingTypeManager consultingTypeManager;
+
+
+  @MockBean
+  private AgencyRepository agencyRepository;
+
 
   @Test
   public void searchAgencies_Should_returnBadRequest_When_requiredPaginationParamsAreMissing()
@@ -113,6 +150,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
   public void createAgency_Should_returnCreated_When_AgencyDtoIsGiven() throws Exception {
 
     EasyRandom easyRandom = new EasyRandom();
@@ -146,6 +184,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
   public void createAgency_Should_ReturnBadRequest_WhenAgencyConsultingType_IsInvalid()
       throws Exception {
 
@@ -165,6 +204,7 @@ public class AgencyAdminControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
   public void createAgency_Should_ReturnBadRequest_WhenAgencyPostcode_IsInvalid() throws Exception {
 
     EasyRandom easyRandom = new EasyRandom();

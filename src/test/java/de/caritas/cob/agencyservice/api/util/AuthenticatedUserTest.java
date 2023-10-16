@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.helper;
+package de.caritas.cob.agencyservice.api.util;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

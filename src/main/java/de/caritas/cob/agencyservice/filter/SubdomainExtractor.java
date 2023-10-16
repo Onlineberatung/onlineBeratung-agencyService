@@ -6,7 +6,7 @@ import static java.util.Optional.of;
 import static org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes;
 
 import com.google.common.net.InternetDomainName;
-import de.caritas.cob.agencyservice.api.helper.HttpUrlUtils;
+import de.caritas.cob.agencyservice.api.util.HttpUrlUtils;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Setter;

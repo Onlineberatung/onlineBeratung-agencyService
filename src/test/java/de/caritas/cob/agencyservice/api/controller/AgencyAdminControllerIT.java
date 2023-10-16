@@ -14,14 +14,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
-import de.caritas.cob.agencyservice.testHelper.JsonConverter;
+import de.caritas.cob.agencyservice.api.util.JsonConverter;
 import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -114,7 +113,7 @@ class AgencyAdminControllerIT {
         .consultingType(0)
         .url("https://www.test.de")
         .external(true);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
@@ -157,7 +156,7 @@ class AgencyAdminControllerIT {
         .consultingType(0)
         .url("https://www.test.de")
         .external(true);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
@@ -185,7 +184,7 @@ class AgencyAdminControllerIT {
         .offline(true)
         .url("https://www.test-update.de")
         .external(false);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
@@ -226,7 +225,7 @@ class AgencyAdminControllerIT {
 
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
             .contentType(APPLICATION_JSON)
-            .content(JsonConverter.convert(agencyDTO)))
+            .content(JsonConverter.convertToJson(agencyDTO)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
@@ -262,7 +261,7 @@ class AgencyAdminControllerIT {
         .offline(true)
         .url("https://www.test-update.de")
         .external(false);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
@@ -305,7 +304,7 @@ class AgencyAdminControllerIT {
         .offline(true)
         .url("https://www.test-update.de")
         .external(false);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
@@ -327,7 +326,7 @@ class AgencyAdminControllerIT {
       throws Exception {
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
     mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
             .content(payload)
             .contentType(APPLICATION_JSON))
@@ -339,7 +338,7 @@ class AgencyAdminControllerIT {
       throws Exception {
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO agencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
             .content(payload)
             .contentType(APPLICATION_JSON))
@@ -361,7 +360,7 @@ class AgencyAdminControllerIT {
       throws Exception {
     EasyRandom easyRandom = new EasyRandom();
     AgencyDTO agencyDTO = easyRandom.nextObject(AgencyDTO.class);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
     mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
             .content(payload)
             .contentType(APPLICATION_JSON))
@@ -374,7 +373,7 @@ class AgencyAdminControllerIT {
       throws Exception {
     EasyRandom easyRandom = new EasyRandom();
     UpdateAgencyDTO agencyDTO = easyRandom.nextObject(UpdateAgencyDTO.class);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
             .content(payload)
             .contentType(APPLICATION_JSON))

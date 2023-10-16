@@ -2,7 +2,7 @@ package de.caritas.cob.agencyservice.config;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.exception.KeycloakException;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

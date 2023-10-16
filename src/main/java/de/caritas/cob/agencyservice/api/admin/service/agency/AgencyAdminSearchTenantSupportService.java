@@ -1,7 +1,7 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import jakarta.persistence.EntityManagerFactory;

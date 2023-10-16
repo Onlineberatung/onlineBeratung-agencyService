@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.helper;
+package de.caritas.cob.agencyservice.api.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.caritas.cob.agencyservice.api.authorization.Authority;

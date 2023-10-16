@@ -28,6 +28,10 @@ create table AGENCY
     UPDATE_DATE     timestamp,
     DELETE_DATE     timestamp     null     default null,
     COUNSELLING_RELATIONS varchar(200) null default null,
+    DATA_PROTECTION_RESPONSIBLE_ENTITY varchar(100) null default null,
+    DATA_PROTECTION_RESPONSIBLE_CONTACT longtext null default null,
+    DATA_PROTECTION_OFFICER_CONTACT longtext null default null,
+    DATA_PROTECTION_ALTERNATIVE_CONTACT longtext null default null,
     primary key (ID)
 );
 CREATE SEQUENCE SEQUENCE_AGENCY
