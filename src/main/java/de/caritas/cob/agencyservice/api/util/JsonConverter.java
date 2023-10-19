@@ -12,6 +12,7 @@ public class JsonConverter {
   private JsonConverter() {
     // Utility class
   }
+
   public static String convertToJson(Object object) {
     return serializeToJsonString(object);
   }

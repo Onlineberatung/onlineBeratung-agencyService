@@ -6,3 +6,6 @@ ADD COLUMN data_protection_responsible_contact longtext NULL AFTER `data_protect
 
 ALTER TABLE `agencyservice`.`agency`
 ADD COLUMN data_protection_officer_contact longtext NULL AFTER `data_protection_responsible_contact`;
+
+ALTER TABLE `agencyservice`.`agency`
+ADD COLUMN data_protection_agency_contact longtext NULL AFTER `data_protection_officer_contact`;

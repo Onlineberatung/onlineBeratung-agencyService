@@ -22,6 +22,7 @@ import de.caritas.cob.agencyservice.config.apiclient.TenantServiceApiControllerF
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,7 +86,7 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
             new de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO());
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(new ApplicationSettingsDTO()
         .mainTenantSubdomainForSingleDomainMultitenancy(new ApplicationSettingsDTOMainTenantSubdomainForSingleDomainMultitenancy().value("app")));
-    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(new RestrictedTenantDTO().id(0L));
+    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app", null)).thenReturn(new RestrictedTenantDTO().id(0L));
     when(tenantServiceApiControllerFactory.createControllerApi()).thenReturn(tenantControllerApi);
   }
 
@@ -123,6 +124,8 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
 
   @Test
   void getAgencies_Should_ReturnOk_GetAgencyById_When_DifferentTenantAgencyIsRequested() throws Exception {
+    when(tenantControllerApi.getRestrictedTenantDataByTenantId(Mockito.anyLong())).thenReturn(new RestrictedTenantDTO().id(10L));
+    when(tenantServiceApiControllerFactory.createControllerApi()).thenReturn(tenantControllerApi);
     mvc.perform(
 
             get(PATH_GET_AGENCIES_WITH_IDS + "1738")

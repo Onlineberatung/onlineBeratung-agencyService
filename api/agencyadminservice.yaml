@@ -560,6 +560,10 @@ components:
             type: string
             maxLength: 100
             example: "Freiburg"
+          phoneNumber:
+            type: string
+            maxLength: 100
+            example: "0761 123456"
           email:
             type: string
             maxLength: 100

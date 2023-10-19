@@ -130,6 +130,9 @@ public class Agency implements TenantAware {
   @Column(name = "data_protection_alternative_contact", nullable = false)
   private String dataProtectionAlternativeContactData;
 
+  @Column(name = "data_protection_agency_contact", nullable = false)
+  private String dataProtectionAgencyContactData;
+
 
 
   @OneToMany(targetEntity = AgencyPostcodeRange.class, mappedBy = "agency", fetch = FetchType.LAZY)

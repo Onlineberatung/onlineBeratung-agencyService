@@ -16,6 +16,7 @@ import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import java.time.LocalDateTime;
@@ -51,6 +52,8 @@ public class AgencyService {
   private final @NonNull TenantService tenantService;
   private final @NonNull DemographicsConverter demographicsConverter;
 
+  private final @NonNull CentralDataProtectionTemplateService centralDataProtectionTemplateService;
+
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
 
@@ -72,7 +75,7 @@ public class AgencyService {
   public List<AgencyResponseDTO> getAgencies(List<Long> agencyIds) {
     return getAgencyRepositoryForSearch().findByIdIn(agencyIds).stream()
         .map(this::convertToAgencyResponseDTO)
-        .collect(Collectors.toList());
+        .toList();
   }
 
 
@@ -88,7 +91,7 @@ public class AgencyService {
 
       return agencyRepository.findByConsultingTypeId(consultingTypeId).stream()
           .map(this::convertToAgencyResponseDTO)
-          .collect(Collectors.toList());
+          .toList();
 
     } catch (MissingConsultingTypeException ex) {
       throw new BadRequestException(
@@ -126,7 +129,7 @@ public class AgencyService {
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
-        .collect(Collectors.toList());
+        .toList();
 
     if (agencyResponseDTOs.isEmpty()) {
       addWhiteSpotAgency(consultingTypeSettings, agencyResponseDTOs);
@@ -277,6 +280,8 @@ public class AgencyService {
   }
 
   private AgencyResponseDTO convertToAgencyResponseDTO(Agency agency) {
+    String agencySpecificPrivacy = centralDataProtectionTemplateService.renderDataProtectionTemplate(agency);
+
     return new AgencyResponseDTO()
         .id(agency.getId())
         .name(agency.getName())
@@ -286,7 +291,8 @@ public class AgencyService {
         .teamAgency(agency.isTeamAgency())
         .offline(agency.isOffline())
         .tenantId(agency.getTenantId())
-        .consultingType(agency.getConsultingTypeId());
+        .consultingType(agency.getConsultingTypeId())
+        .agencySpecificPrivacy(agencySpecificPrivacy);
   }
 
 
