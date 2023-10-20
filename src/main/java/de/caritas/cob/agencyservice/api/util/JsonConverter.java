@@ -17,6 +17,13 @@ public class JsonConverter {
     return serializeToJsonString(object);
   }
 
+  public static DataProtectionContactDTO convertFromJsonNullSafe(String jsonString) {
+    if (jsonString == null) {
+      return new DataProtectionContactDTO();
+    }
+    return deserializeFromJsonString(jsonString, DataProtectionContactDTO.class);
+  }
+
   public static DataProtectionContactDTO convertFromJson(String jsonString) {
     return deserializeFromJsonString(jsonString, DataProtectionContactDTO.class);
   }
