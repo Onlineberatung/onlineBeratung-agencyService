@@ -24,6 +24,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -130,7 +131,7 @@ public class AgencyService {
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
-        .toList();
+        .collect(Collectors.toList());
 
     if (agencyResponseDTOs.isEmpty()) {
       addWhiteSpotAgency(consultingTypeSettings, agencyResponseDTOs);
@@ -286,8 +287,9 @@ public class AgencyService {
           .getMainTenantSubdomainForSingleDomainMultitenancy().getValue();
       return tenantService.getRestrictedTenantDataBySubdomain(mainTenantSubdomain);
     } else {
-      return tenantService.getRestrictedTenantDataByTenantId(
-          agency.getTenantId());
+
+      return agency.getTenantId() != null ? tenantService.getRestrictedTenantDataByTenantId(
+          agency.getTenantId()) : null;
     }
   }
 
@@ -309,7 +311,7 @@ public class AgencyService {
   protected String getRenderedAgencySpecificPrivacy(Agency agency) {
     RestrictedTenantDTO tenantDataHoldingFeatureToggles = getTenantDataRelevantForFeatureToggles(
         agency);
-    Settings settings = tenantDataHoldingFeatureToggles.getSettings();
+    Settings settings = tenantDataHoldingFeatureToggles != null ? tenantDataHoldingFeatureToggles.getSettings() : null;
     if (settings != null && settings.getFeatureCentralDataProtectionTemplateEnabled()) {
       return centralDataProtectionTemplateService.renderPrivacyTemplateWithRenderedPlaceholderValues(
           agency);
