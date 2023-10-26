@@ -34,6 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -45,6 +46,8 @@ import org.springframework.web.context.WebApplicationContext;
 class AgencyAdminControllerIT {
 
   static final String PATH_GET_AGENCY_BY_ID = "/agencyadmin/agencies/1";
+
+  static final String PATH_GET_AGENCY_BY_TENANT_ID = "/agencyadmin/agencies/tenant/1";
 
   private MockMvc mockMvc;
 
@@ -80,7 +83,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").exists())
-        .andExpect(jsonPath("_embedded.dioceseId").exists())
         .andExpect(jsonPath("_embedded.city").exists())
         .andExpect(jsonPath("_embedded.consultingType").exists())
         .andExpect(jsonPath("_embedded.description").exists())
@@ -104,7 +106,6 @@ class AgencyAdminControllerIT {
         .thenReturn(new ExtendedConsultingTypeResponseDTO());
 
     AgencyDTO agencyDTO = new AgencyDTO()
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .postcode("12345")
@@ -122,7 +123,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("_embedded.id").exists())
         .andExpect(jsonPath("_embedded.name").value("Test name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(0))
         .andExpect(jsonPath("_embedded.city").value("Test city"))
         .andExpect(jsonPath("_embedded.consultingType").value(0))
         .andExpect(jsonPath("_embedded.description").value("Test description"))
@@ -149,7 +149,6 @@ class AgencyAdminControllerIT {
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
 
     AgencyDTO agencyDTO = new AgencyDTO()
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .postcode("12345")
@@ -178,7 +177,6 @@ class AgencyAdminControllerIT {
         .thenReturn(extendedConsultingTypeResponseDTO);
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .postcode("54321")
@@ -196,7 +194,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.city").value("Test update city"))
         .andExpect(jsonPath("_embedded.consultingType").value(18))
         .andExpect(jsonPath("_embedded.description").value("Test update description"))
@@ -222,7 +219,6 @@ class AgencyAdminControllerIT {
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
 
     var agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description(null)
         .offline(true)
@@ -234,7 +230,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.description").isEmpty())
         .andExpect(jsonPath("_embedded.teamAgency").value("false"))
         .andExpect(jsonPath("_embedded.external").value("false"))
@@ -256,10 +251,10 @@ class AgencyAdminControllerIT {
     var extendedConsultingTypeResponseDTO = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
-    when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(Lists.newArrayList(1L));
+    when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(
+        Lists.newArrayList(1L));
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .postcode("54321")
@@ -276,7 +271,6 @@ class AgencyAdminControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("_embedded.id").value(1))
         .andExpect(jsonPath("_embedded.name").value("Test update name"))
-        .andExpect(jsonPath("_embedded.dioceseId").value(1))
         .andExpect(jsonPath("_embedded.city").value("Test update city"))
         .andExpect(jsonPath("_embedded.consultingType").value(0))
         .andExpect(jsonPath("_embedded.description").value("Test update description"))
@@ -300,10 +294,10 @@ class AgencyAdminControllerIT {
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenReturn(extendedConsultingTypeResponseDTO);
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
-    when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(Lists.newArrayList(2L, 3L));
+    when(userAdminService.getAdminUserAgencyIds(authenticatedUser.getUserId())).thenReturn(
+        Lists.newArrayList(2L, 3L));
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .postcode("54321")
@@ -386,4 +380,43 @@ class AgencyAdminControllerIT {
             .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
+
+  @Test
+  @WithMockUser(authorities = {"NOT_AUTHORIZED"})
+  void getAgencyByTenantId_Should_returnForbidden_When_calledAsUnauthorizedUser()
+      throws Exception {
+    mockMvc.perform(get(PATH_GET_AGENCY_BY_TENANT_ID)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_TENANT_ADMIN"})
+  void getAgencyByTenantId_Should_returnForbidden_When_calledAsTenantAdminButWithoutAgencyPriviliges()
+      throws Exception {
+    mockMvc.perform(get(PATH_GET_AGENCY_BY_TENANT_ID)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
+  void getAgencyByTenantId_Should_returnForbidden_When_calledAsAgencyAdminButWithoutSuperAdminPriviliges()
+      throws Exception {
+    mockMvc.perform(get(PATH_GET_AGENCY_BY_TENANT_ID)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN", "AUTHORIZATION_TENANT_ADMIN"})
+  void getAgencyByTenantId_Should_return_Ok_When_calledAsTenantAdminWithAgencyAuthorities()
+      throws Exception {
+    mockMvc.perform(get(PATH_GET_AGENCY_BY_TENANT_ID)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0]._embedded.id").value(1735))
+        .andExpect(jsonPath("$[0]._embedded.name").value("With tenant id"));
+  }
+
 }
