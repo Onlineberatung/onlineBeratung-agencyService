@@ -84,6 +84,12 @@ public class AgencyServiceTest {
   @Mock
   private AgencyRepository agencyRepository;
 
+  @Mock
+  CentralDataProtectionTemplateService centralDataProtectionTemplateService;
+
+  @Mock
+  ApplicationSettingsService applicationSettingsService;
+
   private static final Long TENANT_ID = null;
 
   @After
@@ -168,6 +174,7 @@ public class AgencyServiceTest {
       throws MissingConsultingTypeException {
 
     Optional<Agency> agency = Optional.of(AGENCY_SUCHT);
+    when(tenantService.getRestrictedTenantDataByTenantId(any())).thenReturn(new RestrictedTenantDTO());
 
     when(agencyRepository.searchWithoutTopic(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
         CONSULTING_TYPE_SUCHT, AGE, GENDER, COUNSELLING_RELATION, TENANT_ID)).thenReturn(EMPTY_AGENCY_LIST);
@@ -208,6 +215,7 @@ public class AgencyServiceTest {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
         .thenReturn(AGENCY_LIST);
+    when(tenantService.getRestrictedTenantDataByTenantId(any())).thenReturn(new RestrictedTenantDTO());
 
     AgencyResponseDTO result = agencyService.getAgencies(AGENCY_IDS_LIST).get(0);
 
@@ -228,6 +236,7 @@ public class AgencyServiceTest {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
         .thenReturn(Collections.singletonList(AGENCY_ONLINE_U25));
+    when(tenantService.getRestrictedTenantDataByTenantId(any())).thenReturn(new RestrictedTenantDTO());
 
     AgencyResponseDTO result = agencyService.getAgencies(Collections.singletonList(AGENCY_ID))
         .get(0);
@@ -240,6 +249,7 @@ public class AgencyServiceTest {
 
     when(agencyRepository.findByIdIn(AGENCY_IDS_LIST))
         .thenReturn(Collections.singletonList(AGENCY_OFFLINE));
+    when(tenantService.getRestrictedTenantDataByTenantId(any())).thenReturn(new RestrictedTenantDTO());
 
     AgencyResponseDTO result = agencyService.getAgencies(AGENCY_IDS_LIST).get(0);
 

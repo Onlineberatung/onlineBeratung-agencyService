@@ -563,7 +563,10 @@ components:
             type: string
           example: "[en, de, fr]"
         extendedSettings:
-          $ref: './consultingtypeservice.yaml#/components/schemas/ConsultingTypePatchDTO'
+          $ref: 'consultingtypeservice.yaml#/components/schemas/ConsultingTypePatchDTO'
+        featureCentralDataProtectionTemplateEnabled:
+          type: boolean
+          example: "false"
 
     MultilingualContent:
       type: object

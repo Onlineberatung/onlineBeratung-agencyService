@@ -18,6 +18,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -51,6 +52,8 @@ public class AgencyService {
   private final @NonNull DemographicsConverter demographicsConverter;
 
   private final @NonNull CentralDataProtectionTemplateService centralDataProtectionTemplateService;
+
+  private final @NonNull ApplicationSettingsService applicationSettingsService;
 
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
@@ -277,9 +280,19 @@ public class AgencyService {
     }
   }
 
-  private AgencyResponseDTO convertToAgencyResponseDTO(Agency agency) {
-    centralDataProtectionTemplateService.renderPrivacyTemplateWithRenderedPlaceholderValues(agency);
+  private RestrictedTenantDTO getTenantDataRelevantForFeatureToggles(Agency agency) {
+    if (multitenancyWithSingleDomain) {
+      String mainTenantSubdomain = applicationSettingsService.getApplicationSettings()
+          .getMainTenantSubdomainForSingleDomainMultitenancy().getValue();
+      return tenantService.getRestrictedTenantDataBySubdomain(mainTenantSubdomain);
+    } else {
+      return tenantService.getRestrictedTenantDataByTenantId(
+          agency.getTenantId());
+    }
+  }
 
+  private AgencyResponseDTO convertToAgencyResponseDTO(Agency agency) {
+    String renderedAgencySpecificPrivacy = getRenderedAgencySpecificPrivacy(agency);
     return new AgencyResponseDTO()
         .id(agency.getId())
         .name(agency.getName())
@@ -289,7 +302,20 @@ public class AgencyService {
         .teamAgency(agency.isTeamAgency())
         .offline(agency.isOffline())
         .tenantId(agency.getTenantId())
-        .consultingType(agency.getConsultingTypeId());
+        .consultingType(agency.getConsultingTypeId())
+        .agencySpecificPrivacy(renderedAgencySpecificPrivacy);
+  }
+
+  protected String getRenderedAgencySpecificPrivacy(Agency agency) {
+    RestrictedTenantDTO tenantDataHoldingFeatureToggles = getTenantDataRelevantForFeatureToggles(
+        agency);
+    Settings settings = tenantDataHoldingFeatureToggles.getSettings();
+    if (settings != null && settings.getFeatureCentralDataProtectionTemplateEnabled()) {
+      return centralDataProtectionTemplateService.renderPrivacyTemplateWithRenderedPlaceholderValues(
+          agency);
+    } else {
+      return null;
+    }
   }
 
 
