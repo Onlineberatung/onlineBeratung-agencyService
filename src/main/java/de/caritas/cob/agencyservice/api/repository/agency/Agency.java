@@ -131,7 +131,7 @@ public class Agency implements TenantAware {
   private String dataProtectionAlternativeContactData;
 
   @Column(name = "data_protection_agency_contact", nullable = false)
-  private String dataProtectionAgencyContactData;
+  private String dataProtectionAgencyResponsibleContactData;
 
 
 

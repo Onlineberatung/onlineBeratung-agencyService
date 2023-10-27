@@ -4,6 +4,7 @@ package de.caritas.cob.agencyservice.api.service;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
@@ -24,7 +25,6 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,13 +131,15 @@ public class AgencyService {
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
-        .collect(Collectors.toList());
+        .toList();
+
+    var mutableResponseDTO = Lists.newArrayList(agencyResponseDTOs);
 
     if (agencyResponseDTOs.isEmpty()) {
-      addWhiteSpotAgency(consultingTypeSettings, agencyResponseDTOs);
+      addWhiteSpotAgency(consultingTypeSettings, mutableResponseDTO);
     }
 
-    return agencyResponseDTOs;
+    return mutableResponseDTO;
   }
 
   private Optional<Integer> getConsultingTypeIdForSearch(int consultingTypeId) {

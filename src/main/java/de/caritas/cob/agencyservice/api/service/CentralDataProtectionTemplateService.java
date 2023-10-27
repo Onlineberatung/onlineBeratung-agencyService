@@ -87,7 +87,7 @@ public class CentralDataProtectionTemplateService {
   private String renderDataProtectionResponsibleFromTemplateIfAvailable(Agency agency,
       DataProtectionContactTemplateDTO dataProtectionContactTemplateDTO) {
     var agencyContact = JsonConverter.convertFromJsonNullSafe(
-        agency.getDataProtectionAgencyContactData());
+        agency.getDataProtectionAgencyResponsibleContactData());
     return renderDataProtectionContactTemplate(
         dataProtectionContactTemplateDTO.getAgencyContext().getResponsibleContact(), agencyContact);
   }
@@ -125,7 +125,7 @@ public class CentralDataProtectionTemplateService {
       }
       case AGENCY_RESPONSIBLE -> {
         var agencyContact = JsonConverter.convertFromJsonNullSafe(
-            agency.getDataProtectionAgencyContactData());
+            agency.getDataProtectionAgencyResponsibleContactData());
         return renderDataProtectionContactTemplate(
             dataProtectionOfficerDTO.getAgencyResponsibleContact(), agencyContact);
       }

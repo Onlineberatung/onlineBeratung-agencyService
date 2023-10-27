@@ -57,7 +57,7 @@ class CentralDataProtectionTemplateServiceTest {
         .name("agencyName")
         .dataProtectionResponsibleEntity(DataProtectionResponsibleEntity.DATA_PROTECTION_OFFICER)
         .dataProtectionOfficerContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
-        .dataProtectionAgencyContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
+        .dataProtectionAgencyResponsibleContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
         .build();
 
     // when
@@ -88,7 +88,7 @@ class CentralDataProtectionTemplateServiceTest {
         .name("agencyName")
         .dataProtectionResponsibleEntity(DataProtectionResponsibleEntity.DATA_PROTECTION_OFFICER)
         .dataProtectionOfficerContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
-        .dataProtectionAgencyContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
+        .dataProtectionAgencyResponsibleContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
         .build();
 
     // when
@@ -125,7 +125,7 @@ class CentralDataProtectionTemplateServiceTest {
         .name("agencyName")
         .dataProtectionResponsibleEntity(DataProtectionResponsibleEntity.DATA_PROTECTION_OFFICER)
         .dataProtectionOfficerContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
-        .dataProtectionAgencyContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
+        .dataProtectionAgencyResponsibleContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
         .build();
 
     // when

@@ -51,11 +51,10 @@ public class DataProtectionDTOBuilder {
   }
 
   private DataProtectionDTO getAgencyResponsibleDataProtectionDTO() {
+    DataProtectionContactDTO dataProtectionContactDTO = JsonConverter.convertFromJson(
+        this.agency.getDataProtectionAgencyResponsibleContactData());
     return new DataProtectionDTO()
         .dataProtectionResponsibleEntity(DataProtectionResponsibleEntityEnum.AGENCY_RESPONSIBLE)
-        .agencyDataProtectionResponsibleContact(new DataProtectionContactDTO()
-            .nameAndLegalForm(this.agency.getName())
-            .postcode(this.agency.getPostCode())
-            .city(this.agency.getCity()));
+        .agencyDataProtectionResponsibleContact(dataProtectionContactDTO);
   }
 }
