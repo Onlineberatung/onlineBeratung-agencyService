@@ -185,6 +185,7 @@ class AgencyAdminServiceTest {
     // given
     ReflectionTestUtils.setField(agencyAdminService, "featureDemographicsEnabled", true);
     var agency = this.easyRandom.nextObject(Agency.class);
+    agency.setDataProtectionAgencyResponsibleContactData(null);
     agency.setDataProtectionResponsibleEntity(DataProtectionResponsibleEntity.AGENCY_RESPONSIBLE);
     agency.setCounsellingRelations(AgencyAdminResponseDTO.CounsellingRelationsEnum.PARENTAL_COUNSELLING.getValue());
     when(agencyRepository.findById(AGENCY_ID)).thenReturn(Optional.of(agency));

@@ -32,8 +32,12 @@ public class DataProtectionDTOBuilder {
   }
 
   private DataProtectionDTO getDataProtectionOfficerDTO() {
+    String dataProtectionOfficerContactData = this.agency.getDataProtectionOfficerContactData();
+    if (dataProtectionOfficerContactData == null) {
+      return null;
+    }
     DataProtectionContactDTO dataProtectionContactDTO = JsonConverter.convertFromJson(
-        this.agency.getDataProtectionOfficerContactData());
+        dataProtectionOfficerContactData);
     return new DataProtectionDTO()
         .dataProtectionResponsibleEntity(
             DataProtectionResponsibleEntityEnum.DATA_PROTECTION_OFFICER)
@@ -41,8 +45,12 @@ public class DataProtectionDTOBuilder {
   }
 
   private DataProtectionDTO getAlternativeRepresentative() {
+    String dataProtectionAlternativeContactData = this.agency.getDataProtectionAlternativeContactData();
+    if (dataProtectionAlternativeContactData == null) {
+      return null;
+    }
     DataProtectionContactDTO dataProtectionContactDTO = JsonConverter.convertFromJson(
-        this.agency.getDataProtectionAlternativeContactData());
+        dataProtectionAlternativeContactData);
 
     return new DataProtectionDTO()
         .dataProtectionResponsibleEntity(
@@ -51,8 +59,12 @@ public class DataProtectionDTOBuilder {
   }
 
   private DataProtectionDTO getAgencyResponsibleDataProtectionDTO() {
+    String dataProtectionAgencyResponsibleContactData = this.agency.getDataProtectionAgencyResponsibleContactData();
+    if (dataProtectionAgencyResponsibleContactData == null) {
+      return null;
+    }
     DataProtectionContactDTO dataProtectionContactDTO = JsonConverter.convertFromJson(
-        this.agency.getDataProtectionAgencyResponsibleContactData());
+        dataProtectionAgencyResponsibleContactData);
     return new DataProtectionDTO()
         .dataProtectionResponsibleEntity(DataProtectionResponsibleEntityEnum.AGENCY_RESPONSIBLE)
         .agencyDataProtectionResponsibleContact(dataProtectionContactDTO);

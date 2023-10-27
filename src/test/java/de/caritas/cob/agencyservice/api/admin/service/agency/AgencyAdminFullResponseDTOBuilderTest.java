@@ -30,6 +30,7 @@ class AgencyAdminFullResponseDTOBuilderTest {
     EasyRandom easyRandom = new EasyRandom();
     this.agency = easyRandom.nextObject(Agency.class);
     this.agency.setDataProtectionResponsibleEntity(DataProtectionResponsibleEntity.AGENCY_RESPONSIBLE);
+    this.agency.setDataProtectionAgencyResponsibleContactData(JsonConverter.convertToJson(new DataProtectionContactDTO()));
     this.agency.setDataProtectionOfficerContactData(JsonConverter.convertToJson(new DataProtectionContactDTO()));
     this.agency.setTenantId(TENANT_ID);
     this.agencyAdminFullResponseDTOBuilder = new AgencyAdminFullResponseDTOBuilder(agency);
