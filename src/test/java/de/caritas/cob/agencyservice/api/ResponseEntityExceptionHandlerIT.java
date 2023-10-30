@@ -22,7 +22,9 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidPostcodeE
 import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
+import de.caritas.cob.agencyservice.config.security.AuthorisationService;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
+import de.caritas.cob.agencyservice.config.security.JwtAuthConverterProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +66,12 @@ public class ResponseEntityExceptionHandlerIT {
 
   @Mock
   private Logger logger;
+
+  @MockBean
+  private AuthorisationService authorisationService;
+
+  @MockBean
+  private JwtAuthConverterProperties jwtAuthConverterProperties;
 
   @Before
   public void setup() {

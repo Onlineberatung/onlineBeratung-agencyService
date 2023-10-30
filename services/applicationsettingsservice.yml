@@ -28,7 +28,33 @@ paths:
           description: UNAUTHORIZED - no/invalid Keycloak token
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
+  /settingsadmin:
+    patch:
+      tags:
+        - applicationsettings-controller
+      summary: 'Patch application settings'
+      operationId: patchApplicationSettings
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ApplicationSettingsPatchDTO'
+      responses:
+        200:
+          description: OK - successful operation
 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationSettingsDTO'
+        204:
+          description: NO CONTENT - no content found
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        401:
+          description: UNAUTHORIZED - no/invalid Keycloak token
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
 components:
   schemas:
     ApplicationSettingsDTO:
@@ -55,14 +81,41 @@ components:
         mainTenantSubdomainForSingleDomainMultitenancy:
           allOf:
             - $ref: '#/components/schemas/SettingDTO'
-        budibaseSSO:
-          allOf:
-            - $ref: '#/components/schemas/FeatureToggleDTO'
         useOverviewPage:
           allOf:
             - $ref: '#/components/schemas/FeatureToggleDTO'
+        calcomUrl:
+          allOf:
+            - $ref: '#/components/schemas/SettingDTO'
+        budibaseAuthClientId:
+          allOf:
+            - $ref: '#/components/schemas/SettingDTO'
+        budibaseUrl:
+          allOf:
+            - $ref: '#/components/schemas/SettingDTO'
+        calendarAppUrl:
+          allOf:
+            - $ref: '#/components/schemas/SettingDTO'
+        legalContentChangesBySingleTenantAdminsAllowed:
+          allOf:
+            - $ref: '#/components/schemas/FeatureToggleDTO'
+        documentationEnabled:
+          allOf:
+            - $ref: '#/components/schemas/FeatureToggleDTO'
+        releaseToggles:
+          type: object
+          additionalProperties:
+            type: object
 
 
+    ApplicationSettingsPatchDTO:
+      type: object
+      properties:
+        legalContentChangesBySingleTenantAdminsAllowed:
+          type: boolean
+        mainTenantSubdomainForSingleDomainMultitenancy:
+          type: string
+    
     FeatureToggleDTO:
       type: object
       required:

@@ -42,6 +42,12 @@ public class AgencyServiceTenantAwareTest {
   @Mock
   private AgencyRepository agencyRepository;
 
+  @Mock
+  private CentralDataProtectionTemplateService centralDataProtectionTemplateService;
+
+  @Mock
+  private ApplicationSettingsService applicationSettingsService;
+
   private static final Long TENANT_ID = 1L;
 
   @Before

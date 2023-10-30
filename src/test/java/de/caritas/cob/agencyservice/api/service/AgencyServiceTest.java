@@ -84,6 +84,12 @@ public class AgencyServiceTest {
   @Mock
   private AgencyRepository agencyRepository;
 
+  @Mock
+  CentralDataProtectionTemplateService centralDataProtectionTemplateService;
+
+  @Mock
+  ApplicationSettingsService applicationSettingsService;
+
   private static final Long TENANT_ID = null;
 
   @After
