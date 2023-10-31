@@ -521,6 +521,52 @@ components:
           type: integer
           format: int64
           example: 12
+        dataProtection:
+          type: object
+          $ref: '#/components/schemas/DataProtectionDTO'
+
+    DataProtectionDTO:
+        type: object
+        properties:
+          dataProtectionResponsibleEntity:
+            type: string
+            enum: [ AGENCY_RESPONSIBLE, ALTERNATIVE_REPRESENTATIVE, DATA_PROTECTION_OFFICER ]
+          agencyDataProtectionResponsibleContact:
+            type: object
+            $ref: '#/components/schemas/DataProtectionContactDTO'
+          alternativeDataProtectionRepresentativeContact:
+            type: object
+            $ref: '#/components/schemas/DataProtectionContactDTO'
+          dataProtectionOfficerContact:
+            type: object
+            $ref: '#/components/schemas/DataProtectionContactDTO'
+
+    DataProtectionContactDTO:
+        type: object
+        properties:
+          nameAndLegalForm:
+            type: string
+            example: "Max Mustermann"
+          street:
+            type: string
+            maxLength: 100
+            example: "Musterstraße 1"
+          postcode:
+            type: string
+            minLength: 5
+            maxLength: 5
+            example: "79106"
+          city:
+            type: string
+            maxLength: 100
+            example: "Freiburg"
+          phoneNumber:
+            type: string
+            maxLength: 100
+            example: "0761 123456"
+          email:
+            type: string
+            maxLength: 100
 
 
     PostcodeRangeDTO:

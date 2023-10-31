@@ -1,6 +1,6 @@
-package de.caritas.cob.agencyservice.api.helper;
+package de.caritas.cob.agencyservice.api.util;
 
-import static de.caritas.cob.agencyservice.api.helper.HttpUrlUtils.removeHttpPrefix;
+import static de.caritas.cob.agencyservice.api.util.HttpUrlUtils.removeHttpPrefix;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

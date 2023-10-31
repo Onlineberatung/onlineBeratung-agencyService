@@ -50,7 +50,8 @@ class AccessTokenTenantResolverTest {
   private void givenUserIsAuthenticated() {
     SecurityContextHolder.setContext(mockSecurityContext);
     when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
-    when(mockAuthentication.getPrincipal()).thenReturn(buildJwt());
+    Jwt jwt = buildJwt();
+    when(mockAuthentication.getPrincipal()).thenReturn(jwt);
   }
 
   @Test

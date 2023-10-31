@@ -4,10 +4,9 @@ import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.annotation.UpdateAgencyValidator;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.AgencyAccessDeniedException;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 @Component

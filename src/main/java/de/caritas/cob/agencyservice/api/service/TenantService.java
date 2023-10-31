@@ -22,7 +22,7 @@ public class TenantService {
   @Cacheable(cacheNames = CacheManagerConfig.TENANT_CACHE, key = "#subdomain")
   public RestrictedTenantDTO getRestrictedTenantDataBySubdomain(String subdomain) {
     TenantControllerApi controllerApi = tenantServiceApiControllerFactory.createControllerApi();
-    return controllerApi.getRestrictedTenantDataBySubdomainWithHttpInfo(subdomain).getBody();
+    return controllerApi.getRestrictedTenantDataBySubdomain(subdomain, null);
   }
 
   public RestrictedTenantDTO getRestrictedTenantDataByTenantId(Long tenantId) {
@@ -32,6 +32,6 @@ public class TenantService {
 
   public RestrictedTenantDTO getRestrictedTenantDataForSingleTenant() {
     TenantControllerApi controllerApi = tenantServiceApiControllerFactory.createControllerApi();
-    return controllerApi.getRestrictedSingleTenantData();
+    return controllerApi.getRestrictedSingleTenancyTenantData();
   }
 }

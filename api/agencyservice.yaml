@@ -172,6 +172,9 @@ components:
           type: integer
           format: int64
           example: 12
+        agencySpecificPrivacy:
+          type: string
+          example: "specific for agency privacy text"
 
     FullAgencyResponseDTO:
       type: object

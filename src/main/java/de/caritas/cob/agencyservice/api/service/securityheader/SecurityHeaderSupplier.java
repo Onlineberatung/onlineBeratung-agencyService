@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.service.securityheader;
 
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

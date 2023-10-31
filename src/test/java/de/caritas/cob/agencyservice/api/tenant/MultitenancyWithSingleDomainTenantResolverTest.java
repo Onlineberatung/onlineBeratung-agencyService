@@ -86,14 +86,14 @@ class MultitenancyWithSingleDomainTenantResolverTest {
     when(applicationsettingsControllerApi.getApplicationSettings()).thenReturn(
         new ApplicationSettingsDTO().mainTenantSubdomainForSingleDomainMultitenancy(
             new ApplicationSettingsDTOMainTenantSubdomainForSingleDomainMultitenancy().value("app")));
-    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app")).thenReturn(
+    when(tenantControllerApi.getRestrictedTenantDataBySubdomain("app", null)).thenReturn(
         new RestrictedTenantDTO().id(1L));
     // when
     Optional<Long> resolve = resolver.resolve(request);
 
     // then
     assertThat(resolve).isPresent().contains(1L);
-    verify(tenantControllerApi).getRestrictedTenantDataBySubdomain("app");
+    verify(tenantControllerApi).getRestrictedTenantDataBySubdomain("app", null);
     verify(applicationsettingsControllerApi).getApplicationSettings();
   }
 }
