@@ -30,7 +30,8 @@ public class RoleAuthorizationAuthorityMapper implements GrantedAuthoritiesMappe
     return roleNames.stream()
         .map(Authority::fromRoleName)
         .filter(Objects::nonNull)
-        .map(Authority::getAuthority)
+        .map(Authority::getAuthorities)
+        .flatMap(Collection::parallelStream)
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toSet());
   }
