@@ -2,10 +2,8 @@ package de.caritas.cob.agencyservice.api.authorization;
 
 import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
 import static java.util.Collections.emptyList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import de.caritas.cob.agencyservice.api.authorization.Authority.AuthorityValue;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +26,10 @@ public class RoleAuthorizationAuthorityMapperTest {
     Collection<? extends GrantedAuthority> mappedAuthorities = this.roleAuthorizationAuthorityMapper
         .mapAuthorities(grantedAuthorities);
 
-    assertThat(mappedAuthorities, hasSize(1));
-    assertThat(mappedAuthorities.iterator().next().getAuthority(), is(AGENCY_ADMIN.getAuthority()));
+    assertThat(mappedAuthorities).hasSize(2);
+    List<String> authorities = mappedAuthorities.stream()
+        .map(grantedAuthority -> grantedAuthority.getAuthority()).toList();
+    assertThat(authorities).containsAll(AGENCY_ADMIN.getAuthorities());
   }
 
   @Test
@@ -41,8 +41,24 @@ public class RoleAuthorizationAuthorityMapperTest {
     Collection<? extends GrantedAuthority> mappedAuthorities = this.roleAuthorizationAuthorityMapper
         .mapAuthorities(grantedAuthorities);
 
-    assertThat(mappedAuthorities, hasSize(1));
-    assertThat(mappedAuthorities.iterator().next().getAuthority(), is(AGENCY_ADMIN.getAuthority()));
+    assertThat(mappedAuthorities).hasSize(2);
+    List<String> authorities = mappedAuthorities.stream()
+        .map(grantedAuthority -> grantedAuthority.getAuthority()).toList();
+    assertThat(authorities).containsAll(AGENCY_ADMIN.getAuthorities());
+
+  }
+
+  @Test
+  public void mapAuthorities_Should_returnGrantedAgencySearchAuthority_When_authoritiesRestrictedConsultantAdmin() {
+    List<GrantedAuthority> grantedAuthorities = Stream.of("a", "v", "restricted-consultant-admin", "c")
+        .map(SimpleGrantedAuthority::new)
+        .collect(Collectors.toList());
+
+    Collection<? extends GrantedAuthority> mappedAuthorities = this.roleAuthorizationAuthorityMapper
+        .mapAuthorities(grantedAuthorities);
+
+    assertThat(mappedAuthorities).hasSize(1);
+    assertThat(mappedAuthorities.iterator().next().getAuthority()).isEqualTo(AuthorityValue.SEARCH_AGENCIES);
   }
 
   @Test
@@ -50,7 +66,7 @@ public class RoleAuthorizationAuthorityMapperTest {
     Collection<? extends GrantedAuthority> mappedAuthorities = this.roleAuthorizationAuthorityMapper
         .mapAuthorities(emptyList());
 
-    assertThat(mappedAuthorities, hasSize(0));
+    assertThat(mappedAuthorities).isEmpty();
   }
 
   @Test
@@ -62,7 +78,7 @@ public class RoleAuthorizationAuthorityMapperTest {
     Collection<? extends GrantedAuthority> mappedAuthorities = this.roleAuthorizationAuthorityMapper
         .mapAuthorities(grantedAuthorities);
 
-    assertThat(mappedAuthorities, hasSize(0));
+    assertThat(mappedAuthorities).isEmpty();
   }
 
 }

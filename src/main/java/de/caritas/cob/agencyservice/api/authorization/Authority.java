@@ -1,24 +1,35 @@
 package de.caritas.cob.agencyservice.api.authorization;
 
+import com.google.common.collect.Lists;
+import java.util.List;
 import java.util.stream.Stream;
+import lombok.Getter;
 
 /**
  * 
  * Definition of all authorities and of the role-authority-mapping.
  *
  */
+@Getter
 public enum Authority {
 
-  AGENCY_ADMIN("agency-admin", "AUTHORIZATION_AGENCY_ADMIN"),
-  TENANT_ADMIN("tenant-admin", "AUTHORIZATION_TENANT_ADMIN"),
-  RESTRICTED_AGENCY_ADMIN("restricted-agency-admin", "AUTHORIZATION_RESTRICTED_AGENCY_ADMIN");
+  AGENCY_ADMIN("agency-admin", AuthorityValue.AGENCY_ADMIN, AuthorityValue.SEARCH_AGENCIES),
+  TENANT_ADMIN("tenant-admin", AuthorityValue.TENANT_ADMIN),
+  RESTRICTED_AGENCY_ADMIN("restricted-agency-admin", AuthorityValue.RESTRICTED_AGENCY_ADMIN, AuthorityValue.SEARCH_AGENCIES),
+
+  RESTRICTED_CONSULTANT_ADMIN("restricted-consultant-admin", AuthorityValue.SEARCH_AGENCIES);
 
   private final String roleName;
-  private final String authorityName;
+  private final List<String> authorities;
 
   Authority(final String roleName, final String authorityName) {
     this.roleName = roleName;
-    this.authorityName = authorityName;
+    this.authorities = Lists.newArrayList(authorityName);
+  }
+
+  Authority(final String roleName, final String... authorities) {
+    this.roleName = roleName;
+    this.authorities = Lists.newArrayList(authorities);
   }
 
   /**
@@ -34,12 +45,18 @@ public enum Authority {
         .orElse(null);
   }
 
-  public String getAuthority() {
-    return this.authorityName;
+
+  public static class AuthorityValue {
+
+    private AuthorityValue() {}
+
+    public static final String PREFIX = "AUTHORIZATION_";
+    public static final String AGENCY_ADMIN = PREFIX + "AGENCY_ADMIN";
+    public static final String SEARCH_AGENCIES = PREFIX + "SEARCH_AGENCIES";
+    public static final String TENANT_ADMIN = PREFIX + "TENANT_ADMIN";
+    public static final String RESTRICTED_AGENCY_ADMIN = PREFIX + "RESTRICTED_AGENCY_ADMIN";
+
   }
 
-  public String getRoleName() {
-    return this.roleName;
-  }
 
 }
