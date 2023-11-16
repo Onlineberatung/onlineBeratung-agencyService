@@ -71,6 +71,39 @@ class CentralDataProtectionTemplateServiceTest {
   }
 
   @Test
+  void renderDataProtectionPrivacy_shouldReturnPrivacyAsItIs_When_PlaceholdersAreNotIncludedInPrivacy() {
+
+    // given
+    when(tenantService.getRestrictedTenantDataByTenantId(anyLong())).thenReturn(
+        new RestrictedTenantDTO()
+            .content(
+                new Content().dataProtectionContactTemplate(getDataProtectionContactTemplate())
+                    .privacy(
+                        "Privacy template without placeholders")));
+    DataProtectionContactDTO dataProtectionContactDTO = new DataProtectionContactDTO()
+        .nameAndLegalForm("Max Mustermann");
+
+    Agency agency = Agency.builder()
+        .id(1000L)
+        .tenantId(1L)
+        .consultingTypeId(1)
+        .name("agencyName")
+        .dataProtectionResponsibleEntity(DataProtectionResponsibleEntity.DATA_PROTECTION_OFFICER)
+        .dataProtectionOfficerContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
+        .dataProtectionAgencyResponsibleContactData(JsonConverter.convertToJson(dataProtectionContactDTO))
+        .build();
+
+    // when
+    var renderedPrivacy = centralDataProtectionTemplateService.renderPrivacyTemplateWithRenderedPlaceholderValues(
+        agency);
+
+    // then
+    assertThat(
+        renderedPrivacy).isEqualTo(
+        "Privacy template without placeholders");
+  }
+
+  @Test
   void renderDataProtectionTemplatePlaceholders_shouldProperlyRenderPlaceholders_If_SomeVariableDataIsMissing() {
 
     // given
