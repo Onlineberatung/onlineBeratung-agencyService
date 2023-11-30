@@ -65,12 +65,17 @@ public class CentralDataProtectionTemplateService {
         && restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate() != null) {
       var renderedDataProtectionOfficerContact = renderDataProtectionOfficerContactFromTemplate(
           agency, restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate());
-      result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER,
-          renderedDataProtectionOfficerContact);
+
+      if (renderedDataProtectionOfficerContact != null) {
+        result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER,
+            renderedDataProtectionOfficerContact);
+      }
       var renderedDataProtectionResponsible = renderDataProtectionResponsibleFromTemplate(
           agency, restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate());
-      result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE,
-          renderedDataProtectionResponsible);
+      if (renderedDataProtectionResponsible != null) {
+        result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE,
+            renderedDataProtectionResponsible);
+      }
     }
     return result;
   }
