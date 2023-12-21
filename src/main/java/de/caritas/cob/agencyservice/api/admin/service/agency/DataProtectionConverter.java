@@ -43,8 +43,10 @@ public class DataProtectionConverter {
         return DataProtectionResponsibleEntity.DATA_PROTECTION_OFFICER;
       case ALTERNATIVE_REPRESENTATIVE:
         return DataProtectionResponsibleEntity.ALTERNATIVE_REPRESENTATIVE;
+      default:
+        throw new IllegalArgumentException(
+            "DataProtectionResponsibleEntity not supported: " + dataProtectionEntity);
     }
-    return null;
   }
 
 }
