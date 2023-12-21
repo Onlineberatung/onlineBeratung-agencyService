@@ -55,7 +55,7 @@ public class AgencyAdminService {
   @Autowired(required = false)
   private DemographicsConverter demographicsConverter;
 
-  @Autowired(required = false)
+  @Autowired
   private DataProtectionConverter dataProtectionConverter;
 
   @Value("${feature.topics.enabled}")
@@ -210,7 +210,9 @@ public class AgencyAdminService {
         .counsellingRelations(agency.getCounsellingRelations())
         .deleteDate(agency.getDeleteDate());
 
-    dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
+    if (dataProtectionConverter != null) {
+      dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
+    }
 
     if (nonNull(updateAgencyDTO.getConsultingType())) {
       agencyBuilder.consultingTypeId(updateAgencyDTO.getConsultingType());

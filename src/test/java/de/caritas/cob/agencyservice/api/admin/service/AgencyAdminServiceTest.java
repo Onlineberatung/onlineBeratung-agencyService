@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.DataProtectionConverter;
 import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
@@ -73,6 +74,9 @@ class AgencyAdminServiceTest {
 
   @Mock
   DemographicsConverter demographicsConverter;
+
+  @Mock
+  DataProtectionConverter dataProtectionConverter;
 
   @Mock
   AppointmentService appointmentService;
