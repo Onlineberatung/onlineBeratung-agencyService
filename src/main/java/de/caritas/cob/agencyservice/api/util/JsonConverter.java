@@ -14,6 +14,9 @@ public class JsonConverter {
   }
 
   public static String convertToJson(Object object) {
+    if (object == null) {
+      return null;
+    }
     return serializeToJsonString(object);
   }
 
