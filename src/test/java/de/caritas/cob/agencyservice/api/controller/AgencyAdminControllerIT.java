@@ -14,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
+import de.caritas.cob.agencyservice.api.model.DataProtectionContactDTO;
+import de.caritas.cob.agencyservice.api.model.DataProtectionDTO;
 import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
@@ -34,6 +36,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -237,6 +240,56 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
         .andExpect(jsonPath("_embedded.deleteDate").exists());
+
+    var savedAgency = agencyRepository.findById(1L).orElseThrow();
+    assertNull(savedAgency.getDescription());
+  }
+
+  @Test
+  @WithMockUser(authorities = "AUTHORIZATION_AGENCY_ADMIN")
+  void updateAgency_Should_persistDataProtectionAttributes_When_payloadContainsDataProtection() throws Exception {
+    var response = new ExtendedConsultingTypeResponseDTO();
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
+
+    var agencyDTO = new UpdateAgencyDTO()
+        .name("Test update name")
+        .description(null)
+        .offline(true)
+        .external(false)
+            .dataProtection(new DataProtectionDTO()
+                .dataProtectionResponsibleEntity(DataProtectionDTO.DataProtectionResponsibleEntityEnum.AGENCY_RESPONSIBLE)
+                .agencyDataProtectionResponsibleContact(new DataProtectionContactDTO().nameAndLegalForm("agency responsible contact")
+                    .city("Freiburg").postcode("99999").phoneNumber("123-123-123").email("agency@onlineberatung.net")
+                )
+                .dataProtectionOfficerContact(new DataProtectionContactDTO().nameAndLegalForm("data protection contact").city("Munich")
+                    .postcode("00001").phoneNumber("321-321-321").email("dataprotection@onlineberatung.net")
+                ));
+
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(JsonConverter.convertToJson(agencyDTO)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("_embedded.id").value(1))
+        .andExpect(jsonPath("_embedded.name").value("Test update name"))
+        .andExpect(jsonPath("_embedded.description").isEmpty())
+        .andExpect(jsonPath("_embedded.teamAgency").value("false"))
+        .andExpect(jsonPath("_embedded.external").value("false"))
+        .andExpect(jsonPath("_embedded.offline").exists())
+        .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.createDate").exists())
+        .andExpect(jsonPath("_embedded.updateDate").exists())
+        .andExpect(jsonPath("_embedded.deleteDate").exists())
+        .andExpect(jsonPath("_embedded.dataProtection.dataProtectionResponsibleEntity").value("AGENCY_RESPONSIBLE"))
+        .andExpect(jsonPath("_embedded.dataProtection.agencyDataProtectionResponsibleContact.nameAndLegalForm").value("agency responsible contact"))
+        .andExpect(jsonPath("_embedded.dataProtection.agencyDataProtectionResponsibleContact.city").value("Freiburg"))
+        .andExpect(jsonPath("_embedded.dataProtection.agencyDataProtectionResponsibleContact.postcode").value("99999"))
+        .andExpect(jsonPath("_embedded.dataProtection.agencyDataProtectionResponsibleContact.phoneNumber").value("123-123-123"))
+        .andExpect(jsonPath("_embedded.dataProtection.agencyDataProtectionResponsibleContact.email").value("agency@onlineberatung.net"))
+        .andExpect(jsonPath("_embedded.dataProtection.dataProtectionOfficerContact.nameAndLegalForm").value("data protection contact"))
+        .andExpect(jsonPath("_embedded.dataProtection.dataProtectionOfficerContact.city").value("Munich"))
+        .andExpect(jsonPath("_embedded.dataProtection.dataProtectionOfficerContact.postcode").value("00001"))
+        .andExpect(jsonPath("_embedded.dataProtection.dataProtectionOfficerContact.phoneNumber").value("321-321-321"))
+        .andExpect(jsonPath("_embedded.dataProtection.dataProtectionOfficerContact.email").value("dataprotection@onlineberatung.net"));
 
     var savedAgency = agencyRepository.findById(1L).orElseThrow();
     assertNull(savedAgency.getDescription());
