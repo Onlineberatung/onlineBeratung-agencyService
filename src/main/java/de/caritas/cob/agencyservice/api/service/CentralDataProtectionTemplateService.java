@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 
@@ -66,16 +67,16 @@ public class CentralDataProtectionTemplateService {
       var renderedDataProtectionOfficerContact = renderDataProtectionOfficerContactFromTemplate(
           agency, restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate());
 
-      if (renderedDataProtectionOfficerContact != null) {
-        result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER,
-            renderedDataProtectionOfficerContact);
-      }
+
+      result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER,
+            renderedDataProtectionOfficerContact != null ? renderedDataProtectionOfficerContact : StringUtils.EMPTY);
+
       var renderedDataProtectionResponsible = renderDataProtectionResponsibleFromTemplate(
           agency, restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate());
-      if (renderedDataProtectionResponsible != null) {
-        result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE,
-            renderedDataProtectionResponsible);
-      }
+
+      result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE,
+            renderedDataProtectionResponsible != null ? renderedDataProtectionResponsible : StringUtils.EMPTY);
+
     }
     return result;
   }
