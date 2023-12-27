@@ -16,6 +16,7 @@ import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPos
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /*
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @UpdateAgencyValidator
+@Slf4j
 public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
 
   private final @NonNull AgencyRepository agencyRepository;
@@ -48,7 +50,6 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
       if (hasNoConsultant(validateAgencyDto)) {
         throw new InvalidOfflineStatusException(AGENCY_CONTAINS_NO_CONSULTANTS);
       }
-
     }
   }
 

@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.controller;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -16,6 +17,7 @@ import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.model.DataProtectionContactDTO;
 import de.caritas.cob.agencyservice.api.model.DataProtectionDTO;
+import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
@@ -28,6 +30,7 @@ import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,6 +71,9 @@ class AgencyAdminControllerIT {
   @Autowired
   private AgencyRepository agencyRepository;
 
+  @MockBean
+  private TenantService tenantService;
+
   @BeforeEach
   public void setup() {
     TenantContext.clear();
@@ -75,6 +81,8 @@ class AgencyAdminControllerIT {
         .webAppContextSetup(context)
         .apply(springSecurity())
         .build();
+    when(tenantService.getRestrictedTenantDataByTenantId(Mockito.any()))
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().content(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.Content().privacy("test privacy")));
   }
 
   @Test
@@ -250,6 +258,7 @@ class AgencyAdminControllerIT {
   void updateAgency_Should_persistDataProtectionAttributes_When_payloadContainsDataProtection() throws Exception {
     var response = new ExtendedConsultingTypeResponseDTO();
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
+
 
     var agencyDTO = new UpdateAgencyDTO()
         .name("Test update name")
