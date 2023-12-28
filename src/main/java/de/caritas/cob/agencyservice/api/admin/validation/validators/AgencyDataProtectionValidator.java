@@ -29,14 +29,20 @@ public class AgencyDataProtectionValidator implements ConcreteAgencyValidator {
   public void validate(ValidateAgencyDTO validateAgencyDto) {
 
     var tenant = tenantService.getRestrictedTenantDataByTenantId(validateAgencyDto.getTenantId());
-    agencyDataProtectionValidationService.validate(validateAgencyDto, tenant);
+
+    if (Boolean.TRUE.equals(tenant.getSettings().getFeatureCentralDataProtectionTemplateEnabled())) {
+      log.info("Validating agency data protection for agency with id {}.", validateAgencyDto.getId());
+      agencyDataProtectionValidationService.validate(validateAgencyDto);
+    }
 
     if (multitenancyWithSingleDomain) {
       var mainTenantSubdomainForSingleDomainMultitenancy = applicationSettingsService.getApplicationSettings()
           .getMainTenantSubdomainForSingleDomainMultitenancy();
       de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO mainTenant = tenantService.getRestrictedTenantDataBySubdomain(
           mainTenantSubdomainForSingleDomainMultitenancy.getValue());
-      agencyDataProtectionValidationService.validate(validateAgencyDto, mainTenant);
+      if (Boolean.TRUE.equals(mainTenant.getSettings().getFeatureCentralDataProtectionTemplateEnabled())) {
+        agencyDataProtectionValidationService.validate(validateAgencyDto);
+      }
     }
   }
 }

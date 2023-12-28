@@ -17,42 +17,59 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AgencyDataProtectionValidationService {
 
-  public void validate(ValidateAgencyDTO validateAgencyDto,
-      de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO tenant) {
-    if (DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER.existsInText(tenant.getContent().getPrivacy())) {
-      log.info("Validating data protection officer for agency with id {}.", validateAgencyDto.getId());
-      validateIfDataProtectionOfficer(validateAgencyDto);
-      validateIfAgencyResponsible(validateAgencyDto);
-      validateIfAlternativeRepresentative(validateAgencyDto);
-    }
+  public void validate(ValidateAgencyDTO validateAgencyDto) {
+    validateThatDataProtectionDtoExists(validateAgencyDto);
+    validateIfDataProtectionOfficer(validateAgencyDto);
+    validateIfAgencyResponsible(validateAgencyDto);
+    validateIfAlternativeRepresentative(validateAgencyDto);
+  }
 
-    if (DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE.existsInText(tenant.getContent().getPrivacy())) {
-      log.info("Validating agency responsible for agency with id {}.", validateAgencyDto.getId());
-      validateIfAgencyResponsible(validateAgencyDto);
+  private void validateThatDataProtectionDtoExists(ValidateAgencyDTO validateAgencyDto) {
+    if (validateAgencyDto.getDataProtectionDTO() == null) {
+      log.warn(
+          "Could not save agency with id {} status. Required fields for data protection officer is empty.",
+          validateAgencyDto.getId());
+      throw new InvalidOfflineStatusException(
+          HttpStatusExceptionReason.DATA_PROTECTION_DTO_IS_NULL);
     }
   }
 
   private void validateIfDataProtectionOfficer(ValidateAgencyDTO validateAgencyDto) {
-    if (DATA_PROTECTION_OFFICER.equals(validateAgencyDto.getDataProtectionDTO().getDataProtectionResponsibleEntity())
-        && areFieldsEmpty(validateAgencyDto.getDataProtectionDTO().getDataProtectionOfficerContact())) {
-      log.warn("Could not bring agency with id {} status to ONLINE. Required fields for data protection officer is empty and privacy text requires placeholder.", validateAgencyDto.getId());
-      throw new InvalidOfflineStatusException(HttpStatusExceptionReason.DATA_PROTECTION_OFFICER_IS_EMPTY);
+    if (DATA_PROTECTION_OFFICER.equals(
+        validateAgencyDto.getDataProtectionDTO().getDataProtectionResponsibleEntity())
+        && areFieldsEmpty(
+        validateAgencyDto.getDataProtectionDTO().getDataProtectionOfficerContact())) {
+      log.warn(
+          "Could not save agency with id {}. Required fields for data protection officer is empty.",
+          validateAgencyDto.getId());
+      throw new InvalidOfflineStatusException(
+          HttpStatusExceptionReason.DATA_PROTECTION_OFFICER_IS_EMPTY);
     }
   }
 
   private void validateIfAgencyResponsible(ValidateAgencyDTO validateAgencyDto) {
-    if (AGENCY_RESPONSIBLE.equals(validateAgencyDto.getDataProtectionDTO().getDataProtectionResponsibleEntity())
-        && areFieldsEmpty(validateAgencyDto.getDataProtectionDTO().getAgencyDataProtectionResponsibleContact())) {
-      log.warn("Could not bring agency with id {} status to ONLINE. Required fields for agency responsible is empty and privacy text requires data protection placeholder.", validateAgencyDto.getId());
-      throw new InvalidOfflineStatusException(HttpStatusExceptionReason.DATA_PROTECTION_RESPONSIBLE_IS_EMPTY);
+    if (AGENCY_RESPONSIBLE.equals(
+        validateAgencyDto.getDataProtectionDTO().getDataProtectionResponsibleEntity())
+        && areFieldsEmpty(
+        validateAgencyDto.getDataProtectionDTO().getAgencyDataProtectionResponsibleContact())) {
+      log.warn(
+          "Could not save agency with id {} status. Required fields for agency responsible is empty.",
+          validateAgencyDto.getId());
+      throw new InvalidOfflineStatusException(
+          HttpStatusExceptionReason.DATA_PROTECTION_RESPONSIBLE_IS_EMPTY);
     }
   }
 
   private void validateIfAlternativeRepresentative(ValidateAgencyDTO validateAgencyDto) {
-    if (ALTERNATIVE_REPRESENTATIVE.equals(validateAgencyDto.getDataProtectionDTO().getDataProtectionResponsibleEntity())
-        && areFieldsEmpty(validateAgencyDto.getDataProtectionDTO().getAlternativeDataProtectionRepresentativeContact())) {
-      log.warn("Could not bring agency with id {} status to ONLINE. Required fields for alternative responsible is empty and privacy text requires data protection placeholder.", validateAgencyDto.getId());
-      throw new InvalidOfflineStatusException(HttpStatusExceptionReason.DATA_PROTECTION_ALTERNATIVE_RESPONSIBLE_IS_EMPTY);
+    if (ALTERNATIVE_REPRESENTATIVE.equals(
+        validateAgencyDto.getDataProtectionDTO().getDataProtectionResponsibleEntity())
+        && areFieldsEmpty(validateAgencyDto.getDataProtectionDTO()
+        .getAlternativeDataProtectionRepresentativeContact())) {
+      log.warn(
+          "Could not save agency with id {} status. Required fields for alternative responsible is empty.",
+          validateAgencyDto.getId());
+      throw new InvalidOfflineStatusException(
+          HttpStatusExceptionReason.DATA_PROTECTION_ALTERNATIVE_RESPONSIBLE_IS_EMPTY);
     }
   }
 

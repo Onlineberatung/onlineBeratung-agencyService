@@ -71,7 +71,7 @@ class AgencyAdminControllerWithDemographicsIT {
         .apply(springSecurity())
         .build();
     when(tenantService.getRestrictedTenantDataByTenantId(Mockito.any()))
-        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().content(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.Content().privacy("test privacy")));
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().settings(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings().featureCentralDataProtectionTemplateEnabled(false)));
 
   }
 

@@ -26,6 +26,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.api.util.JsonConverter;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
 import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,7 +83,7 @@ class AgencyAdminControllerIT {
         .apply(springSecurity())
         .build();
     when(tenantService.getRestrictedTenantDataByTenantId(Mockito.any()))
-        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().content(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.Content().privacy("test privacy")));
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().settings(new Settings().featureCentralDataProtectionTemplateEnabled(false)));
   }
 
   @Test
@@ -251,6 +252,72 @@ class AgencyAdminControllerIT {
 
     var savedAgency = agencyRepository.findById(1L).orElseThrow();
     assertNull(savedAgency.getDescription());
+  }
+
+  @Test
+  @WithMockUser(authorities = "AUTHORIZATION_AGENCY_ADMIN")
+  void updateAgency_Should_returnStatusOk_When_CentralDataProtectionIsEnabled_And_PayloadContainsValidDataProtectionContent() throws Exception {
+    var response = new ExtendedConsultingTypeResponseDTO();
+
+    Long tenantId = agencyRepository.findById(1L).get().getTenantId();
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
+
+    when(tenantService.getRestrictedTenantDataByTenantId(tenantId))
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().settings(new Settings().featureCentralDataProtectionTemplateEnabled(true)));
+
+    var agencyDTO = new UpdateAgencyDTO()
+        .name("Test update name")
+        .description(null)
+        .offline(true)
+        .external(false)
+            .dataProtection(new DataProtectionDTO().dataProtectionResponsibleEntity(DataProtectionDTO.DataProtectionResponsibleEntityEnum.DATA_PROTECTION_OFFICER)
+                .dataProtectionOfficerContact(new DataProtectionContactDTO().nameAndLegalForm("data protection contact").city("Munich")
+                    .postcode("00001").phoneNumber("321-321-321").email("dataprotection@onlineberatung.net")));
+
+
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(JsonConverter.convertToJson(agencyDTO)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("_embedded.id").value(1))
+        .andExpect(jsonPath("_embedded.name").value("Test update name"))
+        .andExpect(jsonPath("_embedded.description").isEmpty())
+        .andExpect(jsonPath("_embedded.teamAgency").value("false"))
+        .andExpect(jsonPath("_embedded.external").value("false"))
+        .andExpect(jsonPath("_embedded.offline").exists())
+        .andExpect(jsonPath("_embedded.topics").exists())
+        .andExpect(jsonPath("_embedded.createDate").exists())
+        .andExpect(jsonPath("_embedded.updateDate").exists())
+        .andExpect(jsonPath("_embedded.deleteDate").exists());
+
+    var savedAgency = agencyRepository.findById(1L).orElseThrow();
+    assertNull(savedAgency.getDescription());
+  }
+
+  @Test
+  @WithMockUser(authorities = "AUTHORIZATION_AGENCY_ADMIN")
+  void updateAgency_Should_returnStatusBadRequest_When_CentralDataProtectionIsEnabled_And_PayloadContainsInvalidDataProtectionContent() throws Exception {
+    var response = new ExtendedConsultingTypeResponseDTO();
+
+    Long tenantId = agencyRepository.findById(1L).get().getTenantId();
+    when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(response);
+
+    when(tenantService.getRestrictedTenantDataByTenantId(tenantId))
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().settings(new Settings().featureCentralDataProtectionTemplateEnabled(true)));
+
+    var agencyDTO = new UpdateAgencyDTO()
+        .name("Test update name")
+        .description(null)
+        .offline(true)
+        .external(false)
+        .dataProtection(new DataProtectionDTO().dataProtectionResponsibleEntity(DataProtectionDTO.DataProtectionResponsibleEntityEnum.DATA_PROTECTION_OFFICER)
+            .dataProtectionOfficerContact(new DataProtectionContactDTO()));
+
+
+    mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)
+            .contentType(APPLICATION_JSON)
+            .content(JsonConverter.convertToJson(agencyDTO)))
+        .andExpect(status().isBadRequest());
   }
 
   @Test

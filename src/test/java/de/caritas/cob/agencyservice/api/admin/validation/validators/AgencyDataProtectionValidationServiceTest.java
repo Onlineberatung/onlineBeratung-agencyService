@@ -8,7 +8,6 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidOfflineSt
 import de.caritas.cob.agencyservice.api.model.DataProtectionContactDTO;
 import de.caritas.cob.agencyservice.api.model.DataProtectionDTO;
 import de.caritas.cob.agencyservice.api.model.DataProtectionDTO.DataProtectionResponsibleEntityEnum;
-import de.caritas.cob.agencyservice.api.repository.agency.DataProtectionPlaceHolderType;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Content;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import org.assertj.core.api.Fail;
@@ -33,7 +32,7 @@ class AgencyDataProtectionValidationServiceTest {
     // when
     try {
       agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy("${dataProtectionOfficer}"));
+          agencyToValidate);
     } catch (InvalidOfflineStatusException e) {
       // then
       assertThat(e.getHttpStatusExceptionReason()).isEqualTo(HttpStatusExceptionReason.DATA_PROTECTION_OFFICER_IS_EMPTY);
@@ -54,7 +53,7 @@ class AgencyDataProtectionValidationServiceTest {
     // when
     try {
       agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy("${dataProtectionOfficer}"));
+          agencyToValidate);
     } catch (Exception e) {
       // then
       Fail.fail("Should not throw exception");
@@ -62,41 +61,7 @@ class AgencyDataProtectionValidationServiceTest {
   }
 
   @Test
-  void validate_Should_Validate_When_DataProtectionOfficerIsNotSet_And_PrivacyWithoutPlaceholder() {
-    // given
-    ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
-        .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(DataProtectionResponsibleEntityEnum.DATA_PROTECTION_OFFICER)).build();
-    // when
-    try {
-      agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy("privacy without placeholder"));
-    } catch (Exception e) {
-      // then
-      Fail.fail("Should not throw exception");
-    }
-  }
-
-
-
-  @Test
-  void validate_Should_Validate_When_DataResponsibleIsNotSet_And_PrivacyWithoutPlaceholder() {
-    // given
-    ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
-        .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
-            DataProtectionResponsibleEntityEnum.AGENCY_RESPONSIBLE)
-        ).build();
-    // when
-    try {
-      agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy("privacy without placeholder"));
-    } catch (Exception e) {
-      // then
-      Fail.fail("Should not throw exception");
-    }
-  }
-
-  @Test
-  void validate_Should_Validate_When_DataResponsibleIsSet_And_ResponsiblePlaceholderExistsInPrivacy() {
+  void validate_Should_Validate_When_DataResponsibleIsSet() {
     // given
     ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
         .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
@@ -105,7 +70,7 @@ class AgencyDataProtectionValidationServiceTest {
     // when
     try {
       agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE.getPlaceholder()));
+          agencyToValidate);
     } catch (Exception e) {
       // then
       Fail.fail("Should not throw exception");
@@ -114,7 +79,7 @@ class AgencyDataProtectionValidationServiceTest {
 
 
   @Test
-  void validate_Should_NotValidate_When_DataResponsibleIsNotSet_And_DataResponsiblePlaceholder() {
+  void validate_Should_NotValidate_When_DataResponsibleIsNotSet() {
     // given
     ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
         .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
@@ -123,45 +88,7 @@ class AgencyDataProtectionValidationServiceTest {
     // when
     try {
       agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE.getPlaceholder()));
-    } catch (InvalidOfflineStatusException e) {
-      // then
-      assertThat(e.getHttpStatusExceptionReason()).isEqualTo(HttpStatusExceptionReason.DATA_PROTECTION_RESPONSIBLE_IS_EMPTY);
-    }
-  }
-
-
-
-
-  @Test
-  void validate_Should_Validate_When_DataResponsibleIsSet_And_DataProtectionOfficerPlaceholder() {
-    // given
-    ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
-        .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
-                DataProtectionResponsibleEntityEnum.AGENCY_RESPONSIBLE)
-            .agencyDataProtectionResponsibleContact(new DataProtectionContactDTO().nameAndLegalForm("name").email("email").city("city").postcode("postcode"))
-        ).build();
-
-    // when
-    try {
-      agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER.getPlaceholder()));
-    } catch (Exception e) {
-      // then
-      Fail.fail("Should not throw exception");
-    }
-  }
-
-  @Test
-  void validate_Should_NotValidate_When_DataResponsibleIsNotSet_And_DataProtectionOfficerPlaceholder() {
-    // given
-    ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
-        .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
-            DataProtectionResponsibleEntityEnum.AGENCY_RESPONSIBLE)).build();
-    // when
-    try {
-      agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER.getPlaceholder()));
+          agencyToValidate);
     } catch (InvalidOfflineStatusException e) {
       // then
       assertThat(e.getHttpStatusExceptionReason()).isEqualTo(HttpStatusExceptionReason.DATA_PROTECTION_RESPONSIBLE_IS_EMPTY);
@@ -169,15 +96,14 @@ class AgencyDataProtectionValidationServiceTest {
   }
 
   @Test
-  void validate_Should_NotValidate_When_AlternativeDataResponsibleIsNotSet_And_DataProtectionOfficerPlaceholder() {
+  void validate_Should_NotValidate_When_AlternativeDataResponsibleIsNotSet() {
     // given
     ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
         .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
             DataProtectionResponsibleEntityEnum.ALTERNATIVE_REPRESENTATIVE)).build();
     // when
     try {
-      agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER.getPlaceholder()));
+      agencyDataProtectionValidator.validate(agencyToValidate);
     } catch (InvalidOfflineStatusException e) {
       // then
       assertThat(e.getHttpStatusExceptionReason()).isEqualTo(HttpStatusExceptionReason.DATA_PROTECTION_ALTERNATIVE_RESPONSIBLE_IS_EMPTY);
@@ -186,39 +112,22 @@ class AgencyDataProtectionValidationServiceTest {
 
 
   @Test
-  void validate_Should_Validate_When_AlternativeDataResponsibleIsSet_And_DataProtectionOfficerPlaceholder() {
+  void validate_Should_Validate_When_AlternativeDataResponsibleIsSet() {
     // given
     ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
         .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
                 DataProtectionResponsibleEntityEnum.ALTERNATIVE_REPRESENTATIVE)
-            .alternativeDataProtectionRepresentativeContact(new DataProtectionContactDTO().nameAndLegalForm("name").city("city").postcode("postcode").email("email"))).build();
+            .alternativeDataProtectionRepresentativeContact(
+                new DataProtectionContactDTO().nameAndLegalForm("name").city("city")
+                    .postcode("postcode").email("email"))).build();
 
     // when
     try {
       agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER.getPlaceholder()));
+          agencyToValidate);
     } catch (Exception e) {
       // then
       Fail.fail("Should not throw exception");
     }
   }
-
-  @Test
-  void validate_Should_Validate_When_AlternativeDataResponsibleIsNotSet_And_PrivacyWithoutPlaceholder() {
-    // given
-    ValidateAgencyDTO agencyToValidate = ValidateAgencyDTO.builder()
-        .dataProtectionDTO(new DataProtectionDTO().dataProtectionResponsibleEntity(
-                DataProtectionResponsibleEntityEnum.ALTERNATIVE_REPRESENTATIVE)).build();
-
-    // when
-    try {
-      agencyDataProtectionValidator.validate(
-          agencyToValidate, tenantWithPrivacy("privacy without placeholder"));
-    } catch (Exception e) {
-      // then
-      Fail.fail("Should not throw exception");
-    }
-  }
-
-
 }
