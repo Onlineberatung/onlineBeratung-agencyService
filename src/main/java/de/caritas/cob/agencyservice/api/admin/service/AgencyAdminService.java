@@ -8,6 +8,7 @@ import static java.util.Objects.nonNull;
 import com.google.common.base.Joiner;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.DataProtectionConverter;
 import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
@@ -26,7 +27,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +54,9 @@ public class AgencyAdminService {
 
   @Autowired(required = false)
   private DemographicsConverter demographicsConverter;
+
+  @Autowired
+  private DataProtectionConverter dataProtectionConverter;
 
   @Value("${feature.topics.enabled}")
   private boolean featureTopicsEnabled;
@@ -207,6 +210,10 @@ public class AgencyAdminService {
         .counsellingRelations(agency.getCounsellingRelations())
         .deleteDate(agency.getDeleteDate());
 
+    if (dataProtectionConverter != null) {
+      dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
+    }
+
     if (nonNull(updateAgencyDTO.getConsultingType())) {
       agencyBuilder.consultingTypeId(updateAgencyDTO.getConsultingType());
     } else {
@@ -233,6 +240,8 @@ public class AgencyAdminService {
     agencyToUpdate.setTenantId(agency.getTenantId());
     return agencyToUpdate;
   }
+
+
 
 
   /**
