@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import de.caritas.cob.agencyservice.api.service.TenantService;
 import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
@@ -25,6 +26,7 @@ import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +60,9 @@ class AgencyAdminControllerWithDemographicsIT {
   @MockBean
   AuthenticatedUser authenticatedUser;
 
+  @MockBean
+  TenantService tenantService;
+
   @BeforeEach
   public void setup() {
     TenantContext.clear();
@@ -65,6 +70,9 @@ class AgencyAdminControllerWithDemographicsIT {
         .webAppContextSetup(context)
         .apply(springSecurity())
         .build();
+    when(tenantService.getRestrictedTenantDataByTenantId(Mockito.any()))
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().settings(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings().featureCentralDataProtectionTemplateEnabled(false)));
+
   }
 
   @Test
