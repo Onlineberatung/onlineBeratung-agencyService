@@ -146,13 +146,7 @@ public class AgencyAdminService {
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
     }
-
-    if (dataProtectionConverter != null) {
-      dataProtectionConverter.convertToEntity(agencyDTO.getDataProtection(), agencyBuilder);
-    }
-
-
-
+    dataProtectionConverter.convertToEntity(agencyDTO.getDataProtection(), agencyBuilder);
     var agencyToCreate = agencyBuilder.build();
 
     if (featureTopicsEnabled) {
@@ -215,9 +209,7 @@ public class AgencyAdminService {
         .counsellingRelations(agency.getCounsellingRelations())
         .deleteDate(agency.getDeleteDate());
 
-    if (dataProtectionConverter != null) {
-      dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
-    }
+    dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
 
     if (nonNull(updateAgencyDTO.getConsultingType())) {
       agencyBuilder.consultingTypeId(updateAgencyDTO.getConsultingType());
