@@ -1,5 +1,6 @@
 package de.caritas.cob.agencyservice.api.admin.validation.validators.model;
 
+import de.caritas.cob.agencyservice.api.model.DataProtectionDTO;
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,9 @@ public class ValidateAgencyDTO {
   private String postcode;
   private Integer consultingType;
   private Boolean offline;
+  private Long tenantId;
   private DemographicsDTO demographicsDTO;
+
+  private DataProtectionDTO dataProtectionDTO;
 
 }
