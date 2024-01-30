@@ -26,15 +26,14 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundExceptio
 import de.caritas.cob.agencyservice.api.model.AgencyAdminResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.DataProtectionContactDTO;
+import de.caritas.cob.agencyservice.api.model.DataProtectionDTO;
 import de.caritas.cob.agencyservice.api.model.DemographicsDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
-import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyTenantUnawareRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.DataProtectionResponsibleEntity;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
-import de.caritas.cob.agencyservice.api.service.LogService;
 import de.caritas.cob.agencyservice.api.util.JsonConverter;
 import java.util.List;
 import java.util.Optional;
@@ -108,6 +107,7 @@ class AgencyAdminServiceTest {
 
   @Test
   void createAgency_Should_CreateAgencyAndAddDefaultCounsellingRelations() {
+    // given
     var agency = this.easyRandom.nextObject(Agency.class);
     agency.setCounsellingRelations(null);
     agency.setDataProtectionOfficerContactData(null);
@@ -115,11 +115,15 @@ class AgencyAdminServiceTest {
     var agencyDTO = this.easyRandom.nextObject(AgencyDTO.class);
     agencyDTO.setCounsellingRelations(null);
     agencyDTO.setConsultingType(1);
+    agencyDTO.setDataProtection(new DataProtectionDTO());
 
     when(agencyRepository.save(any())).thenReturn(agency);
+    // when
     agencyAdminService.createAgency(agencyDTO);
+    // then
     verify(agencyRepository).save(agencyArgumentCaptor.capture());
     assertThat(agencyArgumentCaptor.getValue().getCounsellingRelations(), is("RELATIVE_COUNSELLING,SELF_COUNSELLING,PARENTAL_COUNSELLING"));
+    verify(dataProtectionConverter).convertToEntity(Mockito.any(DataProtectionDTO.class), Mockito.any(Agency.AgencyBuilder.class));
   }
 
   @Test

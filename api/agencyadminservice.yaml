@@ -630,6 +630,9 @@ components:
           items:
             type: string
             enum: [ RELATIVE_COUNSELLING, SELF_COUNSELLING, PARENTAL_COUNSELLING]
+        dataProtection:
+          type: object
+          $ref: '#/components/schemas/DataProtectionDTO'
 
     AgencyAdminFullResponseDTO:
       type: object
