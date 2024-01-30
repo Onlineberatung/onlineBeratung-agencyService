@@ -49,14 +49,13 @@ public class AgencyAdminService {
   private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
   private final @NonNull AppointmentService appointmentService;
 
+  private final @NonNull DataProtectionConverter dataProtectionConverter;
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
 
   @Autowired(required = false)
   private DemographicsConverter demographicsConverter;
 
-  @Autowired
-  private DataProtectionConverter dataProtectionConverter;
 
   @Value("${feature.topics.enabled}")
   private boolean featureTopicsEnabled;
@@ -147,6 +146,12 @@ public class AgencyAdminService {
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
     }
+
+    if (dataProtectionConverter != null) {
+      dataProtectionConverter.convertToEntity(agencyDTO.getDataProtection(), agencyBuilder);
+    }
+
+
 
     var agencyToCreate = agencyBuilder.build();
 
