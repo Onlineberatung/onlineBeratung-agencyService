@@ -15,6 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 
@@ -27,9 +28,23 @@ public class CentralDataProtectionTemplateService {
 
   private final @NonNull TemplateRenderer templateRenderer;
 
+  private final @NonNull ApplicationSettingsService applicationSettingsService;
+
+  @Value("${feature.multitenancy.with.single.domain.enabled}")
+  private boolean multitenancyWithSingleDomain;
+
+  private boolean isTenantLevelLegalContentOverrideAllowed() {
+    de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTOMultitenancyWithSingleDomainEnabled
+        legalContentChangesBySingleTenantAdminsAllowed =
+        applicationSettingsService
+            .getApplicationSettings()
+            .getLegalContentChangesBySingleTenantAdminsAllowed();
+    return legalContentChangesBySingleTenantAdminsAllowed != null
+        && Boolean.TRUE.equals(legalContentChangesBySingleTenantAdminsAllowed.getValue());
+  }
+
   public String renderPrivacyTemplateWithRenderedPlaceholderValues(Agency agency) {
-    RestrictedTenantDTO restrictedTenantDataByTenantId = tenantService.getRestrictedTenantDataByTenantId(
-        agency.getTenantId());
+    RestrictedTenantDTO restrictedTenantDataByTenantId = retrieveProperTenant(agency);
     if (restrictedTenantDataByTenantId != null
         && restrictedTenantDataByTenantId.getContent() != null) {
       return renderPrivacyTemplateWithRenderedPlaceholderValues(agency,
@@ -42,7 +57,8 @@ public class CentralDataProtectionTemplateService {
   @Nullable
   private String renderPrivacyTemplateWithRenderedPlaceholderValues(Agency agency,
       RestrictedTenantDTO restrictedTenantDataByTenantId) {
-    var renderedPlaceholdersMap = renderDataProtectionPlaceholdersFromTemplates(agency);
+    var renderedPlaceholdersMap = renderDataProtectionPlaceholdersFromTemplates(agency,
+        restrictedTenantDataByTenantId);
     Map<String, Object> dataModel = renderedPlaceholdersMap.entrySet().stream()
         .collect(Collectors.toMap(entry -> entry.getKey().getPlaceholderVariable(),
             Entry::getValue));
@@ -56,10 +72,26 @@ public class CentralDataProtectionTemplateService {
     }
   }
 
-  protected Map<DataProtectionPlaceHolderType, String> renderDataProtectionPlaceholdersFromTemplates(
+  private de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO retrieveProperTenant(
       Agency agency) {
-    RestrictedTenantDTO restrictedTenantDataByTenantId = tenantService.getRestrictedTenantDataByTenantId(
-        agency.getTenantId());
+    if (multitenancyWithSingleDomain) {
+      return getAgencyTenantOrFallbackToMainTenantIfTenantPrivacyOverrideNotAllowed(agency);
+    } else {
+      return tenantService.getRestrictedTenantDataByTenantId(agency.getTenantId());
+    }
+  }
+
+  private de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO getAgencyTenantOrFallbackToMainTenantIfTenantPrivacyOverrideNotAllowed(
+      Agency agency) {
+    if (isTenantLevelLegalContentOverrideAllowed()) {
+      return tenantService.getRestrictedTenantDataByTenantId(agency.getTenantId());
+    } else {
+      return tenantService.getMainTenant();
+    }
+  }
+
+  protected Map<DataProtectionPlaceHolderType, String> renderDataProtectionPlaceholdersFromTemplates(
+      Agency agency, RestrictedTenantDTO restrictedTenantDataByTenantId) {
 
     Map<DataProtectionPlaceHolderType, String> result = Maps.newHashMap();
     if (restrictedTenantDataByTenantId.getContent() != null
@@ -67,15 +99,16 @@ public class CentralDataProtectionTemplateService {
       var renderedDataProtectionOfficerContact = renderDataProtectionOfficerContactFromTemplate(
           agency, restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate());
 
-
       result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_OFFICER,
-            renderedDataProtectionOfficerContact != null ? renderedDataProtectionOfficerContact : StringUtils.EMPTY);
+          renderedDataProtectionOfficerContact != null ? renderedDataProtectionOfficerContact
+              : StringUtils.EMPTY);
 
       var renderedDataProtectionResponsible = renderDataProtectionResponsibleFromTemplate(
           agency, restrictedTenantDataByTenantId.getContent().getDataProtectionContactTemplate());
 
       result.put(DataProtectionPlaceHolderType.DATA_PROTECTION_RESPONSIBLE,
-            renderedDataProtectionResponsible != null ? renderedDataProtectionResponsible : StringUtils.EMPTY);
+          renderedDataProtectionResponsible != null ? renderedDataProtectionResponsible
+              : StringUtils.EMPTY);
 
     }
     return result;
