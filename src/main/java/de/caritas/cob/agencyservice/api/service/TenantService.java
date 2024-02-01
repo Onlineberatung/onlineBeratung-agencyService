@@ -16,8 +16,14 @@ public class TenantService {
 
   private final @NonNull TenantServiceApiControllerFactory tenantServiceApiControllerFactory;
 
+  private final @NonNull ApplicationSettingsService applicationSettingsService;
+
   @Value("${multitenancy.enabled}")
   private boolean multitenancy;
+
+
+  @Value("${feature.multitenancy.with.single.domain.enabled}")
+  private boolean multitenancyWithSingleDomain;
 
   @Cacheable(cacheNames = CacheManagerConfig.TENANT_CACHE, key = "#subdomain")
   public RestrictedTenantDTO getRestrictedTenantDataBySubdomain(String subdomain) {
@@ -33,5 +39,18 @@ public class TenantService {
   public RestrictedTenantDTO getRestrictedTenantDataForSingleTenant() {
     TenantControllerApi controllerApi = tenantServiceApiControllerFactory.createControllerApi();
     return controllerApi.getRestrictedSingleTenancyTenantData();
+  }
+
+  public RestrictedTenantDTO getMainTenant() {
+    if (multitenancyWithSingleDomain) {
+      return getRestrictedTenantDataBySubdomain(getMainTenantSubdomain());
+    }
+    throw new IllegalStateException("Main tenant can only be retrieved if multitenancy with single domain is enabled.");
+  }
+
+  private String getMainTenantSubdomain() {
+    return applicationSettingsService
+        .getApplicationSettings()
+        .getMainTenantSubdomainForSingleDomainMultitenancy().getValue();
   }
 }
