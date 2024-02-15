@@ -309,7 +309,8 @@ public class AgencyService {
         .offline(agency.isOffline())
         .tenantId(agency.getTenantId())
         .consultingType(agency.getConsultingTypeId())
-        .agencySpecificPrivacy(renderedAgencySpecificPrivacy);
+        .agencySpecificPrivacy(renderedAgencySpecificPrivacy)
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(Collectors.toList()));
   }
 
   protected String getRenderedAgencySpecificPrivacy(Agency agency) {
