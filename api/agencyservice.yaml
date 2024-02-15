@@ -175,6 +175,10 @@ components:
         agencySpecificPrivacy:
           type: string
           example: "specific for agency privacy text"
+        topicIds:
+          type: array
+          items:
+            type: long
 
     FullAgencyResponseDTO:
       type: object
