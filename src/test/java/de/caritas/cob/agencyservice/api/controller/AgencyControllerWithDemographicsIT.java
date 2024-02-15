@@ -105,8 +105,7 @@ class AgencyControllerWithDemographicsIT {
         .andExpect(jsonPath("$[0].demographics.ageTo").value(60))
         .andExpect(jsonPath("$[0].demographics.genders[0]").value("FEMALE"))
         .andExpect(jsonPath("$[0].demographics.genders[1]").value("DIVERS"));
-    MvcResult mvcResult = perform.andReturn();
-    String contentAsString = mvcResult.getResponse().getContentAsString();
+
   }
 
 

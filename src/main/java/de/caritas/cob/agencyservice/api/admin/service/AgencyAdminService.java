@@ -140,8 +140,10 @@ public class AgencyAdminService {
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
         .counsellingRelations(Joiner.on(",").join(agencyDTO.getCounsellingRelations()))
+        .associationLogo(agencyDTO.getAssociationLogo())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
+
 
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
@@ -207,7 +209,8 @@ public class AgencyAdminService {
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .counsellingRelations(agency.getCounsellingRelations())
-        .deleteDate(agency.getDeleteDate());
+        .deleteDate(agency.getDeleteDate())
+        .associationLogo(updateAgencyDTO.getAssociationLogo());
 
     dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
 
