@@ -105,7 +105,8 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.topics").exists())
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
-        .andExpect(jsonPath("_embedded.deleteDate").exists());
+        .andExpect(jsonPath("_embedded.deleteDate").exists())
+        .andExpect(jsonPath("_embedded.associationLogo").exists());
   }
 
   @Test
@@ -124,7 +125,8 @@ class AgencyAdminControllerIT {
         .teamAgency(true)
         .consultingType(0)
         .url("https://www.test.de")
-        .external(true);
+        .external(true)
+        .associationLogo("base64 encoded logo");
     String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
@@ -145,7 +147,8 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.topics").exists())
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
-        .andExpect(jsonPath("_embedded.deleteDate").exists());
+        .andExpect(jsonPath("_embedded.deleteDate").exists())
+        .andExpect(jsonPath("_embedded.associationLogo").value("base64 encoded logo"));
   }
 
   @Test
@@ -269,6 +272,7 @@ class AgencyAdminControllerIT {
         .name("Test update name")
         .description(null)
         .offline(true)
+        .associationLogo("base64 encoded logo")
         .external(false)
             .dataProtection(new DataProtectionDTO().dataProtectionResponsibleEntity(DataProtectionDTO.DataProtectionResponsibleEntityEnum.DATA_PROTECTION_OFFICER)
                 .dataProtectionOfficerContact(new DataProtectionContactDTO().nameAndLegalForm("data protection contact").city("Munich")
@@ -288,7 +292,8 @@ class AgencyAdminControllerIT {
         .andExpect(jsonPath("_embedded.topics").exists())
         .andExpect(jsonPath("_embedded.createDate").exists())
         .andExpect(jsonPath("_embedded.updateDate").exists())
-        .andExpect(jsonPath("_embedded.deleteDate").exists());
+        .andExpect(jsonPath("_embedded.deleteDate").exists())
+        .andExpect(jsonPath("_embedded.associationLogo").value("base64 encoded logo"));
 
     var savedAgency = agencyRepository.findById(1L).orElseThrow();
     assertNull(savedAgency.getDescription());

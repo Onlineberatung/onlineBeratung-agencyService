@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.service;
 
 
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import com.google.common.collect.Lists;
@@ -309,7 +310,9 @@ public class AgencyService {
         .offline(agency.isOffline())
         .tenantId(agency.getTenantId())
         .consultingType(agency.getConsultingTypeId())
-        .agencySpecificPrivacy(renderedAgencySpecificPrivacy);
+        .agencySpecificPrivacy(renderedAgencySpecificPrivacy)
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(toList()))
+        .associationLogo(agency.getAssociationLogo());
   }
 
   protected String getRenderedAgencySpecificPrivacy(Agency agency) {
@@ -339,8 +342,8 @@ public class AgencyService {
         .external(agency.isExternal())
         .demographics(getDemographics(agency))
         .tenantId(agency.getTenantId())
-        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(
-            Collectors.toList()));
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
+        .associationLogo(agency.getAssociationLogo());
 
   }
 
