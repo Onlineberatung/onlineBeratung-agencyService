@@ -153,8 +153,8 @@ public class Agency implements TenantAware {
   @Column(name = "counselling_relations")
   private String counsellingRelations;
 
-  @Column(name = "association_logo")
-  private String associationLogo;
+  @Column(name = "agency_logo")
+  private String agencyLogo;
 
   @Transient
   public boolean hasAnyDemographicsAttributes() {

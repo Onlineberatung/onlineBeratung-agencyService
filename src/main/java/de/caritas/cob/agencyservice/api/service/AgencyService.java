@@ -2,7 +2,6 @@ package de.caritas.cob.agencyservice.api.service;
 
 
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import com.google.common.collect.Lists;
@@ -27,7 +26,6 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -311,8 +309,8 @@ public class AgencyService {
         .tenantId(agency.getTenantId())
         .consultingType(agency.getConsultingTypeId())
         .agencySpecificPrivacy(renderedAgencySpecificPrivacy)
-        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(toList()))
-        .associationLogo(agency.getAssociationLogo());
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
+        .agencyLogo(agency.getAgencyLogo());
   }
 
   protected String getRenderedAgencySpecificPrivacy(Agency agency) {
@@ -343,7 +341,7 @@ public class AgencyService {
         .demographics(getDemographics(agency))
         .tenantId(agency.getTenantId())
         .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
-        .associationLogo(agency.getAssociationLogo());
+        .agencyLogo(agency.getAgencyLogo());
 
   }
 

@@ -140,7 +140,7 @@ public class AgencyAdminService {
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
         .counsellingRelations(Joiner.on(",").join(agencyDTO.getCounsellingRelations()))
-        .associationLogo(agencyDTO.getAssociationLogo())
+        .agencyLogo(agencyDTO.getAgencyLogo())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
 
@@ -210,7 +210,7 @@ public class AgencyAdminService {
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .counsellingRelations(agency.getCounsellingRelations())
         .deleteDate(agency.getDeleteDate())
-        .associationLogo(updateAgencyDTO.getAssociationLogo());
+        .agencyLogo(updateAgencyDTO.getAgencyLogo());
 
     dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
 

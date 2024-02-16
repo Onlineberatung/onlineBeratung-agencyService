@@ -179,7 +179,7 @@ components:
           type: array
           items:
             type: long
-        associationLogo:
+        agencyLogo:
           type: string
           example: "base64 encoded image"
 
