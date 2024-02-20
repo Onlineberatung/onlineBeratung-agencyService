@@ -54,7 +54,7 @@ public class MultitenancyWithSingleDomainTenantResolver implements TenantResolve
       String rootTenantSubdomain) {
     var tenantControllerApi = tenantServiceApiControllerFactory.createControllerApi();
     RestrictedTenantDTO rootTenantData = tenantControllerApi.getRestrictedTenantDataBySubdomain(
-        rootTenantSubdomain);
+        rootTenantSubdomain, null);
     return Optional.of(rootTenantData.getId());
   }
 

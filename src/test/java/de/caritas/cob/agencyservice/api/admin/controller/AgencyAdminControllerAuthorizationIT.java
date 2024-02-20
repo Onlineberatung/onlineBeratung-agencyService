@@ -5,7 +5,6 @@ import static de.caritas.cob.agencyservice.testHelper.PathConstants.AGENCY_SEARC
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CHANGE_AGENCY_TYPE_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.CREATE_AGENCY_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_AGENCY_PATH;
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.GET_DIOCESES_PATH;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PER_PAGE_PARAM;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.UPDATE_DELETE_AGENCY_PATH;
@@ -27,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.caritas.cob.agencyservice.api.admin.service.AgencyAdminService;
-import de.caritas.cob.agencyservice.api.admin.service.DioceseAdminService;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminSearchService;
 import de.caritas.cob.agencyservice.api.admin.service.agencypostcoderange.AgencyPostcodeRangeAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.AgencyValidator;
@@ -73,9 +71,6 @@ public class AgencyAdminControllerAuthorizationIT {
   private AgencyPostcodeRangeAdminService agencyPostCodeRangeAdminService;
 
   @MockBean
-  private DioceseAdminService dioceseAdminService;
-
-  @MockBean
   private AgencyAdminService agencyAdminService;
 
   @MockBean
@@ -109,33 +104,6 @@ public class AgencyAdminControllerAuthorizationIT {
   }
 
   @Test
-  public void getDioceses_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
-      throws Exception {
-
-    mvc.perform(get(GET_DIOCESES_PATH)
-        .cookie(CSRF_COOKIE)
-        .header(CSRF_HEADER, CSRF_VALUE))
-        .andExpect(status().isUnauthorized());
-
-    verifyNoMoreInteractions(this.dioceseAdminService);
-  }
-
-  @Test
-  @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
-  public void getDioceses_Should_ReturnOkAndCallDioceseAdminService_When_agencyAdminAuthority()
-      throws Exception {
-
-    mvc.perform(get(GET_DIOCESES_PATH)
-        .param(PAGE_PARAM, "0")
-        .param(PER_PAGE_PARAM, "1")
-        .cookie(CSRF_COOKIE)
-        .header(CSRF_HEADER, CSRF_VALUE))
-        .andExpect(status().isOk());
-
-    verify(this.dioceseAdminService, times(1)).findAllDioceses(anyInt(), anyInt());
-  }
-
-  @Test
   public void getAgencyPostCodeRanges_Should_ReturnUnauthorizedAndCallNoMethods_When_noKeycloakAuthorizationIsPresent()
       throws Exception {
 
@@ -149,7 +117,7 @@ public class AgencyAdminControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {"AUTHORIZATION_AGENCY_ADMIN"})
-  public void getAgencyPostCodeRanges_Should_ReturnOkAndCallDioceseAdminService_When_agencyAdminAuthority()
+  public void getAgencyPostCodeRanges_Should_ReturnOkAndCallAgencyPostCodeRangeAdminService_When_agencyAdminAuthority()
       throws Exception {
 
     mvc.perform(get(AGENCY_POSTCODE_RANGE_PATH)

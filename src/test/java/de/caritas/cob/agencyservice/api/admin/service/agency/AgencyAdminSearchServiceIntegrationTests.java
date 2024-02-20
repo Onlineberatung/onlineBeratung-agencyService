@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminFullResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyLinks;
@@ -200,20 +200,9 @@ public class AgencyAdminSearchServiceIntegrationTests {
     agencies.forEach(agency -> {
       String resultSet = agency.getEmbedded().getCity()
           + agency.getEmbedded().getName()
-          + agency.getEmbedded().getPostcode()
-          + agency.getEmbedded().getDioceseId().toString();
+          + agency.getEmbedded().getPostcode();
       assertThat(resultSet, containsString("1"));
     });
-  }
-
-  @Test
-  public void searchAgencies_Should_returnFirstMatchOnDioceseId_When_keywordIsValidDioceseId() {
-    List<AgencyAdminFullResponseDTO> agencies = this.agencyAdminSearchService
-        .searchAgencies("1", 0, 5, null)
-        .getEmbedded();
-
-    AgencyAdminFullResponseDTO firstResult = agencies.get(0);
-    assertThat(firstResult.getEmbedded().getDioceseId(), is(1L));
   }
 
   @Test
@@ -260,7 +249,6 @@ public class AgencyAdminSearchServiceIntegrationTests {
     assertThat(firstSearchResult.getEmbedded().getCreateDate(), is("2019-08-23T06:52:05"));
     assertThat(firstSearchResult.getEmbedded().getUpdateDate(), is("2019-08-23T06:52:05"));
     assertThat(firstSearchResult.getEmbedded().getDeleteDate(), is("null"));
-    assertThat(firstSearchResult.getEmbedded().getDioceseId(), is(10L));
     assertThat(firstSearchResult.getEmbedded().getName(),
         is("Schwangerschaftsberatungsstelle Schwelm"));
     assertThat(firstSearchResult.getEmbedded().getOffline(), is(false));

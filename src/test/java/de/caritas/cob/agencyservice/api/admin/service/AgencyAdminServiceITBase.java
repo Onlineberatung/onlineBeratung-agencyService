@@ -34,7 +34,6 @@ public class AgencyAdminServiceITBase {
     Agency agency = agencyOptional.get();
     assertTrue(agency.isTeamAgency());
     assertThat(0, is(agency.getConsultingTypeId()));
-    assertEquals(0L, agency.getDioceseId().longValue());
     assertEquals("12345", agency.getPostCode());
     assertEquals("Agency description", agency.getDescription());
     assertEquals("Agency name", agency.getName());
@@ -89,7 +88,6 @@ public class AgencyAdminServiceITBase {
     AgencyDTO agencyDTO = new AgencyDTO();
     agencyDTO.setTeamAgency(true);
     agencyDTO.setConsultingType(0);
-    agencyDTO.setDioceseId(0L);
     agencyDTO.setPostcode("12345");
     agencyDTO.setDescription("Agency description");
     agencyDTO.setName("Agency name");
@@ -112,7 +110,6 @@ public class AgencyAdminServiceITBase {
     Optional<Agency> agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
-    assertEquals(updateAgencyDTO.getDioceseId(), agency.getDioceseId());
     assertEquals(updateAgencyDTO.getPostcode(), agency.getPostCode());
     assertEquals(updateAgencyDTO.getDescription(), agency.getDescription());
     assertEquals(updateAgencyDTO.getName(), agency.getName());
@@ -125,7 +122,6 @@ public class AgencyAdminServiceITBase {
     Optional<Agency> agencyOptional = agencyRepository.findById(0L);
     Agency agency = agencyOptional.orElseThrow(RuntimeException::new);
     UpdateAgencyDTO updateAgencyDTO = new UpdateAgencyDTO();
-    updateAgencyDTO.dioceseId(agency.getDioceseId() + 1);
     updateAgencyDTO.name(agency.getName() + "x");
     updateAgencyDTO.description(agency.getDescription() + "x");
     updateAgencyDTO.postcode("00000");
@@ -179,7 +175,6 @@ public class AgencyAdminServiceITBase {
     assertThat(result.getEmbedded().getDescription(), notNullValue());
     assertThat(result.getEmbedded().getConsultingType(), notNullValue());
     assertThat(result.getEmbedded().getName(), notNullValue());
-    assertThat(result.getEmbedded().getDioceseId(), notNullValue());
   }
 
 }

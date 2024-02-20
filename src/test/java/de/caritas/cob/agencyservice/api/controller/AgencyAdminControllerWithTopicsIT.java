@@ -11,18 +11,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.service.TenantService;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.service.TopicService;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
-import de.caritas.cob.agencyservice.testHelper.JsonConverter;
+import de.caritas.cob.agencyservice.api.util.JsonConverter;
 import de.caritas.cob.agencyservice.testHelper.PathConstants;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,6 +61,9 @@ class AgencyAdminControllerWithTopicsIT {
   @MockBean
   private AuthenticatedUser authenticatedUser;
 
+  @MockBean
+  private TenantService tenantService;
+
   @BeforeEach
   public void setup() {
     TenantContext.clear();
@@ -66,6 +71,8 @@ class AgencyAdminControllerWithTopicsIT {
         .webAppContextSetup(context)
         .apply(springSecurity())
         .build();
+    when(tenantService.getRestrictedTenantDataByTenantId(Mockito.any()))
+        .thenReturn(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO().settings(new de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings().featureCentralDataProtectionTemplateEnabled(false)));
   }
 
   @Test
@@ -113,7 +120,6 @@ class AgencyAdminControllerWithTopicsIT {
 
     AgencyDTO agencyDTO = new AgencyDTO()
         .topicIds(List.of(1L, 2L))
-        .dioceseId(0L)
         .name("Test name")
         .description("Test description")
         .postcode("12345")
@@ -122,7 +128,7 @@ class AgencyAdminControllerWithTopicsIT {
         .consultingType(0)
         .url("https://www.test.de")
         .external(true);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(post(PathConstants.CREATE_AGENCY_PATH)
@@ -162,12 +168,11 @@ class AgencyAdminControllerWithTopicsIT {
 
     UpdateAgencyDTO agencyDTO = new UpdateAgencyDTO()
         .topicIds(List.of(2L, 3L))
-        .dioceseId(1L)
         .name("Test update name")
         .description("Test update description")
         .offline(true)
         .external(false);
-    String payload = JsonConverter.convert(agencyDTO);
+    String payload = JsonConverter.convertToJson(agencyDTO);
 
     // when, then
     mockMvc.perform(put(PathConstants.UPDATE_DELETE_AGENCY_PATH)

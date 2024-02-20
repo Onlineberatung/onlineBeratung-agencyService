@@ -119,7 +119,6 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     assertThat(result.getEmbedded().getDescription()).isNotNull();
     assertThat(result.getEmbedded().getConsultingType()).isNotNull();
     assertThat(result.getEmbedded().getName()).isNotNull();
-    assertThat(result.getEmbedded().getDioceseId()).isNotNull();
     assertThat(result.getEmbedded().getTopics()).hasSize(2);
     assertThat(result.getEmbedded().getTopics())
         .extracting(topic -> topic.getId())
@@ -143,7 +142,6 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     var agencyOptional =
         agencyRepository.findById(agencyAdminFullResponseDTO.getEmbedded().getId());
     var agency = agencyOptional.orElseThrow(RuntimeException::new);
-    assertThat(updateAgencyDTO.getDioceseId()).isEqualTo(agency.getDioceseId());
     assertThat(updateAgencyDTO.getPostcode()).isEqualTo(agency.getPostCode());
     assertThat(updateAgencyDTO.getDescription()).isEqualTo(agency.getDescription());
     assertThat(updateAgencyDTO.getName()).isEqualTo(agency.getName());
@@ -175,7 +173,6 @@ public class AgencyAdminServiceTenantAwareIT extends AgencyAdminServiceITBase {
     Agency agency = agencyOptional.get();
     assertTrue(agency.isTeamAgency());
     assertThat(agency.getConsultingTypeId()).isZero();
-    assertThat(agency.getDioceseId().longValue()).isZero();
     assertThat(agency.getPostCode()).isEqualTo("12345");
     assertThat(agency.getDescription()).isEqualTo("Agency description");
     assertThat(agency.getName()).isEqualTo("Agency name");

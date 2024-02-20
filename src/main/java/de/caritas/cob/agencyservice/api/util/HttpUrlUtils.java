@@ -1,4 +1,4 @@
-package de.caritas.cob.agencyservice.api.helper;
+package de.caritas.cob.agencyservice.api.util;
 
 import static org.apache.commons.lang3.Validate.notNull;
 

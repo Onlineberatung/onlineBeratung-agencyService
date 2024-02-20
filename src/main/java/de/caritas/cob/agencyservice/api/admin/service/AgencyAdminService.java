@@ -8,6 +8,7 @@ import static java.util.Objects.nonNull;
 import com.google.common.base.Joiner;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyAdminFullResponseDTOBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.agency.AgencyTopicEnrichmentService;
+import de.caritas.cob.agencyservice.api.admin.service.agency.DataProtectionConverter;
 import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.admin.validation.DeleteAgencyValidator;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.ConflictException;
@@ -18,6 +19,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyTypeRequestDTO;
 import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
+import de.caritas.cob.agencyservice.api.repository.agency.AgencyTenantUnawareRepository;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
@@ -25,7 +27,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +41,21 @@ import org.springframework.stereotype.Service;
 public class AgencyAdminService {
 
   private final @NonNull AgencyRepository agencyRepository;
+
+  private final @NonNull AgencyTenantUnawareRepository agencyTenantUnawareRepository;
+
   private final @NonNull UserAdminService userAdminService;
   private final @NonNull DeleteAgencyValidator deleteAgencyValidator;
   private final @NonNull AgencyTopicMergeService agencyTopicMergeService;
   private final @NonNull AppointmentService appointmentService;
 
+  private final @NonNull DataProtectionConverter dataProtectionConverter;
   @Autowired(required = false)
   private AgencyTopicEnrichmentService agencyTopicEnrichmentService;
 
   @Autowired(required = false)
   private DemographicsConverter demographicsConverter;
+
 
   @Value("${feature.topics.enabled}")
   private boolean featureTopicsEnabled;
@@ -110,8 +116,7 @@ public class AgencyAdminService {
   }
 
   private List<AgencyDTO.CounsellingRelationsEnum> getAllPossibleCounsellingRelations() {
-    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values())
-        .collect(Collectors.toList());
+    return Arrays.stream(AgencyDTO.CounsellingRelationsEnum.values()).toList();
 
   }
 
@@ -125,7 +130,6 @@ public class AgencyAdminService {
   private Agency fromAgencyDTO(AgencyDTO agencyDTO) {
 
     var agencyBuilder = Agency.builder()
-        .dioceseId(agencyDTO.getDioceseId())
         .name(agencyDTO.getName())
         .description(agencyDTO.getDescription())
         .postCode(agencyDTO.getPostcode())
@@ -136,13 +140,15 @@ public class AgencyAdminService {
         .url(agencyDTO.getUrl())
         .isExternal(agencyDTO.getExternal())
         .counsellingRelations(Joiner.on(",").join(agencyDTO.getCounsellingRelations()))
+        .agencyLogo(agencyDTO.getAgencyLogo())
         .createDate(LocalDateTime.now(ZoneOffset.UTC))
         .updateDate(LocalDateTime.now(ZoneOffset.UTC));
+
 
     if (featureDemographicsEnabled && agencyDTO.getDemographics() != null) {
       demographicsConverter.convertToEntity(agencyDTO.getDemographics(), agencyBuilder);
     }
-
+    dataProtectionConverter.convertToEntity(agencyDTO.getDataProtection(), agencyBuilder);
     var agencyToCreate = agencyBuilder.build();
 
     if (featureTopicsEnabled) {
@@ -183,6 +189,7 @@ public class AgencyAdminService {
     var updatedAgency = agencyRepository.save(mergeAgencies(agency, updateAgencyDTO));
     enrichWithAgencyTopicsIfTopicFeatureEnabled(updatedAgency);
     this.appointmentService.syncAgencyDataToAppointmentService(updatedAgency);
+    agencyRepository.flush();
     return new AgencyAdminFullResponseDTOBuilder(updatedAgency)
         .fromAgency();
   }
@@ -191,7 +198,6 @@ public class AgencyAdminService {
 
     var agencyBuilder = Agency.builder()
         .id(agency.getId())
-        .dioceseId(updateAgencyDTO.getDioceseId())
         .name(updateAgencyDTO.getName())
         .description(updateAgencyDTO.getDescription())
         .postCode(updateAgencyDTO.getPostcode())
@@ -203,7 +209,10 @@ public class AgencyAdminService {
         .createDate(agency.getCreateDate())
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .counsellingRelations(agency.getCounsellingRelations())
-        .deleteDate(agency.getDeleteDate());
+        .deleteDate(agency.getDeleteDate())
+        .agencyLogo(updateAgencyDTO.getAgencyLogo());
+
+    dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
 
     if (nonNull(updateAgencyDTO.getConsultingType())) {
       agencyBuilder.consultingTypeId(updateAgencyDTO.getConsultingType());
@@ -231,6 +240,8 @@ public class AgencyAdminService {
     agencyToUpdate.setTenantId(agency.getTenantId());
     return agencyToUpdate;
   }
+
+
 
 
   /**
@@ -263,5 +274,9 @@ public class AgencyAdminService {
     agency.setDeleteDate(LocalDateTime.now(ZoneOffset.UTC));
     this.agencyRepository.save(agency);
     this.appointmentService.deleteAgency(agency);
+  }
+
+  public List<Agency> getAgenciesByTenantId(Long tenantId) {
+    return this.agencyTenantUnawareRepository.findByTenantId(tenantId);
   }
 }

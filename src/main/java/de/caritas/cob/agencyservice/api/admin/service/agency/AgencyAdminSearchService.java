@@ -1,12 +1,11 @@
 package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import static io.micrometer.common.util.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.hallink.SearchResultLinkBuilder;
 import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.AgencyAdminSearchResultDTO;
 import de.caritas.cob.agencyservice.api.model.SearchResultLinks;
 import de.caritas.cob.agencyservice.api.model.Sort;
@@ -43,7 +42,6 @@ public class AgencyAdminSearchService {
   protected static final String NAME_SEARCH_FIELD = "name";
   protected static final String POST_CODE_SEARCH_FIELD = "postCode";
   protected static final String CITY_SEARCH_FIELD = "city";
-  protected static final String DIOCESE_ID_SEARCH_FIELD = "dioceseId";
   protected static final String TENANT_ID_SEARCH_FIELD = "tenantId";
   protected final @NonNull EntityManagerFactory entityManagerFactory;
 
@@ -241,8 +239,6 @@ public class AgencyAdminSearchService {
   protected Predicate keywordSearchPredicate(String keyword, CriteriaBuilder criteriaBuilder,
       Root<Agency> root) {
     return criteriaBuilder.or(
-        criteriaBuilder.equal(root.get(DIOCESE_ID_SEARCH_FIELD),
-            isNumeric(keyword) ? Integer.parseInt(keyword.toLowerCase()) : -1),
         criteriaBuilder.like(criteriaBuilder.lower(root.get(NAME_SEARCH_FIELD)),
             "%" + keyword.toLowerCase() + "%"),
         criteriaBuilder.like(

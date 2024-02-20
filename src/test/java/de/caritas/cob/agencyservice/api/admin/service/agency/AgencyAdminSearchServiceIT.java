@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.FieldEnum;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;

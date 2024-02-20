@@ -2,7 +2,7 @@ package de.caritas.cob.agencyservice.api.admin.service.agency;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;

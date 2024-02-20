@@ -31,13 +31,13 @@
     <jackson-databind-nullable.version>0.2.3</jackson-databind-nullable.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <commons-lang3.version>3.11</commons-lang3.version>
-    <liquibase-maven-plugin.version>4.1.1</liquibase-maven-plugin.version>
+    <liquibase-maven-plugin.version>4.23.2</liquibase-maven-plugin.version>
     <h2.version>1.4.200</h2.version>
     <powermock-module-junit4.version>2.0.9</powermock-module-junit4.version>
     <ehcache.version>2.10.6</ehcache.version>
     <easy-random-core.version>5.0.0</easy-random-core.version>
     <spring-boot-autoconfigure.version>3.0.6</spring-boot-autoconfigure.version>
-    <liquibase-core.version>4.9.1</liquibase-core.version>
+    <liquibase-core.version>4.23.2</liquibase-core.version>
     <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
     <spring-security.version>6.0.5</spring-security.version>
     <springfox.version>2.9.2</springfox.version>
@@ -82,6 +82,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-freemarker</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -198,7 +202,20 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-maven-plugin</artifactId>
       <version>${liquibase-maven-plugin.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>${liquibase-core.version}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
@@ -474,6 +491,12 @@
               <modelPackage>
                 ${project.groupId}.${project.artifactId}.tenantservice.generated.web.model
               </modelPackage>
+              <typeMappings>
+                <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+              </typeMappings>
+              <importMappings>
+                <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+              </importMappings>
             </configuration>
           </execution>
           <execution>

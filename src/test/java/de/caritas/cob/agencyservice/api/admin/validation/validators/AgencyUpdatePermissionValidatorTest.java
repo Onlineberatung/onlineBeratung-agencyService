@@ -5,21 +5,14 @@ import de.caritas.cob.agencyservice.api.admin.service.UserAdminService;
 import de.caritas.cob.agencyservice.api.admin.validation.validators.model.ValidateAgencyDTO;
 
 import de.caritas.cob.agencyservice.api.exception.httpresponses.AgencyAccessDeniedException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.InvalidConsultingTypeException;
-import de.caritas.cob.agencyservice.api.exception.httpresponses.NotFoundException;
-import de.caritas.cob.agencyservice.api.helper.AuthenticatedUser;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AdminAgencyResponseDTO;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyAdminFullResponseDTO;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyAdminResponseDTO;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;

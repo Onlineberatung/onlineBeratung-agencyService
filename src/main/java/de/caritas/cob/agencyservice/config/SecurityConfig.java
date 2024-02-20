@@ -1,8 +1,6 @@
 package de.caritas.cob.agencyservice.config;
 
-import static de.caritas.cob.agencyservice.api.authorization.Authority.AGENCY_ADMIN;
-import static de.caritas.cob.agencyservice.api.authorization.Authority.RESTRICTED_AGENCY_ADMIN;
-
+import de.caritas.cob.agencyservice.api.authorization.Authority.AuthorityValue;
 import de.caritas.cob.agencyservice.config.security.AuthorisationService;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverterProperties;
@@ -15,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -79,13 +78,17 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        //.sessionAuthenticationStrategy(sessionAuthenticationStrategy())
         .and().authorizeRequests()
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()
+        .requestMatchers(HttpMethod.GET, "/agencyadmin/agencies")
+        .hasAuthority(AuthorityValue.SEARCH_AGENCIES)
+        .requestMatchers("/agencyadmin/agencies/tenant/*")
+        .access("hasAuthority('" + AuthorityValue.AGENCY_ADMIN
+            + "') and hasAuthority('" + AuthorityValue.TENANT_ADMIN + "')")
         .requestMatchers("/agencyadmin", "/agencyadmin/", "/agencyadmin/**")
-        .hasAnyAuthority(AGENCY_ADMIN.getAuthority(), RESTRICTED_AGENCY_ADMIN.getAuthority())
+        .hasAnyAuthority(AuthorityValue.AGENCY_ADMIN, AuthorityValue.RESTRICTED_AGENCY_ADMIN)
         .anyRequest().denyAll();
 
 

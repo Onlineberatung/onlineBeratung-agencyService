@@ -1,0 +1,5 @@
+ALTER TABLE agency
+DROP FOREIGN KEY IF EXISTS agency_ibfk_1;
+
+ALTER TABLE agency
+MODIFY diocese_id INT NULL;
