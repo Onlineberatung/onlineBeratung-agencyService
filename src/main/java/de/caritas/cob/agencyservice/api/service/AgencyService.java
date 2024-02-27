@@ -103,9 +103,9 @@ public class AgencyService {
   }
 
 
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
+  public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode, int consultingTypeId,
       Optional<Integer> topicId) {
-    return getAgencies(Optional.ofNullable(postCode), consultingTypeId, topicId, Optional.empty(), Optional.empty(), Optional.empty());
+    return getAgencies(postCode, consultingTypeId, topicId, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
   /**
@@ -311,7 +311,8 @@ public class AgencyService {
         .tenantId(agency.getTenantId())
         .consultingType(agency.getConsultingTypeId())
         .agencySpecificPrivacy(renderedAgencySpecificPrivacy)
-        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList());
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
+        .agencyLogo(agency.getAgencyLogo());
   }
 
   protected String getRenderedAgencySpecificPrivacy(Agency agency) {
@@ -341,7 +342,8 @@ public class AgencyService {
         .external(agency.isExternal())
         .demographics(getDemographics(agency))
         .tenantId(agency.getTenantId())
-        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList());
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
+        .agencyLogo(agency.getAgencyLogo());
 
   }
 

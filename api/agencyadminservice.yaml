@@ -524,6 +524,9 @@ components:
         dataProtection:
           type: object
           $ref: '#/components/schemas/DataProtectionDTO'
+        agencyLogo:
+          type: string
+          example: "base64 encoded image"
 
     DataProtectionDTO:
         type: object
@@ -633,6 +636,9 @@ components:
         dataProtection:
           type: object
           $ref: '#/components/schemas/DataProtectionDTO'
+        agencyLogo:
+          type: string
+          example: "base64 encoded image"
 
     AgencyAdminFullResponseDTO:
       type: object
@@ -696,6 +702,9 @@ components:
         dataProtection:
           type: object
           $ref: '#/components/schemas/DataProtectionDTO'
+        agencyLogo:
+          type: string
+          example: "base64 encoded image"
 
     DemographicsDTO:
       type: object

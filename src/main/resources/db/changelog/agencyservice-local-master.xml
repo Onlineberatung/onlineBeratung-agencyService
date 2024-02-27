@@ -23,4 +23,5 @@
   <include file="db/changelog/changeset/0014_drop_diocese/0014_changeSet.xml"/>-->
   <include file="db/changelog/changeset/0015_change_consultingtype_column_type/0015_changeSet.xml"/>
   <include file="db/changelog/changeset/0016_add_data_protection_attributes/0016_changeSet.xml"/>
+  <include file="db/changelog/changeset/0017_add_agency_logo/0017_changeSet.xml"/>
 </databaseChangeLog>

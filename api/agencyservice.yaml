@@ -179,6 +179,9 @@ components:
           type: array
           items:
             type: long
+        agencyLogo:
+          type: string
+          example: "base64 encoded image"
 
     FullAgencyResponseDTO:
       type: object

@@ -53,7 +53,8 @@ public class AgencyAdminFullResponseDTOBuilder {
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
         .deleteDate(String.valueOf(this.agency.getDeleteDate()))
-            .dataProtection(new DataProtectionDTOBuilder(this.agency).fromAgency());
+        .dataProtection(new DataProtectionDTOBuilder(this.agency).fromAgency())
+        .agencyLogo(this.agency.getAgencyLogo());
 
     responseDTO.demographics(getDemographics(this.agency));
     return responseDTO;
