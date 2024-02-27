@@ -15,7 +15,7 @@ paths:
       parameters:
         - name: postcode
           in: query
-          required: true
+          required: false
           description: The postcode the user entered
           schema:
             type: string
