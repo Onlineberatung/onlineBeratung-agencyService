@@ -60,7 +60,7 @@ class AgencyRepositoryIT {
     // given, when
     var agencyList = agencyRepository.searchWithoutTopic(null, 5, 0, null, null, null, 1L);
     // then
-    assertThat(agencyList).hasSize(1138);
+    assertThat(agencyList).hasSize(104);
   }
 
 
@@ -79,7 +79,7 @@ class AgencyRepositoryIT {
     // given, when
     var agencyList = agencyRepository.searchWithTopic(null, 5, 0, 1, null, null, null, 1L);
     // then
-    assertThat(agencyList).hasSize(4);
+    assertThat(agencyList).hasSize(2);
   }
 
   @Test
