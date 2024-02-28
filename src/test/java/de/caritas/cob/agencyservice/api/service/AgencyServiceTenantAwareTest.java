@@ -77,7 +77,7 @@ public class AgencyServiceTenantAwareTest {
         restrictedTenantDTO);
 
     // when
-    this.agencyService.getAgencies("12123", 1, Optional.empty());
+    this.agencyService.getAgencies(Optional.of("12123"), 1, Optional.empty());
 
     // then
     verify(agencyRepository).searchWithTopic("12123", 5, 1, 2, null,
@@ -99,7 +99,7 @@ public class AgencyServiceTenantAwareTest {
         restrictedTenantDTO);
 
     // when
-    this.agencyService.getAgencies("12123", 1, Optional.of(2), Optional.empty(), Optional.empty(), Optional.empty());
+    this.agencyService.getAgencies(Optional.of("12123"), 1, Optional.of(2), Optional.empty(), Optional.empty(), Optional.empty());
 
     // then
     verify(agencyRepository).searchWithTopic("12123", 5, 1, 2, null,
