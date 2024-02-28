@@ -103,7 +103,7 @@ public class AgencyService {
   }
 
 
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
+  public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode, int consultingTypeId,
       Optional<Integer> topicId) {
     return getAgencies(postCode, consultingTypeId, topicId, Optional.empty(), Optional.empty(), Optional.empty());
   }
@@ -116,16 +116,18 @@ public class AgencyService {
    * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
+  public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode,
+      Integer consultingTypeId,
       Optional<Integer> topicId,
       Optional<Integer> age, Optional<String> gender, Optional<String> counsellingRelation) {
 
     var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
-
-    if (doesPostCodeNotMatchMinSize(postCode, consultingTypeSettings)) {
+    if (postCode.isPresent() && doesPostCodeNotMatchMinSize(postCode.get(),
+        consultingTypeSettings)) {
       return Collections.emptyList();
     }
+
 
     var agencies = findAgencies(postCode, getConsultingTypeIdForSearch(consultingTypeId), topicId,
         age, gender, counsellingRelation);
@@ -147,7 +149,7 @@ public class AgencyService {
     return multitenancyWithSingleDomain ? Optional.empty() : Optional.of(consultingTypeId);
   }
 
-  private List<Agency> findAgencies(String postCode, Optional<Integer> consultingTypeId,
+  private List<Agency> findAgencies(Optional<String> postCode, Optional<Integer> consultingTypeId,
       Optional<Integer> optionalTopicId, Optional<Integer> age,
       Optional<String> gender, Optional<String> counsellingRelation) {
 
@@ -175,8 +177,8 @@ public class AgencyService {
   private List<Agency> findAgencies(AgencySearch agencySearch) {
     try {
       return getAgencyRepositoryForSearch()
-          .searchWithoutTopic(agencySearch.getPostCode(),
-              agencySearch.getPostCode().length(), agencySearch.getConsultingTypeId().orElse(null),
+          .searchWithoutTopic(agencySearch.getPostCode().orElse(null),
+              agencySearch.getPostCode().orElse("").length(), agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getAge().orElse(null),
               agencySearch.getGender().orElse(null),
               agencySearch.getCounsellingRelation().orElse(null),
@@ -238,7 +240,7 @@ public class AgencyService {
   private List<Agency> findAgenciesWithTopic(AgencySearch agencySearch) {
     try {
       return getAgencyRepositoryForSearch()
-          .searchWithTopic(agencySearch.getPostCode(), agencySearch.getPostCode().length(),
+          .searchWithTopic(agencySearch.getPostCode().orElse(null), agencySearch.getPostCode().orElse("").length(),
               agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getTopicId().orElseThrow(),
               agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
