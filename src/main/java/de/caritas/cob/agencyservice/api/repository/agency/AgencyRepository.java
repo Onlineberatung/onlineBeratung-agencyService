@@ -16,8 +16,8 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
   String SELECT_WITH_TOPICS = "SELECT a.*, :tenantId FROM agency a "
       + "LEFT JOIN agency_postcode_range r ON a.id = r.agency_id "
       + "INNER JOIN agency_topic at ON a.id = at.agency_id "
-      + "WHERE :postcode is NULL OR ((CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
-      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int))) " + "AND a.is_offline = false "
+      + "WHERE (:postcode is NULL OR ((CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)))) " + "AND a.is_offline = false "
       + "AND (:type is NULL OR a.consulting_type = :type) "
       + "AND at.topic_id = :topicId "
       + AND_WITH_BRACKET
@@ -33,8 +33,8 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
   String SELECT_WITHOUT_TOPICS = "SELECT a.*, :tenantId FROM agency a "
       + "LEFT JOIN agency_postcode_range r ON a.id = r.agency_id "
       + "WHERE "
-      + ":postcode is NULL OR ((CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
-      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int))) " + "AND a.is_offline = false "
+      + "(:postcode is NULL OR ((CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)))) " + "AND a.is_offline = false "
       + "AND (:type is NULL OR a.consulting_type = :type) "
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (a.age_from <= :age)"
