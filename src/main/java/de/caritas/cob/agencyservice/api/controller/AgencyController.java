@@ -8,6 +8,7 @@ import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
 import java.util.List;
+import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,14 +39,14 @@ public class AgencyController implements AgenciesApi {
    */
   @Override
   public ResponseEntity<List<FullAgencyResponseDTO>> getAgencies(
-      @RequestParam String postcode, @RequestParam Integer consultingType,
+      @RequestParam Integer consultingType, @RequestParam(required = false) String postcode,
       @RequestParam(value = "topicId", required = false) Integer topicId,
       @RequestParam(value = "age", required = false) Integer age,
       @RequestParam(value = "gender", required = false) String gender,
       @RequestParam(value = "counsellingRelation", required = false) String counsellingRelation
   ) {
 
-    var agencies = agencyService.getAgencies(postcode, consultingType,
+    var agencies = agencyService.getAgencies(Optional.ofNullable(postcode), consultingType,
         ofNullable(topicId), ofNullable(age), ofNullable(gender), ofNullable(counsellingRelation));
 
     return !CollectionUtils.isEmpty(agencies)

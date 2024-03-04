@@ -80,7 +80,7 @@ class AgencyControllerIT {
   @Test
   void getAgencies_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
+    when(agencyService.getAgencies(Mockito.any(Optional.class), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
         .thenReturn(null);
 
     mvc.perform(
@@ -112,11 +112,11 @@ class AgencyControllerIT {
   }
 
   @Test
-  void getAgencies_Should_ReturnBadRequest_When_PostcodeParamIsNotProvided()
+  void getAgencies_Should_ReturnRespondWith2XXResponseCode_When_PostcodeParamIsNotProvided()
       throws Exception {
 
     mvc.perform(get(PATH_GET_LIST_OF_AGENCIES + "?" + VALID_CONSULTING_TYPE_QUERY)
-        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
   }
 
   @Test
@@ -133,7 +133,7 @@ class AgencyControllerIT {
     List<FullAgencyResponseDTO> agencies = new ArrayList<>();
     agencies.add(FULL_AGENCY_RESPONSE_DTO);
 
-    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
+    when(agencyService.getAgencies(Mockito.any(Optional.class), Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class)))
         .thenReturn(agencies);
 
     mvc.perform(
@@ -143,7 +143,7 @@ class AgencyControllerIT {
         .andExpect(status().isOk())
         .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
 
-    verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyString(),
+    verify(agencyService, atLeastOnce()).getAgencies(Mockito.any(Optional.class),
         Mockito.anyInt(), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class), Mockito.any(Optional.class));
   }
 

@@ -49,6 +49,7 @@ import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.jeasy.random.EasyRandom;
 import org.junit.After;
@@ -117,7 +118,7 @@ public class AgencyServiceTest {
   private void callGetAgencies() {
     Optional<Integer> emptyTopicIds = Optional.empty();
     try {
-      agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, emptyTopicIds);
+      agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_SUCHT, emptyTopicIds);
       fail("Expected exception: ServiceException");
     } catch (InternalServerErrorException internalServerErrorException) {
       assertTrue("Excepted ServiceException thrown", true);
@@ -163,9 +164,9 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()),
+    assertThat(agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_SUCHT, Optional.empty()),
         everyItem(instanceOf(FullAgencyResponseDTO.class)));
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()))
+    assertThat(agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_SUCHT, Optional.empty()))
         .extracting(POSTCODE).contains(POSTCODE);
   }
 
@@ -181,7 +182,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()))
+    assertThat(agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_SUCHT, Optional.empty()))
         .extracting(FIELD_AGENCY_ID).contains(AGENCY_ID);
   }
 
@@ -194,7 +195,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_WITHOUT_WHITESPOT_AGENCY);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_SUCHT, Optional.empty()),
+    assertThat(agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_SUCHT, Optional.empty()),
         IsEmptyCollection.empty());
   }
 
@@ -205,7 +206,7 @@ public class AgencyServiceTest {
     when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
         .thenReturn(CONSULTING_TYPE_SETTINGS_EMIGRATION);
 
-    assertThat(agencyService.getAgencies(VALID_POSTCODE, CONSULTING_TYPE_EMIGRATION, Optional.empty()),
+    assertThat(agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_EMIGRATION, Optional.empty()),
         IsEmptyCollection.empty());
   }
 
@@ -268,7 +269,7 @@ public class AgencyServiceTest {
 
     when(consultingTypeManager.getConsultingTypeSettings(anyInt()))
         .thenThrow(new MissingConsultingTypeException(""));
-    agencyService.getAgencies("", 0, Optional.empty());
+    agencyService.getAgencies(Optional.of(""), 0, Optional.empty());
   }
 
   @Test
@@ -310,7 +311,7 @@ public class AgencyServiceTest {
     when(tenantService.getRestrictedTenantDataForSingleTenant()).thenReturn(restrictedTenantDTO);
 
     // when
-    this.agencyService.getAgencies("12123", 1, Optional.empty());
+    this.agencyService.getAgencies(Optional.of("12123"), 1, Optional.empty());
   }
 
   @Test
@@ -326,7 +327,7 @@ public class AgencyServiceTest {
     when(tenantService.getRestrictedTenantDataForSingleTenant()).thenReturn(restrictedTenantDTO);
 
     // when
-    this.agencyService.getAgencies("12123", 1, Optional.of(2));
+    this.agencyService.getAgencies(Optional.of("12123"), 1, Optional.of(2));
 
     // then
     verify(agencyRepository).searchWithTopic("12123", 5, 1, 2, AGE, GENDER, COUNSELLING_RELATION,

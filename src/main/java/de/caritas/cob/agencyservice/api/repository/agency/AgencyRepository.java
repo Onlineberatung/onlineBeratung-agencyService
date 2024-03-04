@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -15,10 +14,10 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
 
   String AND_WITH_BRACKET = "AND (";
   String SELECT_WITH_TOPICS = "SELECT a.*, :tenantId FROM agency a "
-      + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
+      + "LEFT JOIN agency_postcode_range r ON a.id = r.agency_id "
       + "INNER JOIN agency_topic at ON a.id = at.agency_id "
-      + "WHERE (CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
-      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
+      + "WHERE (:postcode is NULL OR ((CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)))) " + "AND a.is_offline = false "
       + "AND (:type is NULL OR a.consulting_type = :type) "
       + "AND at.topic_id = :topicId "
       + AND_WITH_BRACKET
@@ -32,10 +31,10 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
       + "AND a.delete_date IS NULL ";
 
   String SELECT_WITHOUT_TOPICS = "SELECT a.*, :tenantId FROM agency a "
-      + "INNER JOIN agency_postcode_range r ON a.id = r.agency_id "
+      + "LEFT JOIN agency_postcode_range r ON a.id = r.agency_id "
       + "WHERE "
-      + "(CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
-      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)) " + "AND a.is_offline = false "
+      + "(:postcode is NULL OR ((CAST(:postcode AS INT) BETWEEN CAST(SUBSTR(r.postcode_from, 1, :length) AS int) "
+      + "AND CAST(SUBSTR(r.postcode_to, 1, :length) AS int)))) " + "AND a.is_offline = false "
       + "AND (:type is NULL OR a.consulting_type = :type) "
       + AND_WITH_BRACKET
       + " (:age IS NULL) OR (a.age_from <= :age)"

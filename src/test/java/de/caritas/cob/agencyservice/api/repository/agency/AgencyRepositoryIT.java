@@ -55,6 +55,14 @@ class AgencyRepositoryIT {
     assertThat(agencyList).hasSize(2);
   }
 
+  @Test
+  void searchWithoutTopic_Should_findAgencyByOnlyConsultingTypeSkippingPostCodeFiltering() {
+    // given, when
+    var agencyList = agencyRepository.searchWithoutTopic(null, 5, 0, null, null, null, 1L);
+    // then
+    assertThat(agencyList).hasSize(104);
+  }
+
 
   @Test
   void searchWithTopic_Should_findAgencyByPostcodeAndConsultingTypeAndTopicId() {
@@ -64,6 +72,14 @@ class AgencyRepositoryIT {
     assertThat(agencyList).hasSize(1);
     assertThat(agencyList.get(0).getId()).isZero();
     assertThat(agencyList.get(0).getAgencyTopics()).extracting("topicId").containsExactly(0L, 1L);
+  }
+
+  @Test
+  void searchWithTopic_Should_findAgencyConsultingTypeAndTopicIdSkippingPostCode() {
+    // given, when
+    var agencyList = agencyRepository.searchWithTopic(null, 5, 0, 1, null, null, null, 1L);
+    // then
+    assertThat(agencyList).hasSize(2);
   }
 
   @Test
