@@ -20,7 +20,6 @@ public class TopicService {
   private final @NonNull SecurityHeaderSupplier securityHeaderSupplier;
   private final @NonNull TenantHeaderSupplier tenantHeaderSupplier;
 
-  @Cacheable(cacheNames = CacheManagerConfig.TOPICS_CACHE)
   public List<TopicDTO> getAllTopics() {
     TopicControllerApi controllerApi = topicServiceApiControllerFactory.createControllerApi();
     addDefaultHeaders(controllerApi.getApiClient());

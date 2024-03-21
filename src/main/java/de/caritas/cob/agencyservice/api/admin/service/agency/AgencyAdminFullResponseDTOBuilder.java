@@ -86,7 +86,16 @@ public class AgencyAdminFullResponseDTOBuilder {
   }
 
   private List<TopicDTO> getTopics(List<AgencyTopic> agencyTopics) {
-    return agencyTopics.stream().map(AgencyTopic::getTopicData).toList();
+    return agencyTopics.stream().map(agencyTopic -> createTopicDTO(agencyTopic)).toList();
+  }
+
+  private TopicDTO createTopicDTO(AgencyTopic agencyTopic) {
+    return new TopicDTO().id(agencyTopic.getTopicId())
+        .name(agencyTopic.getTopicData().getName())
+        .description(agencyTopic.getTopicData().getDescription())
+        .status(agencyTopic.getTopicData().getStatus())
+        .internalIdentifier(agencyTopic.getTopicData().getInternalIdentifier());
+
   }
 
   private AgencyLinks createAgencyLinks() {
